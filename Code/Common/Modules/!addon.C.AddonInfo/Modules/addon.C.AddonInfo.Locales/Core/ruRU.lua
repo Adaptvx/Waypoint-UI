@@ -3,7 +3,7 @@
 ---@class addon
 local addon = select(2, ...)
 local L = addon.C.AddonInfo.Locales
-
+--Переводчик ZamestoTV
 --------------------------------
 
 L.ruRU = {}
@@ -24,7 +24,7 @@ function NS:Load()
 	do
 		-- WAYPOINT
 		L["WaypointSystem - Waypoint - Distance - Prefix"] = ""
-		L["WaypointSystem - Waypoint - Distance - Suffix"] = " yds"
+		L["WaypointSystem - Waypoint - Distance - Suffix"] = " ярд"
 
 		-- PINPOINT
 		L["WaypointSystem - Pinpoint - Quest - Complete"] = "Готов к сдаче"
@@ -35,19 +35,19 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Config - Appearance"] = "Appearance"
-		L["Config - Appearance - Title"] = "Appearance"
-		L["Config - Appearance - Title - Subtext"] = "Customize the appearance of the user interface."
-		L["Config - Appearance - WaypointSystem - Type"] = "Enable"
-		L["Config - Appearance - WaypointSystem - Type - Both"] = "All"
-		L["Config - Appearance - WaypointSystem - Type - Waypoint"] = "Waypoint"
-		L["Config - Appearance - WaypointSystem - Type - Pinpoint"] = "Pinpoint"
-		L["Config - Appearance - WaypointSystem - Waypoint"] = "Waypoint"
-		L["Config - Appearance - WaypointSystem - Pinpoint"] = "Pinpoint"
-		L["Config - Appearance - WaypointSystem - WaypointScale"] = "Waypoint Size"
-		L["Config - Appearance - WaypointSystem - PinpointScale"] = "Pinpoint Size"
-		L["Config - Appearance - WaypointSystem - PinpointDetail"] = "Show Extended Info"
-		L["Config - Appearance - WaypointSystem - PinpointDetail - Description"] = "Include additional info, such as name / description."
+		L["Config - Appearance"] = "Появление"
+		L["Config - Appearance - Title"] = "Появление"
+		L["Config - Appearance - Title - Subtext"] = "Настройте внешний вид пользовательского интерфейса."
+		L["Config - Appearance - WaypointSystem - Type"] = "Включить"
+		L["Config - Appearance - WaypointSystem - Type - Both"] = "ВСЕ"
+		L["Config - Appearance - WaypointSystem - Type - Waypoint"] = "Точка маршрута"
+		L["Config - Appearance - WaypointSystem - Type - Pinpoint"] = "Точка привязки"
+		L["Config - Appearance - WaypointSystem - Waypoint"] = "Точка маршрута"
+		L["Config - Appearance - WaypointSystem - Pinpoint"] = "Точка привязки"
+		L["Config - Appearance - WaypointSystem - WaypointScale"] = "Размер точки маршрута"
+		L["Config - Appearance - WaypointSystem - PinpointScale"] = "Размер точки привязки"
+		L["Config - Appearance - WaypointSystem - PinpointDetail"] = "Показать расширенную информацию"
+		L["Config - Appearance - WaypointSystem - PinpointDetail - Description"] = "Включите дополнительную информацию, например, имя/описание."
 	end
 end
 
