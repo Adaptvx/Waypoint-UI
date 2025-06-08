@@ -25,7 +25,7 @@ function NS:Load()
 		L["Distance - Prefix"] = ""
 		L["Distance - Prefix - Singular"] = ""
 		L["Distance - Suffix"] = " ярд"
-		L["Distance - Suffix - Singular"] = " yd"
+		L["Distance - Suffix - Singular"] = " ярд"
 	end
 
 	--------------------------------
@@ -42,7 +42,7 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["SlashCommand - /way - Map ID - Prefix"] = "Current Map ID: "
+		L["SlashCommand - /way - Map ID - Prefix"] = "Текущий ID карты: "
 		L["SlashCommand - /way - Map ID - Suffix"] = ""
 		L["SlashCommand - /way - Position - Axis (X) - Prefix"] = "X: "
 		L["SlashCommand - /way - Position - Axis (X) - Suffix"] = ""
