@@ -1,5 +1,3 @@
--- ♡ Translation // huchang47
-
 ---@class addon
 local addon = select(2, ...)
 local L = addon.C.AddonInfo.Locales
@@ -12,10 +10,6 @@ local NS = L.zhCN; L.zhCN = NS
 --------------------------------
 
 function NS:Load()
-	if GetLocale() ~= "zhCN" then
-		return
-	end
-
 	--------------------------------
 	-- GENERAL
 	--------------------------------
@@ -24,7 +18,7 @@ function NS:Load()
 		L["Distance - Prefix"] = ""
 		L["Distance - Prefix - Singular"] = ""
 		L["Distance - Suffix"] = " 码"
-		L["Distance - Suffix - Singular"] = " yd"
+		L["Distance - Suffix - Singular"] = " 码"
 	end
 
 	--------------------------------
@@ -41,7 +35,7 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["SlashCommand - /way - Map ID - Prefix"] = "Current Map ID: "
+		L["SlashCommand - /way - Map ID - Prefix"] = "当前地图ID: "
 		L["SlashCommand - /way - Map ID - Suffix"] = ""
 		L["SlashCommand - /way - Position - Axis (X) - Prefix"] = "X: "
 		L["SlashCommand - /way - Position - Axis (X) - Suffix"] = ""
@@ -63,22 +57,22 @@ function NS:Load()
 		L["Config - Appearance - WaypointSystem - Type - Waypoint"] = "路径点"
 		L["Config - Appearance - WaypointSystem - Type - Pinpoint"] = "标记点"
 
-		L["Config - Appearance - WaypointSystem - General"] = "General"
-		L["Config - Appearance - WaypointSystem - General - Transition Distance"] = "Pinpoint Distance"
-		L["Config - Appearance - WaypointSystem - General - Transition Distance - Description"] = "Maximum distance before Pinpoint is shown."
-		L["Config - Appearance - WaypointSystem - General - Hide Distance"] = "Minimum Distance"
-		L["Config - Appearance - WaypointSystem - General - Hide Distance - Description"] = "Distance before Waypoint / Pinpoint is hidden."
+		L["Config - Appearance - WaypointSystem - General"] = "通用"
+		L["Config - Appearance - WaypointSystem - General - Transition Distance"] = "标记点距离"
+		L["Config - Appearance - WaypointSystem - General - Transition Distance - Description"] = "标记点显示的最大距离。"
+		L["Config - Appearance - WaypointSystem - General - Hide Distance"] = "最小距离"
+		L["Config - Appearance - WaypointSystem - General - Hide Distance - Description"] = "超出距离后隐藏路径点和标记点。"
 
 		L["Config - Appearance - WaypointSystem - Waypoint"] = "路径点"
-		L["Config - Appearance - WaypointSystem - WaypointScale"] = "路径点尺寸"
-		L["Config - Appearance - WaypointSystem - WaypointScale - Description"] = "Waypoint size changes based on distance. This option sets the overall size."
-		L["Config - Appearance - WaypointSystem - WaypointMinScale"] = "Minimum %"
-		L["Config - Appearance - WaypointSystem - WaypointMinScale - Description"] = "Minimum % size that can reduce to."
-		L["Config - Appearance - WaypointSystem - WaypointMaxScale"] = "Maximum %"
-		L["Config - Appearance - WaypointSystem - WaypointMaxScale - Description"] = "Maximum % size that can enlarge to."
-
+		L["Config - Appearance - WaypointSystem - WaypointScale"] = "路径点大小"
+		L["Config - Appearance - WaypointSystem - WaypointScale - Description"] = "路径点的大小会跟随距离变化。此选项用于调整整体大小。"
+		L["Config - Appearance - WaypointSystem - WaypointMinScale"] = "最小%"
+		L["Config - Appearance - WaypointSystem - WaypointMinScale - Description"] = "可缩小到的最小百分比。"
+		L["Config - Appearance - WaypointSystem - WaypointMaxScale"] = "最大%"
+		L["Config - Appearance - WaypointSystem - WaypointMaxScale - Description"] = "可放大到的最大百分比。"
+		
 		L["Config - Appearance - WaypointSystem - Pinpoint"] = "标记点"
-		L["Config - Appearance - WaypointSystem - PinpointScale"] = "标记点尺寸"
+		L["Config - Appearance - WaypointSystem - PinpointScale"] = "标记点大小"
 		L["Config - Appearance - WaypointSystem - PinpointDetail"] = "显示扩展信息"
 		L["Config - Appearance - WaypointSystem - PinpointDetail - Description"] = "包含额外的信息，例如名称/描述。"
 	end
