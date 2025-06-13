@@ -52,21 +52,21 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Config - General"] = "General"
-		L["Config - General - Title"] = "General"
-		L["Config - General - Title - Subtext"] = "Customize overall settings."
-		L["Config - General - Preferences"] = "Preferences"
-		L["Config - General - Preferences - Meter"] = "Use Meters instead of Yards"
-		L["Config - General - Preferences - Meter - Description"] = "Changes the unit of measurement to Metric."
-		L["Config - General - Reset"] = "Reset"
-		L["Config - General - Reset - Button"] = "Reset to Default"
-		L["Config - General - Reset - Confirm"] = "Are you sure you want to reset all settings?"
-		L["Config - General - Reset - Confirm - Yes"] = "Confirm"
-		L["Config - General - Reset - Confirm - No"] = "Cancel"
+		L["Config - General"] = "Общие"
+		L["Config - General - Title"] = "Общие"
+		L["Config - General - Title - Subtext"] = "Настройте общие параметры."
+		L["Config - General - Preferences"] = "Предпочтения"
+		L["Config - General - Preferences - Meter"] = "Используйте метры вместо ярдов"
+		L["Config - General - Preferences - Meter - Description"] = "Изменяет единицу измерения на метрическую."
+		L["Config - General - Reset"] = "Сбросить"
+		L["Config - General - Reset - Button"] = "Сброс по умолчанию"
+		L["Config - General - Reset - Confirm"] = "Вы уверены, что хотите сбросить все настройки?"
+		L["Config - General - Reset - Confirm - Yes"] = "Подтвердить"
+		L["Config - General - Reset - Confirm - No"] = "Отмена"
 
-		L["Config - WaypointSystem"] = "Waypoint"
-		L["Config - WaypointSystem - Title"] = "Waypoint"
-		L["Config - WaypointSystem - Title - Subtext"] = "Manage behavior of in-world marker and in-world objective pin."
+		L["Config - WaypointSystem"] = "Точка маршрута"
+		L["Config - WaypointSystem - Title"] = "Точка маршрута"
+		L["Config - WaypointSystem - Title - Subtext"] = "Управлять поведением маркера внутри мира и значка цели внутри мира."
 		L["Config - WaypointSystem - Type"] = "Включить"
 		L["Config - WaypointSystem - Type - Both"] = "ВСЕ"
 		L["Config - WaypointSystem - Type - Waypoint"] = "Точка маршрута"
@@ -92,15 +92,15 @@ function NS:Load()
 		L["Config - Appearance - Title"] = "Появление"
 		L["Config - Appearance - Title - Subtext"] = "Настройте внешний вид пользовательского интерфейса."
 
-		L["Config - Audio"] = "Audio"
-		L["Config - Audio - Title"] = "Audio"
-		L["Config - Audio - Title - Subtext"] = "Configuration for Waypoint UI audio effects."
-		L["Config - Audio - General"] = "General"
-		L["Config - Audio - General - EnableGlobalAudio"] = "Enable Audio"
+		L["Config - Audio"] = "Аудио"
+		L["Config - Audio - Title"] = "Аудио"
+		L["Config - Audio - Title - Subtext"] = "Конфигурация звуковых эффектов интерфейса точки маршрута."
+		L["Config - Audio - General"] = "Общие"
+		L["Config - Audio - General - EnableGlobalAudio"] = "Включить аудио"
 
-		L["Config - About"] = "About"
-		L["Config - About - Contributors"] = "Contributors"
-		L["Config - About - Developer"] = "Developer"
+		L["Config - About"] = "О"
+		L["Config - About - Contributors"] = "Участники"
+		L["Config - About - Developer"] = "Разработчик"
 	end
 
 	--------------------------------
@@ -108,10 +108,10 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Contributors - ZamestoTV - Description"] = "Translator — Russian"
-		L["Contributors - huchang47 - Description"] = "Translator — Chinese (Simplified)"
-		L["Contributors - BlueNightSky - Description"] = "Translator — Chinese (Traditional)"
-		L["Contributors - y45853160 - Description"] = "Code — Beta Bug Fix"
+		L["Contributors - ZamestoTV - Description"] = "Переводчик — на русский язык"
+		L["Contributors - huchang47 - Description"] = "Переводчик — на китайский (упрощенный) язык"
+		L["Contributors - BlueNightSky - Description"] = "Переводчик — на китайский (традиционный) язык"
+		L["Contributors - y45853160 - Description"] = "Код — Исправление ошибок в бета-версии"
 	end
 end
 
