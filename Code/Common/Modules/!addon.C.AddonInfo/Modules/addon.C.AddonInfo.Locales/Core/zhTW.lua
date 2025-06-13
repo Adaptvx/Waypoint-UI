@@ -51,21 +51,21 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Config - General"] = "General"
-		L["Config - General - Title"] = "General"
-		L["Config - General - Title - Subtext"] = "Customize overall settings."
-		L["Config - General - Preferences"] = "Preferences"
-		L["Config - General - Preferences - Meter"] = "Use Meters instead of Yards"
-		L["Config - General - Preferences - Meter - Description"] = "Changes the unit of measurement to Metric."
-		L["Config - General - Reset"] = "Reset"
-		L["Config - General - Reset - Button"] = "Reset to Default"
-		L["Config - General - Reset - Confirm"] = "Are you sure you want to reset all settings?"
-		L["Config - General - Reset - Confirm - Yes"] = "Confirm"
-		L["Config - General - Reset - Confirm - No"] = "Cancel"
+		L["Config - General"] = "通用"
+		L["Config - General - Title"] = "通用"
+		L["Config - General - Title - Subtext"] = "自定義整體設定。"
+		L["Config - General - Preferences"] = "偏好"
+		L["Config - General - Preferences - Meter"] = "使用公尺代替碼"
+		L["Config - General - Preferences - Meter - Description"] = "將測量單位更改為公制。"
+		L["Config - General - Reset"] = "重置"
+		L["Config - General - Reset - Button"] = "重置回預設"
+		L["Config - General - Reset - Confirm"] = "你確定要重置所有設定嗎？"
+		L["Config - General - Reset - Confirm - Yes"] = "確認"
+		L["Config - General - Reset - Confirm - No"] = "取消"
 
-		L["Config - WaypointSystem"] = "General"
-		L["Config - WaypointSystem - Title"] = "General"
-		L["Config - WaypointSystem - Title - Subtext"] = "Manage general settings, such as waypoint system behavior."
+		L["Config - WaypointSystem"] = "一般"
+		L["Config - WaypointSystem - Title"] = "一般"
+		L["Config - WaypointSystem - Title - Subtext"] = "管理一般設定，像是路徑點系統行為。"
 		L["Config - WaypointSystem - Type"] = "啟用"
 		L["Config - WaypointSystem - Type - Both"] = "所有"
 		L["Config - WaypointSystem - Type - Waypoint"] = "路徑點"
@@ -91,15 +91,15 @@ function NS:Load()
 		L["Config - Appearance - Title"] = "外觀"
 		L["Config - Appearance - Title - Subtext"] = "自定義用戶界面的外觀。"
 
-		L["Config - Audio"] = "Audio"
-		L["Config - Audio - Title"] = "Audio"
-		L["Config - Audio - Title - Subtext"] = "Configuration for Waypoint UI audio effects."
-		L["Config - Audio - General"] = "General"
-		L["Config - Audio - General - EnableGlobalAudio"] = "Enable Audio"
+		L["Config - Audio"] = "音效"
+		L["Config - Audio - Title"] = "音效"
+		L["Config - Audio - Title - Subtext"] = "路徑點介面音效的設置。"
+		L["Config - Audio - General"] = "一般"
+		L["Config - Audio - General - EnableGlobalAudio"] = "啟用音效"
 
-		L["Config - About"] = "About"
-		L["Config - About - Contributors"] = "Contributors"
-		L["Config - About - Developer"] = "Developer"
+		L["Config - About"] = "關於"
+		L["Config - About - Contributors"] = "貢獻者"
+		L["Config - About - Developer"] = "開發人員"
 	end
 
 	--------------------------------
@@ -107,10 +107,10 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Contributors - ZamestoTV - Description"] = "Translator — Russian"
-		L["Contributors - huchang47 - Description"] = "Translator — Chinese (Simplified)"
-		L["Contributors - BlueNightSky - Description"] = "Translator — Chinese (Traditional)"
-		L["Contributors - y45853160 - Description"] = "Code — Beta Bug Fix"
+		L["Contributors - ZamestoTV - Description"] = "翻譯者 — 俄語"
+		L["Contributors - huchang47 - Description"] = "翻譯者 — 中文 (簡体)"
+		L["Contributors - BlueNightSky - Description"] = "翻譯者 — 中文 (繁体)"
+		L["Contributors - y45853160 - Description"] = "代碼 — 測試錯誤修復"
 	end
 end
 
