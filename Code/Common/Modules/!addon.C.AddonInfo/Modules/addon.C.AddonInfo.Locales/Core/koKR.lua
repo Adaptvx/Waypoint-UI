@@ -76,12 +76,12 @@ function NS:Load()
 		L["Config - WaypointSystem - General - Hide Distance"] = "목표 지점 - 최소 거리"
 		L["Config - WaypointSystem - General - Hide Distance - Description"] = "목표 지점이 숨겨지기 전 거리."
 		L["Config - WaypointSystem - Waypoint"] = "목표 지점 아이콘"
-		L["Config - WaypointSystem - WaypointFooterType"] = "Additional Info"
-		L["Config - WaypointSystem - WaypointFooterType - Both"] = "All"
-		L["Config - WaypointSystem - WaypointFooterType - Distance"] = "Distance"
-		L["Config - WaypointSystem - WaypointFooterType - ETA"] = "Arrival Time"
-		L["Config - WaypointSystem - WaypointFooterType - None"] = "None"
-		L["Config - WaypointSystem - WaypointFooterOpacity"] = "Transparency"
+		L["Config - WaypointSystem - WaypointFooterType"] = "추가 정보 옵션"
+		L["Config - WaypointSystem - WaypointFooterType - Both"] = "모두"
+		L["Config - WaypointSystem - WaypointFooterType - Distance"] = "거리"
+		L["Config - WaypointSystem - WaypointFooterType - ETA"] = "도착 시간"
+		L["Config - WaypointSystem - WaypointFooterType - None"] = "없음"
+		L["Config - WaypointSystem - WaypointFooterOpacity"] = "투명도"
 		L["Config - WaypointSystem - WaypointScale"] = "목표 지점 아이콘 크기"
 		L["Config - WaypointSystem - WaypointScale - Description"] = "목표 지점 아이콘 크기는 거리에 따라 조정됩니다. 이 옵션은 전체 크기를 조정하는 데 사용됩니다."
 		L["Config - WaypointSystem - WaypointMinScale"] = "축소 - 최소 크기"
@@ -93,9 +93,9 @@ function NS:Load()
 		L["Config - WaypointSystem - PinpointDetail"] = "추가 정보 표시"
 		L["Config - WaypointSystem - PinpointDetail - Description"] = "이름 / 설명 등의 추가 정보 포함."
 
-		L["Config - Appearance"] = "Appearance"
-		L["Config - Appearance - Title"] = "Appearance"
-		L["Config - Appearance - Title - Subtext"] = "Customize the appearance of the user interface."
+		L["Config - Appearance"] = "외형"
+		L["Config - Appearance - Title"] = "외형"
+		L["Config - Appearance - Title - Subtext"] = "UI의 외형을 원하는 대로 변경하세요."
 
 		L["Config - Audio"] = "오디오"
 		L["Config - Audio - Title"] = "오디오"
@@ -113,10 +113,10 @@ function NS:Load()
 	--------------------------------
 
 	do
-		L["Contributors - ZamestoTV - Description"] = "번역자: 러시아어"
-		L["Contributors - huchang47 - Description"] = "번역자: 중국어(간체)"
-		L["Contributors - BlueNightSky - Description"] = "번역자: 중국어(번체)"
-		L["Contributors - Crazyyoungs - Description"] = "Translator — Korean"
+		L["Contributors - ZamestoTV - Description"] = "번역가: 러시아어"
+		L["Contributors - huchang47 - Description"] = "번역가: 중국어(간체)"
+		L["Contributors - BlueNightSky - Description"] = "번역가: 중국어(번체)"
+		L["Contributors - Crazyyoungs - Description"] = "번역가: 한국어"
 		L["Contributors - y45853160 - Description"] = "코드: 베타 버그 수정"
 	end
 end
