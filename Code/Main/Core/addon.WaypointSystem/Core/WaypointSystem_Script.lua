@@ -29,50 +29,120 @@ function NS.Script:Load()
 	do
 		do -- WAYPOINT
 			do -- SET
-				function Frame_Waypoint:SetContext(image, tintColor)
-					Frame.REF_WAYPOINT_CONTEXT:SetInfo(image, tintColor)
+				function Frame_Waypoint:SetText(text, subtext)
+					if text then
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT_FRAME:Show()
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT:SetText(text)
+					else
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT_FRAME:Hide()
+					end
+
+					if subtext then
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME:ShowWithAnimation()
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT:SetText(subtext)
+					else
+						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME:HideWithAnimation()
+					end
+
+					Frame.LGS_FOOTER()
 				end
 
-				function Frame_Waypoint:SetMarker(tintColor)
+				function Frame_Waypoint:Context_SetOpacity(opacity)
+					Frame.REF_WAYPOINT_CONTEXT:SetOpacity(opacity)
+				end
+
+				function Frame_Waypoint:Context_SetImage(image, opacity)
+					Frame.REF_WAYPOINT_CONTEXT:SetInfo(image, opacity)
+				end
+
+				function Frame_Waypoint:Context_SetVFX(type, tintColor)
+					if type == "Wave" then
+						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE.Animation_Playback_Loop:Start()
+						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE_BACKGROUND_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+					else
+						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Hide()
+					end
+				end
+
+				--------------------------------
+
+				function Frame_Waypoint:APP_SetTint(tintColor)
+					Frame.REF_WAYPOINT_MARKER_PULSE:SetTint(tintColor)
 					Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+					Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+					Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
 				end
 
-				function Frame_Waypoint:SetText(text, tintColor)
-					Frame.REF_WAYPOINT_FOOTER_TEXT:SetText(text)
-					Frame.REF_WAYPOINT_FOOTER_TEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, 1)
+				function Frame_Waypoint:APP_SetTextAlpha(alpha)
+					Frame.REF_WAYPOINT_FOOTER:SetAlpha(alpha or .5)
 				end
 
-				function Frame_Waypoint:SetInfo(text, contextImage, tintColor)
-					Frame_Waypoint:SetContext(contextImage, tintColor)
-					Frame_Waypoint:SetText(text, tintColor)
-					Frame_Waypoint:SetMarker(tintColor)
+				function Frame_Waypoint:APP_Context_SetTint(tintColor)
+					Frame.REF_WAYPOINT_CONTEXT:SetTint(tintColor)
 				end
-			end
 
-			do -- LOGIC
+				function Frame_Waypoint:APP_Context_SetRecolor(recolor)
+					if recolor then
+						Frame.REF_WAYPOINT_CONTEXT:Recolor()
+					else
+						Frame.REF_WAYPOINT_CONTEXT:Decolor()
+					end
+				end
 
+				function Frame_Waypoint:APP_Beam_Set(visible, opacity)
+					Frame.REF_WAYPOINT_MARKER_CONTENT:SetShown(visible)
+					Frame.REF_WAYPOINT_MARKER_CONTENT:SetAlpha(opacity)
+				end
+
+				function Frame_Waypoint:APP_SetScale(scale)
+					Frame.REF_WAYPOINT:SetScale(scale)
+				end
 			end
 		end
 
 		do -- PINPOINT
 			do -- SET
-				function Frame_Pinpoint:Background_SetContext(image, tintColor)
-					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:SetInfo(image, tintColor)
+				function Frame_Pinpoint:SetText(text)
+					if text and text ~= Frame.REF_PINPOINT_FOREGROUND_TEXT:GetText() then
+						Frame.REF_PINPOINT_FOREGROUND_TEXT:SetText(text)
+					end
+
+					--------------------------------
+
+					Frame.REF_PINPOINT_FOREGROUND:SetShown(text ~= nil)
 				end
 
-				function Frame_Pinpoint:Foreground_SetText(text, tintColor)
-					Frame.REF_PINPOINT_FOREGROUND_TEXT:SetText(text)
-					Frame.REF_PINPOINT_FOREGROUND_BACKGROUND_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, 1)
+				function Frame_Pinpoint:Context_SetOpacity(opacity)
+					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:SetOpacity(opacity)
 				end
 
-				function Frame_Pinpoint:SetInfo(text, contextImage, tintColor)
-					Frame_Pinpoint:Background_SetContext(contextImage, tintColor)
-					Frame_Pinpoint:Foreground_SetText(text, tintColor)
+				function Frame_Pinpoint:Context_SetImage(image, opacity)
+					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:SetInfo(image, opacity)
 				end
-			end
 
-			do -- LOGIC
+				--------------------------------
 
+				function Frame_Pinpoint:APP_SetTint(tintColor)
+					Frame.REF_PINPOINT_BACKGROUND_ARROW:SetTint(tintColor)
+					Frame.REF_PINPOINT_FOREGROUND_BACKGROUND_BORDER_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+					Frame.REF_PINPOINT_FOREGROUND_TEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+				end
+
+				function Frame_Pinpoint:APP_Context_SetTint(tintColor)
+					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:SetTint(tintColor)
+				end
+
+				function Frame_Pinpoint:APP_Context_SetRecolor(recolor)
+					if recolor then
+						Frame.REF_PINPOINT_BACKGROUND_CONTEXT:Recolor()
+					else
+						Frame.REF_PINPOINT_BACKGROUND_CONTEXT:Decolor()
+					end
+				end
+
+				function Frame_Pinpoint:APP_SetScale(scale)
+					Frame_Pinpoint:SetScale(scale)
+				end
 			end
 		end
 	end
@@ -82,6 +152,65 @@ function NS.Script:Load()
 	--------------------------------
 
 	do
+		local IS_WAYPOINT = false
+		local IS_PINPOINT = false
+
+		local C_WS_TYPE
+		local C_WS_WAYPOINT_SCALE
+		local C_WS_WAYPOINT_MIN_SCALE
+		local C_WS_WAYPOINT_MAX_SCALE
+		local C_WS_PINPOINT_SCALE
+		local C_WS_PINPOINT_DETAIL
+		local C_WS_DISTANCE_TEXT_TYPE
+		local C_WS_DISTANCE_TEXT_ALPHA
+		local C_APP_WAYPOINT_BEAM
+		local C_APP_WAYPOINT_BEAM_ALPHA
+		local C_APP_COLOR
+		local C_APP_COLOR_QUEST_INCOMPLETE_TINT
+		local C_APP_COLOR_QUEST_COMPLETE_TINT
+		local C_APP_COLOR_QUEST_COMPLETE_REPEATABLE_TINT
+		local C_APP_COLOR_QUEST_COMPLETE_IMPORTANT_TINT
+		local C_APP_COLOR_NEUTRAL_TINT
+		local C_APP_COLOR_QUEST_INCOMPLETE
+		local C_APP_COLOR_QUEST_COMPLETE
+		local C_APP_COLOR_QUEST_COMPLETE_REPEATABLE
+		local C_APP_COLOR_QUEST_COMPLETE_IMPORTANT
+		local C_APP_COLOR_NEUTRAL
+		local C_PREF_METRIC
+		local CVAR_FOV
+
+		local function UpdateReferences()
+			C_WS_TYPE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_TYPE
+			C_WS_WAYPOINT_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_SCALE
+			C_WS_WAYPOINT_MIN_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_MIN_SCALE
+			C_WS_WAYPOINT_MAX_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_MAX_SCALE
+			C_WS_DISTANCE_TEXT_TYPE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TEXT_TYPE
+			C_WS_DISTANCE_TEXT_ALPHA = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TEXT_ALPHA
+			C_WS_PINPOINT_DETAIL = addon.C.Database.Variables.DB_GLOBAL.profile.WS_PINPOINT_DETAIL
+			C_WS_PINPOINT_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_PINPOINT_SCALE
+			C_APP_WAYPOINT_BEAM = addon.C.Database.Variables.DB_GLOBAL.profile.APP_WAYPOINT_BEAM
+			C_APP_WAYPOINT_BEAM_ALPHA = addon.C.Database.Variables.DB_GLOBAL.profile.APP_WAYPOINT_BEAM_ALPHA
+			C_APP_COLOR = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR
+			C_APP_COLOR_QUEST_INCOMPLETE_TINT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_INCOMPLETE_TINT
+			C_APP_COLOR_QUEST_INCOMPLETE = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_INCOMPLETE
+			C_APP_COLOR_QUEST_COMPLETE_TINT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE_TINT
+			C_APP_COLOR_QUEST_COMPLETE = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE
+			C_APP_COLOR_QUEST_COMPLETE_REPEATABLE_TINT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE_REPEATABLE_TINT
+			C_APP_COLOR_QUEST_COMPLETE_REPEATABLE = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE_REPEATABLE
+			C_APP_COLOR_QUEST_COMPLETE_IMPORTANT_TINT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE_IMPORTANT_TINT
+			C_APP_COLOR_QUEST_COMPLETE_IMPORTANT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_QUEST_COMPLETE_IMPORTANT
+			C_APP_COLOR_NEUTRAL_TINT = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_NEUTRAL_TINT
+			C_APP_COLOR_NEUTRAL = addon.C.Database.Variables.DB_GLOBAL.profile.APP_COLOR_NEUTRAL
+			C_PREF_METRIC = addon.C.Database.Variables.DB_GLOBAL.profile.PREF_METRIC
+			CVAR_FOV = GetCVar("cameraFov")
+		end
+
+		UpdateReferences()
+		CallbackRegistry:Add("C_CONFIG_UPDATE", UpdateReferences)
+		CallbackRegistry:Add("C_CONFIG_APPEARANCE_UPDATE", UpdateReferences)
+
+		--------------------------------
+
 		do -- 3D
 			-- ---@param framePosX number
 			-- ---@param framePosY number
@@ -211,7 +340,6 @@ function NS.Script:Load()
 			local function ArrivalTime_Update()
 				local distance = C_Navigation.GetDistance()
 				local delta = session.lastDistance - distance
-				local arrivalTime = math.ceil(distance / delta)
 
 				--------------------------------
 
@@ -219,8 +347,16 @@ function NS.Script:Load()
 
 				--------------------------------
 
-				if arrivalTime > 0 and delta > 0 then
-					NS.Variables.ArrivalTime = arrivalTime
+				if delta > 0 then
+					local arrivalTime = math.ceil(distance / delta)
+
+					--------------------------------
+
+					if arrivalTime > 0 then
+						NS.Variables.ArrivalTime = arrivalTime
+					else
+						NS.Variables.ArrivalTime = nil
+					end
 				else
 					NS.Variables.ArrivalTime = nil
 				end
@@ -231,10 +367,6 @@ function NS.Script:Load()
 		end
 
 		do -- GET
-			local SavedClamped = nil
-
-			--------------------------------
-
 			function Callback:GetSuperTrackingInfo()
 				local superTrackingInfo = {
 					["valid"] = C_SuperTrack.IsSuperTrackingAnything(),
@@ -274,27 +406,21 @@ function NS.Script:Load()
 				if pinInfo.pinType then
 					if pinInfo.pinType == Enum.SuperTrackingType.Corpse then
 						texture.type = "ATLAS"
-						texture.recolor = false
 						texture.path = "poi-torghast"
 					elseif pinInfo.poiInfo and pinInfo.poiInfo.atlasName then
 						texture.type = "ATLAS"
-						texture.recolor = true
 						texture.path = pinInfo.poiInfo.atlasName
 					elseif isWay then
 						texture.type = "TEXTURE"
-						texture.recolor = false
 						texture.path = addon.CREF:GetAddonPath() .. "Art/ContextIcons/map-pin-way.png"
 					elseif pinInfo.pinType == Enum.SuperTrackingType.UserWaypoint then
 						texture.type = "TEXTURE"
-						texture.recolor = false
 						texture.path = addon.CREF:GetAddonPath() .. "Art/ContextIcons/map-pin-default.png"
 					elseif pinInfo.poiType == Enum.SuperTrackingMapPinType.TaxiNode then
 						texture.type = "ATLAS"
-						texture.recolor = true
 						texture.path = "Crosshair_Taxi_128"
 					elseif pinInfo.poiType == Enum.SuperTrackingMapPinType.DigSite then
 						texture.type = "ATLAS"
-						texture.recolor = true
 						texture.path = "ArchBlob"
 					elseif pinInfo.poiType == Enum.SuperTrackingMapPinType.QuestOffer then
 						-- local mapID = C_Map.GetBestMapForUnit("player")
@@ -317,17 +443,14 @@ function NS.Script:Load()
 						-- })
 
 						-- texture.type = "TEXTURE"
-						-- texture.recolor = false
 						-- texture.path = contextIcon and addon.CREF:GetAddonPath() .. "Art/ContextIcons/" .. contextIcon .. ".png" or addon.CREF:GetAddonPath() .. "Art/ContextIcons/quest-available.png"
 
 						-- --------------------------------
 
 						texture.type = "TEXTURE"
-						texture.recolor = true
 						texture.path = addon.CREF:GetAddonPath() .. "Art/ContextIcons/quest-available.png"
 					else
 						texture.type = "TEXTURE"
-						texture.recolor = false
 						texture.path = addon.CREF:GetAddonPath() .. "Art/ContextIcons/map-pin-default.png"
 					end
 				end
@@ -368,8 +491,8 @@ function NS.Script:Load()
 				return texture
 			end
 
-			function Callback:GetTint(questID)
-				local tint = nil
+			function Callback:GetTrackingType(questID)
+				local result = nil
 
 				--------------------------------
 
@@ -385,26 +508,26 @@ function NS.Script:Load()
 
 					if questComplete then
 						if questClassification == Enum.QuestClassification.Recurring then
-							tint = addon.CREF:GetSharedColor().RGB_PING_QUEST_REPEATABLE
+							result = "QUEST_COMPLETE_RECURRING"
 						elseif questClassification == Enum.QuestClassification.Important then
-							tint = addon.CREF:GetSharedColor().RGB_PING_QUEST_IMPORTANT
+							result = "QUEST_COMPLETE_IMPORTANT"
 						else
-							tint = addon.CREF:GetSharedColor().RGB_PING_QUEST_NORMAL
+							result = "QUEST_COMPLETE"
 						end
 					else
-						tint = addon.CREF:GetSharedColor().RGB_PING_QUEST_NEUTRAL
+						result = "QUEST_INCOMPLETE"
 					end
 				else
 					if pinType == Enum.SuperTrackingType.Corpse then
-						tint = { r = addon.CREF:GetSharedColor().RGB_WHITE.r, g = addon.CREF:GetSharedColor().RGB_WHITE.g, b = addon.CREF:GetSharedColor().RGB_WHITE.b, a = 1 }
+						result = "CORPSE"
 					else
-						tint = { r = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.r, g = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.g, b = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.b, a = 1 }
+						result = "NEUTRAL"
 					end
 				end
 
 				--------------------------------
 
-				return tint
+				return result
 			end
 
 			--------------------------------
@@ -490,13 +613,13 @@ function NS.Script:Load()
 			end
 
 			function Callback:GetCurrentState()
-				local CONFIG_WS_DISTANCE_TRANSITION = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TRANSITION
-				local CONFIG_WS_DISTANCE_HIDE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_HIDE
+				local C_WS_DISTANCE_TRANSITION = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TRANSITION
+				local C_WS_DISTANCE_HIDE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_HIDE
 
 				--------------------------------
 
 				local SUPER_TRACK_INFO = Callback:GetSuperTrackingInfo()
-				local QUEST_INFO = Callback:GetQuestInfo()
+				local questInfo = NS.Variables.Session.questInfo
 
 				--------------------------------
 
@@ -504,11 +627,11 @@ function NS.Script:Load()
 
 				local distance = C_Navigation.GetDistance()
 				local isInInstance = (IsInInstance())
-				local isQuest = (QUEST_INFO ~= nil)
+				local isQuest = (questInfo ~= nil)
 				local isValid = (SUPER_TRACK_INFO.valid)
 				local isDefault = (SUPER_TRACK_INFO.texture == "3308452")
-				local isRangeProximity = (distance < CONFIG_WS_DISTANCE_TRANSITION)
-				local isRangeValid = (distance > CONFIG_WS_DISTANCE_HIDE)
+				local isRangeProximity = (distance < C_WS_DISTANCE_TRANSITION)
+				local isRangeValid = (distance > C_WS_DISTANCE_HIDE)
 
 				if (isInInstance) or (not isRangeValid) or (not isValid) then
 					if not isRangeValid then
@@ -537,8 +660,8 @@ function NS.Script:Load()
 
 			function Callback:GetIsClamped()
 				local isClamped = Frame_BlizzardWaypoint.isClamped
-				local newClamped = SavedClamped ~= isClamped
-				SavedClamped = isClamped
+				local newClamped = NS.Variables.Session.lastClamped ~= isClamped
+				NS.Variables.Session.lastClamped = isClamped
 
 				return isClamped, newClamped
 			end
@@ -549,167 +672,150 @@ function NS.Script:Load()
 		end
 
 		do -- SET
-			do -- GENERAL
-				function Callback:Blizzard_Hide()
-					Frame_BlizzardWaypoint.Icon:SetAlpha(0)
-					Frame_BlizzardWaypoint.DistanceText:SetAlpha(0)
-					Frame_BlizzardWaypoint.Arrow:SetAlpha(0)
+			function Callback:Waypoint_Reset(keepElementState)
+				if not keepElementState then
+					Frame_Waypoint.hidden = true
+					Frame_Waypoint:Hide()
+
+					Frame_Pinpoint.hidden = true
+					Frame_Pinpoint:Hide()
 				end
 
-				function Callback:Blizzard_Show()
-					Frame_BlizzardWaypoint.Icon:SetAlpha(1)
-					Frame_BlizzardWaypoint.DistanceText:SetAlpha(1)
-					Frame_BlizzardWaypoint.Arrow:SetAlpha(1)
-				end
+				--------------------------------
 
-				function Callback:Waypoint_Reset(keepElementState)
-					if not keepElementState then
-						Frame_Waypoint.hidden = true
-						Frame_Waypoint:Hide()
-
-						Frame_Pinpoint.hidden = true
-						Frame_Pinpoint:Hide()
-					end
-
-					--------------------------------
-
-					NS.Variables.ArrivalTime = nil
-					NS.Variables.Session = {
-						["isInInstance"] = nil,
-						["state"] = nil,
-						["lastState"] = nil,
-						["id"] = nil,
-						["quest"] = nil,
-						["questContextIcon"] = nil,
-						["arrivalTime"] = nil
-					}
-				end
-
-				function Callback:Waypoint_Hide()
-					Frame:Hide()
-				end
-
-				function Callback:Waypoint_Show()
-					Frame.Waypoint:SetPoint("CENTER", Frame_BlizzardWaypoint.navFrame)
-					Frame.Pinpoint:SetPoint("BOTTOM", Frame_BlizzardWaypoint.navFrame, "TOP", 0, 75)
-					Frame:Show()
-				end
+				NS.Variables.ArrivalTime = nil
+				NS.Variables.Session = {}
 			end
 
-			do -- WAYPOINT
-				function Callback:Waypoint_Context_Show()
-					Frame.REF_WAYPOINT_CONTEXT:Show()
-				end
-
-				function Callback:Waypoint_Context_Hide()
-					Frame.REF_WAYPOINT_CONTEXT:Hide()
-				end
-
-				function Callback:Waypoint_SetTint(tintColor)
-					Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
-					Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
-					Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
-				end
-
-				function Callback:Waypoint_SetDistanceText(text, subtext, alpha)
-					if text then
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT_FRAME:Show()
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT:SetText(text)
-					else
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_TEXT_FRAME:Hide()
-					end
-
-					if subtext then
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME:ShowWithAnimation()
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT:SetText(subtext)
-					else
-						Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME:HideWithAnimation()
-					end
-
-					Frame.REF_WAYPOINT_FOOTER:SetAlpha(alpha or .5)
-					Frame.LGS_FOOTER()
-				end
-
-				function Callback:Waypoint_SetContext(image, tintColor, opacity)
-					Frame.REF_WAYPOINT_CONTEXT:SetInfo(image, tintColor, opacity)
-				end
-
-				function Callback:Waypoint_SetContextVFX(type, tintColor)
-					if type == "QuestCompletion" then
-						Frame.REF_WAYPOINT_CONTEXT_VFX_QUEST_COMPLETION:Show()
-					else
-						Frame.REF_WAYPOINT_CONTEXT_VFX_QUEST_COMPLETION:Hide()
-					end
-
-					if type == "Wave" then
-						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse_Start()
-						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE_BACKGROUND_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
-					else
-						Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Hide()
-					end
-				end
-
-				function Callback:Waypoint_SetType(type)
-					if type == "WAYPOINT" then
-						Frame.REF_WAYPOINT_CONTEXT:Hide()
-
-						Frame.REF_WAYPOINT_MARKER:ClearAllPoints()
-						Frame.REF_WAYPOINT_MARKER:SetPoint("BOTTOM", Frame.REF_WAYPOINT, "TOP", 0, -37.5)
-					elseif type == "CONTEXT" then
-						Frame.REF_WAYPOINT_CONTEXT:Show()
-
-						Frame.REF_WAYPOINT_MARKER:ClearAllPoints()
-						Frame.REF_WAYPOINT_MARKER:SetPoint("BOTTOM", Frame.REF_WAYPOINT_CONTEXT, "TOP", 0, -25)
-					end
-				end
+			function Callback:Blizzard_Hide()
+				Frame_BlizzardWaypoint.Icon:SetAlpha(0)
+				Frame_BlizzardWaypoint.DistanceText:SetAlpha(0)
+				Frame_BlizzardWaypoint.Arrow:SetAlpha(0)
 			end
 
-			do -- PINPOINT
-				function Callback:Pinpoint_SetText(text)
-					if text and text ~= Frame.REF_PINPOINT_FOREGROUND_TEXT:GetText() then
-						Frame.REF_PINPOINT_FOREGROUND_TEXT:SetText(text)
-					end
+			function Callback:Blizzard_Show()
+				Frame_BlizzardWaypoint.Icon:SetAlpha(1)
+				Frame_BlizzardWaypoint.DistanceText:SetAlpha(1)
+				Frame_BlizzardWaypoint.Arrow:SetAlpha(1)
+			end
 
-					--------------------------------
+			function Callback:Waypoint_Hide()
+				Frame:Hide()
+			end
 
-					Frame.REF_PINPOINT_FOREGROUND:SetShown(text ~= nil)
+			function Callback:Waypoint_Show()
+				Frame.Waypoint:SetPoint("CENTER", Frame_BlizzardWaypoint.navFrame)
+				Frame.Pinpoint:SetPoint("BOTTOM", Frame_BlizzardWaypoint.navFrame, "TOP", 0, 75)
+				Frame:Show()
+			end
+		end
+
+		do -- APPEARANCE
+			function Callback:APP_GetColor(questID)
+				local result = nil
+
+				--------------------------------
+
+				local trackingType = Callback:GetTrackingType(questID)
+
+				local COLOR_QUEST_INCOMPLETE = C_APP_COLOR and C_APP_COLOR_QUEST_INCOMPLETE or addon.CREF:GetSharedColor().RGB_PING_QUEST_NEUTRAL
+				local COLOR_QUEST_COMPLETE = C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE or addon.CREF:GetSharedColor().RGB_PING_QUEST_NORMAL
+				local COLOR_QUEST_COMPLETE_REPEATABLE = C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE_REPEATABLE or addon.CREF:GetSharedColor().RGB_PING_QUEST_REPEATABLE
+				local COLOR_QUEST_COMPLETE_IMPORTANT = C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE_IMPORTANT or addon.CREF:GetSharedColor().RGB_PING_QUEST_IMPORTANT
+				local COLOR_NEUTRAL = C_APP_COLOR and C_APP_COLOR_NEUTRAL or addon.CREF:GetSharedColor().RGB_PING_NEUTRAL
+
+				--------------------------------
+
+				if trackingType == "QUEST_COMPLETE" then
+					result = COLOR_QUEST_COMPLETE
+				elseif trackingType == "QUEST_COMPLETE_RECURRING" then
+					result = COLOR_QUEST_COMPLETE_REPEATABLE
+				elseif trackingType == "QUEST_COMPLETE_IMPORTANT" then
+					result = COLOR_QUEST_COMPLETE_IMPORTANT
+				elseif trackingType == "QUEST_INCOMPLETE" then
+					result = COLOR_QUEST_INCOMPLETE
+				elseif trackingType == "CORPSE" then
+					result = { r = addon.CREF:GetSharedColor().RGB_WHITE.r, g = addon.CREF:GetSharedColor().RGB_WHITE.g, b = addon.CREF:GetSharedColor().RGB_WHITE.b, a = 1 }
+				else
+					result = COLOR_NEUTRAL
 				end
 
-				function Callback:Pinpoint_SetTint(tintColor)
-					Frame.REF_PINPOINT_BACKGROUND_ARROW:SetTint(tintColor)
-					Frame.REF_PINPOINT_FOREGROUND_BACKGROUND_BORDER_TEXTURE:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
-					Frame.REF_PINPOINT_FOREGROUND_TEXT:SetTextColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
+				--------------------------------
+
+				return result
+			end
+
+			function Callback:APP_CanRecolor(questID)
+				local result = nil
+
+				--------------------------------
+
+				local trackingType = Callback:GetTrackingType(questID)
+
+				local RECOLOR_QUEST_INCOMPLETE = (C_APP_COLOR and C_APP_COLOR_QUEST_INCOMPLETE_TINT) or (not C_APP_COLOR and false)
+				local RECOLOR_QUEST_COMPLETE = (C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE_TINT) or (not C_APP_COLOR and false)
+				local RECOLOR_QUEST_COMPLETE_REPEATABLE = (C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE_REPEATABLE_TINT) or (not C_APP_COLOR and false)
+				local RECOLOR_QUEST_COMPLETE_IMPORTANT = (C_APP_COLOR and C_APP_COLOR_QUEST_COMPLETE_IMPORTANT_TINT) or (not C_APP_COLOR and false)
+				local RECOLOR_NEUTRAL = (C_APP_COLOR and C_APP_COLOR_NEUTRAL_TINT) or (not C_APP_COLOR and true)
+
+				--------------------------------
+
+				if trackingType == "QUEST_COMPLETE" then
+					result = RECOLOR_QUEST_COMPLETE
+				elseif trackingType == "QUEST_COMPLETE_RECURRING" then
+					result = RECOLOR_QUEST_COMPLETE_REPEATABLE
+				elseif trackingType == "QUEST_COMPLETE_IMPORTANT" then
+					result = RECOLOR_QUEST_COMPLETE_IMPORTANT
+				elseif trackingType == "QUEST_INCOMPLETE" then
+					result = RECOLOR_QUEST_INCOMPLETE
+				elseif trackingType == "CORPSE" then
+					result = false
+				else
+					result = RECOLOR_NEUTRAL
 				end
 
-				function Callback:Pinpoint_SetContext(image, tintColor, opacity)
-					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:SetInfo(image, tintColor, opacity)
+				--------------------------------
+
+				return result
+			end
+
+			--------------------------------
+
+			function Callback:APP_GetInfo(questID)
+				local result = {
+					["color"] = Callback:APP_GetColor(questID),
+					["recolorContext"] = Callback:APP_CanRecolor(questID),
+				}
+
+				--------------------------------
+
+				return result
+			end
+
+			function Callback:APP_Set()
+				if not NS.Variables.Session.appearanceInfo then
+					return
 				end
+
+				local appearanceInfo = NS.Variables.Session.appearanceInfo
+
+				--------------------------------
+
+				Frame_Waypoint:APP_SetTint(appearanceInfo.color)
+				Frame_Waypoint:APP_Context_SetTint(appearanceInfo.color)
+				Frame_Waypoint:APP_Context_SetRecolor(appearanceInfo.recolorContext)
+				Frame_Waypoint:APP_SetTextAlpha(C_WS_DISTANCE_TEXT_ALPHA)
+				Frame_Waypoint:APP_Beam_Set(C_APP_WAYPOINT_BEAM, C_APP_WAYPOINT_BEAM_ALPHA)
+				Frame_Waypoint:APP_SetScale(C_WS_WAYPOINT_SCALE)
+
+				Frame_Pinpoint:APP_SetTint(appearanceInfo.color)
+				Frame_Pinpoint:APP_Context_SetTint(appearanceInfo.color)
+				Frame_Pinpoint:APP_Context_SetRecolor(appearanceInfo.recolorContext)
+				Frame_Pinpoint:APP_SetScale(C_WS_PINPOINT_SCALE)
 			end
 		end
 
 		do -- LOGIC
-			local IS_WAYPOINT = false
-			local IS_PINPOINT = false
-
-			local CONFIG_WS_TYPE, CONFIG_WS_PINPOINT_DETAIL, CONFIG_WS_WAYPOINT_MIN_SCALE, CONFIG_WS_WAYPOINT_MAX_SCALE, CONFIG_WS_DISTANCE_TEXT_TYPE, CONFIG_WS_DISTANCE_TEXT_ALPHA, CONFIG_PREF_METRIC
-			local CVAR_FOV
-
-			local function UpdateReferences()
-				CONFIG_WS_TYPE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_TYPE
-				CONFIG_WS_PINPOINT_DETAIL = addon.C.Database.Variables.DB_GLOBAL.profile.WS_PINPOINT_DETAIL
-				CONFIG_WS_WAYPOINT_MIN_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_MIN_SCALE
-				CONFIG_WS_WAYPOINT_MAX_SCALE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_MAX_SCALE
-				CONFIG_WS_DISTANCE_TEXT_TYPE = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TEXT_TYPE
-				CONFIG_WS_DISTANCE_TEXT_ALPHA = addon.C.Database.Variables.DB_GLOBAL.profile.WS_DISTANCE_TEXT_ALPHA
-				CONFIG_PREF_METRIC = addon.C.Database.Variables.DB_GLOBAL.profile.PREF_METRIC
-				CVAR_FOV = GetCVar("cameraFov")
-			end
-
-			UpdateReferences()
-			CallbackRegistry:Add("C_CONFIG_UPDATE", UpdateReferences)
-
-			--------------------------------
-
 			local function Transition_Pinpoint(id)
 				if not Frame_Waypoint.hidden then
 					Frame_Waypoint:HideWithAnimation(id).onFinish(function()
@@ -789,6 +895,172 @@ function NS.Script:Load()
 
 			--------------------------------
 
+			local function Process_Waypoint_Update()
+				local questInfo = NS.Variables.Session.questInfo
+				local appearanceInfo = NS.Variables.Session.appearanceInfo
+
+				--------------------------------
+
+				if questInfo then
+					local contextIcon = { type = "TEXTURE", path = questInfo.contextIcon.texture }
+					local currentWaypointObjective = (C_QuestLog.GetNextWaypointText(questInfo.questID))
+
+					if currentWaypointObjective then
+						contextIcon = { type = "TEXTURE", path = Callback:GetContextIcon_Redirect(questInfo.questID) }
+					end
+
+					--------------------------------
+
+					Frame_Waypoint:Context_SetOpacity(1)
+					Frame_Waypoint:Context_SetImage(contextIcon)
+					Frame_Waypoint:Context_SetVFX("Wave", appearanceInfo.color)
+				else
+					local contextIcon = (Callback:GetContextIcon_Pin())
+
+					--------------------------------
+
+					Frame_Waypoint:Context_SetOpacity(1)
+					Frame_Waypoint:Context_SetImage(contextIcon)
+					Frame_Waypoint:Context_SetVFX("Wave", appearanceInfo.color)
+				end
+
+				--------------------------------
+
+				Callback:APP_Set(questInfo and questInfo.questID)
+			end
+
+			local function Process_Waypoint_Distance()
+				local DISTANCE = C_Navigation.GetDistance()
+
+				--------------------------------
+
+				-- Arrival time (hr, min, sec)
+				local _, _, _, strHr, strMin, strSec = addon.C.API.Util:FormatTime(NS.Variables.ArrivalTime or 0)
+				local arrivalTime = strHr .. strMin .. strSec
+
+				-- Distance (yd/m)
+				local yds = addon.C.API.Util:FormatNumber(string.format("%.0f", DISTANCE))
+				local km, m = addon.C.API.Util:ConvertYardsToMetric(DISTANCE)
+				local formattedKm, formattedM = string.format("%.2f", km), string.format("%.0f", m)
+				local distance = C_PREF_METRIC and (km >= 1 and formattedKm .. "km" or formattedM .. "m") or (yds .. " yds")
+
+				-- Gemerate text to display based on user setting
+				local text = nil
+				local subtext = nil
+				if C_WS_DISTANCE_TEXT_TYPE == 1 then -- Distance + Arrival Time
+					text = distance
+					subtext = arrivalTime and #arrivalTime > 0 and arrivalTime or nil
+				elseif C_WS_DISTANCE_TEXT_TYPE == 2 then -- Distance
+					text = distance
+					subtext = nil
+				elseif C_WS_DISTANCE_TEXT_TYPE == 3 then -- Arrival Time
+					text = nil
+					subtext = arrivalTime and #arrivalTime > 0 and arrivalTime or nil
+				else -- Hide
+					text = nil
+					subtext = nil
+				end
+
+				-- Set text
+				Frame_Waypoint:SetText(text, subtext)
+			end
+
+			local function Process_Pinpoint_Update()
+				local questInfo = NS.Variables.Session.questInfo
+
+				--------------------------------
+
+				if questInfo then
+					local text = nil
+					local contextIcon = { type = "TEXTURE", path = questInfo.contextIcon.texture }
+
+					local isComplete = (questInfo.completed)
+					local currentWaypointObjective = (C_QuestLog.GetNextWaypointText(questInfo.questID))
+					local currentQuestObjective = ((questInfo.objectiveInfo.objectives and #questInfo.objectiveInfo.objectives >= questInfo.objectiveInfo.objectiveIndex and questInfo.objectiveInfo.objectives[questInfo.objectiveInfo.objectiveIndex].text) or "")
+					local questName = (C_QuestLog.GetTitleForQuestID(questInfo.questID))
+
+					--------------------------------
+
+					if currentWaypointObjective then
+						text = currentWaypointObjective
+						contextIcon = { type = "TEXTURE", path = Callback:GetContextIcon_Redirect(questInfo.questID) }
+					else
+						if isComplete then
+							if C_WS_PINPOINT_DETAIL then
+								text = questName .. " — " .. L["WaypointSystem - Pinpoint - Quest - Complete"]
+							else
+								text = L["WaypointSystem - Pinpoint - Quest - Complete"]
+							end
+						elseif currentQuestObjective then
+							text = currentQuestObjective
+						end
+					end
+
+					Frame_Pinpoint:SetText(text)
+					Frame_Pinpoint:Context_SetOpacity(.25)
+					Frame_Pinpoint:Context_SetImage(contextIcon)
+				else
+					local text = nil
+					local contextIcon = (Callback:GetContextIcon_Pin())
+
+					local pinInfo = (Callback:GetPinInfo())
+
+					--------------------------------
+
+					if pinInfo.isWay then
+						local wayInfo = WaypointUI_GetWay()
+
+						--------------------------------
+
+						if #wayInfo.name >= 1 then
+							text = wayInfo.name
+						else
+							text = nil
+						end
+					elseif pinInfo.pinType == Enum.SuperTrackingType.UserWaypoint then
+						text = nil
+					elseif pinInfo.pinType == Enum.SuperTrackingType.Corpse then
+						text = nil
+					else
+						if C_WS_PINPOINT_DETAIL then
+							if pinInfo.poiInfo and pinInfo.poiInfo.description and #pinInfo.poiInfo.description > 1 then
+								text = pinInfo.pinName .. " — " .. pinInfo.poiInfo.description
+							else
+								text = pinInfo.pinName
+							end
+						else
+							text = pinInfo.pinName
+						end
+					end
+
+					Frame_Pinpoint:SetText(text)
+					Frame_Pinpoint:Context_SetOpacity(text and .25 or 1)
+					Frame_Pinpoint:Context_SetImage(contextIcon)
+				end
+
+				--------------------------------
+
+				Callback:APP_Set(questInfo and questInfo.questID)
+			end
+
+			local function Process_3D()
+				-- [DISTANCE SCALE]
+				local DISTANCE = C_Navigation.GetDistance()
+				local WAYPOINT_3D_MODIFIER_SCALE = Callback:GetDistanceScale(DISTANCE, 2000, .25, C_WS_WAYPOINT_MIN_SCALE, C_WS_WAYPOINT_MAX_SCALE, 1)
+				Frame.REF_WAYPOINT_CONTENT:SetScale(WAYPOINT_3D_MODIFIER_SCALE)
+
+				-- [WAYPOINT BEAM ROTATION]
+				-- local DISTANCE_2D = Callback:GetDistance2D()
+				-- local ELEVATION = Callback:GetElevation()
+				-- local WAYPOINT_3D_MODIFIER_ROTATION = Callback:GetPerspectiveRotation(SuperTrackedFrame:GetLeft() or 0, SuperTrackedFrame:GetTop() or 0, GetScreenWidth(), GetScreenHeight(), DISTANCE_2D, ELEVATION, CVAR_FOV)
+				-- Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetRotation(WAYPOINT_3D_MODIFIER_ROTATION)
+
+				-- local WAYPOINT_3D_MODIFIER_ROTATION = Callback:GetPerspectiveRotation(SuperTrackedFrame:GetLeft() or 0, CVAR_FOV, DISTANCE)
+				-- Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetRotation(WAYPOINT_3D_MODIFIER_ROTATION)
+			end
+
+			--------------------------------
+
 			local function Event_OnStateChanged(state, isNewState, id)
 				if state == "INVALID" or state == "INVALID_RANGE" then
 					if isNewState and state == "INVALID_RANGE" then
@@ -812,87 +1084,59 @@ function NS.Script:Load()
 
 				if isNewState then
 					if state == "QUEST_PROXIMITY" then
-						if CONFIG_WS_TYPE == 1 then -- Both
+						if C_WS_TYPE == 1 then -- Both
 							Transition_Pinpoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 2 then -- Waypoint
+						if C_WS_TYPE == 2 then -- Waypoint
 							Transition_OnlyWaypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 3 then -- Pinpoint
+						if C_WS_TYPE == 3 then -- Pinpoint
 							Transition_OnlyPinpoint(id)
 						end
 					elseif state == "PROXIMITY" then
-						if CONFIG_WS_TYPE == 1 then -- Both
+						if C_WS_TYPE == 1 then -- Both
 							Transition_Pinpoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 2 then -- Waypoint
+						if C_WS_TYPE == 2 then -- Waypoint
 							Transition_OnlyWaypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 3 then -- Pinpoint
+						if C_WS_TYPE == 3 then -- Pinpoint
 							Transition_OnlyPinpoint(id)
 						end
 					elseif state == "QUEST_AREA" then
-						if CONFIG_WS_TYPE == 1 then -- Both
+						if C_WS_TYPE == 1 then -- Both
 							Transition_Waypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 2 then -- Waypoint
+						if C_WS_TYPE == 2 then -- Waypoint
 							Transition_OnlyWaypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 3 then -- Pinpoint
+						if C_WS_TYPE == 3 then -- Pinpoint
 							Transition_OnlyPinpoint(id)
 						end
 					elseif state == "AREA" then
-						if CONFIG_WS_TYPE == 1 then -- Both
+						if C_WS_TYPE == 1 then -- Both
 							Transition_Waypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 2 then -- Waypoint
+						if C_WS_TYPE == 2 then -- Waypoint
 							Transition_OnlyWaypoint(id)
 						end
 
-						if CONFIG_WS_TYPE == 3 then -- Pinpoint
+						if C_WS_TYPE == 3 then -- Pinpoint
 							Transition_OnlyPinpoint(id)
 						end
 					end
 
 					--------------------------------
 
-					local QUEST_INFO = Callback:GetQuestInfo()
-					local TINT_COLOR = Callback:GetTint(QUEST_INFO and QUEST_INFO.questID)
-
 					if IS_WAYPOINT then
-						if QUEST_INFO then
-							local contextIcon = { type = "TEXTURE", recolor = false, path = QUEST_INFO.contextIcon.texture }
-							local currentWaypointObjective = (C_QuestLog.GetNextWaypointText(QUEST_INFO.questID))
-							local questClassification = C_QuestInfoSystem.GetQuestClassification(QUEST_INFO.questID)
-
-							if currentWaypointObjective then
-								contextIcon = { type = "TEXTURE", recolor = false, path = Callback:GetContextIcon_Redirect(QUEST_INFO.questID) }
-							end
-
-							--------------------------------
-
-							Callback:Waypoint_SetTint(TINT_COLOR)
-							Callback:Waypoint_SetContext(contextIcon, TINT_COLOR, 1)
-							Callback:Waypoint_SetContextVFX((QUEST_INFO.completed and questClassification == Enum.QuestClassification.Normal and "QuestCompletion") or (QUEST_INFO.completed and "Wave") or "", TINT_COLOR)
-							Callback:Waypoint_SetType("CONTEXT")
-						else
-							local pinInfo = (Callback:GetPinInfo())
-							local contextIcon = (Callback:GetContextIcon_Pin())
-
-							--------------------------------
-
-							Callback:Waypoint_SetTint(TINT_COLOR)
-							Callback:Waypoint_SetContext(contextIcon, TINT_COLOR, 1)
-							Callback:Waypoint_SetContextVFX("Wave", TINT_COLOR)
-							Callback:Waypoint_SetType("CONTEXT")
-						end
+						Process_Waypoint_Update()
 					end
 				end
 			end
@@ -908,114 +1152,16 @@ function NS.Script:Load()
 			end
 
 			local function Event_OnUpdate()
-				local QUEST_INFO = Callback:GetQuestInfo()
-				local TINT_COLOR = Callback:GetTint(QUEST_INFO and QUEST_INFO.questID)
+				Process_3D()
 
 				--------------------------------
 
 				if IS_WAYPOINT then
-					local DISTANCE = C_Navigation.GetDistance()
-
-					--------------------------------
-
-					-- Arrival time (hr, min, sec)
-					local _, _, _, strHr, strMin, strSec = addon.C.API.Util:FormatTime(NS.Variables.ArrivalTime or 0)
-					local arrivalTime = strHr .. strMin .. strSec
-					-- Distance (yd/m)
-					local yds = addon.C.API.Util:FormatNumber(string.format("%.0f", DISTANCE))
-					local km, m = addon.C.API.Util:ConvertYardsToMetric(DISTANCE)
-					local formattedKm, formattedM = string.format("%.2f", km), string.format("%.0f", m)
-					local distance = CONFIG_PREF_METRIC and (km >= 1 and formattedKm .. "km" or formattedM .. "m") or (yds .. " yds")
-
-					-- Gemerate text to display based on user setting
-					local text = nil
-					local subtext = nil
-					if CONFIG_WS_DISTANCE_TEXT_TYPE == 1 then -- Distance + Arrival Time
-						text = distance
-						subtext = arrivalTime and #arrivalTime > 0 and arrivalTime or nil
-					elseif CONFIG_WS_DISTANCE_TEXT_TYPE == 2 then -- Distance
-						text = distance
-						subtext = nil
-					elseif CONFIG_WS_DISTANCE_TEXT_TYPE == 3 then -- Arrival Time
-						text = nil
-						subtext = arrivalTime and #arrivalTime > 0 and arrivalTime or nil
-					else -- Hide
-						text = nil
-						subtext = nil
-					end
-
-					-- Set text
-					Callback:Waypoint_SetDistanceText(text, subtext, CONFIG_WS_DISTANCE_TEXT_ALPHA)
+					Process_Waypoint_Distance()
 				end
 
 				if IS_PINPOINT then
-					if QUEST_INFO then
-						local text = nil
-						local contextIcon = { type = "TEXTURE", recolor = false, path = QUEST_INFO.contextIcon.texture }
-
-						local isComplete = (QUEST_INFO.completed)
-						local currentWaypointObjective = (C_QuestLog.GetNextWaypointText(QUEST_INFO.questID))
-						local currentQuestObjective = ((QUEST_INFO.objectiveInfo.objectives and #QUEST_INFO.objectiveInfo.objectives >= QUEST_INFO.objectiveInfo.objectiveIndex and QUEST_INFO.objectiveInfo.objectives[QUEST_INFO.objectiveInfo.objectiveIndex].text) or "")
-						local questName = (C_QuestLog.GetTitleForQuestID(QUEST_INFO.questID))
-
-						--------------------------------
-
-						if currentWaypointObjective then
-							text = currentWaypointObjective
-							contextIcon = { type = "TEXTURE", recolor = false, path = Callback:GetContextIcon_Redirect(QUEST_INFO.questID) }
-						else
-							if isComplete then
-								if CONFIG_WS_PINPOINT_DETAIL then
-									text = questName .. " — " .. L["WaypointSystem - Pinpoint - Quest - Complete"]
-								else
-									text = L["WaypointSystem - Pinpoint - Quest - Complete"]
-								end
-							elseif currentQuestObjective then
-								text = currentQuestObjective
-							end
-						end
-
-						Callback:Pinpoint_SetTint(TINT_COLOR)
-						Callback:Pinpoint_SetText(text)
-						Callback:Pinpoint_SetContext(contextIcon, TINT_COLOR, .25)
-					else
-						local text = nil
-						local contextIcon = (Callback:GetContextIcon_Pin())
-
-						local pinInfo = (Callback:GetPinInfo())
-
-						--------------------------------
-
-						if pinInfo.isWay then
-							local wayInfo = WaypointUI_GetWay()
-
-							--------------------------------
-
-							if #wayInfo.name >= 1 then
-								text = wayInfo.name
-							else
-								text = nil
-							end
-						elseif pinInfo.pinType == Enum.SuperTrackingType.UserWaypoint then
-							text = nil
-						elseif pinInfo.pinType == Enum.SuperTrackingType.Corpse then
-							text = nil
-						else
-							if CONFIG_WS_PINPOINT_DETAIL then
-								if pinInfo.poiInfo and pinInfo.poiInfo.description and #pinInfo.poiInfo.description > 1 then
-									text = pinInfo.pinName .. " — " .. pinInfo.poiInfo.description
-								else
-									text = pinInfo.pinName
-								end
-							else
-								text = pinInfo.pinName
-							end
-						end
-
-						Callback:Pinpoint_SetTint(TINT_COLOR)
-						Callback:Pinpoint_SetText(text)
-						Callback:Pinpoint_SetContext(contextIcon, TINT_COLOR, text and .25 or 1)
-					end
+					Process_Pinpoint_Update()
 				end
 			end
 
@@ -1050,56 +1196,30 @@ function NS.Script:Load()
 					return
 				end
 
-				--------------------------------
-
 				if isNewWaypoint then
 					Callback:Waypoint_Reset()
 				end
 
 				--------------------------------
-				-- VARIABLES
-				--------------------------------
 
-				local QUEST_INFO = Callback:GetQuestInfo()
+				local questInfo = Callback:GetQuestInfo()
+				local appearanceInfo = Callback:APP_GetInfo(questInfo and questInfo.questID)
+				local state = Callback:GetCurrentState()
+				local id, isNewState = Callback:UpdateStateSession(state)
+				local isClamped, isNewClamped = Callback:GetIsClamped()
 
-				local STATE = Callback:GetCurrentState()
-				local ID, IS_NEW_STATE = Callback:UpdateStateSession(STATE)
-				local IS_CLAMPED, IS_NEW_CLAMPED = Callback:GetIsClamped()
-
-				--------------------------------
-				-- 3D
-				--------------------------------
-
-				local DISTANCE = C_Navigation.GetDistance()
-				local WAYPOINT_3D_MODIFIER_SCALE = Callback:GetDistanceScale(DISTANCE, 2000, .25, CONFIG_WS_WAYPOINT_MIN_SCALE, CONFIG_WS_WAYPOINT_MAX_SCALE, 1)
-				Frame.REF_WAYPOINT_CONTENT:SetScale(WAYPOINT_3D_MODIFIER_SCALE)
-
-				-- local DISTANCE_2D = Callback:GetDistance2D()
-				-- local ELEVATION = Callback:GetElevation()
-				-- local WAYPOINT_3D_MODIFIER_ROTATION = Callback:GetPerspectiveRotation(SuperTrackedFrame:GetLeft() or 0, SuperTrackedFrame:GetTop() or 0, GetScreenWidth(), GetScreenHeight(), DISTANCE_2D, ELEVATION, CVAR_FOV)
-				-- Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetRotation(WAYPOINT_3D_MODIFIER_ROTATION)
-
-				-- local WAYPOINT_3D_MODIFIER_ROTATION = Callback:GetPerspectiveRotation(SuperTrackedFrame:GetLeft() or 0, CVAR_FOV, DISTANCE)
-				-- Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE:SetRotation(WAYPOINT_3D_MODIFIER_ROTATION)
-
-				--------------------------------
-				-- SET
-				--------------------------------
-
-				NS.Variables.Session = {
-					["lastInInstance"] = IsInInstance(),
-					["state"] = STATE,
-					["lastState"] = NS.Variables.Session.lastState,
-					["id"] = ID,
-					["questInfo"] = QUEST_INFO,
-				}
-
-				NS.Variables.Session.lastState = STATE
+				NS.Variables.Session.questInfo = questInfo
+				NS.Variables.Session.appearanceInfo = appearanceInfo
+				NS.Variables.Session.lastState = state
+				NS.Variables.Session.id = id
 
 				--------------------------------
 
-				Event_OnClampChanged(IS_CLAMPED)
-				Event_OnStateChanged(STATE, IS_NEW_STATE, ID)
+				if isNewClamped then
+					Event_OnClampChanged(isClamped)
+				end
+
+				Event_OnStateChanged(state, isNewState, id)
 				Event_OnUpdate()
 			end
 		end
@@ -1113,41 +1233,28 @@ function NS.Script:Load()
 		do -- WAYPOINT
 			do -- VFX
 				do -- WAVE
-					local RepeatTimer = nil
+					local Wave = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE
 
-					function Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse_StopEvent()
-						return not Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:IsShown()
+					--------------------------------
+
+					function Wave:Animation_Playback_StopEvent()
+						return not Wave:IsShown()
 					end
 
-					function Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse()
-						addon.C.Animation:CancelAll(Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE)
+					function Wave:Animation_Playback()
+						addon.C.Animation:CancelAll(Wave)
 
 						--------------------------------
 
-						addon.C.Animation:Alpha({ ["frame"] = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE, ["duration"] = 1.5, ["from"] = 1, ["to"] = 0, ["ease"] = nil, ["stopEvent"] = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE.Animation_Pulse_StopEvent })
-						addon.C.Animation:Scale({ ["frame"] = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE, ["duration"] = 2, ["from"] = .5, ["to"] = 1.5, ["ease"] = "EaseExpo_InOut", ["stopEvent"] = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE.Animation_Pulse_StopEvent })
+						addon.C.Animation:Alpha({ ["frame"] = Wave, ["duration"] = 1.5, ["from"] = 1, ["to"] = 0, ["ease"] = nil, ["stopEvent"] = Wave.Animation_Playback_StopEvent })
+						addon.C.Animation:Scale({ ["frame"] = Wave, ["duration"] = 2, ["from"] = .5, ["to"] = 1.5, ["ease"] = "EaseExpo_InOut", ["stopEvent"] = Wave.Animation_Playback_StopEvent })
 					end
 
-					function Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse_Start()
-						if not Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:IsShown() then
-							Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Show()
-
-							--------------------------------
-
-							if RepeatTimer then
-								RepeatTimer:Cancel()
-							end
-
-							--------------------------------
-
-							Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse()
-							RepeatTimer = C_Timer.NewTicker(1.75, function()
-								if not Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse_StopEvent() then
-									Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE:Animation_Pulse()
-								end
-							end)
-						end
-					end
+					Wave.Animation_Playback_Loop = addon.C.Animation.Sequencer:CreateLoop()
+					Wave.Animation_Playback_Loop:SetInterval(1.75)
+					Wave.Animation_Playback_Loop:SetAnimation(Wave.Animation_Playback)
+					Wave.Animation_Playback_Loop:SetOnStart(function() Wave:Show() end)
+					Wave.Animation_Playback_Loop:SetOnStop(function() Wave:Hide() end)
 				end
 			end
 
@@ -1194,6 +1301,7 @@ function NS.Script:Load()
 					end
 
 					Frame.REF_WAYPOINT_CONTEXT:ShowWithAnimation(skipAnimation)
+					Frame.REF_WAYPOINT_MARKER_PULSE.Animation_Playback_Loop:Start()
 				end
 			end
 
@@ -1362,7 +1470,7 @@ function NS.Script:Load()
 					end
 
 					Frame.REF_PINPOINT_BACKGROUND_CONTEXT:ShowWithAnimation(skipAnimation)
-					Frame.REF_PINPOINT_BACKGROUND_ARROW:Animation_Playback_Start()
+					Frame.REF_PINPOINT_BACKGROUND_ARROW.Animation_Playback_Loop:Start()
 				end
 			end
 
@@ -1433,29 +1541,21 @@ function NS.Script:Load()
 	--------------------------------
 
 	do
-		local function CONFIG_WAYPOINT_SCALE()
-			local variable = addon.C.Database.Variables.DB_GLOBAL.profile.WS_WAYPOINT_SCALE
-			Frame_Waypoint:SetScale(variable)
-		end
-
-		local function CONFIG_PINPOINT_SCALE()
-			local variable = addon.C.Database.Variables.DB_GLOBAL.profile.WS_PINPOINT_SCALE
-			Frame_Pinpoint:SetScale(variable)
-		end
-
-		local function CONFIG_WS_TYPE()
+		local function C_CONFIG_WS_TYPE()
 			Callback:Waypoint_Reset(true)
 		end
 
-		CONFIG_WAYPOINT_SCALE()
-		CONFIG_PINPOINT_SCALE()
-		CONFIG_WS_TYPE()
+		local function C_CONFIG_APPEARANCE_UPDATE()
+			C_Timer.After(.075, function() Callback:APP_Set() end)
+		end
+
+		C_CONFIG_WS_TYPE()
+		C_CONFIG_APPEARANCE_UPDATE()
 
 		--------------------------------
 
-		CallbackRegistry:Add("CONFIG_WAYPOINT_SCALE", CONFIG_WAYPOINT_SCALE)
-		CallbackRegistry:Add("CONFIG_PINPOINT_SCALE", CONFIG_PINPOINT_SCALE)
-		CallbackRegistry:Add("CONFIG_WS_TYPE", CONFIG_WS_TYPE)
+		CallbackRegistry:Add("C_CONFIG_WS_TYPE", C_CONFIG_WS_TYPE)
+		CallbackRegistry:Add("C_CONFIG_APPEARANCE_UPDATE", C_CONFIG_APPEARANCE_UPDATE)
 	end
 
 	--------------------------------
@@ -1463,11 +1563,22 @@ function NS.Script:Load()
 	--------------------------------
 
 	do
+		local maxUpdatePerSecond = 30
+		local updateInterval = 1 / maxUpdatePerSecond
+		local updateTimer = 0
+
 		local _ = CreateFrame("Frame")
 		_:RegisterEvent("SUPER_TRACKING_CHANGED")
 		_:RegisterEvent("SUPER_TRACKING_PATH_UPDATED")
-		_:SetScript("OnUpdate", function()
-			Callback:Update(false)
+		_:SetScript("OnUpdate", function(self, elapsed)
+			updateTimer = updateTimer + elapsed
+			if updateTimer >= updateInterval then
+				updateTimer = 0
+
+				--------------------------------
+
+				Callback:Update(false)
+			end
 		end)
 		_:SetScript("OnEvent", function(_, event)
 			if event == "SUPER_TRACKING_CHANGED" then

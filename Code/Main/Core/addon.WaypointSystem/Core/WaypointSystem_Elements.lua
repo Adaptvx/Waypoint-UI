@@ -80,15 +80,6 @@ function NS.Elements:Load()
 
 									--------------------------------
 
-									do -- QUEST COMPLETION
-										VFX.QuestCompletion = addon.C.FrameTemplates:CreateModelFrame_VisualEffect(VFX, { dynamicEffectInfo = { effectID = 179, offsetX = 3, offsetY = 0 } }, "$parent.QuestCompletion")
-										VFX.QuestCompletion:SetSize(125, 125)
-										VFX.QuestCompletion:SetPoint("CENTER", VFX)
-										VFX.QuestCompletion:SetFrameStrata(NS.Variables.FRAME_STRATA)
-										VFX.QuestCompletion:SetFrameLevel(NS.Variables.FRAME_LEVEL + 4)
-										VFX.QuestCompletion:SetScale(.875)
-									end
-
 									do -- WAVE
 										VFX.Wave = CreateFrame("Frame", "$parent.Wave", VFX)
 										VFX.Wave:SetSize(75, 75)
@@ -179,24 +170,49 @@ function NS.Elements:Load()
 										end
 									end
 								end
+							end
 
-								do -- MARKER
-									Content.Marker = CreateFrame("Frame", "$parent.Marker", Content)
-									Content.Marker:SetWidth(17.5)
-									Content.Marker:SetHeight(MARKER_HEIGHT)
-									Content.Marker:SetFrameStrata(NS.Variables.FRAME_STRATA)
-									Content.Marker:SetFrameLevel(NS.Variables.FRAME_LEVEL + 3)
+							do -- MARKER
+								Content.Marker = CreateFrame("Frame", "$parent.Marker", Content)
+								Content.Marker:SetSize(35, MARKER_HEIGHT)
+								Content.Marker:SetPoint("BOTTOM", Content, 0, 15)
+								Content.Marker:SetFrameStrata(NS.Variables.FRAME_STRATA)
+								Content.Marker:SetFrameLevel(NS.Variables.FRAME_LEVEL + 3)
 
-									local Marker = Content.Marker
+								local Marker = Content.Marker
+
+								--------------------------------
+
+								do -- CONTENT
+									Marker.Content = CreateFrame("Frame", "$parent.Content", Marker)
+									Marker.Content:SetPoint("CENTER", Marker)
+									Marker.Content:SetFrameStrata(NS.Variables.FRAME_STRATA)
+									Marker.Content:SetFrameLevel(NS.Variables.FRAME_LEVEL + 4)
+									addon.C.API.FrameUtil:SetDynamicSize(Marker.Content, Marker, 0, 0)
+
+									local Marker_Content = Marker.Content
 
 									--------------------------------
 
 									do -- BACKGROUND
-										Marker.Background, Marker.BackgroundTexture = addon.C.FrameTemplates:CreateTexture(Marker, NS.Variables.FRAME_STRATA, NS.Variables.PATH .. "waypoint-line-half.png", "$parent.Background")
-										Marker.Background:SetPoint("CENTER", Marker, 0, -MARKER_HEIGHT / 2)
-										Marker.Background:SetFrameStrata(NS.Variables.FRAME_STRATA)
-										Marker.Background:SetFrameLevel(NS.Variables.FRAME_LEVEL + 4)
-										addon.C.API.FrameUtil:SetDynamicSize(Marker.Background, Marker, 0, 0)
+										Marker_Content.Background, Marker_Content.BackgroundTexture = addon.C.FrameTemplates:CreateTexture(Marker_Content, NS.Variables.FRAME_STRATA, NS.Variables.PATH .. "waypoint-line.png", "$parent.Background")
+										Marker_Content.Background:SetWidth(125)
+										Marker_Content.Background:SetPoint("CENTER", Marker_Content, 0, -MARKER_HEIGHT / 2)
+										Marker_Content.Background:SetFrameStrata(NS.Variables.FRAME_STRATA)
+										Marker_Content.Background:SetFrameLevel(NS.Variables.FRAME_LEVEL + 4)
+										addon.C.API.FrameUtil:SetDynamicSize(Marker_Content.Background, Marker_Content, nil, 0)
+
+										Marker_Content.Background:SetAlpha(.25)
+									end
+
+									do -- PULSE
+										Marker_Content.Pulse = PrefabRegistry:Create("WaypointSystem.Waypoint.Marker.PulseFrame", Marker_Content, NS.Variables.FRAME_STRATA, NS.Variables.FRAME_LEVEL + 5, "$parent.Pulse")
+										Marker_Content.Pulse:SetPoint("CENTER", Marker_Content)
+										Marker_Content.Pulse:SetFrameStrata(NS.Variables.FRAME_STRATA)
+										Marker_Content.Pulse:SetFrameLevel(NS.Variables.FRAME_LEVEL + 5)
+										addon.C.API.FrameUtil:SetDynamicSize(Marker_Content.Pulse, Marker_Content, 0, function(relativeWidth, relativeHeight) return relativeHeight / 2 end)
+
+										Marker_Content.Pulse:SetAlpha(.75)
 									end
 								end
 							end
@@ -355,7 +371,6 @@ function NS.Elements:Load()
 			Frame.REF_WAYPOINT_CONTENT = Frame.REF_WAYPOINT.Content
 			Frame.REF_WAYPOINT_CONTEXT = Frame.REF_WAYPOINT_CONTENT.ContextFrame
 			Frame.REF_WAYPOINT_CONTEXT_VFX = Frame.REF_WAYPOINT_CONTEXT.VFX
-			Frame.REF_WAYPOINT_CONTEXT_VFX_QUEST_COMPLETION = Frame.REF_WAYPOINT_CONTEXT_VFX.QuestCompletion
 			Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE = Frame.REF_WAYPOINT_CONTEXT_VFX.Wave
 			Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE_BACKGROUND = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE.Background
 			Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE_BACKGROUND_TEXTURE = Frame.REF_WAYPOINT_CONTEXT_VFX_WAVE.BackgroundTexture
@@ -367,8 +382,10 @@ function NS.Elements:Load()
 			Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME = Frame.REF_WAYPOINT_FOOTER_LAYOUT.SubtextFrame
 			Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT = Frame.REF_WAYPOINT_FOOTER_LAYOUT_SUBTEXT_FRAME.Text
 			Frame.REF_WAYPOINT_MARKER = Frame.REF_WAYPOINT_CONTENT.Marker
-			Frame.REF_WAYPOINT_MARKER_BACKGROUND = Frame.REF_WAYPOINT_MARKER.Background
-			Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE = Frame.REF_WAYPOINT_MARKER.BackgroundTexture
+			Frame.REF_WAYPOINT_MARKER_CONTENT = Frame.REF_WAYPOINT_MARKER.Content
+			Frame.REF_WAYPOINT_MARKER_BACKGROUND = Frame.REF_WAYPOINT_MARKER_CONTENT.Background
+			Frame.REF_WAYPOINT_MARKER_BACKGROUND_TEXTURE = Frame.REF_WAYPOINT_MARKER_CONTENT.BackgroundTexture
+			Frame.REF_WAYPOINT_MARKER_PULSE = Frame.REF_WAYPOINT_MARKER_CONTENT.Pulse
 
 			-- PINPOINT
 			Frame.REF_PINPOINT_CONTENT = Frame.REF_PINPOINT.Content

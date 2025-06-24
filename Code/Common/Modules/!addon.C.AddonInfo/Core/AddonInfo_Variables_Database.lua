@@ -44,6 +44,21 @@ do -- CONSTANTS
 				WS_PINPOINT_SCALE = 1,
 				WS_PINPOINT_DETAIL = false,
 
+				-- APPEARANCE
+				APP_WAYPOINT_BEAM = true,
+				APP_WAYPOINT_BEAM_ALPHA = 1,
+				APP_COLOR = false,
+				APP_COLOR_QUEST_INCOMPLETE_TINT = false,
+				APP_COLOR_QUEST_INCOMPLETE = { r = addon.CREF:GetSharedColor().RGB_PING_QUEST_NEUTRAL.r, g = addon.CREF:GetSharedColor().RGB_PING_QUEST_NEUTRAL.g, b = addon.CREF:GetSharedColor().RGB_PING_QUEST_NEUTRAL.b, a = 1 },
+				APP_COLOR_QUEST_COMPLETE_TINT = false,
+				APP_COLOR_QUEST_COMPLETE = { r = addon.CREF:GetSharedColor().RGB_PING_QUEST_NORMAL.r, g = addon.CREF:GetSharedColor().RGB_PING_QUEST_NORMAL.g, b = addon.CREF:GetSharedColor().RGB_PING_QUEST_NORMAL.b, a = 1 },
+				APP_COLOR_QUEST_COMPLETE_REPEATABLE_TINT = false,
+				APP_COLOR_QUEST_COMPLETE_REPEATABLE = { r = addon.CREF:GetSharedColor().RGB_PING_QUEST_REPEATABLE.r, g = addon.CREF:GetSharedColor().RGB_PING_QUEST_REPEATABLE.g, b = addon.CREF:GetSharedColor().RGB_PING_QUEST_REPEATABLE.b, a = 1 },
+				APP_COLOR_QUEST_COMPLETE_IMPORTANT_TINT = false,
+				APP_COLOR_QUEST_COMPLETE_IMPORTANT = { r = addon.CREF:GetSharedColor().RGB_PING_QUEST_IMPORTANT.r, g = addon.CREF:GetSharedColor().RGB_PING_QUEST_IMPORTANT.g, b = addon.CREF:GetSharedColor().RGB_PING_QUEST_IMPORTANT.b, a = 1 },
+				APP_COLOR_NEUTRAL_TINT = true,
+				APP_COLOR_NEUTRAL = { r = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.r, g = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.g, b = addon.CREF:GetSharedColor().RGB_PING_NEUTRAL.b , a = 1 },
+
 				-- AUDIO
 				AUDIO_GLOBAL = true,
 

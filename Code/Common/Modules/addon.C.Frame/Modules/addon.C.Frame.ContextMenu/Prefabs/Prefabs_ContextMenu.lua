@@ -109,7 +109,7 @@ function NS.Prefabs:Load()
 							--------------------------------
 
 							addon.C.Animation:Alpha({ ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = 0, ["to"] = 1, ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.ShowWithAnimation_StopEvent })
-							addon.C.Animation:Translate( { ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = 7.5, ["to"] = 0, ["axis"] = "y", ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.ShowWithAnimation_StopEvent } )
+							addon.C.Animation:Translate({ ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = 7.5, ["to"] = 0, ["axis"] = "y", ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.ShowWithAnimation_StopEvent })
 						end
 					end
 
@@ -126,7 +126,7 @@ function NS.Prefabs:Load()
 							--------------------------------
 
 							addon.C.Animation:Alpha({ ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = Frame.REF_CONTENT:GetAlpha(), ["to"] = 0, ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.HideWithAnimation_StopEvent })
-							addon.C.Animation:Translate( { ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = select(5, Frame.REF_CONTENT:GetPoint()), ["to"] = 7.5, ["axis"] = "y", ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.HideWithAnimation_StopEvent } )
+							addon.C.Animation:Translate({ ["frame"] = Frame.REF_CONTENT, ["duration"] = .5, ["from"] = select(5, Frame.REF_CONTENT:GetPoint()), ["to"] = 7.5, ["axis"] = "y", ["ease"] = "EaseExpo_Out", ["stopEvent"] = Frame.HideWithAnimation_StopEvent })
 						end
 					end
 				end
@@ -260,7 +260,20 @@ function NS.Prefabs:Load()
 							end
 						end
 
+						local function Logic_OnKeyDown(key)
+							if Frame:IsVisible() then
+								if key == "ESCAPE" then
+									Frame:HideWithAnimation()
+
+									--------------------------------
+
+									CallbackRegistry:Trigger("EVENT_PREVENT_KEY")
+								end
+							end
+						end
+
 						CallbackRegistry:Add("EVENT_MOUSE_DOWN", Logic_GlobalClick)
+						CallbackRegistry:Add("EVENT_KEY_DOWN", Logic_OnKeyDown)
 					end
 				end
 

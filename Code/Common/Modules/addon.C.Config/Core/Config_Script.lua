@@ -151,7 +151,7 @@ function NS.Script:Load()
 					return Frame
 				end
 
-				function Callback.Constructor:Create_Setting_Container(parent, title, transparent, name)
+				function Callback.Constructor:Create_Setting_Container(parent, title, transparent, subcontainer, name)
 					local FRAME_STRATA, FRAME_LEVEL = parent:GetFrameStrata(), parent:GetFrameLevel()
 
 					--------------------------------
@@ -159,10 +159,10 @@ function NS.Script:Load()
 					local Frame = nil
 
 					if title then
-						Frame = PrefabRegistry:Create("C.Config.Main.Setting.Container.Title", parent, FRAME_STRATA, FRAME_LEVEL + 1, { transparent = transparent }, name)
+						Frame = PrefabRegistry:Create("C.Config.Main.Setting.Container.Title", parent, FRAME_STRATA, FRAME_LEVEL + 1, { transparent = transparent, subcontainer = subcontainer }, name)
 						Frame:SetTitle(title)
 					else
-						Frame = PrefabRegistry:Create("C.Config.Main.Setting.Container", parent, FRAME_STRATA, FRAME_LEVEL + 1, { transparent = transparent }, name)
+						Frame = PrefabRegistry:Create("C.Config.Main.Setting.Container", parent, FRAME_STRATA, FRAME_LEVEL + 1, { transparent = transparent, subcontainer = subcontainer }, name)
 					end
 
 					addon.C.API.FrameUtil:SetDynamicSize(Frame, parent, 0, nil)
@@ -354,7 +354,11 @@ function NS.Script:Load()
 							newFrame:SetInfo(var_title_imageTexture, var_title_text, var_title_subtext)
 						end
 						if v_type == addon.C.AddonInfo.Variables.Config.TYPE_CONTAINER then
-							newFrame = Callback.Constructor:Create_Setting_Container(parent, v_name, var_transparent, v_name)
+							local var_subcontainer = v.var_subcontainer
+
+							--------------------------------
+
+							newFrame = Callback.Constructor:Create_Setting_Container(parent, v_name, var_transparent, var_subcontainer, v_name)
 
 							local eventResponder = Callback.Constructor:Create_Responder(newFrame)
 

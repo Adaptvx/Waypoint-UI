@@ -44,14 +44,7 @@ function NS.Variables:Load()
 
 	do -- MAIN
 		NS.Variables.ArrivalTime = nil
-		NS.Variables.Session = {
-			["isInInstance"] = nil,
-			["state"] = nil,
-			["lastState"] = nil,
-			["id"] = nil,
-			["quest"] = nil,
-			["questContextIcon"] = nil,
-		}
+		NS.Variables.Session = {}
 	end
 
 	--------------------------------

@@ -68,7 +68,7 @@ function NS.Prefabs:Load()
 							Content.Main:SetPoint("CENTER", Content)
 							Content.Main:SetFrameStrata(frameStrata)
 							Content.Main:SetFrameLevel(frameLevel + 10)
-							addon.C.API.FrameUtil:SetDynamicSize(Content.Main, Content, function(relativeWidth, relativeHeight) return relativeHeight * .5 end, function(relativeWidth, relativeHeight) return relativeHeight * .5 end)
+							addon.C.API.FrameUtil:SetDynamicSize(Content.Main, Content, function(relativeWidth, relativeHeight) return relativeHeight * .425 end, function(relativeWidth, relativeHeight) return relativeHeight * .425 end)
 
 							local Main = Content.Main
 
@@ -138,6 +138,10 @@ function NS.Prefabs:Load()
 				end
 
 				do -- LOGIC
+					Frame.tintColor = nil
+
+					--------------------------------
+
 					do -- FUNCTIONS
 						do -- SET
 							function Frame:SetImage(texture)
@@ -148,9 +152,22 @@ function NS.Prefabs:Load()
 								Frame.REF_MAIN_IMAGE_BACKGROUND_TEXTURE:SetAtlas(atlas)
 							end
 
-							function Frame:Recolor(color)
+							function Frame:SetTint(color)
+								Frame.REF_BACKGROUND_FOREGROUND_TEXTURE:SetVertexColor(color.r, color.g, color.b, color.a)
+								Frame.REF_BACKGROUND_BACKGROUND_TEXTURE:SetVertexColor(color.r, color.g, color.b, color.a)
+
+								--------------------------------
+
+								Frame.tintColor = { r = color.r, g = color.g, b = color.b, a = color.a }
+							end
+
+							function Frame:SetOpacity(opacity)
+								Frame.Content:SetAlpha(opacity)
+							end
+
+							function Frame:Recolor()
 								Frame.REF_MAIN_IMAGE_BACKGROUND_TEXTURE:SetDesaturated(true)
-								Frame.REF_MAIN_IMAGE_BACKGROUND_TEXTURE:SetVertexColor(color.r, color.g, color.b, color.a)
+								Frame.REF_MAIN_IMAGE_BACKGROUND_TEXTURE:SetVertexColor(Frame.tintColor.r, Frame.tintColor.g, Frame.tintColor.b, Frame.tintColor.a)
 							end
 
 							function Frame:Decolor()
@@ -158,23 +175,206 @@ function NS.Prefabs:Load()
 								Frame.REF_MAIN_IMAGE_BACKGROUND_TEXTURE:SetVertexColor(1, 1, 1, 1)
 							end
 
-							function Frame:SetTint(color)
-								Frame.REF_BACKGROUND_FOREGROUND_TEXTURE:SetVertexColor(color.r, color.g, color.b, color.a)
-								Frame.REF_BACKGROUND_BACKGROUND_TEXTURE:SetVertexColor(color.r, color.g, color.b, color.a)
-							end
-
-							function Frame:SetInfo(image, tintColor, opacity)
+							function Frame:SetInfo(image)
 								if image.type == "ATLAS" then
 									Frame:SetAtlas(image.path)
 								else
 									Frame:SetImage(image.path)
 								end
+							end
+						end
 
-								--------------------------------
+						do -- LOGIC
 
-								Frame:SetTint(tintColor)
-								if image.recolor then Frame:Recolor(tintColor) else Frame:Decolor() end
-								if opacity then Frame.Content:SetAlpha(opacity) else Frame.Content:SetAlpha(1) end
+						end
+					end
+
+					do -- EVENTS
+
+					end
+				end
+
+				do -- SETUP
+
+				end
+
+				--------------------------------
+
+				return Frame
+			end)
+		end
+	end
+
+	do -- WAYPOINT
+		do -- MARKER
+			PrefabRegistry:Add("WaypointSystem.Waypoint.Marker.PulseFrame", function(parent, frameStrata, frameLevel, name)
+				local Frame = CreateFrame("Frame", name, parent)
+				Frame:SetFrameStrata(frameStrata)
+				Frame:SetFrameLevel(frameLevel)
+
+				--------------------------------
+
+				do -- ELEMENTS
+					do -- CONTENT
+						Frame.Content = CreateFrame("Frame", "$parent.Content", Frame)
+						Frame.Content:SetPoint("CENTER", Frame)
+						Frame.Content:SetFrameStrata(frameStrata)
+						Frame.Content:SetFrameLevel(frameLevel + 1)
+						addon.C.API.FrameUtil:SetDynamicSize(Frame.Content, Frame, 0, 0)
+
+						local Content = Frame.Content
+
+						--------------------------------
+
+						do -- LAYOUT GROUP
+							Content.LayoutGroup, Content.LayoutGroup_Sort = addon.C.FrameTemplates:CreateLayoutGroup(Content, { point = "BOTTOM", direction = "vertical", resize = false, padding = 0, distribute = false, distributeResizeElements = false, excludeHidden = true, autoSort = true, customOffset = nil, customLayoutSort = nil }, "$parent.LayoutGroup")
+							Content.LayoutGroup:SetPoint("CENTER", Content)
+							Content.LayoutGroup:SetFrameStrata(frameStrata)
+							Content.LayoutGroup:SetFrameLevel(frameLevel + 2)
+							addon.C.API.FrameUtil:SetDynamicSize(Content.LayoutGroup, Content, 0, 0)
+							Frame.LGS_CONTENT = Content.LayoutGroup_Sort
+
+							local LayoutGroup = Content.LayoutGroup
+
+							--------------------------------
+
+							do -- ELEMENTS
+								local function CreatePulse(name)
+									local Pulse = PrefabRegistry:Create("WaypointSystem.Waypoint.Marker.PulseFrame.Element", Content.LayoutGroup, frameStrata, frameLevel + 3, name)
+									Pulse:SetSize(5, 100)
+									Pulse:SetFrameStrata(frameStrata)
+									Pulse:SetFrameLevel(frameLevel + 3)
+
+									--------------------------------
+
+									return Pulse
+								end
+
+								for i = 1, 3 do
+									local Pulse = CreatePulse("$parent.Pulse" .. i)
+									LayoutGroup["Pulse" .. i] = Pulse
+
+									--------------------------------
+
+									LayoutGroup:AddElement(Pulse)
+								end
+							end
+						end
+					end
+				end
+
+				do -- ANIMATIONS
+					do -- PLAYBACK
+						function Frame:Animation_Playback_Cycle()
+							for i = 1, #Frame.Elements do
+								addon.C.Libraries.AceTimer:ScheduleTimer(function()
+									Frame.Elements[i].Animation_Playback_Pre()
+									Frame.Elements[i]:Animation_Playback()
+								end, i * .75)
+							end
+						end
+
+						Frame.Animation_Playback_Loop = addon.C.Animation.Sequencer:CreateLoop()
+						Frame.Animation_Playback_Loop:SetInterval(3)
+						Frame.Animation_Playback_Loop:SetAnimation(Frame.Animation_Playback_Cycle)
+					end
+				end
+
+				do -- LOGIC
+					Frame.Elements = {
+						[1] = Frame.Content.LayoutGroup.Pulse3,
+						[2] = Frame.Content.LayoutGroup.Pulse2,
+						[3] = Frame.Content.LayoutGroup.Pulse1,
+					}
+
+					---------------------------------
+
+					do -- FUNCTIONS
+						do -- SET
+							function Frame:SetTint(tintColor)
+								for i = 1, #Frame.Elements do
+									Frame.Elements[i]:SetTint(tintColor)
+								end
+							end
+						end
+
+						do -- LOGIC
+
+						end
+					end
+				end
+
+				--------------------------------
+
+				return Frame
+			end)
+
+			PrefabRegistry:Add("WaypointSystem.Waypoint.Marker.PulseFrame.Element", function(parent, frameStrata, frameLevel, name)
+				local Frame = CreateFrame("Frame", name, parent)
+				Frame:SetFrameStrata(frameStrata)
+				Frame:SetFrameLevel(frameLevel)
+
+				--------------------------------
+
+				do -- ELEMENTS
+					do -- CONTENT
+						Frame.Content = CreateFrame("Frame", "$parent.Content", Frame)
+						Frame.Content:SetPoint("CENTER", Frame)
+						Frame.Content:SetFrameStrata(frameStrata)
+						Frame.Content:SetFrameLevel(frameLevel + 1)
+						addon.C.API.FrameUtil:SetDynamicSize(Frame.Content, Frame, 0, 0)
+
+						local Content = Frame.Content
+
+						--------------------------------
+
+						do -- BACKGROUND
+							Content.Background, Content.BackgroundTexture = addon.C.FrameTemplates:CreateTexture(Content, frameStrata, NS.Variables.PATH .. "waypoint-line-pulse.png", "$parent.Background")
+							Content.Background:SetPoint("CENTER", Content)
+							Content.Background:SetFrameStrata(frameStrata)
+							Content.Background:SetFrameLevel(frameLevel + 2)
+							addon.C.API.FrameUtil:SetDynamicSize(Content.Background, Content, 0, 0)
+						end
+					end
+				end
+
+				do -- ANIMATIONS
+					do -- PLAYBACK
+						function Frame:Animation_Playback_StopEvent()
+							return not Frame:IsShown()
+						end
+
+						function Frame:Animation_Playback()
+							do -- START
+								addon.C.Animation:Alpha({ ["frame"] = Frame.Content, ["duration"] = 1.5, ["from"] = 0, ["to"] = 1, ["ease"] = nil, ["stopEvent"] = Frame.Animation_Playback_StopEvent })
+								addon.C.Animation:Translate({ ["frame"] = Frame.Content, ["duration"] = 3, ["from"] = -75, ["to"] = 125, ["axis"] = "y", ["ease"] = nil, ["stopEvent"] = Frame.Animation_Playback_StopEvent })
+							end
+
+							do -- END
+								C_Timer.After(1.5, function()
+									if not Frame:Animation_Playback_StopEvent() then
+										addon.C.Animation:Alpha({ ["frame"] = Frame.Content, ["duration"] = 1.5, ["from"] = 1, ["to"] = 0, ["ease"] = nil, ["stopEvent"] = Frame.Animation_Playback_StopEvent })
+									end
+								end)
+							end
+						end
+
+						function Frame:Animation_Playback_Pre()
+							addon.C.Animation:CancelAll(Frame.Content)
+
+							--------------------------------
+
+							Frame.Content:SetAlpha(0)
+							Frame.Content:SetPoint("CENTER", Frame, "CENTER", 0, -75)
+						end
+					end
+				end
+
+				do -- LOGIC
+					do -- FUNCTIONS
+						do -- SET
+							function Frame:SetTint(tintColor)
+								Frame.Content.BackgroundTexture:SetVertexColor(tintColor.r, tintColor.g, tintColor.b, tintColor.a)
 							end
 						end
 
@@ -263,47 +463,16 @@ function NS.Prefabs:Load()
 
 				do -- ANIMATIONS
 					do -- PLAYBACK
-						local PlaybackSession = {
-							["playbackID"] = nil,
-							["loopTimer"] = nil
-						}
-
-						function Frame:Animation_Playback_Start_StopEvent()
-
-						end
-
-						function Frame:Animation_Playback_Start()
-							PlaybackSession.playbackID = addon.C.API.Util:gen_hash()
-
-							--------------------------------
-
-							if PlaybackSession.loopTimer then
-								PlaybackSession.loopTimer:Cancel()
-							end
-
-							for i = 1, #Frame.Elements do
-								Frame.Elements[i]:Animation_Playback_Pre()
-							end
-
-							Frame:Animation_Playback_Cycle()
-							PlaybackSession.loopTimer = C_Timer.NewTicker(1.5, function()
-								Frame:Animation_Playback_Cycle()
-							end, nil)
-						end
-
-						function Frame:Animation_Playback_Stop_StopEvent()
-
-						end
-
-						function Frame:Animation_Playback_Stop()
-
-						end
-
 						function Frame:Animation_Playback_Cycle()
 							for i = 1, #Frame.Elements do
-								addon.C.Libraries.AceTimer:ScheduleTimer(function() Frame.Elements[i]:Animation_Playback(PlaybackSession.playbackID) end, i * .125)
+								Frame.Elements[i].Animation_Playback_Pre()
+								addon.C.Libraries.AceTimer:ScheduleTimer(function() Frame.Elements[i]:Animation_Playback() end, i * .125)
 							end
 						end
+
+						Frame.Animation_Playback_Loop = addon.C.Animation.Sequencer:CreateLoop()
+						Frame.Animation_Playback_Loop:SetInterval(1.5)
+						Frame.Animation_Playback_Loop:SetAnimation(Frame.Animation_Playback_Cycle)
 					end
 				end
 

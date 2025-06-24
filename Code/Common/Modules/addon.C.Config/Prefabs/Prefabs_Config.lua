@@ -537,7 +537,7 @@ function NS.Prefabs:Load()
 
 			do -- CONTAINER
 				PrefabRegistry:Add("C.Config.Main.Setting.Container", function(parent, frameStrata, frameLevel, data, name)
-					local transparent = data.transparent
+					local transparent, subcontainer = data.transparent, data.subcontainer
 
 					--------------------------------
 
@@ -564,7 +564,7 @@ function NS.Prefabs:Load()
 							--------------------------------
 
 							do -- BACKGROUND
-								Content.Background, Content.BackgroundTexture = addon.C.FrameTemplates:CreateNineSlice(Content, frameStrata, addon.CREF:GetCommonPathConfig() .. "frame.png", 70, .25, "$parent.Background", Enum.UITextureSliceMode.Stretched)
+								Content.Background, Content.BackgroundTexture = addon.C.FrameTemplates:CreateNineSlice(Content, frameStrata, nil, 70, .25, "$parent.Background", Enum.UITextureSliceMode.Stretched)
 								Content.Background:SetPoint("CENTER", Content)
 								Content.Background:SetFrameStrata(frameStrata)
 								Content.Background:SetFrameLevel(frameLevel + 1)
@@ -641,6 +641,7 @@ function NS.Prefabs:Load()
 					do -- LOGIC
 						Frame.VAR_PARENT = nil
 						Frame.VAR_TRANSPARENT = transparent
+						Frame.VAR_SUBCONTAINER = subcontainer
 
 						--------------------------------
 
@@ -663,6 +664,15 @@ function NS.Prefabs:Load()
 										Frame.REF_BACKGROUND:SetAlpha(1)
 									end
 								end
+
+								function Frame:UpdateSubcontainer()
+									if Frame.VAR_SUBCONTAINER then
+										Frame.REF_BACKGROUND_TEXTURE:SetTexture(addon.CREF:GetCommonPathConfig() .. "frame-light.png")
+										if Frame.VAR_PARENT then addon.C.API.Util:SetFontSize(Frame.VAR_PARENT.REF_HEADER_TITLE_TEXT, 14) end
+									else
+										Frame.REF_BACKGROUND_TEXTURE:SetTexture(addon.CREF:GetCommonPathConfig() .. "frame.png")
+									end
+								end
 							end
 						end
 
@@ -671,12 +681,19 @@ function NS.Prefabs:Load()
 								Frame:UpdateLayout()
 							end
 
-							CallbackRegistry:Add("C_CONFIG_UPDATE", Event_ConfigUpdate, 10)
+							if Frame.VAR_SUBCONTAINER then
+								CallbackRegistry:Add("C_CONFIG_UPDATE", Event_ConfigUpdate, 9)
+							else
+								CallbackRegistry:Add("C_CONFIG_UPDATE", Event_ConfigUpdate, 10)
+							end
 						end
 					end
 
 					do -- SETUP
-						Frame:UpdateTransparency()
+						C_Timer.After(0, function()
+							Frame:UpdateTransparency()
+							Frame:UpdateSubcontainer()
+						end)
 					end
 
 					--------------------------------
@@ -1281,7 +1298,7 @@ function NS.Prefabs:Load()
 							--------------------------------
 
 							do -- CHECKBOX
-								Action_Content.Checkbox = PrefabRegistry:Create("C.FrameTemplates.Blizzard.Checkbox", parent, frameStrata, Action_Content_FrameLevel + 1, nil, "$parent.Checkbox")
+								Action_Content.Checkbox = PrefabRegistry:Create("C.FrameTemplates.Blizzard.Checkbox", Action_Content, frameStrata, Action_Content_FrameLevel + 1, nil, "$parent.Checkbox")
 								Action_Content.Checkbox:SetSize(Frame.VAR_ELEMENT_HEIGHT * 1.175, Frame.VAR_ELEMENT_HEIGHT * 1.175)
 								Action_Content.Checkbox:SetPoint("RIGHT", Action_Content)
 								Action_Content.Checkbox:SetFrameStrata(frameStrata)

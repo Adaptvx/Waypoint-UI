@@ -1614,7 +1614,7 @@ function NS.Prefabs:Load()
 							end
 
 							function Frame:ColorPicker_OnConfirm()
-								Frame:UpdateColor()
+								Frame:UpdateColor(true)
 
 								--------------------------------
 

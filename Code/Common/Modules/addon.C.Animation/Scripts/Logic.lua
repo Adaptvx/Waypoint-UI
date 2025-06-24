@@ -319,6 +319,80 @@ do
 end
 
 --------------------------------
+-- FUNCTIONS (SEQUENCER)
+--------------------------------
+
+do
+	NS.Sequencer = {}
+
+	--------------------------------
+
+	do -- CREATE
+		function NS.Sequencer:CreateLoop()
+			local loop = {}
+			loop.interval = 1
+			loop.animation = nil
+			loop.onStart = nil
+			loop.onStop = nil
+			loop.timer = nil
+
+			--------------------------------
+
+			do -- LOGIC
+				do -- FUNCTIONS
+					do -- SET
+						function loop:SetInterval(interval)
+							loop.interval = interval
+						end
+
+						function loop:SetAnimation(animation)
+							loop.animation = animation
+						end
+
+						function loop:SetOnStart(onStart)
+							loop.onStart = onStart
+						end
+
+						function loop:SetOnStop(onStop)
+							loop.onStop = onStop
+						end
+					end
+
+					do -- LOGIC
+						function loop:Start()
+							if loop.timer then
+								loop.timer:Cancel()
+							end
+
+							if loop.onStart then
+								loop.onStart()
+							end
+
+							loop.animation()
+							loop.timer = C_Timer.NewTicker(loop.interval, loop.animation)
+						end
+
+						function loop:Stop()
+							if loop.timer then
+								loop.timer:Cancel()
+							end
+
+							if loop.onStop then
+								loop.onStop()
+							end
+						end
+					end
+				end
+			end
+
+			--------------------------------
+
+			return loop
+		end
+	end
+end
+
+--------------------------------
 -- FUNCTIONS (MAIN)
 --------------------------------
 

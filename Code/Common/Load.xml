@@ -13,6 +13,7 @@
 	<!-- Modules -->
 	<Include file="Modules/addon.C.CallbackRegistry/Load.xml"/>
 	<Include file="Modules/addon.C.PrefabRegistry/Load.xml"/>
+	<Include file="Modules/addon.C.SharedVariables/Load.xml"/>
 	<Include file="Modules/!addon.C.AddonInfo/Load.xml"/>
 	<Include file="Modules/addon.C.Database/Load.xml"/>
 	<Include file="Modules/addon.C.Frame/Load.xml"/>
@@ -24,7 +25,6 @@
 	<Include file="Modules/addon.C.Sound/Load.xml"/>
 	<Include file="Modules/addon.C.DevTools/Load.xml"/>
 	<Include file="Modules/addon.C.FrameTemplates/Load.xml"/>
-	<Include file="Modules/addon.C.SharedVariables/Load.xml"/>
 	<Include file="Modules/addon.C.WoWClient/Load.xml"/>
 	<Include file="Modules/addon.C.SlashCommand/Load.xml"/>
 
