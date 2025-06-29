@@ -136,7 +136,7 @@ function NS:Load()
 		L["Contributors - Crazyyoungs"] = "Crazyyoungs"
 		L["Contributors - Crazyyoungs - Description"] = "翻譯者 — 韓語"
 		L["Contributors - Klep"] = "Klep"
-		L["Contributors - Klep - Description"] = "Translator — French"
+		L["Contributors - Klep - Description"] = "翻譯者 — 法語"
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "代碼 — 測試錯誤修復"
 	end
