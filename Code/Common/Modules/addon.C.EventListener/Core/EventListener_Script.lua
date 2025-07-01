@@ -27,6 +27,27 @@ function NS.Script:Load()
 	--------------------------------
 
 	do
+		local Event_Key = CreateFrame("Frame")
+		local function EventKeyInit() 
+			if InCombatLockdown() then return end
+			Event_Key:SetPropagateKeyboardInput(true)
+			Event_Key:SetScript("OnKeyDown", function(_, key)
+				CallbackRegistry:Trigger("EVENT_KEY_DOWN", key)
+			end)
+			Event_Key:SetScript("OnKeyUp", function(_, key)
+				CallbackRegistry:Trigger("EVENT_KEY_UP", key)
+			end)
+			CallbackRegistry:Add("EVENT_PREVENT_KEY", function()
+				if not InCombatLockdown() then
+					Event_Key:SetPropagateKeyboardInput(false)
+					C_Timer.After(0, function()
+						Event_Key:SetPropagateKeyboardInput(true)
+					end)
+				end
+			end)
+		end
+		EventKeyInit()
+
 		local Event_General = CreateFrame("Frame")
 		Event_General:RegisterEvent("UI_SCALE_CHANGED")
 		Event_General:RegisterEvent("GLOBAL_MOUSE_DOWN")
@@ -36,6 +57,7 @@ function NS.Script:Load()
 		Event_General:RegisterEvent("PLAY_MOVIE")
 		Event_General:RegisterEvent("STOP_MOVIE")
 		Event_General:RegisterEvent("CVAR_UPDATE")
+		Event_General:RegisterEvent("PLAYER_REGEN_ENABLED")
 		Event_General:SetScript("OnEvent", function(self, event, ...)
 			if event == "GLOBAL_MOUSE_DOWN" then
 				CallbackRegistry:Trigger("EVENT_MOUSE_DOWN", ...)
@@ -56,26 +78,9 @@ function NS.Script:Load()
 			if event == "CVAR_UPDATE" then
 				CallbackRegistry:Trigger("EVENT_CVAR_UPDATE", ...)
 			end
-		end)
 
-		local Event_Key = CreateFrame("Frame")
-		Event_Key:SetPropagateKeyboardInput(true)
-		Event_Key:SetScript("OnKeyDown", function(_, key)
-			CallbackRegistry:Trigger("EVENT_KEY_DOWN", key)
-		end)
-		Event_Key:SetScript("OnKeyUp", function(_, key)
-			CallbackRegistry:Trigger("EVENT_KEY_UP", key)
-		end)
-
-		CallbackRegistry:Add("EVENT_PREVENT_KEY", function()
-			if not InCombatLockdown() then
-				Event_Key:SetPropagateKeyboardInput(false)
-
-				--------------------------------
-
-				C_Timer.After(0, function()
-					Event_Key:SetPropagateKeyboardInput(true)
-				end)
+			if event == "PLAYER_REGEN_ENABLED" then
+				EventKeyInit()
 			end
 		end)
 	end
