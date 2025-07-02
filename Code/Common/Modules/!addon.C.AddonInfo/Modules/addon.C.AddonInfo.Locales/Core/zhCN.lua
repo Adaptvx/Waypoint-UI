@@ -53,13 +53,13 @@ function NS:Load()
 	do
 		L["Config - General"] = "通用"
 		L["Config - General - Title"] = "通用"
-		L["Config - General - Title - Subtext"] = "自定义全局的设置。"
+		L["Config - General - Title - Subtext"] = "自定义全局设置。"
 		L["Config - General - Preferences"] = "偏好设置"
 		L["Config - General - Preferences - Meter"] = "单位使用米，而不是码"
 		L["Config - General - Preferences - Meter - Description"] = "将度量单位更改为公制。"
 		L["Config - General - Reset"] = "重置"
 		L["Config - General - Reset - Button"] = "重置为默认设置"
-		L["Config - General - Reset - Confirm"] = "您确定要重置所有设置吗？"
+		L["Config - General - Reset - Confirm"] = "你确定要重置所有设置吗？"
 		L["Config - General - Reset - Confirm - Yes"] = "确定"
 		L["Config - General - Reset - Confirm - No"] = "取消"
 
@@ -137,7 +137,7 @@ function NS:Load()
 		L["Contributors - Crazyyoungs"] = "Crazyyoungs"
 		L["Contributors - Crazyyoungs - Description"] = "翻译者 — 韩语"
 		L["Contributors - Klep"] = "Klep"
-		L["Contributors - Klep - Description"] = "Translator — French"
+		L["Contributors - Klep - Description"] = "翻译者 — 法语"
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "编码者 — 修复Bug"
 	end
