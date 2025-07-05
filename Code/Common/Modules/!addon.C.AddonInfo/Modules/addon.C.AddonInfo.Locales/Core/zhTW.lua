@@ -84,9 +84,9 @@ function NS:Load()
 		L["Config - WaypointSystem - Pinpoint"] = "標記點"
 		L["Config - WaypointSystem - Pinpoint - Detail"] = "顯示額外訊息"
 		L["Config - WaypointSystem - Pinpoint - Detail - Description"] = "包含額外的訊息，例如名稱/描述。"
-		L["Config - WaypointSystem - Navigator"] = "Navigator"
-		L["Config - WaypointSystem - Navigator - Enable"] = "Show"
-		L["Config - WaypointSystem - Navigator - Enable - Description"] = "When the Waypoint or Pinpoint is off-screen, the navigator will point at the direction."
+		L["Config - WaypointSystem - Navigator"] = "導航器"
+		L["Config - WaypointSystem - Navigator - Enable"] = "顯示"
+		L["Config - WaypointSystem - Navigator - Enable - Description"] = "當路徑點或標記點在螢幕外，導航器將指出方位。"
 
 		L["Config - Appearance"] = "外觀"
 		L["Config - Appearance - Title"] = "外觀"
@@ -103,9 +103,9 @@ function NS:Load()
 		L["Config - Appearance - Waypoint - Footer - Alpha"] = "訊息文字透明度"
 		L["Config - Appearance - Pinpoint"] = "標記點"
 		L["Config - Appearance - Pinpoint - Scale"] = "標記點大小"
-		L["Config - Appearance - Navigator"] = "Navigator"
-		L["Config - Appearance - Navigator - Scale"] = "Size"
-		L["Config - Appearance - Navigator - Alpha"] = "Transparency"
+		L["Config - Appearance - Navigator"] = "導航器"
+		L["Config - Appearance - Navigator - Scale"] = "尺寸大小"
+		L["Config - Appearance - Navigator - Alpha"] = "透明度"
 		L["Config - Appearance - Visual"] = "視覺"
 		L["Config - Appearance - Visual - UseCustomColor"] = "使用自訂顏色"
 		L["Config - Appearance - Visual - UseCustomColor - Color"] = "顏色"
@@ -146,7 +146,7 @@ function NS:Load()
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "代碼 — 測試錯誤修復"
 		L["Contributors - lemieszek"] = "lemieszek"
-		L["Contributors - lemieszek - Description"] = "Code — Beta Bug Fix"
+		L["Contributors - lemieszek - Description"] = "代碼 — 測試錯誤修復"
 	end
 end
 
