@@ -57,8 +57,8 @@ function NS:Load()
 		L["Config - General - Preferences"] = "환경 설정"
 		L["Config - General - Preferences - Meter"] = "단위를 야드 대신 미터 변경"
 		L["Config - General - Preferences - Meter - Description"] = "측정 단위를 미터법으로 변경합니다.\n[ 거리가 1000M 이상이면 1KM 단위가 변경 됩니다. ]"
-		L["Config - General - Preferences - Font"] = "Font"
-		L["Config - General - Preferences - Font - Description"] = "The font used throughout the add-on."
+		L["Config - General - Preferences - Font"] = "글꼴";
+		L["Config - General - Preferences - Font - Description"] = "애드온 전반에 사용되는 글꼴입니다.";
 		L["Config - General - Reset"] = "재설정"
 		L["Config - General - Reset - Button"] = "기본값으로 재설정"
 		L["Config - General - Reset - Confirm"] = "모든 설정을 재설정 하시겠습니까?"
