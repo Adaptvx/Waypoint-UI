@@ -1027,6 +1027,7 @@ do  -- CONSTANTS
 							["var_transparent"] = true,
 							["var_hidden"] = function() return false end,
 							["elements"] = {
+                                                               
 								{
 									["name"] = L["Contributors - ZamestoTV"],
 									["type"] = NS.Variables.Config.TYPE_TEXT,
@@ -1063,6 +1064,14 @@ do  -- CONSTANTS
 									["name"] = L["Contributors - Klep"],
 									["type"] = NS.Variables.Config.TYPE_TEXT,
 									["descriptor"] = NS.Variables.Config:NewDescriptor(nil, nil, L["Contributors - Klep - Description"]),
+									["indent"] = 0,
+									["var_transparent"] = true,
+									["var_hidden"] = function() return false end,
+								},
+                                                                {
+									["name"] = L["Contributors - cathtail"],
+									["type"] = NS.Variables.Config.TYPE_TEXT,
+									["descriptor"] = NS.Variables.Config:NewDescriptor(nil, nil, L["Contributors - cathtail - Description"]),
 									["indent"] = 0,
 									["var_transparent"] = true,
 									["var_hidden"] = function() return false end,
@@ -1108,3 +1117,4 @@ do  -- CONSTANTS
 		end)
 	end
 end
+
