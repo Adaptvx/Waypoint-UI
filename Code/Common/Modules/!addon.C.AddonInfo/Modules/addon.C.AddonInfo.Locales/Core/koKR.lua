@@ -152,6 +152,8 @@ function NS:Load()
 		L["Contributors - Crazyyoungs - Description"] = "번역가: 한국어"
 		L["Contributors - Klep"] = "Klep"
 		L["Contributors - Klep - Description"] = "번역가 - 프랑스어"
+		L["Contributors - Larsj02"] = "Larsj02"
+		L["Contributors - Larsj02 - Description"] = "번역가 — 독일어"
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "코드: 베타 버그 수정"
 		L["Contributors - lemieszek"] = "lemieszek"
