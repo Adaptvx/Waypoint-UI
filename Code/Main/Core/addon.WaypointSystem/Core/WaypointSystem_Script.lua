@@ -236,6 +236,13 @@ function NS.Script:Load()
 
 		do -- PINPOINT
 			do -- SET
+				Frame_World_Pinpoint:EnableMouse(true)
+				Frame_World_Pinpoint:SetScript("OnMouseDown", function(self, button)
+					if button == "RightButton" then
+						WaypointUI_ClearAll()
+					end
+				end)
+				
 				function Frame_World_Pinpoint:SetText(text)
 					if text and text ~= Frame.REF_WORLD_PINPOINT_FOREGROUND_TEXT:GetText() then
 						Frame.REF_WORLD_PINPOINT_FOREGROUND_TEXT:SetText(text)
