@@ -57,8 +57,8 @@ function NS:Load()
 		L["Config - General - Preferences"] = "偏好"
 		L["Config - General - Preferences - Meter"] = "使用公尺代替碼"
 		L["Config - General - Preferences - Meter - Description"] = "將測量單位更改為公制。"
-		L["Config - General - Preferences - Font"] = "Font"
-		L["Config - General - Preferences - Font - Description"] = "The font used throughout the add-on."
+		L["Config - General - Preferences - Font"] = "字體"
+		L["Config - General - Preferences - Font - Description"] = "整個插件中使用的字體。"
 		L["Config - General - Reset"] = "重置"
 		L["Config - General - Reset - Button"] = "重置回預設"
 		L["Config - General - Reset - Confirm"] = "你確定要重置所有設定嗎？"
@@ -157,7 +157,7 @@ function NS:Load()
 		L["Contributors - Klep"] = "Klep"
 		L["Contributors - Klep - Description"] = "翻譯者 — 法語"
 		L["Contributors - cathtail"] = "cathtail"
-		L["Contributors - cathtail - Description"] = "Translator - Brazilian Portuguese"
+		L["Contributors - cathtail - Description"] = "翻譯者 — 巴西葡萄牙語"
 		L["Contributors - Larsj02"] = "Larsj02"
 		L["Contributors - Larsj02 - Description"] = "翻譯者 — 德語"
 		L["Contributors - dabear78"] = "dabear78"
@@ -167,9 +167,9 @@ function NS:Load()
 		L["Contributors - lemieszek"] = "lemieszek"
 		L["Contributors - lemieszek - Description"] = "代碼 — 測試錯誤修復"
 		L["Contributors - BadBoyBarny"] = "BadBoyBarny"
-		L["Contributors - BadBoyBarny - Description"] = "Code — Bug Fix"
+		L["Contributors - BadBoyBarny - Description"] = "代碼 — 錯誤修復"
 		L["Contributors - SyverGiswold"] = "SyverGiswold"
-		L["Contributors - SyverGiswold - Description"] = "Code - Feature"
+		L["Contributors - SyverGiswold - Description"] = "代碼 — 功能"
 	end
 end
 
