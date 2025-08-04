@@ -52,7 +52,17 @@ function NS.Elements:Load()
 						--------------------------------
 
 						do -- CONTENT
-							Waypoint.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Waypoint)
+							Waypoint.Alpha_MouseOver = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_MouseOver", Waypoint)
+							Waypoint.Alpha_CharacterOverlap = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_CharacterOverlap", Waypoint.Alpha_MouseOver)
+							Waypoint.Alpha_ScreenEdge = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_ScreenEdge", Waypoint.Alpha_CharacterOverlap)
+							Waypoint.Alpha_MouseOver:SetPoint("CENTER", Waypoint)
+							Waypoint.Alpha_CharacterOverlap:SetPoint("CENTER", Waypoint)
+							Waypoint.Alpha_ScreenEdge:SetPoint("CENTER", Waypoint)
+							addon.C.API.FrameUtil:SetDynamicSize(Waypoint.Alpha_MouseOver, Waypoint, 0, 0)
+							addon.C.API.FrameUtil:SetDynamicSize(Waypoint.Alpha_CharacterOverlap, Waypoint, 0, 0)
+							addon.C.API.FrameUtil:SetDynamicSize(Waypoint.Alpha_ScreenEdge, Waypoint, 0, 0)
+
+							Waypoint.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Waypoint.Alpha_ScreenEdge)
 							Waypoint.Content:SetPoint("CENTER", Waypoint)
 							Waypoint.Content:SetFrameStrata(NS.Variables.FRAME_STRATA)
 							Waypoint.Content:SetFrameLevel(NS.Variables.FRAME_LEVEL + 2)
@@ -238,7 +248,17 @@ function NS.Elements:Load()
 						--------------------------------
 
 						do -- CONTENT
-							Pinpoint.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Pinpoint)
+							Pinpoint.Alpha_MouseOver = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_MouseOver", Pinpoint)
+							Pinpoint.Alpha_CharacterOverlap = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_CharacterOverlap", Pinpoint.Alpha_MouseOver)
+							Pinpoint.Alpha_ScreenEdge = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_ScreenEdge", Pinpoint.Alpha_CharacterOverlap)
+							Pinpoint.Alpha_MouseOver:SetPoint("CENTER", Pinpoint)
+							Pinpoint.Alpha_CharacterOverlap:SetPoint("CENTER", Pinpoint)
+							Pinpoint.Alpha_ScreenEdge:SetPoint("CENTER", Pinpoint)
+							addon.C.API.FrameUtil:SetDynamicSize(Pinpoint.Alpha_MouseOver, Pinpoint, 0, 0)
+							addon.C.API.FrameUtil:SetDynamicSize(Pinpoint.Alpha_CharacterOverlap, Pinpoint, 0, 0)
+							addon.C.API.FrameUtil:SetDynamicSize(Pinpoint.Alpha_ScreenEdge, Pinpoint, 0, 0)
+
+							Pinpoint.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Pinpoint.Alpha_ScreenEdge)
 							Pinpoint.Content:SetPoint("CENTER", Pinpoint)
 							Pinpoint.Content:SetFrameStrata(NS.Variables.FRAME_STRATA)
 							Pinpoint.Content:SetFrameLevel(NS.Variables.FRAME_LEVEL_MAX)
@@ -384,7 +404,11 @@ function NS.Elements:Load()
 						--------------------------------
 
 						do -- CONTENT
-							Arrow.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Arrow)
+							Arrow.Alpha_MouseOver = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Alpha_MouseOver", Arrow)
+							Arrow.Alpha_MouseOver:SetPoint("CENTER", Arrow)
+							addon.C.API.FrameUtil:SetDynamicSize(Arrow.Alpha_MouseOver, Arrow, 0, 0)
+
+							Arrow.Content = addon.C.FrameTemplates:CreateFrame("Frame", "$parent.Content", Arrow.Alpha_MouseOver)
 							Arrow.Content:SetPoint("CENTER", Arrow)
 							Arrow.Content:SetFrameStrata(NS.Variables.FRAME_STRATA)
 							Arrow.Content:SetFrameLevel(NS.Variables.FRAME_LEVEL + 2)
@@ -443,6 +467,10 @@ function NS.Elements:Load()
 			Frame.REF_NAVIGATOR_ARROW = Frame.REF_NAVIGATOR.Arrow
 
 			-- WAYPOINT
+			Frame.REF_WORLD_WAYPOINT_ALPHA_MOUSE_OVER = Frame.REF_WORLD_WAYPOINT.Alpha_MouseOver
+			Frame.REF_WORLD_WAYPOINT_ALPHA_CHARACTER_OVERLAP = Frame.REF_WORLD_WAYPOINT.Alpha_CharacterOverlap
+			Frame.REF_WORLD_WAYPOINT_ALPHA_SCREEN_EDGE = Frame.REF_WORLD_WAYPOINT.Alpha_ScreenEdge
+
 			Frame.REF_WORLD_WAYPOINT_CONTENT = Frame.REF_WORLD_WAYPOINT.Content
 			Frame.REF_WORLD_WAYPOINT_CONTEXT = Frame.REF_WORLD_WAYPOINT_CONTENT.ContextFrame
 			Frame.REF_WORLD_WAYPOINT_CONTEXT_VFX = Frame.REF_WORLD_WAYPOINT_CONTEXT.VFX
@@ -463,6 +491,10 @@ function NS.Elements:Load()
 			Frame.REF_WORLD_WAYPOINT_MARKER_PULSE = Frame.REF_WORLD_WAYPOINT_MARKER_CONTENT.Pulse
 
 			-- PINPOINT
+			Frame.REF_WORLD_PINPOINT_ALPHA_MOUSE_OVER = Frame.REF_WORLD_PINPOINT.Alpha_MouseOver
+			Frame.REF_WORLD_PINPOINT_ALPHA_CHARACTER_OVERLAP = Frame.REF_WORLD_PINPOINT.Alpha_CharacterOverlap
+			Frame.REF_WORLD_PINPOINT_ALPHA_SCREEN_EDGE = Frame.REF_WORLD_PINPOINT.Alpha_ScreenEdge
+
 			Frame.REF_WORLD_PINPOINT_CONTENT = Frame.REF_WORLD_PINPOINT.Content
 			Frame.REF_WORLD_PINPOINT_BACKGROUND = Frame.REF_WORLD_PINPOINT_CONTENT.Background
 			Frame.REF_WORLD_PINPOINT_BACKGROUND_CONTEXT = Frame.REF_WORLD_PINPOINT_BACKGROUND.ContextFrame
@@ -476,6 +508,8 @@ function NS.Elements:Load()
 			Frame.REF_WORLD_PINPOINT_FOREGROUND_TEXT = Frame.REF_WORLD_PINPOINT_FOREGROUND.Content.TextFrame.Text
 
 			-- NAVIGATOR
+			Frame.REF_NAVIGATOR_ARROW_ALPHA_MOUSE_OVER = Frame.REF_NAVIGATOR_ARROW.Alpha_MouseOver
+
 			Frame.REF_NAVIGATOR_ARROW_CONTENT = Frame.REF_NAVIGATOR_ARROW.Content
 			Frame.REF_NAVIGATOR_ARROW_CONTEXT = Frame.REF_NAVIGATOR_ARROW_CONTENT.ContextFrame
 			Frame.REF_NAVIGATOR_ARROW_INDICATOR = Frame.REF_NAVIGATOR_ARROW_CONTENT.Indicator

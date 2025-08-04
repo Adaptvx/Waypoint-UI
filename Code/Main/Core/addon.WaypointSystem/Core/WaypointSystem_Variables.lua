@@ -44,6 +44,8 @@ function NS.Variables:Load()
 	end
 
 	do -- MAIN
+		NS.Variables.IsActive = false -- check for whether the waypoint system is updating
+
 		NS.Variables.ArrivalTime = nil
 		NS.Variables.Session = {}
 	end

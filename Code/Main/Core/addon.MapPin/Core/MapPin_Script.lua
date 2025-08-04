@@ -147,6 +147,18 @@ function NS.Script:Load()
 	-- EVENTS
 	--------------------------------
 
+	do
+		local Event = addon.C.FrameTemplates:CreateFrame("Frame")
+		Event:RegisterEvent("USER_WAYPOINT_UPDATED")
+		Event:SetScript("OnEvent", function(_, event, ...)
+			if event == "USER_WAYPOINT_UPDATED" then
+				C_Timer.After(0, function()
+					C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+				end)
+			end
+		end)
+	end
+
 	--------------------------------
 	-- SETUP
 	--------------------------------

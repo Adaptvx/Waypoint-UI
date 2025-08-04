@@ -1,3 +1,6 @@
+-- Developer: @AdaptiveX
+-- ♡ Contributor: @BadBoyBarny
+
 ---@class addon
 local addon = select(2, ...)
 local NS = addon.C.AddonInfo; addon.C.AddonInfo = NS
@@ -76,17 +79,29 @@ do  -- CONSTANTS
 							WaypointUI_ClearWay()
 						else
 							-- <#mapID> <x> <y>
-							if token1 and token2 and token3 and (not tonumber(token1) and tonumber(token2) and tonumber(token3)) then
-								if addon.C.API.Util:FindString(token1, "#") then
-									mapID = token1:gsub("#", "")
-									x = token2
-									y = token3
-									for i = 4, #tokens do
-										if #name >= 1 then
-											name = name .. " " .. tokens[i]
-										else
-											name = name .. tokens[i]
-										end
+							if token1 and token2 and token3 and (token1 and tonumber(token2) and tonumber(token3)) then
+								-- Check for valid mapID
+								local token1Formatted = string.gsub(token1, "#", "")
+								local token1Number = tonumber(token1Formatted)
+								local token1Valid = type(token1Number) == "number"
+
+								if not token1Valid then
+									WAYPOINT_UI_WAY_CATCH()
+
+									--------------------------------
+
+									return
+								end
+
+								-- Process /way
+								mapID = token1Number
+								x = token2
+								y = token3
+								for i = 4, #tokens do
+									if #name >= 1 then
+										name = name .. " " .. tokens[i]
+									else
+										name = name .. tokens[i]
 									end
 								end
 

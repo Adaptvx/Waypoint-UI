@@ -621,6 +621,14 @@ function NS.Script:Load()
 						Callback.Navigation:UpdateSidebar()
 					end
 				end
+
+				_G[addon.C.AddonInfo.Variables.General.IDENTIFIER .. "_OpenConfig"] = function()
+					if addon.C.Variables.IS_WOW_VERSION_CLASSIC_ALL then
+						InterfaceOptionsFrame_OpenToCategory(addon.C.AddonInfo.Variables.General.REGISTRY_NAME)
+					else
+						Settings.OpenToCategory(addon.C.AddonInfo.Variables.General.REGISTRY_NAME)
+					end
+				end
 			end
 		end
 	end
@@ -630,27 +638,34 @@ function NS.Script:Load()
 	--------------------------------
 
 	do
+		local loaded = false
+
 		hooksecurefunc(Frame, "Show", function()
 			local SettingsCanvas = SettingsPanel.Container.SettingsCanvas
+			local Offset = addon.C.WoWClient.Script:IsAddOnLoaded("ElvUI") and 0 or 10
 
 			--------------------------------
 
 			Frame:ClearAllPoints()
-			Frame:SetPoint("CENTER", SettingsCanvas, -10, 5)
-			Frame:SetSize(SettingsCanvas:GetWidth() + 10, SettingsCanvas:GetHeight() + 5)
+			Frame:SetPoint("CENTER", SettingsCanvas, -Offset, 5)
 
-			--------------------------------
+			if not loaded then
+				loaded = true
 
-			Frame.REF_CONTENT:SetSize(Frame:GetSize())
-			Frame:UpdateLayout()
+				--------------------------------
+
+				Frame:SetSize(SettingsCanvas:GetWidth() + Offset, SettingsCanvas:GetHeight() + Offset / 2)
+
+				--------------------------------
+
+				Frame.REF_CONTENT:SetSize(Frame:GetSize())
+				Frame:UpdateLayout()
+				CallbackRegistry:Trigger("C_TEXT_AUTOFIT")
+			end
 
 			--------------------------------
 
 			Callback.Navigation:OpenTabByIndex(1, true)
-
-			--------------------------------
-
-			CallbackRegistry:Trigger("C_TEXT_AUTOFIT")
 		end)
 
 		CallbackRegistry:Add("C_CONFIG_UPDATE", function()
@@ -668,7 +683,10 @@ function NS.Script:Load()
 			Frame:SetAddonIcon()
 			Frame:Hide()
 
-			local Category = Settings.RegisterCanvasLayoutCategory(Frame, addon.C.AddonInfo.Variables.General.NAME)
+			-- addon setting name cannot contain spaces or it can't be located by Settings.OpenToCategory
+			-- so using REGISTRY_NAME instead of NAME
+			local Category = Settings.RegisterCanvasLayoutCategory(Frame, addon.C.AddonInfo.Variables.General.REGISTRY_NAME)
+			Category.ID = addon.C.AddonInfo.Variables.General.REGISTRY_NAME
 			Settings.RegisterAddOnCategory(Category)
 		end)
 	end
