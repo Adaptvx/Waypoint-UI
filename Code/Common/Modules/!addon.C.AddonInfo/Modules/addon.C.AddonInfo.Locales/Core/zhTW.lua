@@ -86,7 +86,7 @@ function NS:Load()
 		L["Config - WaypointSystem - Waypoint - Footer - Type - ETA"] = "抵達時間"
 		L["Config - WaypointSystem - Waypoint - Footer - Type - None"] = "無"
 		L["Config - WaypointSystem - Pinpoint"] = "標記點"
-		L["Config - WaypointSystem - Pinpoint - Info"] = "Show Info"
+		L["Config - WaypointSystem - Pinpoint - Info"] = "顯示訊息"
 		L["Config - WaypointSystem - Pinpoint - Info - Extended"] = "顯示額外訊息"
 		L["Config - WaypointSystem - Pinpoint - Info - Extended - Description"] = "包含額外的訊息，例如名稱/描述。"
 		L["Config - WaypointSystem - Navigator"] = "導航器"
@@ -174,7 +174,7 @@ function NS:Load()
 		L["Contributors - BadBoyBarny"] = "BadBoyBarny"
 		L["Contributors - BadBoyBarny - Description"] = "代碼 — 錯誤修復"
 		L["Contributors - Christinxa"] = "Christinxa"
-		L["Contributors - Christinxa - Description"] = "Code - Bug Fix"
+		L["Contributors - Christinxa - Description"] = "代碼 — 錯誤修復"
 		L["Contributors - SyverGiswold"] = "SyverGiswold"
 		L["Contributors - SyverGiswold - Description"] = "代碼 — 功能"
 	end
