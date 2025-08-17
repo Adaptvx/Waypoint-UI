@@ -10,6 +10,10 @@ local NS = L.esES; L.esES = NS
 --------------------------------
 
 function NS:Load()
+	if GetLocale() ~= "esES" then
+		return
+	end
+
 	--------------------------------
 	-- GENERAL
 	--------------------------------
