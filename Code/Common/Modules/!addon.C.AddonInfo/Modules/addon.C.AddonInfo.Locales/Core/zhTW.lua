@@ -170,7 +170,7 @@ function NS:Load()
 		L["Contributors - dabear78"] = "dabear78"
 		L["Contributors - dabear78 - Description"] = "翻譯者 — 德語"
 		L["Contributors - Gotziko"] = "Gotziko"
-		L["Contributors - Gotziko - Description"] = "Translator - Spanish"
+		L["Contributors - Gotziko - Description"] = "翻譯者 — 西班牙語"
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "代碼 — 測試錯誤修復"
 		L["Contributors - lemieszek"] = "lemieszek"
