@@ -171,7 +171,7 @@ function NS:Load()
 		L["Contributors - dabear78"] = "dabear78"
 		L["Contributors - dabear78 - Description"] = "Переводчик — на немецкий язык"
 		L["Contributors - Gotziko"] = "Gotziko"
-		L["Contributors - Gotziko - Description"] = "Translator - Spanish"
+		L["Contributors - Gotziko - Description"] = "Переводчик — на испанский язык"
 		L["Contributors - y45853160"] = "y45853160"
 		L["Contributors - y45853160 - Description"] = "Код — Исправление ошибок в бета-версии"
 		L["Contributors - lemieszek"] = "lemieszek"
