@@ -56,12 +56,12 @@ function NS:Load()
 		L["Config - General - Title"] = "Общие"
 		L["Config - General - Title - Subtext"] = "Настройте общие параметры."
 		L["Config - General - Preferences"] = "Предпочтения"
-		L["Config - General - Preferences - Meter"] = "Используйте метры вместо ярдов"
+		L["Config - General - Preferences - Meter"] = "Метры вместо ярдов"
 		L["Config - General - Preferences - Meter - Description"] = "Изменяет единицу измерения на метрическую."
 		L["Config - General - Preferences - Font"] = "Шрифт"
 		L["Config - General - Preferences - Font - Description"] = "Шрифт, используемый во всем аддоне."
 		L["Config - General - Reset"] = "Сбросить"
-		L["Config - General - Reset - Button"] = "Сброс по умолчанию"
+		L["Config - General - Reset - Button"] = "По умолчанию"
 		L["Config - General - Reset - Confirm"] = "Вы уверены, что хотите сбросить все настройки?"
 		L["Config - General - Reset - Confirm - Yes"] = "Подтвердить"
 		L["Config - General - Reset - Confirm - No"] = "Отмена"
@@ -142,7 +142,7 @@ function NS:Load()
 		L["Config - Audio - Customize - UseCustomAudio - WaypointShow"] = "Показать путевую точку"
 		L["Config - Audio - Customize - UseCustomAudio - PinpointShow"] = "Показать точное местоположение"
 
-		L["Config - About"] = "О"
+		L["Config - About"] = "О нас"
 		L["Config - About - Contributors"] = "Участники"
 		L["Config - About - Developer"] = "Разработчик"
 	end
