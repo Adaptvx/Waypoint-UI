@@ -123,9 +123,9 @@ do
         if self.__Backdrop then self.__Backdrop:Hide() end
     end
 
-    function TextureMixin:SetBlendMode(blendMode)
-        self.__Texture:SetBlendMode(blendMode)
-        if self.__Backdrop then self.__Backdrop:SetBlendMode(blendMode) end
+    function TextureMixin:SetBlendMode(backgroundBlendMode)
+        self.__Texture:SetBlendMode(backgroundBlendMode)
+        if self.__Backdrop then self.__Backdrop:SetBlendMode(backgroundBlendMode) end
     end
 
     -- Color
@@ -200,6 +200,7 @@ function Texture:New(parent, isMaskTexture)
 
 
     texture:SetAllPoints(frame)
+    texture:SetTexelSnappingBias(0)
 
     frame.__Texture = texture
     frame.__isMaskTexture = isMaskTexture

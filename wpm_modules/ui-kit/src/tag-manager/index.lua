@@ -1,6 +1,8 @@
-local env                 = select(2, ...)
+local env              = select(2, ...)
 
-local tremove             = table.remove
+local type             = type
+local find             = string.find
+local tremove          = table.remove
 
 local UIKit_TagManager = env.WPM:New("wpm_modules/ui-kit/tag-manager")
 UIKit_TagManager.Id    = { Registry = {} }
@@ -18,10 +20,31 @@ end
 
 
 
+-- Group Capture String
+--------------------------------
+
+function UIKit_TagManager.NewGroupCaptureString(id, groupID)
+    return tostring(id .. "$groupID" .. groupID)
+end
+
+function UIKit_TagManager.ReadGroupCaptureString(groupCaptureString)
+    local id, groupID = string.match(groupCaptureString, "(.-)$groupID(.+)")
+    return id, groupID
+end
+
+function UIKit_TagManager.IsGroupCaptureString(groupCaptureString)
+    local isString = (type(groupCaptureString) == "string")
+    local hasGroupIDString = (isString and find(groupCaptureString, "$groupID") ~= nil)
+
+    return isString and hasGroupIDString
+end
+
+
+
 -- Id
 --------------------------------
 
-function UIKit_TagManager.Id:Add(frame, id, groupID)
+function UIKit_TagManager.Id.Add(frame, id, groupID)
     local registry = UIKit_TagManager.Id.Registry
     local normalizedId = withGroup(id, groupID)
     local previousId = frame.uk_tagManager_id
@@ -39,7 +62,7 @@ function UIKit_TagManager.Id:Add(frame, id, groupID)
     frame.uk_tagManager_id = normalizedId
 end
 
-function UIKit_TagManager.Id:Remove(id, groupID)
+function UIKit_TagManager.Id.Remove(id, groupID)
     local registry = UIKit_TagManager.Id.Registry
     local normalizedId = withGroup(id, groupID)
     if not normalizedId then return end
@@ -97,7 +120,7 @@ local function removeFromRegistries(frame, classes)
     end
 end
 
-function UIKit_TagManager.Class:Add(frame, class, groupID)
+function UIKit_TagManager.Class.Add(frame, class, groupID)
     local normalizedClass, classes = parseClasses(class, groupID)
 
     if frame.uk_tagManager_class == normalizedClass then return end
@@ -137,7 +160,7 @@ function UIKit_TagManager.Class:Add(frame, class, groupID)
     end
 end
 
-function UIKit_TagManager.Class:Remove(frame, class, groupID)
+function UIKit_TagManager.Class.Remove(frame, class, groupID)
     local _, classes = parseClasses(class, groupID)
     classes = classes or (frame and frame.uk_tagManager_classes)
     if not classes then return end
@@ -152,11 +175,11 @@ end
 -- Get
 --------------------------------
 
-function UIKit_TagManager:GetElementById(id, groupID)
+function UIKit_TagManager.GetElementById(id, groupID)
     return UIKit_TagManager.Id.Registry[withGroup(id, groupID)]
 end
 
-function UIKit_TagManager:GetElementsByClass(class, groupID)
+function UIKit_TagManager.GetElementsByClass(class, groupID)
     return UIKit_TagManager.Class.Registry[withGroup(class, groupID)] or {}
 end
 
@@ -165,14 +188,14 @@ end
 -- Clean up
 --------------------------------
 
-function UIKit_TagManager:CleanupFrame(frame)
+function UIKit_TagManager.CleanupFrame(frame)
     if not frame then return end
 
     if frame.uk_tagManager_id then
-        UIKit_TagManager.Id:Remove(frame.uk_tagManager_id)
+        UIKit_TagManager.Id.Remove(frame.uk_tagManager_id)
     end
 
     if frame.uk_tagManager_class then
-        UIKit_TagManager.Class:Remove(frame, frame.uk_tagManager_class)
+        UIKit_TagManager.Class.Remove(frame, frame.uk_tagManager_class)
     end
 end

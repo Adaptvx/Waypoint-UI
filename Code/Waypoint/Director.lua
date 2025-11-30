@@ -33,7 +33,7 @@ WaypointDirector.navigationMode = WaypointEnum.NavigationMode.Hidden -- Enum.Nav
         Waypoint.DistanceReady
 ]]
 
-local EL = CreateFrame("Frame")
+local Events = CreateFrame("Frame")
 
 do
     local EVENTS_TO_REGISTER = {
@@ -64,6 +64,7 @@ do
 
 
     local function onSlowUpdate()
+        WaypointDataProvider:AttemptToAcquireNavFrame()
         WaypointDataProvider:CacheState()
 
         if not isMoving then
@@ -135,6 +136,7 @@ do
     end
 
     local function onContextChange()
+        WaypointDataProvider:AttemptToAcquireNavFrame()
         WaypointDataProvider:CacheRealtime()
         WaypointDataProvider:CacheSuperTrackingInfo()
         WaypointDataProvider:CacheQuestInfo()
@@ -188,6 +190,11 @@ do
     end)
 
     CallbackRegistry:Add("Waypoint.DistanceReady", onContextChange)
+    CallbackRegistry:Add("WaypointDataProvider.NavFrameObtained", function()
+        if not distanceAwait:IsShown() then
+            distanceAwait:Show()
+        end
+    end)
 
 
     function WaypointDirector:AwaitDistance()
@@ -237,19 +244,26 @@ do
         end
     end
 
-    EL:SetScript("OnEvent", onEvent)
+    Events:SetScript("OnEvent", onEvent)
 
-    function EL:Enable()
+
+
+
+
+    -- Enable/Disable
+    --------------------------------
+
+    function Events:Enable()
         for _, event in ipairs(EVENTS_TO_REGISTER) do
-            EL:RegisterEvent(event)
+            Events:RegisterEvent(event)
         end
 
         startTimers()
         WaypointDirector:AwaitDistance()
     end
 
-    function EL:Disable()
-        EL:UnregisterAllEvents()
+    function Events:Disable()
+        Events:UnregisterAllEvents()
         moveUpdater:Hide()
 
         stopTimers()
@@ -375,7 +389,7 @@ end
 
 local INSTANCE_ALLOW_LIST = {
     [2352] = true, -- Founder's Point
-    [2351] = true  -- Razorwind Shores
+    [2351] = true -- Razorwind Shores
 }
 
 local function shouldSetActive()
@@ -397,9 +411,9 @@ function WaypointDirector:UpdateActive()
     if active ~= WaypointDirector.isActive then
         WaypointDirector.isActive = active
         if active then
-            EL:Enable()
+            Events:Enable()
         else
-            EL:Disable()
+            Events:Disable()
             WaypointDirector:SetNavigationMode(WaypointEnum.NavigationMode.Hidden)
         end
 

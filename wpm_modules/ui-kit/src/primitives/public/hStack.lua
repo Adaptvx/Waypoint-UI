@@ -60,7 +60,7 @@ do
             or spacingSetting == UIKit_Define.Percentage and UIKit_Utils:CalculateRelativePercentage(containerWidth, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
             or 0
 
-        local contentWidth = totalChildWidth + (visibleCount - 1) * spacing
+        local contentWidth = totalChildWidth + ((visibleCount - 1) * spacing)
 
         -- Apply fit-to-content sizing
         local fitWidthToContent, fitHeightToContent = self:GetFitContent()
@@ -74,8 +74,9 @@ do
         end
 
         -- Calculate start position based on horizontal alignment
+        local accountedSpacing = (visibleCount > 2 and spacing or 0)
         local alignmentH = self.uk_prop_layoutAlignmentH or "LEADING"
-        local currentX = alignmentH == "JUSTIFIED" and (containerWidth - contentWidth) * 0.5
+        local currentX = alignmentH == "JUSTIFIED" and (containerWidth - contentWidth - accountedSpacing) * 0.5
             or alignmentH == "TRAILING" and containerWidth - contentWidth
             or 0
 
@@ -130,7 +131,7 @@ function HStack:New(name, parent)
     local hStack = Frame:New("Frame", name, parent)
     Mixin(hStack, HStackMixin)
     hStack:Init()
-    
-    
+
+
     return hStack
 end

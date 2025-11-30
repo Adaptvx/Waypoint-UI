@@ -20,7 +20,7 @@ do
     function VStackMixin:Init()
         self.__visibleChildren = {}
     end
-    
+
 
     -- Layout
     --------------------------------
@@ -60,7 +60,7 @@ do
             or spacingSetting == UIKit_Define.Percentage and UIKit_Utils:CalculateRelativePercentage(containerHeight, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
             or 0
 
-        local contentHeight = totalChildHeight + (visibleCount - 1) * spacing
+        local contentHeight = totalChildHeight + ((visibleCount - 1) * spacing)
 
         -- Apply fit-to-content sizing
         local fitWidthToContent, fitHeightToContent = self:GetFitContent()
@@ -74,8 +74,9 @@ do
         end
 
         -- Calculate start position based on vertical alignment
+        local accountedSpacing = (visibleCount > 2 and spacing or 0)
         local alignmentV = self.uk_prop_layoutAlignmentV or "LEADING"
-        local currentY = alignmentV == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
+        local currentY = alignmentV == "JUSTIFIED" and (containerHeight - contentHeight - accountedSpacing) * 0.5
             or alignmentV == "TRAILING" and containerHeight - contentHeight
             or 0
 

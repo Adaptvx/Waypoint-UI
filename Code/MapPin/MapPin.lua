@@ -146,40 +146,6 @@ function MapPin.IsUserNavigation()
     return (pinTracked and mapIDMatch and xMatch and yMatch)
 end
 
--- Additional Features
---------------------------------
-
-do -- Automatically track user waypoint when placed
-    local DelayTimer = LazyTimer:New()
-    DelayTimer:SetAction(function()
-        SetSuperTrackedUserWaypoint(true)
-    end)
-
-    local EL = CreateFrame("Frame")
-    EL:RegisterEvent("USER_WAYPOINT_UPDATED")
-    EL:SetScript("OnEvent", function(_, event, ...)
-        if event == "USER_WAYPOINT_UPDATED" then
-            DelayTimer:Start(0)
-        end
-    end)
-end
-
-do -- Automatically place and track user waypoint when clicking on map pin link
-    hooksecurefunc("SetItemRef", function(link, text, button, chatFrame)
-        local prefix, mapID, x, y = link:match("^(%a+):(%d+):(%d+):(%d+)$")
-        if prefix ~= "worldmap" then return end
-
-        x = x / 100
-        y = y / 100
-
-        local pos = CreateVector2D(x / 100, y / 100)
-        local mapPoint = UiMapPoint.CreateFromVector2D(mapID, pos)
-
-        SetUserWaypoint(mapPoint)
-        SetSuperTrackedUserWaypoint(true)
-    end)
-end
-
 
 
 

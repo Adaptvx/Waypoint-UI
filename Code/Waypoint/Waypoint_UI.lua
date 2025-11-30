@@ -58,7 +58,7 @@ do
                 :point(UIKit.Enum.Point.Center)
                 :size(P_FILL, P_FILL)
                 :frameLevel(5)
-                :blendMode(UIKit.Enum.BlendMode.Add)
+                :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                 :_updateMode(UIKit.Enum.UpdateMode.None),
 
             Frame("WUIWaypointFrame.Wave")
@@ -83,7 +83,7 @@ do
                     :size(FILL)
                     :frameLevel(1)
                     :background(W_TEXTURE_BEAM)
-                    :blendMode(UIKit.Enum.BlendMode.Add)
+                    :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                     :mask("WUIWaypointFrame.Beam.Mask")
                     :_updateMode(UIKit.Enum.UpdateMode.None),
 
@@ -99,7 +99,7 @@ do
                     :id("WUIWaypointFrame.Beam.FX")
                     :size(FILL)
                     :frameLevel(2)
-                    :blendMode(UIKit.Enum.BlendMode.Add)
+                    :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                     :background(W_TEXTURE_BEAM_FX)
                     :mask("WUIWaypointFrame.Beam.FX.Mask")
                     :_updateMode(UIKit.Enum.UpdateMode.None)
@@ -156,22 +156,22 @@ do
         :_Render()
 
 
-    WUIWaypointFrame                          = UIKit:GetElementById("WUIWaypointFrame")
-    WUIWaypointFrame.Container                = UIKit:GetElementById("WUIWaypointFrame.Container")
-    WUIWaypointFrame.ContextIcon              = UIKit:GetElementById("WUIWaypointFrame.ContextIcon")
-    WUIWaypointFrame.Wave                     = UIKit:GetElementById("WUIWaypointFrame.Wave")
+    WUIWaypointFrame                          = UIKit.GetElementById("WUIWaypointFrame")
+    WUIWaypointFrame.Container                = UIKit.GetElementById("WUIWaypointFrame.Container")
+    WUIWaypointFrame.ContextIcon              = UIKit.GetElementById("WUIWaypointFrame.ContextIcon")
+    WUIWaypointFrame.Wave                     = UIKit.GetElementById("WUIWaypointFrame.Wave")
     WUIWaypointFrame.WaveTexture              = WUIWaypointFrame.Wave:GetBackground()
-    WUIWaypointFrame.Beam                     = UIKit:GetElementById("WUIWaypointFrame.Beam")
-    WUIWaypointFrame.Beam.Background          = UIKit:GetElementById("WUIWaypointFrame.Beam.Background")
+    WUIWaypointFrame.Beam                     = UIKit.GetElementById("WUIWaypointFrame.Beam")
+    WUIWaypointFrame.Beam.Background          = UIKit.GetElementById("WUIWaypointFrame.Beam.Background")
     WUIWaypointFrame.Beam.BackgroundTexture   = WUIWaypointFrame.Beam.Background:GetBackground()
-    WUIWaypointFrame.Beam.Mask                = UIKit:GetElementById("WUIWaypointFrame.Beam.Mask")
-    WUIWaypointFrame.Beam.FX                  = UIKit:GetElementById("WUIWaypointFrame.Beam.FX")
-    WUIWaypointFrame.Beam.FXMask              = UIKit:GetElementById("WUIWaypointFrame.Beam.FX.Mask")
+    WUIWaypointFrame.Beam.Mask                = UIKit.GetElementById("WUIWaypointFrame.Beam.Mask")
+    WUIWaypointFrame.Beam.FX                  = UIKit.GetElementById("WUIWaypointFrame.Beam.FX")
+    WUIWaypointFrame.Beam.FXMask              = UIKit.GetElementById("WUIWaypointFrame.Beam.FX.Mask")
     WUIWaypointFrame.Beam.FXTexture           = WUIWaypointFrame.Beam.FX:GetBackground()
-    WUIWaypointFrame.Footer                   = UIKit:GetElementById("WUIWaypointFrame.Footer")
-    WUIWaypointFrame.Footer.Text              = UIKit:GetElementById("WUIWaypointFrame.Footer.Text")
-    WUIWaypointFrame.Footer.SubtextFrame      = UIKit:GetElementById("WUIWaypointFrame.Footer.SubtextFrame")
-    WUIWaypointFrame.Footer.SubtextFrame.Text = UIKit:GetElementById("WUIWaypointFrame.Footer.SubtextFrame.Text")
+    WUIWaypointFrame.Footer                   = UIKit.GetElementById("WUIWaypointFrame.Footer")
+    WUIWaypointFrame.Footer.Text              = UIKit.GetElementById("WUIWaypointFrame.Footer.Text")
+    WUIWaypointFrame.Footer.SubtextFrame      = UIKit.GetElementById("WUIWaypointFrame.Footer.SubtextFrame")
+    WUIWaypointFrame.Footer.SubtextFrame.Text = UIKit.GetElementById("WUIWaypointFrame.Footer.SubtextFrame.Text")
 
 
 
@@ -424,7 +424,7 @@ end
 do
     local P_BACKGROUND                  = ATLAS{ inset = 75, scale = .125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
     local P_SIZE_CONTEXT                = UIKit.Define.Num{ value = 57 }
-    local P_SIZE_FOREGROUND             = UIKit.Define.Fit{ delta = 20 }
+    local P_SIZE_FOREGROUND             = UIKit.Define.Fit{ delta = 23 }
     local P_SIZE_FOREGROUND_CONTENT     = UIKit.Define.Fit{}
     local P_MAXWIDTH_FOREGROUND_CONTENT = UIKit.Define.Num{ value = 325 }
 
@@ -487,15 +487,15 @@ do
         :_Render()
 
 
-    WUIPinpointFrame = UIKit:GetElementById("WUIPinpointFrame")
-    WUIPinpointFrame.Container = UIKit:GetElementById("WUIPinpointFrame.Container")
-    WUIPinpointFrame.Background = UIKit:GetElementById("WUIPinpointFrame.Background")
-    WUIPinpointFrame.Background.ContextIcon = UIKit:GetElementById("WUIPinpointFrame.Background.ContextIcon")
-    WUIPinpointFrame.Background.Arrow = UIKit:GetElementById("WUIPinpointFrame.Background.Arrow")
-    WUIPinpointFrame.Foreground = UIKit:GetElementById("WUIPinpointFrame.Foreground")
-    WUIPinpointFrame.Foreground.Background = UIKit:GetElementById("WUIPinpointFrame.Foreground.Background")
+    WUIPinpointFrame = UIKit.GetElementById("WUIPinpointFrame")
+    WUIPinpointFrame.Container = UIKit.GetElementById("WUIPinpointFrame.Container")
+    WUIPinpointFrame.Background = UIKit.GetElementById("WUIPinpointFrame.Background")
+    WUIPinpointFrame.Background.ContextIcon = UIKit.GetElementById("WUIPinpointFrame.Background.ContextIcon")
+    WUIPinpointFrame.Background.Arrow = UIKit.GetElementById("WUIPinpointFrame.Background.Arrow")
+    WUIPinpointFrame.Foreground = UIKit.GetElementById("WUIPinpointFrame.Foreground")
+    WUIPinpointFrame.Foreground.Background = UIKit.GetElementById("WUIPinpointFrame.Foreground.Background")
     WUIPinpointFrame.Foreground.BackgroundTexture = WUIPinpointFrame.Foreground.Background:GetBackground()
-    WUIPinpointFrame.Foreground.Content = UIKit:GetElementById("WUIPinpointFrame.Foreground.Content")
+    WUIPinpointFrame.Foreground.Content = UIKit.GetElementById("WUIPinpointFrame.Foreground.Content")
 
 
 
@@ -685,11 +685,11 @@ do
         :_updateMode(UIKit.Enum.UpdateMode.None)
         :_Render()
 
-    WUINavigatorFrame = UIKit:GetElementById("WUINavigatorFrame")
-    WUINavigatorFrame.Container = UIKit:GetElementById("WUINavigatorFrame.Container")
-    WUINavigatorFrame.ContextIcon = UIKit:GetElementById("WUINavigatorFrame.ContextIcon")
-    WUINavigatorFrame.Arrow = UIKit:GetElementById("WUINavigatorFrame.Arrow")
-    WUINavigatorFrame.ArrowTexture = UIKit:GetElementById("WUINavigatorFrame.Arrow"):GetBackground()
+    WUINavigatorFrame = UIKit.GetElementById("WUINavigatorFrame")
+    WUINavigatorFrame.Container = UIKit.GetElementById("WUINavigatorFrame.Container")
+    WUINavigatorFrame.ContextIcon = UIKit.GetElementById("WUINavigatorFrame.ContextIcon")
+    WUINavigatorFrame.Arrow = UIKit.GetElementById("WUINavigatorFrame.Arrow")
+    WUINavigatorFrame.ArrowTexture = UIKit.GetElementById("WUINavigatorFrame.Arrow"):GetBackground()
 
 
 

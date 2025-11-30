@@ -730,7 +730,7 @@ local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
         :background(BACKGROUND)
         :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
 
-    frame.Text = UIKit:GetElementById("Text", id)
+    frame.Text = UIKit.GetElementById("Text", id)
     frame.Background = frame:GetBackground()
 
     return frame
@@ -774,7 +774,7 @@ for i = 1, 500 do
     table.insert(data, "entry" .. i)
 end
 
-myFrame = UIKit:GetElementById("myFrame")
-myLazyScrollView = UIKit:GetElementById("myLazyScrollView")
+myFrame = UIKit.GetElementById("myFrame")
+myLazyScrollView = UIKit.GetElementById("myLazyScrollView")
 myLazyScrollView:SetData(data)
 ]]

@@ -18,7 +18,7 @@ local function setupFrame(frame)
     end
 
     -- Visibillity changed
-    if frame.uk_flag_updateMode ~= UIKit_Enum.UpdateMode.None then
+    if frame.uk_flag_updateMode ~= UIKit_Enum.UpdateMode.None and frame.uk_flag_updateMode ~= UIKit_Enum.UpdateMode.ExcludeVisibilityChanged then
         frame:HookScript("OnShow", UIKit_UI_Scanner.OnVisibilityChanged)
         frame:HookScript("OnHide", UIKit_UI_Scanner.OnVisibilityChanged)
     end
@@ -69,6 +69,7 @@ function UIKit_UI_Scanner.ScanFrame(frame)
     -- Check for scrollbar / nested frames
     local root = (frame.uk_parent and frame.uk_parent.uk_parent) or frame.uk_parent or frame
     if not root then return end
+    if root == UIParent then root = frame end
 
     UIKit_Renderer.Scanner.ScanFrame(root)
 end
@@ -89,7 +90,7 @@ function UIKit_UI_Scanner.OnVisibilityChanged(frame)
 
     while parent do
         -- Stop if parent is set to None update mode to prevent full re-scanning when unnecessary
-        if parent.uk_flag_updateMode == UIKit_Enum.UpdateMode.None then return end
+        if parent.uk_flag_updateMode == UIKit_Enum.UpdateMode.None or parent.uk_flag_updateMode == UIKit_Enum.UpdateMode.ExcludeVisibilityChanged then return end
 
         -- Scan if parent is set to ChildrenVisibilityChanged update mode
         if parent.uk_flag_updateMode == UIKit_Enum.UpdateMode.ChildrenVisibilityChanged then

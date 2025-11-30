@@ -74,7 +74,7 @@ local function handleOnCancel()
     Utils_Blizzard:HidePopup("WAYPOINTUI_RESET_SETTING")
 end
 
-Utils_Blizzard:NewConfirmPopup {
+Utils_Blizzard:NewConfirmPopup{
     id             = "WAYPOINTUI_RESET_SETTING",
     text           = L["Config - General - Other - ResetPrompt"],
     button1Text    = L["Config - General - Other - ResetPrompt - Yes"],
@@ -103,7 +103,7 @@ SettingSchema.SCHEMA = {
             {
                 widgetName       = L["Config - General - Title"],
                 widgetType       = SettingEnum.WidgetType.Title,
-                widgetTitle_info = SettingDefine.TitleInfo { imagePath = getIcon("Cog"), text = L["Config - General - Title"], subtext = L["Config - General - Title - Subtext"] }
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = getIcon("Cog"), text = L["Config - General - Title"], subtext = L["Config - General - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - General - Preferences"],
@@ -120,7 +120,7 @@ SettingSchema.SCHEMA = {
                     },
                     {
                         widgetName        = L["Config - General - Preferences - Meter"],
-                        widgetDescription = SettingDefine.Descriptor { imageType = nil, imagePath = nil, description = L["Config - General - Preferences - Meter - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ imageType = nil, imagePath = nil, description = L["Config - General - Preferences - Meter - Description"] },
                         widgetType        = SettingEnum.WidgetType.Checkbox,
                         key               = "PrefMetric"
                     }
@@ -147,7 +147,7 @@ SettingSchema.SCHEMA = {
             {
                 widgetName       = L["Config - WaypointSystem - Title"],
                 widgetType       = SettingEnum.WidgetType.Title,
-                widgetTitle_info = SettingDefine.TitleInfo { imagePath = getIcon("Waypoint"), text = L["Config - WaypointSystem - Title"], subtext = L["Config - WaypointSystem - Title - Subtext"] }
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = getIcon("Waypoint"), text = L["Config - WaypointSystem - Title"], subtext = L["Config - WaypointSystem - Title - Subtext"] }
             },
             {
 
@@ -167,35 +167,35 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName        = L["Config - WaypointSystem - General - AlwaysShow"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - General - AlwaysShow - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - General - AlwaysShow - Description"] },
                         key               = "AlwaysShow"
                     },
                     {
                         widgetName        = L["Config - WaypointSystem - General - RightClickToClear"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - General - RightClickToClear - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - General - RightClickToClear - Description"] },
                         key               = "RightClickToClear"
                     },
                     {
                         widgetName        = L["Config - WaypointSystem - General - BackgroundPreview"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - General - BackgroundPreview - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - General - BackgroundPreview - Description"] },
                         key               = "BackgroundPreview"
                     },
                     {
                         widgetName                     = L["Config - WaypointSystem - General - Transition Distance"],
-                        widgetDescription              = SettingDefine.Descriptor { description = L["Config - WaypointSystem - General - Transition Distance - Description"] },
+                        widgetDescription              = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - General - Transition Distance - Description"] },
                         widgetType                     = SettingEnum.WidgetType.Range,
                         widgetRange_min                = calculateDistance(50),
                         widgetRange_max                = calculateDistance(500),
                         widgetRange_step               = calculateDistance(5),
                         widgetRange_textFormattingFunc = formatDistance,
                         key                            = "DistanceThresholdPinpoint",
-                        showWhen                       = function() return Config.DBGlobal:GetVariable( "WaypointSystemType") == WaypointEnum.WaypointSystemType.All end
+                        showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointSystemType") == WaypointEnum.WaypointSystemType.All end
                     },
                     {
                         widgetName                     = L["Config - WaypointSystem - General - Hide Distance"],
-                        widgetDescription              = SettingDefine.Descriptor { description = L["Config - WaypointSystem - General - Hide Distance - Description"] },
+                        widgetDescription              = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - General - Hide Distance - Description"] },
                         widgetType                     = SettingEnum.WidgetType.Range,
                         widgetRange_min                = calculateDistance(1),
                         widgetRange_max                = calculateDistance(100),
@@ -236,7 +236,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName        = L["Config - WaypointSystem - Pinpoint - Info - Extended"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - Pinpoint - Info - Extended - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - Pinpoint - Info - Extended - Description"] },
                         indent            = 1,
                         key               = "PinpointInfoExtended",
                         showWhen          = function() return Config.DBGlobal:GetVariable("PinpointInfo") == true end
@@ -244,7 +244,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName        = L["Config - WaypointSystem - Pinpoint - ShowInQuestArea"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - Pinpoint - ShowInQuestArea - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - Pinpoint - ShowInQuestArea - Description"] },
                         key               = "PinpointAllowInQuestArea"
                     }
                 }
@@ -256,7 +256,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName        = L["Config - WaypointSystem - Navigator - Enable"],
                         widgetType        = SettingEnum.WidgetType.Checkbox,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - WaypointSystem - Navigator - Enable - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - WaypointSystem - Navigator - Enable - Description"] },
                         indent            = 0,
                         key               = "NavigatorShow"
                     }
@@ -271,7 +271,7 @@ SettingSchema.SCHEMA = {
             {
                 widgetName       = L["Config - Appearance - Title"],
                 widgetType       = SettingEnum.WidgetType.Title,
-                widgetTitle_info = SettingDefine.TitleInfo { imagePath = getIcon("Brush"), text = L["Config - Appearance - Title"], subtext = L["Config - Appearance - Title - Subtext"] }
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = getIcon("Brush"), text = L["Config - Appearance - Title"], subtext = L["Config - Appearance - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - Appearance - Waypoint"],
@@ -281,7 +281,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName                     = L["Config - Appearance - Waypoint - Scale"],
                         widgetType                     = SettingEnum.WidgetType.Range,
-                        widgetDescription              = SettingDefine.Descriptor { description = L["Config - Appearance - Waypoint - Scale - Description"] },
+                        widgetDescription              = SettingDefine.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Description"] },
                         widgetRange_min                = .5,
                         widgetRange_max                = 5,
                         widgetRange_step               = .1,
@@ -291,7 +291,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName                     = L["Config - Appearance - Waypoint - Scale - Min"],
                         widgetType                     = SettingEnum.WidgetType.Range,
-                        widgetDescription              = SettingDefine.Descriptor { description = L["Config - Appearance - Waypoint - Scale - Min - Description"] },
+                        widgetDescription              = SettingDefine.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Min - Description"] },
                         widgetRange_min                = .125,
                         widgetRange_max                = 1,
                         widgetRange_step               = .125,
@@ -302,7 +302,7 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName                     = L["Config - Appearance - Waypoint - Scale - Max"],
                         widgetType                     = SettingEnum.WidgetType.Range,
-                        widgetDescription              = SettingDefine.Descriptor { description = L["Config - Appearance - Waypoint - Scale - Max - Description"] },
+                        widgetDescription              = SettingDefine.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Max - Description"] },
                         widgetRange_min                = 1,
                         widgetRange_max                = 2,
                         widgetRange_step               = .1,
@@ -411,7 +411,7 @@ SettingSchema.SCHEMA = {
                     },
                     {
                         widgetName        = L["Config - Appearance - Navigator - DynamicDistance"],
-                        widgetDescription = SettingDefine.Descriptor { description = L["Config - Appearance - Navigator - DynamicDistance - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - Appearance - Navigator - DynamicDistance - Description"] },
                         widgetType        = SettingEnum.WidgetType.Checkbox,
                         key               = "NavigatorDynamicDistance"
                     }
@@ -580,7 +580,7 @@ SettingSchema.SCHEMA = {
             {
                 widgetName       = L["Config - Audio - Title"],
                 widgetType       = SettingEnum.WidgetType.Title,
-                widgetTitle_info = SettingDefine.TitleInfo { imagePath = getIcon("SpeakerOn"), text = L["Config - Audio - Title"], subtext = L["Config - Audio - Title - Subtext"] }
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = getIcon("SpeakerOn"), text = L["Config - Audio - Title"], subtext = L["Config - Audio - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - Audio - General"],
@@ -629,7 +629,7 @@ SettingSchema.SCHEMA = {
                                 widgetButton_text = L["Config - Audio - Customize - UseCustomAudio - Preview"],
                                 set               = function()
                                     Sound:PlaySound("Preview",
-                                        Config.DBGlobal:GetVariable("AudioCustomShowWaypoint"))
+                                                    Config.DBGlobal:GetVariable("AudioCustomShowWaypoint"))
                                 end
                             },
                             {
@@ -669,7 +669,7 @@ SettingSchema.SCHEMA = {
                                 widgetButton_refreshOnClick = true,
                                 set                         = function()
                                     Sound:PlaySound("Preview",
-                                        Config.DBGlobal:GetVariable("AudioCustomShowPinpoint"))
+                                                    Config.DBGlobal:GetVariable("AudioCustomShowPinpoint"))
                                 end
                             },
                             {
@@ -709,7 +709,7 @@ SettingSchema.SCHEMA = {
                                 widgetButton_refreshOnClick = true,
                                 set                         = function()
                                     Sound:PlaySound("Preview",
-                                        Config.DBGlobal:GetVariable("AudioCustomNewUserNavigation"))
+                                                    Config.DBGlobal:GetVariable("AudioCustomNewUserNavigation"))
                                 end
                             },
                             {
@@ -728,6 +728,44 @@ SettingSchema.SCHEMA = {
         }
     },
     {
+        widgetName = L["Config - ExtraFeature"],
+        widgetType = SettingEnum.WidgetType.Tab,
+        children   = {
+            {
+                widgetName       = L["Config - ExtraFeature - Title"],
+                widgetType       = SettingEnum.WidgetType.Title,
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = getIcon("List"), text = L["Config - ExtraFeature - Title"], subtext = L["Config - ExtraFeature - Title - Subtext"] }
+            },
+            {
+                widgetName = L["Config - ExtraFeature - Pin"],
+                widgetType = SettingEnum.WidgetType.Container,
+
+                children   = {
+                    {
+                        widgetName        = L["Config - ExtraFeature - Pin - AutoTrackPlacedPin"],
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - ExtraFeature - Pin - AutoTrackPlacedPin - Description"] },
+                        widgetType        = SettingEnum.WidgetType.Checkbox,
+                        key               = "AutoTrackPlacedPinEnabled"
+                    },
+                    {
+                        widgetName        = L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin"],
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] },
+                        widgetType        = SettingEnum.WidgetType.Checkbox,
+                        key               = "AutoTrackChatLinkPinEnabled",
+                        showWhen          = function() return Config.DBGlobal:GetVariable("AutoTrackPlacedPinEnabled") == false end,
+                        indent            = 1
+                    },
+                    {
+                        widgetName        = L["Config - ExtraFeature - Pin - GuidePinAssistant"],
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] },
+                        widgetType        = SettingEnum.WidgetType.Checkbox,
+                        key               = "GuidePinAssistantEnabled"
+                    }
+                }
+            }
+        }
+    },
+    {
         widgetName         = L["Config - About"],
         widgetType         = SettingEnum.WidgetType.Tab,
         widgetTab_isFooter = true,
@@ -735,7 +773,7 @@ SettingSchema.SCHEMA = {
             {
                 widgetName       = L["Config - About"],
                 widgetType       = SettingEnum.WidgetType.Title,
-                widgetTitle_info = SettingDefine.TitleInfo { imagePath = env.ICON_ALT, text = env.NAME, subtext = env.VERSION_STRING }
+                widgetTitle_info = SettingDefine.TitleInfo{ imagePath = env.ICON_ALT, text = env.NAME, subtext = env.VERSION_STRING }
             },
             {
                 widgetName        = L["Config - About - Contributors"],
@@ -745,97 +783,97 @@ SettingSchema.SCHEMA = {
                     {
                         widgetName        = L["Contributors - ZamestoTV"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - ZamestoTV - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - ZamestoTV - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - huchang47"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - huchang47 - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - huchang47 - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - BlueNightSky"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - BlueNightSky - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - BlueNightSky - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Crazyyoungs"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Crazyyoungs - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Crazyyoungs - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Klep"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Klep - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Klep - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Kroffy"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Kroffy - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Kroffy - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - cathtail"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - cathtail - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - cathtail - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Larsj02"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Larsj02 - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Larsj02 - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - dabear78"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - dabear78 - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - dabear78 - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Gotziko"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Gotziko - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Gotziko - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - y45853160"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - y45853160 - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - y45853160 - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - lemieszek"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - lemieszek - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - lemieszek - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - BadBoyBarny"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - BadBoyBarny - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - BadBoyBarny - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - Christinxa"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - Christinxa - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - Christinxa - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - HectorZaGa"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - HectorZaGa - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - HectorZaGa - Description"] },
                         widgetTransparent = true
                     },
                     {
                         widgetName        = L["Contributors - SyverGiswold"],
                         widgetType        = SettingEnum.WidgetType.Text,
-                        widgetDescription = SettingDefine.Descriptor { description = L["Contributors - SyverGiswold - Description"] },
+                        widgetDescription = SettingDefine.Descriptor{ description = L["Contributors - SyverGiswold - Description"] },
                         widgetTransparent = true
                     }
                 }

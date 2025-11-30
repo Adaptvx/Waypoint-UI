@@ -22,11 +22,12 @@ Frame.FrameProps       = {}
 
 
 local dummy = CreateFrame("Frame"); dummy:Hide()
-local SET_SIZE_FUNC                   = getmetatable(dummy).__index.SetSize
-local SET_WIDTH_FUNC                  = getmetatable(dummy).__index.SetWidth
-local SET_HEIGHT_FUNC                 = getmetatable(dummy).__index.SetHeight
-local SET_PROPAGATE_MOUSE_CLICKS_FUNC = getmetatable(dummy).__index.SetPropagateMouseClicks
-local SET_PROPAGATE_MOUSE_MOTION_FUNC = getmetatable(dummy).__index.SetPropagateMouseUIAnim
+local SET_SIZE_FUNC                     = getmetatable(dummy).__index.SetSize
+local SET_WIDTH_FUNC                    = getmetatable(dummy).__index.SetWidth
+local SET_HEIGHT_FUNC                   = getmetatable(dummy).__index.SetHeight
+local SET_PROPAGATE_MOUSE_CLICKS_FUNC   = getmetatable(dummy).__index.SetPropagateMouseClicks
+local SET_PROPAGATE_MOUSE_MOTION_FUNC   = getmetatable(dummy).__index.SetPropagateMouseMotion
+local SET_PROPAGATE_KEYBOARD_INPUT_FUNC = getmetatable(dummy).__index.SetPropagateKeyboardInput
 
 
 
@@ -373,22 +374,30 @@ do
     end
 
     local function propagateEnableMouseClick(self)
-        SET_PROPAGATE_MOUSE_CLICKS_FUNC(self, true)
+        self:SetPropagateMouseClicks(true)
     end
 
     local function propagateDisableMouseClick(self)
-        SET_PROPAGATE_MOUSE_CLICKS_FUNC(self, false)
+        self:SetPropagateMouseClicks(false)
     end
 
-    local function propagateEnableMouseUIAnim(self)
-        SET_PROPAGATE_MOUSE_MOTION_FUNC(self, true)
+    local function propagateEnableMouseMotion(self)
+        self:SetPropagateMouseMotion(true)
     end
 
-    local function propagateDisableMouseUIAnim(self)
-        SET_PROPAGATE_MOUSE_MOTION_FUNC(self, false)
+    local function propagateDisableMouseMotion(self)
+        self:SetPropagateMouseMotion(false)
     end
 
-    function FrameMixin:SetPropagateMouseClicks(propagate)
+    local function propagateEnableKeyboardInput(self)
+        self:SetPropagateKeyboardInput(true)
+    end
+
+    local function propagateDisableKeyboardInput(self)
+        self:SetPropagateKeyboardInput(false)
+    end
+
+    function FrameMixin:AwaitSetPropagateMouseClicks(propagate)
         if propagate then
             UIKit_Utils:AwaitProtectedEvent(propagateEnableMouseClick, self)
         else
@@ -396,12 +405,35 @@ do
         end
     end
 
-    function FrameMixin:SetPropagateMouseUIAnim(propagate)
+    function FrameMixin:AwaitSetPropagateMouseMotion(propagate)
         if propagate then
-            UIKit_Utils:AwaitProtectedEvent(propagateEnableMouseUIAnim, self)
+            UIKit_Utils:AwaitProtectedEvent(propagateEnableMouseMotion, self)
         else
-            UIKit_Utils:AwaitProtectedEvent(propagateDisableMouseUIAnim, self)
+            UIKit_Utils:AwaitProtectedEvent(propagateDisableMouseMotion, self)
         end
+    end
+
+    function FrameMixin:AwaitSetPropagateKeyboardInput(propagate)
+        if propagate then
+            UIKit_Utils:AwaitProtectedEvent(propagateEnableKeyboardInput, self)
+        else
+            UIKit_Utils:AwaitProtectedEvent(propagateDisableKeyboardInput, self)
+        end
+    end
+
+    function FrameMixin:SetPropagateMouseClicks(propagate)
+        if InCombatLockdown() then return end
+        SET_PROPAGATE_MOUSE_CLICKS_FUNC(self, propagate)
+    end
+
+    function FrameMixin:SetPropagateMouseMotion(propagate)
+        if InCombatLockdown() then return end
+        SET_PROPAGATE_MOUSE_MOTION_FUNC(self, propagate)
+    end
+
+    function FrameMixin:SetPropagateKeyboardInput(propagate)
+        if InCombatLockdown() then return end
+        SET_PROPAGATE_KEYBOARD_INPUT_FUNC(self, propagate)
     end
 end
 

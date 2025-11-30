@@ -1,4 +1,4 @@
-local env                 = select(2, ...)
+local env              = select(2, ...)
 local UIKit_Enum       = env.WPM:New("wpm_modules/ui-kit/enum")
 
 UIKit_Enum.FrameStrata = {
@@ -25,12 +25,12 @@ UIKit_Enum.Point       = {
     BottomRight = "BOTTOMRIGHT"
 }
 
-UIKit_Enum.BlendMode = {
-    Disable   = "DISABLE",
-    Blend     = "BLEND",
-    AlphaKey  = "ALPHAKEY",
-    Add       = "ADD",
-    Mod       = "MOD"
+UIKit_Enum.BlendMode   = {
+    Disable  = "DISABLE",
+    Blend    = "BLEND",
+    AlphaKey = "ALPHAKEY",
+    Add      = "ADD",
+    Mod      = "MOD"
 }
 
 UIKit_Enum.Direction   = {
@@ -50,7 +50,7 @@ UIKit_Enum.Orientation = {
 UIKit_Enum.UpdateMode  = {
     None                      = "NONE",
     ChildrenVisibilityChanged = "CHILDREN_VISIBILITY_CHANGED",
+    ExcludeVisibilityChanged  = "EXCLUDE_VISIBILITY_CHANGED",
     UserUpdate                = "USER_UPDATE",
     All                       = "ALL"
 }
-

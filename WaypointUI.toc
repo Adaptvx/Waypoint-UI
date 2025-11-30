@@ -3,7 +3,7 @@
 ## Notes: This is the way.
 ## Author: AdaptiveX
 ## IconTexture: Interface/AddOns/WaypointUI/Art/Icon/IconAltLight.png
-## Version: 1.0.4
+## Version: 1.1.0
 ## SavedVariables: WaypointDB_Global, WaypointDB_Global_Persistent
 ## SavedVariablesPerCharacter: WaypointDB_Local, WaypointDB_Local_Persistent
 ## AddonCompartmentFunc: WaypointUIAPI_OpenSettingUI
@@ -26,11 +26,15 @@ Locales/Locales.xml
 # ------------------------
 
 Code/LocalUtil.lua
+Code/SharedUI.lua
+
 Code/MapPin/MapPin.xml
 Code/Waypoint/Waypoint.xml
 
 Code/Setting/Setting.xml
 Code/Support/Support.xml
+
+Code/ExtraFeature/ExtraFeature.xml
 
 # ------------------------
 # API

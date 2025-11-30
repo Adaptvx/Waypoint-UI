@@ -7,5 +7,6 @@
     <Script file="src/range.lua"/>
     <Script file="src/scrollBar.lua"/>
     <Script file="src/selectionMenu.lua"/>
+    <Script file="src/prompt.lua"/>
     <Script file="index.lua"/>
 </Ui>

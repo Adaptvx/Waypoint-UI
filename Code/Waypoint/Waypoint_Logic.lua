@@ -843,9 +843,9 @@ do -- Right cick WUI frames to untrack
 
     local function updateMouseEvents()
         local propagate = (not Setting_RightClickToClear)
-        WUIWaypointFrame:SetPropagateMouseClicks(propagate)
-        WUIPinpointFrame:SetPropagateMouseClicks(propagate)
-        WUINavigatorFrame:SetPropagateMouseClicks(propagate)
+        WUIWaypointFrame:AwaitSetPropagateMouseClicks(propagate)
+        WUIPinpointFrame:AwaitSetPropagateMouseClicks(propagate)
+        WUINavigatorFrame:AwaitSetPropagateMouseClicks(propagate)
     end
 
     local function updateVariables()

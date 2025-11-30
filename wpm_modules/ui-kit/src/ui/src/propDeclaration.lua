@@ -19,10 +19,18 @@ local Frame                     = env.WPM:Import("wpm_modules/ui-kit/primitives/
 
 -- If a frame is passed to `id`, return itself, otherwise it resolves the using the TagManager
 ---@param id string
----@param groupId? string
-local function resolveFrameReference(id, groupId)
-    if type(id) == "string" then return UIKit_TagManager:GetElementById(id, groupId) end
-    return id
+---@param groupID? string
+local function resolveFrameReference(id, groupID)
+    if type(id) == "string" then
+        if UIKit_TagManager.IsGroupCaptureString(id) then
+            local newID, newGroupID = UIKit_TagManager.ReadGroupCaptureString(id)
+            return UIKit_TagManager.GetElementById(newID, newGroupID)
+        else
+            return UIKit_TagManager.GetElementById(id, groupID)
+        end
+    else
+        return id
+    end
 end
 
 -- If the provided variable is a React variable, hook an OnChange that calls the propName on the frame
@@ -70,11 +78,11 @@ end
 
 do -- TagManager
     Frame.FrameProps["id"] = function(frame, value, groupID)
-        UIKit_TagManager.Id:Add(frame, value, groupID)
+        UIKit_TagManager.Id.Add(frame, value, groupID)
     end
 
     Frame.FrameProps["class"] = function(frame, value, groupID)
-        UIKit_TagManager.Class:Add(frame, value, groupID)
+        UIKit_TagManager.Class.Add(frame, value, groupID)
     end
 end
 
@@ -261,8 +269,8 @@ end
 do -- Move/Resize handle
     local function loadTargetFrame(frame)
         local id = frame.uk_prop_moveHandle_targetId or frame.uk_prop_resizeHandle_targetId
-        local groupId = frame.uk_prop_moveHandle_targetGroupId or frame.uk_prop_resizeHandle_targetGroupId
-        frame.uk_prop_handleTarget = UIKit_TagManager:GetElementById(id, groupId)
+        local groupID = frame.uk_prop_moveHandle_targetGroupId or frame.uk_prop_resizeHandle_targetGroupId
+        frame.uk_prop_handleTarget = UIKit_TagManager.GetElementById(id, groupID)
     end
 
     local function moveHandle_handleMouseDown(frame)
@@ -470,6 +478,14 @@ do -- Background
         UIKit_Renderer_Background:SetBackground(frame, true)
     end
 
+    Frame.FrameProps["backdropColor"] = function(frame, backgroundColor, borderColor)
+        assert(backgroundColor == UIKit_Define.Color_RGBA or backgroundColor == UIKit_Define.Color_HEX, "Invalid variable `background`: Must be a `Color_RGBA` or `Color_HEX`")
+        assert(borderColor == UIKit_Define.Color_RGBA or borderColor == UIKit_Define.Color_HEX, "Invalid variable `border`: Must be a `Color_RGBA` or `Color_HEX`")
+
+        frame.uk_prop_backdropColor_background, frame.uk_prop_backdropColor_border = backgroundColor, borderColor
+        UIKit_Renderer_Background:SetBackdropColor(frame)
+    end
+
     -- >>> React
     Frame.FrameProps["backgroundColor"] = function(frame, color)
         color = handleReact(frame, color, "backgroundColor")
@@ -490,22 +506,24 @@ do -- Background
         UIKit_Renderer_Background:SetRotation(frame)
     end
 
-    Frame.FrameProps["backdropColor"] = function(frame, backgroundColor, borderColor)
-        assert(backgroundColor == UIKit_Define.Color_RGBA or backgroundColor == UIKit_Define.Color_HEX, "Invalid variable `background`: Must be a `Color_RGBA` or `Color_HEX`")
-        assert(borderColor == UIKit_Define.Color_RGBA or borderColor == UIKit_Define.Color_HEX, "Invalid variable `border`: Must be a `Color_RGBA` or `Color_HEX`")
+    -- >>> React
+    Frame.FrameProps["backgroundBlendMode"] = function(frame, backgroundBlendMode)
+        backgroundBlendMode = handleReact(frame, backgroundBlendMode, "backgroundBlendMode")
 
-        frame.uk_prop_backdropColor_background, frame.uk_prop_backdropColor_border = backgroundColor, borderColor
-        UIKit_Renderer_Background:SetBackdropColor(frame)
+        assert(type(backgroundBlendMode) == "string", "Invalid variable `backgroundBlendMode`: Must be a string")
+
+        frame.uk_prop_blendMode = backgroundBlendMode
+        UIKit_Renderer_Background:SetBlendMode(frame)
     end
 
     -- >>> React
-    Frame.FrameProps["blendMode"] = function(frame, blendMode)
-        blendMode = handleReact(frame, blendMode, "blendMode")
+    Frame.FrameProps["backgroundDesaturated"] = function(frame, backgroundDesaturated)
+        backgroundDesaturated = handleReact(frame, backgroundDesaturated, "backgroundDesaturated")
 
-        assert(type(blendMode) == "string", "Invalid variable `blendMode`: Must be a string")
+        assert(type(backgroundDesaturated) == "boolean", "Invalid variable `backgroundDesaturated`: Must be a boolean")
 
-        frame.uk_prop_blendMode = blendMode
-        UIKit_Renderer_Background:SetBlendMode(frame)
+        frame.uk_prop_desaturated = backgroundDesaturated
+        UIKit_Renderer_Background:SetDesaturated(frame)
     end
 
     Frame.FrameProps["mask"] = function(frame, mask)
@@ -1025,8 +1043,8 @@ do -- Linear Slider
         assert(frame.uk_type == "LinearSlider", "Invalid variable `linearSliderThumbPropagateMouse`: Must be called on `LinearSlider`")
         assert(type(propagateMouse) == "boolean", "Invalid variable `linearSliderThumbPropagateMouse`: Must be a boolean")
 
-        frame:GetThumb():SetPropagateMouseClicks(propagateMouse)
-        frame:GetThumb():SetPropagateMouseMotion(propagateMouse)
+        frame:GetThumb():AwaitSetPropagateMouseClicks(propagateMouse)
+        frame:GetThumb():AwaitSetPropagateMouseMotion(propagateMouse)
     end
 end
 

@@ -93,7 +93,7 @@ local function scan(frame)
     end
     
     -- Child frames
-    local children = frame:GetFrameChildren()
+    local children = frame.GetFrameChildren and frame:GetFrameChildren()
     if children then
         for i = 1, #children do
             if not children[i].uk_flag_renderBreakpoint then

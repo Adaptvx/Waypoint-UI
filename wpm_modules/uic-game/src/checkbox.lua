@@ -6,6 +6,7 @@ local UIKit                                                                     
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -15,6 +16,8 @@ local UICGameCheckbox                                                           
 
 
 
+-- Shared
+--------------------------------
 
 local PATH                           = Path.Root .. "/wpm_modules/uic-game/resources/"
 local ATLAS                          = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameCheckbox.png", inset = 75, scale = 1 }
@@ -26,8 +29,11 @@ local BACKGROUND_CHECKED_HIGHLIGHTED = ATLAS{ left = 256 / 768, top = 256 / 512,
 local BACKGROUND_CHECKED_DISABLED    = ATLAS{ left = 512 / 768, top = 256 / 512, right = 768 / 768, bottom = 512 / 512 }
 
 
+Utils_Texture:PreloadAsset(PATH .. "UICGameCheckbox.png")
 
 
+-- Base
+--------------------------------
 
 local CheckboxMixin = CreateFromMixins(UICSharedMixin.CheckboxMixin)
 
@@ -89,6 +95,7 @@ UICGameCheckbox.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name)
         :background(BACKGROUND)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
     Mixin(frame, CheckboxMixin)
     frame:OnLoad()

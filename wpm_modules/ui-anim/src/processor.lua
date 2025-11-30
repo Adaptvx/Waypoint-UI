@@ -16,7 +16,7 @@ local PROP_POSY        = UIAnim_Enum.Property.PosY
 --------------------------------
 
 function UIAnim_Processor.ResolveTarget(target)
-    return type(target) == "string" and UIKit_TagManager:GetElementById(target) or target
+    return type(target) == "string" and UIKit_TagManager.GetElementById(target) or target
 end
 
 

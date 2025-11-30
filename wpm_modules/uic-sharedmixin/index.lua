@@ -45,8 +45,8 @@ end
 
 function ButtonMixin:RegisterMouseEvents(blockMouseEvents)
     if blockMouseEvents == false then
-        self:SetPropagateMouseClicks(true)
-        self:SetPropagateMouseMotion(true)
+        self:AwaitSetPropagateMouseClicks(true)
+        self:AwaitSetPropagateMouseMotion(true)
     end
 
     self:HookScript("OnEnter", self.OnEnter)
@@ -97,26 +97,33 @@ function ButtonMixin:Click()
     triggerHooks(self.onMouseUpHooks, self)
 end
 
-function ButtonMixin:HookEnableChange(func)
+function ButtonMixin:HookEnableChange(func, replace)
+    if replace then wipe(self.onEnableChangeHooks) end
     tinsert(self.onEnableChangeHooks, func)
 end
 
-function ButtonMixin:HookMouseDown(func)
+function ButtonMixin:HookMouseDown(func, replace)
+    if replace then wipe(self.onMouseDownHooks) end
     tinsert(self.onMouseDownHooks, func)
 end
-function ButtonMixin:HookMouseUp(func)
+
+function ButtonMixin:HookMouseUp(func, replace)
+    if replace then wipe(self.onMouseUpHooks) end
     tinsert(self.onMouseUpHooks, func)
 end
 
-function ButtonMixin:HookMouseEnter(func)
+function ButtonMixin:HookMouseEnter(func, replace)
+    if replace then wipe(self.onMouseEnterHooks) end
     tinsert(self.onMouseEnterHooks, func)
 end
 
-function ButtonMixin:HookMouseLeave(func)
+function ButtonMixin:HookMouseLeave(func, replace)
+    if replace then wipe(self.onMouseLeaveHooks) end
     tinsert(self.onMouseLeaveHooks, func)
 end
 
-function ButtonMixin:HookButtonStateChange(func)
+function ButtonMixin:HookButtonStateChange(func, replace)
+    if replace then wipe(self.onStateChangeHooks) end
     tinsert(self.onStateChangeHooks, func)
 end
 
@@ -204,14 +211,15 @@ function SelectionMenuRemote:OnClick()
     local data = self.data
     local value = self.value
 
-    if selectionMenu:IsLoaded() and selectionMenu:GetRoot() == self then
-        selectionMenu:Unload()
+    if selectionMenu:IsOpen() and selectionMenu:GetRoot() == self then
+        selectionMenu:Close()
     else
-        selectionMenu:Load(value, data, self.SetValue, nil, "TOP", self, "BOTTOM", 0, -3, self)
+        selectionMenu:Open(value, data, self.SetValue, nil, "TOP", self, "BOTTOM", 0, -3, self)
     end
 end
 
-function SelectionMenuRemote:HookValueChanged(func)
+function SelectionMenuRemote:HookValueChanged(func, replace)
+    if replace then wipe(self.onValueChangedHooks) end
     tinsert(self.onValueChangedHooks, func)
 end
 
@@ -267,6 +275,11 @@ function CheckboxMixin:InitCheckbox()
     self.onCheckHooks = {}
 end
 
+function CheckboxMixin:HookCheck(func, replace)
+    if replace then wipe(self.onCheckHooks) end
+    tinsert(self.onCheckHooks, func)
+end
+
 function CheckboxMixin:SetChecked(checked)
     if self.checked ~= checked then
         self.checked = checked
@@ -280,10 +293,6 @@ end
 
 function CheckboxMixin:Toggle()
     self:SetChecked(not self:GetChecked())
-end
-
-function CheckboxMixin:HookCheck(func)
-    tinsert(self.onCheckHooks, func)
 end
 
 
@@ -363,7 +372,8 @@ function InputMixin:OnEnableChange()
     self.inputFrame:SetEnabled(self:IsEnabled())
 end
 
-function InputMixin:HookFocusChange(func)
+function InputMixin:HookFocusChange(func, replace)
+    if replace then wipe(self.onFocusChangeHooks) end
     tinsert(self.onFocusChangeHooks, func)
 end
 
@@ -432,7 +442,8 @@ function ColorInputMixin:OnClick()
     )
 end
 
-function ColorInputMixin:HookColorChange(func)
+function ColorInputMixin:HookColorChange(func, replace)
+    if replace then wipe(self.onColorChangeHooks) end
     tinsert(self.onColorChangeHooks, func)
 end
 

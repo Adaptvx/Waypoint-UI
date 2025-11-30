@@ -3,7 +3,7 @@ local env = select(2, ...)
 local assert = assert
 local CreateAtlasMarkup = CreateAtlasMarkup
 
-local Utils_Atlas = env.WPM:New("wpm_modules/utils/atlas")
+local Utils_InlineIcon = env.WPM:New("wpm_modules/utils/inlineIcon")
 
 -- Creates an inline icon.
 ---@param path string
@@ -12,7 +12,7 @@ local Utils_Atlas = env.WPM:New("wpm_modules/utils/atlas")
 ---@param horizontalOffset? number
 ---@param verticalOffset? number
 ---@param textureType? string: "Atlas" or "Texture"
-function Utils_Atlas:InlineIcon(path, height, width, horizontalOffset, verticalOffset, textureType)
+function Utils_InlineIcon:InlineIcon(path, height, width, horizontalOffset, verticalOffset, textureType)
     assert(path, "`InlineIcon`: expected string `path`, got " .. type(path))
     assert(height, "`InlineIcon`: expected number `height`, got " .. type(height))
     assert(width, "`InlineIcon`: expected number `width`, got " .. type(width))
@@ -31,6 +31,6 @@ end
 ---@param iconString string
 ---@param newXOffset number
 ---@param newYOffset number
-function Utils_Atlas:IconOffset(iconString, newXOffset, newYOffset)
+function Utils_InlineIcon:IconOffset(iconString, newXOffset, newYOffset)
     return iconString:gsub(":(%d+):(%d+)|a", ":" .. newXOffset .. ":" .. newYOffset .. "|a")
 end

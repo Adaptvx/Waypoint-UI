@@ -124,8 +124,8 @@ function InteractiveRect:New(name, parent)
     local frame = Frame:New("Frame", name, parent)
     Mixin(frame, RectMixin)
     frame:EnableMouse(true)
-    frame:SetPropagateMouseClicks(true)
-    frame:SetPropagateMouseMotion(true)
+    frame:AwaitSetPropagateMouseClicks(true)
+    frame:AwaitSetPropagateMouseMotion(true)
 
     -- Events
     --------------------------------

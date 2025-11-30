@@ -161,7 +161,7 @@ local function isClamped()
     local clamped = (resultMinDistance < CLAMP_THRESHOLD)
     local clampChanged = WaypointCache:Get("clamped") ~= clamped
 
-
+    
     return clamped, clampChanged
 end
 
@@ -241,13 +241,17 @@ end
 -- Cache
 --------------------------------
 
-local function hasNewNavFrame()
+function WaypointDataProvider:AttemptToAcquireNavFrame()
     local navFrame = GetNavigationFrame()
-    return navFrame ~= nil and WaypointCache:Get("navFrame") ~= navFrame
+    local currentNavFrame = WaypointCache:Get("navFrame")
+
+    if navFrame ~= nil and navFrame ~= currentNavFrame then
+        WaypointCache:Set("navFrame", navFrame)
+        CallbackRegistry:Trigger("WaypointDataProvider.NavFrameObtained")
+    end
 end
 
 function WaypointDataProvider:CacheSuperTrackingInfo()
-    local navFrame                   = GetNavigationFrame()
     local valid                      = IsSuperTrackingAnything()
     local pinType                    = GetHighestPrioritySuperTrackingType()
     local icon                       = tostring(SuperTrackedFrame.Icon:GetTexture())
@@ -256,7 +260,6 @@ function WaypointDataProvider:CacheSuperTrackingInfo()
     local poiInfo                    = poiID and GetAreaPOIInfo(nil, poiID)
     local pinName, pinDescription    = GetSuperTrackedItemName()
     local redirectInfo               = getRedirectInfo()
-    local isNewNavFrame              = hasNewNavFrame()
     local redirectContextIcon        = WaypointDataProvider:GetContextIconTextureForRedirect()
 
     local isUserNavigation           = MapPin.IsUserNavigation()
@@ -271,7 +274,6 @@ function WaypointDataProvider:CacheSuperTrackingInfo()
 
 
 
-    WaypointCache:Set("navFrame", navFrame)
     WaypointCache:Set("valid", valid)
     WaypointCache:Set("pinType", pinType)
     WaypointCache:Set("icon", icon)
@@ -290,7 +292,6 @@ function WaypointDataProvider:CacheSuperTrackingInfo()
 
 
 
-    if isNewNavFrame then CallbackRegistry:Trigger("WaypointDataProvider.NavFrameObtained") end
     CallbackRegistry:Trigger("WaypointDataProvider.CacheSuperTrackingInfo")
 end
 

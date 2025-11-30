@@ -8,6 +8,7 @@ local UIKit                                                                     
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -17,13 +18,17 @@ local UICGameRange                                                              
 
 
 
+-- Shared
+--------------------------------
 
 local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
-local FILL        = UIKit.Define.Fill{}
-local P_FILL      = UIKit.Define.Percentage{ value = 100 }
 local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameRange.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
+local FILL        = UIKit.Define.Fill{}
+local P_FILL      = UIKit.Define.Percentage{ value = 100 }
 
+
+Utils_Texture:PreloadAsset(PATH .. "UICGameRange.png")
 
 
 -- Stepper Button
@@ -110,6 +115,7 @@ UICGameRange.StepperButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name)
         :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
     Mixin(frame, StepperButtonMixin)
 
@@ -190,7 +196,8 @@ UICGameRange.New = UIKit.Prefab(function(id, name, children, ...)
                     :frameLevel(2)
                     :under("LINEAR_SLIDER_THUMB")
                     :size(FILL)
-                    :background(BACKGROUND_THUMB),
+                    :background(BACKGROUND_THUMB)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
                 Frame(name .. ".RangeTrack")
                     :id("RangeTrack", id)
@@ -198,30 +205,34 @@ UICGameRange.New = UIKit.Prefab(function(id, name, children, ...)
                     :under("LINEAR_SLIDER_TRACK")
                     :size(TRACK_SIZE)
                     :background(BACKGROUND)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
             })
                 :id("Range", id)
                 :point(UIKit.Enum.Point.Center)
                 :size(RANGE_WIDTH, RANGE_HEIGHT)
                 :linearSliderThumbPropagateMouse(true)
                 :linearSliderThumbSize(THUMB_SIZE, THUMB_SIZE)
-                :linearSliderOrientation(UIKit.Enum.Orientation.Horizontal),
+                :linearSliderOrientation(UIKit.Enum.Orientation.Horizontal)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             UICGameRange.StepperButton(name .. ".ForwardButton")
                 :id("ForwardButton", id)
                 :point(UIKit.Enum.Point.Right)
-                :size(STEPPER_BTN_SIZE, STEPPER_BTN_SIZE),
+                :size(STEPPER_BTN_SIZE, STEPPER_BTN_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             UICGameRange.StepperButton(name .. ".BackwardButton")
                 :id("BackwardButton", id)
                 :point(UIKit.Enum.Point.Left)
                 :size(STEPPER_BTN_SIZE, STEPPER_BTN_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
 
-    frame.Range = UIKit:GetElementById("Range", id)
-    frame.RangeThumb = UIKit:GetElementById("RangeThumb", id)
-    frame.RangeTrack = UIKit:GetElementById("RangeTrack", id)
-    frame.ForwardButton = UIKit:GetElementById("ForwardButton", id)
-    frame.BackwardButton = UIKit:GetElementById("BackwardButton", id)
+    frame.Range = UIKit.GetElementById("Range", id)
+    frame.RangeThumb = UIKit.GetElementById("RangeThumb", id)
+    frame.RangeTrack = UIKit.GetElementById("RangeTrack", id)
+    frame.ForwardButton = UIKit.GetElementById("ForwardButton", id)
+    frame.BackwardButton = UIKit.GetElementById("BackwardButton", id)
 
     Mixin(frame.Range, RangeSliderMixin)
     Mixin(frame, RangeMixin)
@@ -265,15 +276,18 @@ UICGameRange.NewWithText = UIKit.Prefab(function(id, name, children, ...)
                 :size(RWT_TEXT_WIDTH, P_FILL)
                 :fontObject(UIFont.UIFontObjectNormal12)
                 :textAlignment("RIGHT", "MIDDLE")
-                :textColor(TEXT_COLOR),
+                :textColor(TEXT_COLOR)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
             UICGameRange.New(name .. ".Range")
                 :id("Range", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(RWT_RANGE_WIDTH, P_FILL)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Text = UIKit:GetElementById("Text", id)
-    frame.Range = UIKit:GetElementById("Range", id)
+    frame.Text = UIKit.GetElementById("Text", id)
+    frame.Range = UIKit.GetElementById("Range", id)
 
     Mixin(frame, RangeWithTextMixin)
 

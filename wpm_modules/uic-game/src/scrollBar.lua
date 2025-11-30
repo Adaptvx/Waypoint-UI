@@ -6,6 +6,7 @@ local UIKit                                                                     
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -15,6 +16,8 @@ local UICGameScrollBar                                                          
 
 
 
+-- Shared
+--------------------------------
 
 local PATH                         = Path.Root .. "/wpm_modules/uic-game/resources/"
 local FILL                         = UIKit.Define.Fill{}
@@ -26,7 +29,11 @@ local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 128, scale = .0975, left = 7
 local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 128, scale = .0975, left = 1024 / 1280, right = 1280 / 1280, top = 0 / 512, bottom = 256 / 512 }
 
 
+Utils_Texture:PreloadAsset(PATH .. "UICGameScrollBar.png")
 
+
+-- Scroll Bar
+--------------------------------
 
 local ScrollBarMixin = CreateFromMixins(UICSharedMixin.ScrollBarMixin)
 
@@ -71,30 +78,29 @@ UICGameScrollBar.New = UIKit.Prefab(function(id, name, children, ...)
             InteractiveRect(name .. ".Hitbox")
                 :id("Hitbox", id)
                 :frameLevel(3)
-                :size(FILL),
+                :size(FILL)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-            Frame(name .. ".Thumb", {
-
-            })
+            Frame(name .. ".Thumb")
                 :id("Thumb", id)
                 :frameLevel(2)
                 :under("LINEAR_SLIDER_THUMB")
                 :size(FILL)
-                :background(BACKGROUND_THUMB),
+                :background(BACKGROUND_THUMB)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-            Frame(name .. ".Track", {
-
-            })
+            Frame(name .. ".Track")
                 :id("Track", id)
                 :frameLevel(1)
                 :under("LINEAR_SLIDER_TRACK")
                 :size(FILL)
                 :background(BACKGROUND)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
         })
 
-    frame.Hitbox = UIKit:GetElementById("Hitbox", id)
-    frame.Thumb = UIKit:GetElementById("Thumb", id)
-    frame.Track = UIKit:GetElementById("Track", id)
+    frame.Hitbox = UIKit.GetElementById("Hitbox", id)
+    frame.Thumb = UIKit.GetElementById("Thumb", id)
+    frame.Track = UIKit.GetElementById("Track", id)
 
     Mixin(frame, ScrollBarMixin)
     frame:OnLoad()

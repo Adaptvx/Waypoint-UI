@@ -16,8 +16,6 @@
 	<Include file="struct/index.xml"/>
 	<Include file="slash-command/index.xml"/>
 	<Include file="wow-client/index.xml"/>
-	<Include file="achievements/index.xml"/>
-	<Include file="pvp/index.xml"/>
 	<Include file="ui-kit/index.xml"/>
 	<Include file="ui-anim/index.xml"/>
 	<Include file="uic-sharedmixin/index.xml"/>

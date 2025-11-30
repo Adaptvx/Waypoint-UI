@@ -12,6 +12,7 @@
 	<Script file="public/scrollBar.lua"/>
 	<Script file="public/scrollView.lua"/>
 	<Script file="public/text.lua"/>
+	<Script file="public/modelScene.lua"/>
 
 	<Script file="utils/texture.lua"/>
 </Ui>

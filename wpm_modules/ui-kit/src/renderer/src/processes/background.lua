@@ -69,8 +69,15 @@ function UIKit_Renderer_Background:SetRotation(frame)
 end
 
 function UIKit_Renderer_Background:SetBlendMode(frame)
-    local blendMode = frame.uk_prop_blendMode
-    if not blendMode or not frame.Background then return end
+    local backgroundBlendMode = frame.uk_prop_blendMode
+    if not backgroundBlendMode or not frame.Background then return end
 
-    frame.Background:SetBlendMode(blendMode)
+    frame.Background:SetBlendMode(backgroundBlendMode)
+end
+
+function UIKit_Renderer_Background:SetDesaturated(frame)
+    local backgroundDesaturated = frame.uk_prop_desaturated
+    if not backgroundDesaturated or not frame.Background then return end
+
+    frame.Background:SetDesaturated(backgroundDesaturated)
 end

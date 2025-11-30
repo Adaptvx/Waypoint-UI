@@ -177,7 +177,7 @@ end
         "entry10",
     }
 
-    myFrame = UIKit:GetElementById("Frame")
-    myList = UIKit:GetElementById("List")
+    myFrame = UIKit.GetElementById("Frame")
+    myList = UIKit.GetElementById("List")
     myList:SetData(data)
 ]]

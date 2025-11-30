@@ -7,7 +7,7 @@ local GetQuestClassification = C_QuestInfoSystem.GetQuestClassification
 local GetQuestType           = C_QuestLog.GetQuestType
 
 local Path                   = env.WPM:Import("wpm_modules/path")
-local Utils_Atlas            = env.WPM:Import("wpm_modules/utils/atlas")
+local Utils_InlineIcon            = env.WPM:Import("wpm_modules/utils/inlineIcon")
 local WaypointContextIcon    = env.WPM:New("@/Waypoint/ContextIcon")
 
 local PATH                   = Path.Root .. "/Art/ContextIcon/"
@@ -19,7 +19,7 @@ local PATH                   = Path.Root .. "/Art/ContextIcon/"
 
 function WaypointContextIcon:ConvertToInlineIcon(name, isTexture)
     local iconPath = isTexture and name or (PATH .. name .. ".png")
-    return Utils_Atlas:InlineIcon(iconPath, 16, 16, 0, 0)
+    return Utils_InlineIcon:InlineIcon(iconPath, 16, 16, 0, 0)
 end
 
 function WaypointContextIcon:GetQuestInfo(questID)

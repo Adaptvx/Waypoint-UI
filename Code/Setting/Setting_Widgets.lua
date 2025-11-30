@@ -108,9 +108,9 @@ SettingWidgets.Tab = UIKit.Prefab(function(id, name, children, ...)
         :_updateMode(UIKit.Enum.UpdateMode.None)
         :_renderBreakpoint()
 
-    frame.Content = UIKit:GetElementById("Content", id)
-    frame.ScrollBar = UIKit:GetElementById("ScrollBar", id)
-    frame.Layout = UIKit:GetElementById("Layout", id)
+    frame.Content = UIKit.GetElementById("Content", id)
+    frame.ScrollBar = UIKit.GetElementById("ScrollBar", id)
+    frame.Layout = UIKit.GetElementById("Layout", id)
 
     Mixin(frame, TabMixin)
 
@@ -235,8 +235,8 @@ SettingWidgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
         :size(TB_WIDTH, TB_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Background = UIKit:GetElementById("Background", id)
-    frame.Text = UIKit:GetElementById("Text", id)
+    frame.Background = UIKit.GetElementById("Background", id)
+    frame.Text = UIKit.GetElementById("Text", id)
 
     Mixin(frame, TabButtonMixin)
     frame:OnLoad()
@@ -280,7 +280,7 @@ SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
                     :alpha(.0975)
                     :background(TEXTURE_NIL)
                     :mask(TITLE_IMAGE_MASK)
-                    :blendMode(UIKit.Enum.BlendMode.Add)
+                    :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                     :_updateMode(UIKit.Enum.UpdateMode.None),
 
                 VStack(name .. ".Container.HStack.VStack", {
@@ -314,10 +314,10 @@ SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
         :size(TITLE_WIDTH, TITLE_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Splash = UIKit:GetElementById("Splash", id)
+    frame.Splash = UIKit.GetElementById("Splash", id)
     frame.SplashTexture = frame.Splash:GetBackground()
-    frame.Title = UIKit:GetElementById("Title", id)
-    frame.Description = UIKit:GetElementById("Description", id)
+    frame.Title = UIKit.GetElementById("Title", id)
+    frame.Description = UIKit.GetElementById("Description", id)
 
     Mixin(frame, TitleMixin)
 
@@ -385,8 +385,8 @@ SettingWidgets.Container = UIKit.Prefab(function(id, name, children, ...)
         :size(C_WIDTH, C_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Background = UIKit:GetElementById("Background", id)
-    frame.Content = UIKit:GetElementById("Content", id)
+    frame.Background = UIKit.GetElementById("Background", id)
+    frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ContainerMixin)
 
@@ -455,9 +455,9 @@ SettingWidgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ..
         :size(C_TITLE_WIDTH, C_TITLE_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Title = UIKit:GetElementById("Title", id)
-    frame.Background = UIKit:GetElementById("Background", id)
-    frame.Content = UIKit:GetElementById("Content", id)
+    frame.Title = UIKit.GetElementById("Title", id)
+    frame.Background = UIKit.GetElementById("Background", id)
+    frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ContainerMixin)
 
@@ -635,15 +635,15 @@ SettingWidgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
         :size(E_WIDTH, E_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Hitbox = UIKit:GetElementById("Hitbox", id)
-    frame.Content = UIKit:GetElementById("Content", id)
-    frame.Background = UIKit:GetElementById("Background", id)
-    frame.Title = UIKit:GetElementById("Title", id)
-    frame.Image = UIKit:GetElementById("Image", id)
+    frame.Hitbox = UIKit.GetElementById("Hitbox", id)
+    frame.Content = UIKit.GetElementById("Content", id)
+    frame.Background = UIKit.GetElementById("Background", id)
+    frame.Title = UIKit.GetElementById("Title", id)
+    frame.Image = UIKit.GetElementById("Image", id)
     frame.ImageTexture = frame.Image:GetBackground()
-    frame.Description = UIKit:GetElementById("Description", id)
-    frame.Info = UIKit:GetElementById("Info", id)
-    frame.Action = UIKit:GetElementById("Action", id)
+    frame.Description = UIKit.GetElementById("Description", id)
+    frame.Info = UIKit.GetElementById("Info", id)
+    frame.Action = UIKit.GetElementById("Action", id)
 
     Mixin(frame, ElementBaseMixin)
     frame:OnLoad()
@@ -692,7 +692,7 @@ SettingWidgets.ElementCheckbox = UIKit.Prefab(function(id, name, children, ...)
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Checkbox = UIKit:GetElementById("Checkbox", id)
+    frame.Checkbox = UIKit.GetElementById("Checkbox", id)
 
     Mixin(frame, ElementCheckboxMixin)
 
@@ -724,7 +724,7 @@ SettingWidgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Button = UIKit:GetElementById("Button", id)
+    frame.Button = UIKit.GetElementById("Button", id)
 
     Mixin(frame, ElementButtonMixin)
 
@@ -757,7 +757,7 @@ SettingWidgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Range = UIKit:GetElementById("Range", id)
+    frame.Range = UIKit.GetElementById("Range", id)
 
     Mixin(frame, ElementRangeMixin)
 
@@ -790,7 +790,7 @@ SettingWidgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, 
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.ButtonSelectionMenu = UIKit:GetElementById("ButtonSelectionMenu", id)
+    frame.ButtonSelectionMenu = UIKit.GetElementById("ButtonSelectionMenu", id)
 
     Mixin(frame, ElementSelectionMenuMixin)
 
@@ -822,7 +822,7 @@ SettingWidgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.ColorInput = UIKit:GetElementById("ColorInput", id)
+    frame.ColorInput = UIKit.GetElementById("ColorInput", id)
 
     Mixin(frame, ElementColorInputMixin)
 
@@ -854,7 +854,7 @@ SettingWidgets.ElementInput = UIKit.Prefab(function(id, name, children, ...)
         })
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Input = UIKit:GetElementById("Input", id)
+    frame.Input = UIKit.GetElementById("Input", id)
     frame.Input.Input:fontSize(14)
 
     Mixin(frame, ElementInputMixin)

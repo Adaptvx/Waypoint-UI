@@ -162,7 +162,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :background(PA_ARROW_BACKGROUND)
                         :point(UIKit.Enum.Point.Center)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
-                        :blendMode(UIKit.Enum.BlendMode.Add)
+                        :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
                         :_updateMode(UIKit.Enum.UpdateMode.None)
                 })
@@ -178,7 +178,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :background(PA_ARROW_BACKGROUND)
                         :point(UIKit.Enum.Point.Center)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
-                        :blendMode(UIKit.Enum.BlendMode.Add)
+                        :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
                         :_updateMode(UIKit.Enum.UpdateMode.None)
                 })
@@ -194,7 +194,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :background(PA_ARROW_BACKGROUND)
                         :point(UIKit.Enum.Point.Center)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
-                        :blendMode(UIKit.Enum.BlendMode.Add)
+                        :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
                         :_updateMode(UIKit.Enum.UpdateMode.None)
                 })
@@ -207,13 +207,13 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                 :layoutSpacing(UIKit.Define.Num{ value = -5 })
         })
 
-    frame.Arrow1 = UIKit:GetElementById("Arrow1", id)
-    frame.Arrow2 = UIKit:GetElementById("Arrow2", id)
-    frame.Arrow3 = UIKit:GetElementById("Arrow3", id)
+    frame.Arrow1 = UIKit.GetElementById("Arrow1", id)
+    frame.Arrow2 = UIKit.GetElementById("Arrow2", id)
+    frame.Arrow3 = UIKit.GetElementById("Arrow3", id)
 
-    frame.Arrow1Texture = UIKit:GetElementById("Arrow1Texture", id)
-    frame.Arrow2Texture = UIKit:GetElementById("Arrow2Texture", id)
-    frame.Arrow3Texture = UIKit:GetElementById("Arrow3Texture", id)
+    frame.Arrow1Texture = UIKit.GetElementById("Arrow1Texture", id)
+    frame.Arrow2Texture = UIKit.GetElementById("Arrow2Texture", id)
+    frame.Arrow3Texture = UIKit.GetElementById("Arrow3Texture", id)
     frame.Arrow1TextureBackground = frame.Arrow1Texture:GetBackground()
     frame.Arrow2TextureBackground = frame.Arrow2Texture:GetBackground()
     frame.Arrow3TextureBackground = frame.Arrow3Texture:GetBackground()
@@ -228,10 +228,8 @@ end)
 -- Context Icon
 --------------------------------
 
-local CI_BACKGROUND_TEXTURE = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-local CI_FOREGROUND_TEXTURE = ATLAS{ left = 256 / 1792, right = 512 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-local CI_BACKGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 0 }
-local CI_FOREGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
+local CI_FOREGROUND_TEXTURE = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
+local CI_BACKGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
 local CI_CONTENT_SIZE       = UIKit.Define.Percentage{ value = 32.5 }
 
 
@@ -253,7 +251,6 @@ end
 function ContextIconMixin:SetTint(color)
     self.tintColor = color
     self.BackgroundTexture:SetColor(color)
-    self.ForegroundTexture:SetColor(color)
 end
 
 function ContextIconMixin:Recolor()
@@ -281,40 +278,26 @@ WaypointTemplates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
             Frame(name .. "Background", {
 
             })
-                :id("Background", id)
+                :id("BackgroundTexture", id)
                 :point(UIKit.Enum.Point.Center)
                 :size(CI_BACKGROUND_SIZE, CI_BACKGROUND_SIZE)
-                :background(CI_BACKGROUND_TEXTURE)
-                :alpha(.375)
+                :background(CI_FOREGROUND_TEXTURE)
                 :frameLevel(2)
                 :_updateMode(UIKit.Enum.UpdateMode.None),
 
-            Frame(name .. "Foreground", {
-
-            })
-                :id("Foreground", id)
-                :point(UIKit.Enum.Point.Center)
-                :size(CI_FOREGROUND_SIZE, CI_FOREGROUND_SIZE)
-                :background(CI_FOREGROUND_TEXTURE)
-                :frameLevel(3)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
-
-            Frame(name .. "Image", {
-
-            })
+            Frame(name .. "Image")
                 :id("Image", id)
                 :point(UIKit.Enum.Point.Center)
                 :background(TEXTURE_NIL)
-                :frameLevel(4)
+                :frameLevel(3)
                 :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE)
                 :_updateMode(UIKit.Enum.UpdateMode.None),
 
             children
         })
 
-    frame.BackgroundTexture = UIKit:GetElementById("Background", id):GetBackground()
-    frame.ForegroundTexture = UIKit:GetElementById("Foreground", id):GetBackground()
-    frame.ImageTexture = UIKit:GetElementById("Image", id):GetBackground()
+    frame.BackgroundTexture = UIKit.GetElementById("BackgroundTexture", id):GetBackground()
+    frame.ImageTexture = UIKit.GetElementById("Image", id):GetBackground()
 
     Mixin(frame, ContextIconMixin)
     return frame

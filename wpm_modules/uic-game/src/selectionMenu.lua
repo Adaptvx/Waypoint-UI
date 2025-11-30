@@ -7,6 +7,7 @@ local UIKit                                                                     
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -22,6 +23,9 @@ local UICGameSelectionMenu                                                      
 local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
 local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameSelectionMenu.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
+
+
+Utils_Texture:PreloadAsset(PATH .. "UICGameSelectionMenu.png")
 
 
 -- Row
@@ -138,7 +142,7 @@ UICGameSelectionMenu.Row = UIKit.Prefab(function(id, name, children, ...)
         :size(ROW_WIDTH, ROW_HEIGHT)
         :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Text = UIKit:GetElementById("Text", id)
+    frame.Text = UIKit.GetElementById("Text", id)
     Mixin(frame, RowMixin)
     frame:OnLoad()
 
@@ -246,7 +250,7 @@ function ContentArrowMixin:Unload()
     end)
 end
 
-function ContentArrowMixin:IsLoaded()
+function ContentArrowMixin:isOpen()
     return self.parent:IsShown()
 end
 
@@ -257,11 +261,13 @@ UICGameSelectionMenu.ContentArrow = UIKit.Prefab(function(id, name, children, ..
                 :id("Arrow", id)
                 :size(ARROW_SIZE, ARROW_SIZE)
                 :background(TEXTURE_NIL)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
         :background(TEXTURE_NIL)
         :size(OVERLAY_WIDTH, OVERLAY_HEIGHT)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Arrow = UIKit:GetElementById("Arrow", id)
+    frame.Arrow = UIKit.GetElementById("Arrow", id)
 
     Mixin(frame.Arrow, ContentArrowMixin)
     return frame
@@ -328,19 +334,19 @@ end)
 local SelectionMenuMixin = {}
 
 local function handleGlobalMouseClick(self, button)
-    if not self:IsShown() then return end                    -- Not already hidden as the event triggers while this frame is hidden?
-    if self:IsMouseOver() then return end                    -- Not mouse over context menu
+    if not self:IsShown() then return end -- Not already hidden as the event triggers while this frame is hidden?
+    if self:IsMouseOver() then return end -- Not mouse over context menu
     if self.root and self.root:IsMouseOver() then return end -- Not mouse over root frame
 
-    self:Unload()
+    self:Close()
 end
 
 function SelectionMenuMixin:OnLoad()
-    self.isLoaded = false
-    self.root = nil -- Prevent closing from clicking on the root frame such as a button
-    self.selectedIndex = 0
+    self.isOpen                     = false
+    self.root                       = nil -- Prevent closing from clicking on the root frame such as a button
+    self.selectedIndex              = 0
     self.customElementUpdateHandler = nil
-    self.onValueChangeHook = nil
+    self.onValueChangeHook          = nil
 
     -- List
     self.List:SetOnElementUpdate(function(...) self:HandleElementUpdate(...) end)
@@ -400,7 +406,7 @@ function SelectionMenuMixin:GetRoot()
     return self.root
 end
 
-function SelectionMenuMixin:Load(initialIndex, data, onValueChange, customElementUpdateHandler, point, relativeTo, relativePoint, x, y, root)
+function SelectionMenuMixin:Open(initialIndex, data, onValueChange, customElementUpdateHandler, point, relativeTo, relativePoint, x, y, root)
     assert(initialIndex, "Invalid variable `initialIndex`")
     assert(data, "Invalid variable `data`")
     assert(point, "Invalid variable `point`")
@@ -427,21 +433,21 @@ function SelectionMenuMixin:Load(initialIndex, data, onValueChange, customElemen
     SelectionMenuAnimation:Play(self, "INTRO")
 
     -- Flag as loaded
-    self.isLoaded = true
+    self.isOpen = true
 end
 
-function SelectionMenuMixin:Unload()
+function SelectionMenuMixin:Close()
     if SelectionMenuAnimation:IsPlaying(self, "OUTRO") then return end
 
     SelectionMenuAnimation:Play(self, "OUTRO").onFinish(function()
         self:Hide()
     end)
 
-    self.isLoaded = false
+    self.isOpen = false
 end
 
-function SelectionMenuMixin:IsLoaded()
-    return self.isLoaded
+function SelectionMenuMixin:IsOpen()
+    return self.isOpen
 end
 
 
@@ -455,7 +461,8 @@ UICGameSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
                     :size(MENU_BACKGROUND_SIZE)
                     :background(MENU_BACKGROUND)
                     :alpha(.925)
-                    :_excludeFromCalculations(),
+                    :_excludeFromCalculations()
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
                 LazyScrollView(name .. ".List")
                     :id("List", id)
@@ -468,31 +475,36 @@ UICGameSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
                     :scrollInterpolation(5)
                     :scrollDirection(UIKit.Enum.Direction.Vertical)
                     :poolPrefab(UICGameSelectionMenu.Row)
-                    :lazyScrollViewElementHeight(28),
+                    :lazyScrollViewElementHeight(28)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
                 UICGameSelectionMenu.ContentArrow(name .. ".ArrowUp")
                     :id("ArrowUp", id)
                     :frameLevel(5)
                     :point(UIKit.Enum.Point.Top)
-                    :_excludeFromCalculations(),
+                    :_excludeFromCalculations()
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
                 UICGameSelectionMenu.ContentArrow(name .. ".ArrowDown")
                     :id("ArrowDown", id)
                     :frameLevel(5)
                     :point(UIKit.Enum.Point.Bottom)
                     :_excludeFromCalculations()
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
             })
                 :id("Content", id)
                 :point(UIKit.Enum.Point.Center)
                 :size(MENU_CONTENT_WIDTH, MENU_CONTENT_HEIGHT)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Content = UIKit:GetElementById("Content", id)
-    frame.Background = UIKit:GetElementById("Background", id)
+    frame.Content = UIKit.GetElementById("Content", id)
+    frame.Background = UIKit.GetElementById("Background", id)
     frame.BackgroundTexture = frame.Background:GetBackground()
-    frame.List = UIKit:GetElementById("List", id)
-    frame.ArrowUp = UIKit:GetElementById("ArrowUp", id)
-    frame.ArrowDown = UIKit:GetElementById("ArrowDown", id)
+    frame.List = UIKit.GetElementById("List", id)
+    frame.ArrowUp = UIKit.GetElementById("ArrowUp", id)
+    frame.ArrowDown = UIKit.GetElementById("ArrowDown", id)
 
     frame.List.__parentRef = frame
 

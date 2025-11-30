@@ -6,8 +6,9 @@ local UIFont                                                                    
 local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
-local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -26,34 +27,47 @@ local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameButton.pn
 local TEXTURE_NIL = UIKit.Define.Texture_NineSlice{ path = nil, inset = 1, scale = 1 }
 
 
+Utils_Texture:PreloadAsset(PATH .. "UICGameButton.png")
 
 
 -- Base
 --------------------------------
 
-local CONTENT_SIZE                     = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 19 }
+local CONTENT_SIZE                        = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 19 }
+local CONTENT_SIZE_1x                     = UIKit.Define.Percentage{ value = 100 }
 
-local BASE_BACKGROUND_RED              = ATLAS{ left = 0 / 2048, top = 0 / 768, right = 512 / 2048, bottom = 256 / 768 }
-local BASE_BACKGROUND_RED_HIGHLIGHTED  = ATLAS{ left = 512 / 2048, top = 0 / 768, right = 1024 / 2048, bottom = 256 / 768 }
-local BASE_BACKGROUND_RED_PUSHED       = ATLAS{ left = 1024 / 2048, top = 0 / 768, right = 1536 / 2048, bottom = 256 / 768 }
-local BASE_BACKGROUND_RED_DISABLED     = ATLAS{ left = 1536 / 2048, top = 0 / 768, right = 2048 / 2048, bottom = 256 / 768 }
-local BASE_BACKGROUND_GREY             = ATLAS{ left = 0 / 2048, top = 256 / 768, right = 512 / 2048, bottom = 512 / 768 }
-local BASE_BACKGROUND_GREY_HIGHLIGHTED = ATLAS{ left = 512 / 2048, top = 256 / 768, right = 1024 / 2048, bottom = 512 / 768 }
-local BASE_BACKGROUND_GREY_PUSHED      = ATLAS{ left = 1024 / 2048, top = 256 / 768, right = 1536 / 2048, bottom = 512 / 768 }
-local BASE_BACKGROUND_GREY_DISABLED    = ATLAS{ left = 1536 / 2048, top = 256 / 768, right = 2048 / 2048, bottom = 512 / 768 }
-local CONTENT_Y                        = 0
-local CONTENT_Y_HIGHLIGHTED            = 0
-local CONTENT_Y_PRESSED                = -1
-local ALPHA_ENABLED                    = 1
-local ALPHA_DISABLED                   = .5
+local BASE_BACKGROUND_RED                 = ATLAS{ left = 0 / 2048, top = 0 / 1280, right = 512 / 2048, bottom = 256 / 1280 }
+local BASE_BACKGROUND_RED_HIGHLIGHTED     = ATLAS{ left = 512 / 2048, top = 0 / 1280, right = 1024 / 2048, bottom = 256 / 1280 }
+local BASE_BACKGROUND_RED_PUSHED          = ATLAS{ left = 1024 / 2048, top = 0 / 1280, right = 1536 / 2048, bottom = 256 / 1280 }
+local BASE_BACKGROUND_RED_DISABLED        = ATLAS{ left = 1536 / 2048, top = 0 / 1280, right = 2048 / 2048, bottom = 256 / 1280 }
+local BASE_BACKGROUND_RED_1x              = ATLAS{ left = 0 / 2048, top = 512 / 1280, right = 256 / 2048, bottom = 768 / 1280 }
+local BASE_BACKGROUND_RED_1x_HIGHLIGHED   = ATLAS{ left = 256 / 2048, top = 512 / 1280, right = 512 / 2048, bottom = 768 / 1280 }
+local BASE_BACKGROUND_RED_1x_PUSHED       = ATLAS{ left = 512 / 2048, top = 512 / 1280, right = 768 / 2048, bottom = 768 / 1280 }
+local BASE_BACKGROUND_RED_1x_DISABLED     = ATLAS{ left = 768 / 2048, top = 512 / 1280, right = 1024 / 2048, bottom = 768 / 1280 }
+
+local BASE_BACKGROUND_GREY                = ATLAS{ left = 0 / 2048, top = 256 / 1280, right = 512 / 2048, bottom = 512 / 1280 }
+local BASE_BACKGROUND_GREY_HIGHLIGHTED    = ATLAS{ left = 512 / 2048, top = 256 / 1280, right = 1024 / 2048, bottom = 512 / 1280 }
+local BASE_BACKGROUND_GREY_PUSHED         = ATLAS{ left = 1024 / 2048, top = 256 / 1280, right = 1536 / 2048, bottom = 512 / 1280 }
+local BASE_BACKGROUND_GREY_DISABLED       = ATLAS{ left = 1536 / 2048, top = 256 / 1280, right = 2048 / 2048, bottom = 512 / 1280 }
+local BASE_BACKGROUND_GREY_1x             = ATLAS{ left = 0 / 2048, top = 768 / 1280, right = 256 / 2048, bottom = 1024 / 1280 }
+local BASE_BACKGROUND_GREY_1x_HIGHLIGHTED = ATLAS{ left = 256 / 2048, top = 768 / 1280, right = 512 / 2048, bottom = 1024 / 1280 }
+local BASE_BACKGROUND_GREY_1x_PUSHED      = ATLAS{ left = 512 / 2048, top = 768 / 1280, right = 768 / 2048, bottom = 1024 / 1280 }
+local BASE_BACKGROUND_GREY_1x_DISABLED    = ATLAS{ left = 768 / 2048, top = 768 / 1280, right = 1024 / 2048, bottom = 1024 / 1280 }
+
+local CONTENT_Y                           = 0
+local CONTENT_Y_HIGHLIGHTED               = 0
+local CONTENT_Y_PRESSED                   = -1
+local CONTENT_ALPHA_ENABLED               = 1
+local CONTENT_ALPHA_DISABLED              = .5
 
 
 
 local ButtonMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
 
-function ButtonMixin:OnLoad(isRed)
+function ButtonMixin:OnLoad(isRed, is1x)
     self:InitButton()
     self.isRed = isRed
+    self.is1x = is1x
 
     self:RegisterMouseEvents()
     self:HookButtonStateChange(self.UpdateAnimation)
@@ -67,29 +81,47 @@ function ButtonMixin:UpdateAnimation()
     local buttonState = self:GetButtonState()
 
     if not enabled then
-        self.Texture:background(self.isRed and BASE_BACKGROUND_RED_DISABLED or BASE_BACKGROUND_GREY_DISABLED)
+        local texture =
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_DISABLED or BASE_BACKGROUND_GREY_1x_DISABLED) or
+            (self.isRed and BASE_BACKGROUND_RED_DISABLED or BASE_BACKGROUND_GREY_DISABLED)
+
+        self.Texture:background(texture)
         self.Content:ClearAllPoints()
         self.Content:SetPoint("CENTER", self, "CENTER", 0, CONTENT_Y)
     elseif buttonState == "NORMAL" then
-        self.Texture:background(self.isRed and BASE_BACKGROUND_RED or BASE_BACKGROUND_GREY)
+        local texture =
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x or BASE_BACKGROUND_GREY_1x) or
+            (self.isRed and BASE_BACKGROUND_RED or BASE_BACKGROUND_GREY)
+
+        self.Texture:background(texture)
         self.Content:ClearAllPoints()
         self.Content:SetPoint("CENTER", self, "CENTER", 0, CONTENT_Y)
     elseif buttonState == "HIGHLIGHTED" then
-        self.Texture:background(self.isRed and BASE_BACKGROUND_RED_HIGHLIGHTED or BASE_BACKGROUND_GREY_HIGHLIGHTED)
+        local texture =
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_HIGHLIGHED or BASE_BACKGROUND_GREY_1x_HIGHLIGHTED) or
+            (self.isRed and BASE_BACKGROUND_RED_HIGHLIGHTED or BASE_BACKGROUND_GREY_HIGHLIGHTED)
+
+        self.Texture:background(texture)
         self.Content:ClearAllPoints()
         self.Content:SetPoint("CENTER", self, "CENTER", -CONTENT_Y_HIGHLIGHTED, CONTENT_Y_HIGHLIGHTED)
     elseif buttonState == "PUSHED" then
-        self.Texture:background(self.isRed and BASE_BACKGROUND_RED_PUSHED or BASE_BACKGROUND_GREY_PUSHED)
+        local texture =
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_PUSHED or BASE_BACKGROUND_GREY_1x_PUSHED) or
+            (self.isRed and BASE_BACKGROUND_RED_PUSHED or BASE_BACKGROUND_GREY_PUSHED)
+
+        self.Texture:background(texture)
         self.Content:ClearAllPoints()
         self.Content:SetPoint("CENTER", self, "CENTER", -CONTENT_Y_PRESSED, CONTENT_Y_PRESSED)
     end
 
-    self.Content:SetAlpha(enabled and ALPHA_ENABLED or ALPHA_DISABLED)
+    self.Content:SetAlpha(enabled and CONTENT_ALPHA_ENABLED or CONTENT_ALPHA_DISABLED)
 end
 
 function ButtonMixin:PlayInteractSound()
     Sound:PlaySound("UI", SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
+
+
 
 UICGameButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -100,17 +132,44 @@ UICGameButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
                 :id("Content", id)
                 :point(UIKit.Enum.Point.Center)
                 :size(CONTENT_SIZE, CONTENT_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
         :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
     frame.Texture = frame:GetBackground()
-    frame.Content = UIKit:GetElementById("Content", id)
+    frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
     frame:OnLoad(true)
 
     return frame
 end)
+
+UICGameButton.RedBase1x = UIKit.Prefab(function(id, name, children, ...)
+    local frame =
+        Frame(name, {
+            Frame(name .. ".Content", {
+                unpack(children)
+            })
+                :id("Content", id)
+                :point(UIKit.Enum.Point.Center)
+                :size(CONTENT_SIZE_1x, CONTENT_SIZE_1x)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+        })
+        :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+
+    frame.Texture = frame:GetBackground()
+    frame.Content = UIKit.GetElementById("Content", id)
+
+    Mixin(frame, ButtonMixin)
+    frame:OnLoad(true, true)
+
+    return frame
+end)
+
+
 
 UICGameButton.GreyBase = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -121,14 +180,39 @@ UICGameButton.GreyBase = UIKit.Prefab(function(id, name, children, ...)
                 :id("Content", id)
                 :point(UIKit.Enum.Point.Center)
                 :size(CONTENT_SIZE, CONTENT_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
         :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
     frame.Texture = frame:GetBackground()
-    frame.Content = UIKit:GetElementById("Content", id)
+    frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
     frame:OnLoad(false)
+
+    return frame
+end)
+
+UICGameButton.GreyBase1x = UIKit.Prefab(function(id, name, children, ...)
+    local frame =
+        Frame(name, {
+            Frame(name .. ".Content", {
+                unpack(children)
+            })
+                :id("Content", id)
+                :point(UIKit.Enum.Point.Center)
+                :size(CONTENT_SIZE_1x, CONTENT_SIZE_1x)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+        })
+        :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+
+    frame.Texture = frame:GetBackground()
+    frame.Content = UIKit.GetElementById("Content", id)
+
+    Mixin(frame, ButtonMixin)
+    frame:OnLoad(false, true)
 
     return frame
 end)
@@ -180,19 +264,18 @@ end
 UICGameButton.RedWithText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         UICGameButton.RedBase(name, {
-            Text(name .. ".Text", {
-
-            })
-                :textColor(VARIANT_RED_TEXT_COLOR)
-                :fontObject(UIFont.UIFontObjectNormal12)
+            Text(name .. ".Text")
                 :id("Text", id)
-                :size(FILL),
+                :fontObject(UIFont.UIFontObjectNormal12)
+                :textColor(VARIANT_RED_TEXT_COLOR)
+                :size(FILL)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             unpack(children)
         })
         :id("Button", id)
 
-    frame.Text = UIKit:GetElementById("Text", id)
+    frame.Text = UIKit.GetElementById("Text", id)
 
     Mixin(frame, ButtonTextMixin)
     frame:ButtonText_OnLoad()
@@ -203,17 +286,16 @@ end)
 UICGameButton.GreyWithText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         UICGameButton.GreyBase(name, {
-            Text(name .. ".Text", {
-
-            })
-                :fontObject(UIFont.UIFontObjectNormal12)
+            Text(name .. ".Text")
                 :id("Text", id)
-                :size(FILL),
+                :fontObject(UIFont.UIFontObjectNormal12)
+                :size(FILL)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             unpack(children)
         })
 
-    frame.Text = UIKit:GetElementById("Text", id)
+    frame.Text = UIKit.GetElementById("Text", id)
 
     Mixin(frame, ButtonTextMixin)
     frame:ButtonText_OnLoad()
@@ -223,10 +305,39 @@ end)
 
 
 
+-- Close
+--------------------------------
+
+local C_TEXTURE = ATLAS{ left = 256 / 2048, top = 1024 / 1280, right = 512 / 2048, bottom = 1280 / 1280 }
+local C_SIZE = UIKit.Define.Percentage{ value = 62 }
+
+
+UICGameButton.RedClose = UIKit.Prefab(function(id, name, children, ...)
+    local frame =
+        UICGameButton.RedBase1x(name, {
+            Frame(name .. ".Close")
+                :id("Close", id)
+                :point(UIKit.Enum.Point.Center)
+                :background(C_TEXTURE)
+                :size(C_SIZE, C_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
+
+            unpack(children)
+        })
+
+    frame.Close = UIKit.GetElementById("Close", id)
+    frame.CloseTexture = frame.Close:GetBackground()
+
+    return frame
+end)
+
+
+
+
 -- Selection Menu
 --------------------------------
 
-local SM_ARROW_BACKGROUND = ATLAS{ left = 0 / 1536, top = 512 / 768, right = 256 / 1536, bottom = 768 / 768 }
+local SM_ARROW_BACKGROUND = ATLAS{ left = 0 / 2048, top = 1024 / 1280, right = 256 / 2048, bottom = 1280 / 1280 }
 local SM_ARROW_SIZE       = UIKit.Define.Num{ value = 12 }
 
 
@@ -244,13 +355,14 @@ UICGameButton.SelectionMenu = UIKit.Prefab(function(id, name, children, ...)
                 :id("Arrow", id)
                 :point(UIKit.Enum.Point.Right)
                 :background(SM_ARROW_BACKGROUND)
-                :size(SM_ARROW_SIZE, SM_ARROW_SIZE),
+                :size(SM_ARROW_SIZE, SM_ARROW_SIZE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             unpack(children)
         })
 
     frame.Text:textAlignment("LEFT", "MIDDLE")
-    frame.Arrow = UIKit:GetElementById("Arrow", id)
+    frame.Arrow = UIKit.GetElementById("Arrow", id)
 
     Mixin(frame, ButtonSelectionMenuMixin)
     frame:OnLoad()

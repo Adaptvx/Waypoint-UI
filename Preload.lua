@@ -7,14 +7,14 @@ local CVarUtil         = env.WPM:Import("wpm_modules/cvar-util")
 local SavedVariables   = env.WPM:Import("wpm_modules/saved-variables")
 local SlashCommand     = env.WPM:Import("wpm_modules/slash-command")
 local Path             = env.WPM:Import("wpm_modules/path")
-local Utils_Atlas      = env.WPM:Import("wpm_modules/utils/atlas")
+local Utils_InlineIcon      = env.WPM:Import("wpm_modules/utils/inlineIcon")
 local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
 
 env.NAME               = "Waypoint UI"
 env.ICON               = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT           = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING     = "1.0.4"
-env.VERSION_NUMBER     = 010040
+env.VERSION_STRING     = "1.1.0"
+env.VERSION_NUMBER     = 010100
 env.DEBUG_MODE         = false
 
 
@@ -107,7 +107,11 @@ do
         AudioCustom                            = false,
         AudioCustomShowWaypoint                = Enum.Sound.WaypointShow,
         AudioCustomShowPinpoint                = Enum.Sound.PinpointShow,
-        AudioCustomNewUserNavigation           = Enum.Sound.NewUserNavigation
+        AudioCustomNewUserNavigation           = Enum.Sound.NewUserNavigation,
+
+        AutoTrackPlacedPinEnabled              = true,
+        AutoTrackChatLinkPinEnabled            = true,
+        GuidePinAssistantEnabled               = true,
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS  = {}
     local DB_LOCAL_DEFAULTS              = {
@@ -353,8 +357,8 @@ do -- Slash Command
     local GetBestMapForUnit    = C_Map.GetBestMapForUnit
     local GetPlayerMapPosition = C_Map.GetPlayerMapPosition
 
-    local INLINE_ADDON_ICON    = Utils_Atlas:InlineIcon(Path.Root .. env.ICON_ALT, 16, 16)
-    local PATH_CHAT_DIVIDER    = Utils_Atlas:InlineIcon(Path.Root .. "/Art/Chat/chat-subdivider.png", 16, 16)
+    local INLINE_ADDON_ICON    = Utils_InlineIcon:InlineIcon(Path.Root .. env.ICON_ALT, 16, 16)
+    local PATH_CHAT_DIVIDER    = Utils_InlineIcon:InlineIcon(Path.Root .. "/Art/Chat/chat-subdivider.png", 16, 16)
 
     local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON .. " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_2    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "<x> <y> <name>" .. "|r"

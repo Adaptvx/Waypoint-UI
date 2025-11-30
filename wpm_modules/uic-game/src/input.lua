@@ -6,6 +6,7 @@ local UIKit                                                                     
 local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
 local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
 
 local Mixin                                                                                                                = MixinUtil.Mixin
 local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
@@ -15,11 +16,21 @@ local UICGameInput                                                              
 
 
 
+-- Shared
+--------------------------------
 
-local PATH                   = Path.Root .. "/wpm_modules/uic-game/resources/"
-local FIT                    = UIKit.Define.Fit{}
-local FILL                   = UIKit.Define.Fill{}
-local ATLAS                  = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameInput.png", inset = 128, scale = .125 }
+local PATH  = Path.Root .. "/wpm_modules/uic-game/resources/"
+local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameInput.png", inset = 128, scale = .125 }
+local FIT   = UIKit.Define.Fit{}
+local FILL  = UIKit.Define.Fill{}
+
+
+Utils_Texture:PreloadAsset(PATH .. "UICGameInput.png")
+
+
+-- Base
+--------------------------------
+
 local BACKGROUND             = ATLAS{ left = 0 / 768, top = 0 / 512, right = 256 / 768, bottom = 256 / 512 }
 local BACKGROUND_HIGHLIGHTED = ATLAS{ left = 256 / 768, top = 0 / 512, right = 512 / 768, bottom = 256 / 512 }
 local BACKGROUND_DISABLED    = ATLAS{ left = 512 / 768, top = 0 / 512, right = 768 / 768, bottom = 256 / 512 }
@@ -30,7 +41,6 @@ local PLACEHOLDER_COLOR      = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 25
 local HIGHLIGHT_COLOR        = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .375 }
 local INPUT_SIZE             = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 17.5 }
 local BACKGROUND_SIZE        = UIKit.Define.Fill{ delta = 0 }
-
 
 
 
@@ -107,14 +117,16 @@ UICGameInput.New = UIKit.Prefab(function(id, name, children, ...)
                 :id("Hitbox", id)
                 :frameLevel(5)
                 :size(FILL)
-                :_excludeFromCalculations(),
+                :_excludeFromCalculations()
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             Frame(name .. ".Background")
                 :id("Background", id)
                 :frameLevel(1)
                 :size(BACKGROUND_SIZE)
                 :background(BACKGROUND)
-                :_excludeFromCalculations(),
+                :_excludeFromCalculations()
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
             Input(name .. ".Input", {
                 Frame(name .. ".Caret", {
@@ -126,6 +138,7 @@ UICGameInput.New = UIKit.Prefab(function(id, name, children, ...)
                     :size(FILL)
                     :background(BACKGROUND_CARET)
                     :backgroundColor(CARET_COLOR)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
             })
                 :id("Input", id)
                 :frameLevel(2)
@@ -139,13 +152,15 @@ UICGameInput.New = UIKit.Prefab(function(id, name, children, ...)
                 :inputMultiLine(false)
                 :inputHighlightColor(HIGHLIGHT_COLOR)
                 :inputCaretWidth(2)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
         :enableMouse(true)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Hitbox = UIKit:GetElementById("Hitbox", id)
-    frame.Background = UIKit:GetElementById("Background", id)
-    frame.Input = UIKit:GetElementById("Input", id)
-    frame.Caret = UIKit:GetElementById("Caret", id)
+    frame.Hitbox = UIKit.GetElementById("Hitbox", id)
+    frame.Background = UIKit.GetElementById("Background", id)
+    frame.Input = UIKit.GetElementById("Input", id)
+    frame.Caret = UIKit.GetElementById("Caret", id)
 
     Mixin(frame, InputMixin)
     frame:OnLoad()
