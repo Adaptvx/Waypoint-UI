@@ -2,13 +2,10 @@ local env              = select(2, ...)
 local MixinUtil        = env.WPM:Import("wpm_modules/mixin-util")
 local Utils_Blizzard   = env.WPM:Import("wpm_modules/utils/blizzard")
 
-local tinsert          = table.insert
-local Mixin            = MixinUtil.Mixin
 local CreateFromMixins = MixinUtil.CreateFromMixins
+local tinsert          = table.insert
 
 local UICSharedMixin   = env.WPM:New("wpm_modules/uic-sharedmixin")
-
-
 
 
 -- Shared Util
@@ -19,8 +16,6 @@ local function triggerHooks(hooks, ...)
         hooks[i](...)
     end
 end
-
-
 
 
 -- Button
@@ -35,7 +30,9 @@ function ButtonMixin:InitButton()
     self.isHighlighted = false
     self.isPushed = false
 
+    self.clickFunc = nil
     self.onEnableChangeHooks = {}
+    self.onClickHooks = {}
     self.onMouseDownHooks = {}
     self.onMouseUpHooks = {}
     self.onMouseEnterHooks = {}
@@ -55,7 +52,6 @@ function ButtonMixin:RegisterMouseEvents(blockMouseEvents)
     self:HookScript("OnMouseUp", self.OnMouseUp)
 end
 
--- Expose to allow manual calls of mouse event handlers when using InteractiveRect as a hitbox
 function ButtonMixin:OnEnter()
     if not self:IsEnabled() then return end
 
@@ -90,16 +86,30 @@ function ButtonMixin:OnMouseUp()
     self:UpdateButtonState()
 
     triggerHooks(self.onMouseUpHooks, self)
+
+    if self:IsMouseOver() then
+        self:Click()
+    end
+end
+
+function ButtonMixin:SetClick(func)
+    self.clickFunc = func
 end
 
 function ButtonMixin:Click()
     if not self:IsEnabled() then return end
-    triggerHooks(self.onMouseUpHooks, self)
+    triggerHooks(self.onClickHooks, self)
+    if self.clickFunc then self.clickFunc(self) end
 end
 
 function ButtonMixin:HookEnableChange(func, replace)
     if replace then wipe(self.onEnableChangeHooks) end
     tinsert(self.onEnableChangeHooks, func)
+end
+
+function ButtonMixin:HookClick(func, replace)
+    if replace then wipe(self.onClickHooks) end
+    tinsert(self.onClickHooks, func)
 end
 
 function ButtonMixin:HookMouseDown(func, replace)
@@ -186,10 +196,6 @@ function ButtonMixin:GetButtonState()
 end
 
 
-
-
-
-
 -- Selection Menu Remote
 --------------------------------
 
@@ -257,17 +263,13 @@ function SelectionMenuRemote:GetData()
 end
 
 
-
-
-
-
--- Checkbox
+-- Check Button
 --------------------------------
 
-local CheckboxMixin = CreateFromMixins(ButtonMixin)
-UICSharedMixin.CheckboxMixin = CheckboxMixin
+local CheckButtonMixin = CreateFromMixins(ButtonMixin)
+UICSharedMixin.CheckButtonMixin = CheckButtonMixin
 
-function CheckboxMixin:InitCheckbox()
+function CheckButtonMixin:InitCheckButton()
     self:InitButton()
 
     self.checked = false
@@ -275,33 +277,28 @@ function CheckboxMixin:InitCheckbox()
     self.onCheckHooks = {}
 end
 
-function CheckboxMixin:HookCheck(func, replace)
+function CheckButtonMixin:HookCheck(func, replace)
     if replace then wipe(self.onCheckHooks) end
     tinsert(self.onCheckHooks, func)
 end
 
-function CheckboxMixin:SetChecked(checked)
+function CheckButtonMixin:SetChecked(checked)
     if self.checked ~= checked then
         self.checked = checked
         triggerHooks(self.onCheckHooks, self, self.checked)
     end
 end
 
-function CheckboxMixin:GetChecked()
+function CheckButtonMixin:GetChecked()
     return self.checked
 end
 
-function CheckboxMixin:Toggle()
+function CheckButtonMixin:Toggle()
     self:SetChecked(not self:GetChecked())
 end
 
 
-
-
-
-
-
--- Range Mixin
+-- Range
 --------------------------------
 
 local RangeMixin = CreateFromMixins(ButtonMixin)
@@ -317,12 +314,7 @@ function RangeMixin:OnEnableChange(enabled)
 end
 
 
-
-
-
-
-
--- Scroll Bar Mixin
+-- Scroll Bar
 --------------------------------
 
 local ScrollBarMixin = CreateFromMixins(ButtonMixin)
@@ -336,11 +328,6 @@ end
 function ScrollBarMixin:OnEnableChange(enabled)
     self:SetEnabledSlider(enabled)
 end
-
-
-
-
-
 
 
 -- Input
@@ -402,11 +389,6 @@ function InputMixin:RegisterMouseEventsWithComponents(hitbox, input)
 end
 
 
-
-
-
-
-
 -- Color Input
 --------------------------------
 
@@ -435,7 +417,7 @@ function ColorInputMixin:InitColorInput()
 end
 
 function ColorInputMixin:OnClick()
-    Utils_Blizzard:ShowColorPicker(self.color,
+    Utils_Blizzard.ShowColorPicker(self.color,
                                    self.onColorChanged,
                                    self.onColorChanged,
                                    self.onColorChanged

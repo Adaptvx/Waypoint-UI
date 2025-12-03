@@ -1,15 +1,13 @@
-local env = select(2, ...)
+local env           = select(2, ...)
 
-local CreateFrame = CreateFrame
+local CreateFrame   = CreateFrame
 
 local Utils_Texture = env.WPM:New("wpm_modules/utils/texture")
 
 
-
-
--- Preload
+-- API
 --------------------------------
 
-function Utils_Texture:PreloadAsset(path)
-    CreateFrame("Frame"):CreateTexture():SetTexture(path)
+function Utils_Texture.PreloadAsset(texturePath)
+    CreateFrame("Frame"):CreateTexture():SetTexture(texturePath)
 end

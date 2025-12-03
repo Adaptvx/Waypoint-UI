@@ -1,5 +1,9 @@
-local env              = select(2, ...)
-local UIKit_Enum       = env.WPM:New("wpm_modules/ui-kit/enum")
+local env        = select(2, ...)
+local UIKit_Enum = env.WPM:New("wpm_modules/ui-kit/enum")
+
+
+-- Prop
+--------------------------------
 
 UIKit_Enum.FrameStrata = {
     Tooltip          = "TOOLTIP",
@@ -47,7 +51,11 @@ UIKit_Enum.Orientation = {
     Vertical   = "VERTICAL"
 }
 
-UIKit_Enum.UpdateMode  = {
+
+-- Flag
+--------------------------------
+
+UIKit_Enum.UpdateMode = {
     None                      = "NONE",
     ChildrenVisibilityChanged = "CHILDREN_VISIBILITY_CHANGED",
     ExcludeVisibilityChanged  = "EXCLUDE_VISIBILITY_CHANGED",

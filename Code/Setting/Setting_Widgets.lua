@@ -1,21 +1,20 @@
-local env                                                                                                                  = select(2, ...)
-local MixinUtil                                                                                                            = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                               = env.WPM:Import("wpm_modules/ui-font")
-local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
+local env                                                                                                                                          = select(2, ...)
+local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
 
-local Mixin                                                                                                                = MixinUtil.Mixin
-local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = MixinUtil.Mixin
+local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local UICGame                                                                                                              = env.WPM:Import("wpm_modules/uic-game")
-local SettingEnum                                                                                                          = env.WPM:Import("@/Setting/Enum")
-local SettingWidgets                                                                                                       = env.WPM:New("@/Setting/SettingWidgets")
-
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local UICGame                                                                                                                                      = env.WPM:Import("wpm_modules/uic-game")
+local Setting_Enum                                                                                                                                 = env.WPM:Import("@/Setting/Enum")
+local Setting_Widgets                                                                                                                              = env.WPM:New("@/Setting/Setting_Widgets")
 
 -- Shared
 --------------------------------
@@ -31,7 +30,6 @@ local TEXT_COLOR_YELLOW = UIKit.Define.Color_RGBA{ r = GenericEnum.ColorRGB.Yell
 
 
 
-
 -- Tab
 --------------------------------
 
@@ -39,7 +37,7 @@ local TAB_CONTENT_Y             = UIKit.Define.Num{ value = -22 }
 local TAB_CONTENT_WIDTH         = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 17 + 5 }
 local TAB_CONTENT_HEIGHT        = P_FILL
 local TAB_CONTENT_SCROLL_WIDTH  = P_FILL
-local TAB_CONTENT_SCROLL_HEIGHT = UIKit.Define.Fit{}
+local TAB_CONTENT_SCROLL_HEIGHT = UIKit.Define.Fit{ delta = 240 }
 local TAB_LAYOUT_SPACING        = UIKit.Define.Num{ value = 10 }
 local TAB_LAYOUT_WIDTH          = P_FILL
 local TAB_LAYOUT_HEIGHT         = UIKit.Define.Fit{ delta = 32 }
@@ -70,11 +68,11 @@ end
 
 
 
-SettingWidgets.Tab = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.Tab = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             ScrollView(name .. ".Content", {
-                VStack(name .. ".Layout", {
+                LayoutVertical(name .. ".Layout", {
                     unpack(children)
                 })
                     :id("Layout", id)
@@ -91,8 +89,7 @@ SettingWidgets.Tab = UIKit.Prefab(function(id, name, children, ...)
                 :scrollViewContentWidth(TAB_CONTENT_SCROLL_WIDTH)
                 :scrollViewContentHeight(TAB_CONTENT_SCROLL_HEIGHT)
                 :layoutDirection(UIKit.Enum.Direction.Vertical)
-                :scrollInterpolation(5)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :scrollInterpolation(10),
 
             UICGame.ScrollBar(name .. ".ScrollBar", {
 
@@ -101,11 +98,10 @@ SettingWidgets.Tab = UIKit.Prefab(function(id, name, children, ...)
                 :point(UIKit.Enum.Point.Right)
                 :size(TAB_SCROLLBAR_WIDTH, TAB_SCROLLBAR_HEIGHT)
                 :scrollBarTarget("Content", id)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
         :point(UIKit.Enum.Point.Center)
         :size(P_FILL, P_FILL)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
         :_renderBreakpoint()
 
     frame.Content = UIKit.GetElementById("Content", id)
@@ -116,7 +112,6 @@ SettingWidgets.Tab = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 
@@ -208,11 +203,11 @@ function TabButtonMixin:UpdateAnimation()
 end
 
 function TabButtonMixin:PlayInteractSound()
-    Sound:PlaySound("UI", SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    Sound.PlaySound("UI", SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
 
 
-SettingWidgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Background")
@@ -220,7 +215,7 @@ SettingWidgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
                 :size(TB_BACKGROUND_SIZE)
                 :background(TEXTURE_NIL)
                 :frameLevel(1)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
                 :_excludeFromCalculations(),
 
             Text(name .. ".Text")
@@ -233,7 +228,7 @@ SettingWidgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
                 :_updateMode(UIKit.Enum.UpdateMode.UserUpdate)
         })
         :size(TB_WIDTH, TB_HEIGHT)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Background = UIKit.GetElementById("Background", id)
     frame.Text = UIKit.GetElementById("Text", id)
@@ -243,7 +238,6 @@ SettingWidgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 
@@ -269,7 +263,7 @@ function TitleMixin:SetInfo(image, title, description)
     self.Description:SetText(description)
 end
 
-SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Container", {
@@ -280,10 +274,9 @@ SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
                     :alpha(.0975)
                     :background(TEXTURE_NIL)
                     :mask(TITLE_IMAGE_MASK)
-                    :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :backgroundBlendMode(UIKit.Enum.BlendMode.Add),
 
-                VStack(name .. ".Container.HStack.VStack", {
+                LayoutVertical(name .. ".Container.LayoutHorizontal.LayoutVertical", {
                     Text(name .. ".Title")
                         :id("Title", id)
                         :fontObject(UIFont.UIFontObjectNormal18)
@@ -305,14 +298,14 @@ SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
                     :size(FIT, FIT)
                     :layoutSpacing(TITLE_VERTICAL_SPACING)
                     :layoutAlignmentH(UIKit.Enum.Direction.Justified)
-                    :_updateMode(UIKit.Enum.UpdateMode.None)
+
             })
                 :point(UIKit.Enum.Point.Center)
                 :size(FIT, FIT)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
         :size(TITLE_WIDTH, TITLE_HEIGHT)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Splash = UIKit.GetElementById("Splash", id)
     frame.SplashTexture = frame.Splash:GetBackground()
@@ -323,7 +316,6 @@ SettingWidgets.Title = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 
@@ -362,17 +354,16 @@ function ContainerMixin:SetTransparent(isTransparent)
 end
 
 
-SettingWidgets.Container = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.Container = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Background")
                 :id("Background", id)
                 :size(C_BACKGROUND_SIZE)
                 :background(TEXTURE_NIL)
-                :_excludeFromCalculations()
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :_excludeFromCalculations(),
 
-            VStack(name .. ".Content", {
+            LayoutVertical(name .. ".Content", {
                 unpack(children)
             })
                 :id("Content", id)
@@ -383,7 +374,7 @@ SettingWidgets.Container = UIKit.Prefab(function(id, name, children, ...)
                 :_updateMode(UIKit.Enum.UpdateMode.ChildrenVisibilityChanged)
         })
         :size(C_WIDTH, C_HEIGHT)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Background = UIKit.GetElementById("Background", id)
     frame.Content = UIKit.GetElementById("Content", id)
@@ -407,7 +398,7 @@ local C_MAIN_HEIGHT                 = C_HEIGHT
 local C_MAIN_OFFSET_Y               = UIKit.Define.Num{ value = -32 }
 
 
-SettingWidgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Title", {
@@ -421,22 +412,20 @@ SettingWidgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ..
                     :x(C_TITLE_TEXT_X)
                     :y(C_TITLE_TEXT_Y)
                     :_excludeFromCalculations()
-                    :_updateMode(UIKit.Enum.UpdateMode.None)
+
             })
                 :point(UIKit.Enum.Point.Top)
                 :size(C_TITLE_TEXT_CONTAINER_WIDTH, C_TITLE_TEXT_CONTAINER_HEIGHT)
-                :_excludeFromCalculations()
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :_excludeFromCalculations(),
 
             Frame(name .. ".Main", {
                 Frame(name .. ".Background")
                     :id("Background", id)
                     :size(C_BACKGROUND_SIZE)
                     :background(TEXTURE_NIL)
-                    :_excludeFromCalculations()
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :_excludeFromCalculations(),
 
-                VStack(name .. ".Content", {
+                LayoutVertical(name .. ".Content", {
                     unpack(children)
                 })
                     :id("Content", id)
@@ -450,10 +439,10 @@ SettingWidgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ..
                 :point(UIKit.Enum.Point.Top)
                 :y(C_MAIN_OFFSET_Y)
                 :size(C_MAIN_WIDTH, C_MAIN_HEIGHT)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
         :size(C_TITLE_WIDTH, C_TITLE_HEIGHT)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Title = UIKit.GetElementById("Title", id)
     frame.Background = UIKit.GetElementById("Background", id)
@@ -463,7 +452,6 @@ SettingWidgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ..
 
     return frame
 end)
-
 
 
 
@@ -479,7 +467,6 @@ local E_ACTION_SIZE_125  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM
 local E_ACTION_SIZE_500  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 5) }
 local E_ACTION_SIZE_750  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 7.5) }
 local E_ACTION_SIZE_1000 = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 10) }
-
 
 
 
@@ -510,6 +497,14 @@ local E_ACTION_OFFSET_X      = UIKit.Define.Num{ value = -math.ceil(E_MARGIN / 2
 local E_ACTION_WIDTH         = UIKit.Define.Percentage{ value = 45, operator = "-", delta = E_MARGIN }
 local E_ACTION_HEIGHT        = UIKit.Define.Percentage{ value = 100 }
 local E_BACKGROUND_SIZE      = UIKit.Define.Fill{ delta = -10 }
+
+local INDENT_MAP             = {}
+for i = 0, 5 do
+    INDENT_MAP[i] = {
+        ["x"]     = UIKit.Define.Num{ value = E_INDENT * i },
+        ["width"] = UIKit.Define.Percentage{ value = 100, operator = "-", delta = E_INDENT * i }
+    }
+end
 
 
 local ElementBaseMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
@@ -545,7 +540,7 @@ function ElementBaseMixin:SetInfo(title, description, imageSize, imagePath)
 end
 
 function ElementBaseMixin:SetImage(imageSize, imagePath)
-    if imageSize == SettingEnum.ImageType.Large then
+    if imageSize == Setting_Enum.ImageType.Large then
         self.Image:SetSize(E_IMAGE_SIZE_2x_WIDTH, E_IMAGE_SIZE_2x_HEIGHT)
     else
         self.Image:SetSize(E_IMAGE_SIZE_1x_WIDTH, E_IMAGE_SIZE_1x_HEIGHT)
@@ -560,31 +555,28 @@ function ElementBaseMixin:SetTransparent(isTransparent)
 end
 
 function ElementBaseMixin:SetIndent(indent)
-    local indentWidth = indent * E_INDENT
-
-    self.Content:x(UIKit.Define.Num{ value = indentWidth })
-    self.Content:width(UIKit.Define.Percentage{ value = 100, operator = "-", delta = indentWidth })
+    self.Content:x(INDENT_MAP[indent].x)
+    self.Content:width(INDENT_MAP[indent].width)
 end
 
 
-SettingWidgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             InteractiveRect(name .. ".Hitbox")
                 :id("Hitbox", id)
                 :size(FILL)
-                :_excludeFromCalculations()
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :frameLevel(1000)
+                :_excludeFromCalculations(),
 
             Frame(name .. ".Background")
                 :id("Background", id)
                 :size(E_BACKGROUND_SIZE)
                 :background(E_BACKGROUND)
-                :_excludeFromCalculations()
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :_excludeFromCalculations(),
 
             Frame(name .. ".Content", {
-                VStack(name .. ".Info", {
+                LayoutVertical(name .. ".Info", {
                     Text(name .. ".Title")
                         :id("Title", id)
                         :fontObject(UIFont.UIFontObjectNormal12)
@@ -595,8 +587,7 @@ SettingWidgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
 
                     Frame(name .. ".Image")
                         :id("Image", id)
-                        :background(TEXTURE_NIL)
-                        :_updateMode(UIKit.Enum.UpdateMode.None),
+                        :background(TEXTURE_NIL),
 
                     Text(name .. ".Description")
                         :id("Description", id)
@@ -614,8 +605,7 @@ SettingWidgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
                     :minHeight(E_MIN_HEIGHT)
                     :layoutAlignmentH(UIKit.Enum.Direction.Leading)
                     :layoutAlignmentV(UIKit.Enum.Direction.Justified)
-                    :layoutSpacing(E_SPACING)
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :layoutSpacing(E_SPACING),
 
                 Frame(name .. ".Action", {
                     unpack(children)
@@ -624,16 +614,16 @@ SettingWidgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
                     :point(UIKit.Enum.Point.Right)
                     :x(E_ACTION_OFFSET_X)
                     :size(E_ACTION_WIDTH, E_ACTION_HEIGHT)
-                    :_updateMode(UIKit.Enum.UpdateMode.None)
+
                     :_excludeFromCalculations()
             })
                 :id("Content", id)
                 :point(UIKit.Enum.Point.Left)
                 :height(E_CONTENT_HEIGHT)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
         :size(E_WIDTH, E_HEIGHT)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Hitbox = UIKit.GetElementById("Hitbox", id)
     frame.Content = UIKit.GetElementById("Content", id)
@@ -656,13 +646,12 @@ end)
 
 
 
-
 -- Widget — Element / Text
 --------------------------------
 
-SettingWidgets.ElementText = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name)
+        Setting_Widgets.ElementBase(name)
 
     return frame
 end)
@@ -671,34 +660,32 @@ end)
 
 
 
-
--- Widget — Element / Checkbox
+-- Widget — Element / CheckButton
 --------------------------------
 
-local ElementCheckboxMixin = {}
+local ElementCheckButtonMixin = {}
 
-function ElementCheckboxMixin:GetCheckbox()
-    return self.Checkbox
+function ElementCheckButtonMixin:GetCheckButton()
+    return self.CheckButton
 end
 
-SettingWidgets.ElementCheckbox = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementCheckButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
-            UICGame.Checkbox(name .. ".Checkbox")
-                :id("Checkbox", id)
+        Setting_Widgets.ElementBase(name, {
+            UICGame.CheckButton(name .. ".CheckButton")
+                :id("CheckButton", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_100, E_ACTION_SIZE_100)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
 
-    frame.Checkbox = UIKit.GetElementById("Checkbox", id)
 
-    Mixin(frame, ElementCheckboxMixin)
+    frame.CheckButton = UIKit.GetElementById("CheckButton", id)
+
+    Mixin(frame, ElementCheckButtonMixin)
 
     return frame
 end)
-
 
 
 
@@ -713,16 +700,16 @@ function ElementButtonMixin:GetButton()
     return self.Button
 end
 
-SettingWidgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
+        Setting_Widgets.ElementBase(name, {
             UICGame.ButtonRedWithText(name .. ".Button")
                 :id("Button", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Button = UIKit.GetElementById("Button", id)
 
@@ -730,7 +717,6 @@ SettingWidgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 
@@ -746,16 +732,16 @@ function ElementRangeMixin:GetRange()
     return self.Range:GetRange()
 end
 
-SettingWidgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
+        Setting_Widgets.ElementBase(name, {
             UICGame.RangeWithText(name .. ".Range")
                 :id("Range", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_75)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Range = UIKit.GetElementById("Range", id)
 
@@ -763,7 +749,6 @@ SettingWidgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 
@@ -779,16 +764,16 @@ function ElementSelectionMenuMixin:GetButtonSelectionMenu()
     return self.ButtonSelectionMenu
 end
 
-SettingWidgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
+        Setting_Widgets.ElementBase(name, {
             UICGame.ButtonSelectionMenu(name .. ".ButtonSelectionMenu")
                 :id("ButtonSelectionMenu", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_500, E_ACTION_SIZE_125)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.ButtonSelectionMenu = UIKit.GetElementById("ButtonSelectionMenu", id)
 
@@ -796,7 +781,6 @@ SettingWidgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, 
 
     return frame
 end)
-
 
 
 
@@ -811,16 +795,16 @@ function ElementColorInputMixin:GetColorInput()
     return self.ColorInput
 end
 
-SettingWidgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
+        Setting_Widgets.ElementBase(name, {
             UICGame.ColorInput(name .. ".ColorInput")
                 :id("ColorInput", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.ColorInput = UIKit.GetElementById("ColorInput", id)
 
@@ -828,7 +812,6 @@ SettingWidgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...
 
     return frame
 end)
-
 
 
 
@@ -843,16 +826,16 @@ function ElementInputMixin:GetInput()
     return self.Input:GetInput()
 end
 
-SettingWidgets.ElementInput = UIKit.Prefab(function(id, name, children, ...)
+Setting_Widgets.ElementInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        SettingWidgets.ElementBase(name, {
+        Setting_Widgets.ElementBase(name, {
             UICGame.Input(name .. ".Input")
                 :id("Input", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
 
     frame.Input = UIKit.GetElementById("Input", id)
     frame.Input.Input:fontSize(14)

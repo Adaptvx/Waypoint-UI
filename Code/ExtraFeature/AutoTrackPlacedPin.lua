@@ -9,7 +9,10 @@ local CallbackRegistry                    = env.WPM:Import("wpm_modules/callback
 local SavedVariables                      = env.WPM:Import("wpm_modules/saved-variables")
 
 
-local DelayTimer = LazyTimer:New()
+-- Events
+--------------------------------
+
+local DelayTimer = LazyTimer.New()
 DelayTimer:SetAction(function()
     SetSuperTrackedUserWaypoint(true)
 end)
@@ -23,6 +26,8 @@ Events:SetScript("OnEvent", function(_, event, ...)
 end)
 
 
+-- Settings
+--------------------------------
 
 local function updateToMatchSetting()
     local Setting_AutoTrackPlacedPinEnabled = Config.DBGlobal:GetVariable("AutoTrackPlacedPinEnabled")

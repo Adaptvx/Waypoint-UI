@@ -1,35 +1,41 @@
-local env              = select(2, ...)
-local MixinUtil        = env.WPM:Import("wpm_modules/mixin-util")
-local Utils_LazyTable  = env.WPM:Import("wpm_modules/utils/lazy-table")
-local UIKit_Define     = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_FrameCache = env.WPM:Import("wpm_modules/ui-kit/frame-cache")
-local UIKit_Utils      = env.WPM:Import("wpm_modules/ui-kit/utils")
-local UIKit_Enum       = env.WPM:Import("wpm_modules/ui-kit/enum")
-local UIKit_UI_Scanner = env.WPM:Await("wpm_modules/ui-kit/ui/scanner")
+local env                    = select(2, ...)
+local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
+local Utils_LazyTable        = env.WPM:Import("wpm_modules/utils/lazy-table")
+local UIKit_Define           = env.WPM:Import("wpm_modules/ui-kit/define")
+local UIKit_FrameCache       = env.WPM:Import("wpm_modules/ui-kit/frame-cache")
+local UIKit_Utils            = env.WPM:Import("wpm_modules/ui-kit/utils")
+local UIKit_Enum             = env.WPM:Import("wpm_modules/ui-kit/enum")
+local UIKit_UI_Scanner       = env.WPM:Await("wpm_modules/ui-kit/ui/scanner")
 
-local Mixin            = MixinUtil.Mixin
-local CreateFrame      = CreateFrame
-local math_huge        = math.huge
-local type             = type
-local pairs            = pairs
-local tinsert          = table.insert
-local tremove          = table.remove
+local Mixin                  = MixinUtil.Mixin
+local CreateFrame            = CreateFrame
+local math_huge              = math.huge
+local type                   = type
+local tinsert                = table.insert
+local tremove                = table.remove
 
-local Frame            = env.WPM:New("wpm_modules/ui-kit/primitives/frame")
-Frame.FrameProps       = {}
+local UIKit_Primitives_Frame = env.WPM:New("wpm_modules/ui-kit/primitives/frame")
 
 
+-- Shared
+--------------------------------
 
+UIKit_Primitives_Frame.FrameProps = {}
 
 local dummy = CreateFrame("Frame"); dummy:Hide()
-local SET_SIZE_FUNC                     = getmetatable(dummy).__index.SetSize
-local SET_WIDTH_FUNC                    = getmetatable(dummy).__index.SetWidth
-local SET_HEIGHT_FUNC                   = getmetatable(dummy).__index.SetHeight
-local SET_PROPAGATE_MOUSE_CLICKS_FUNC   = getmetatable(dummy).__index.SetPropagateMouseClicks
-local SET_PROPAGATE_MOUSE_MOTION_FUNC   = getmetatable(dummy).__index.SetPropagateMouseMotion
-local SET_PROPAGATE_KEYBOARD_INPUT_FUNC = getmetatable(dummy).__index.SetPropagateKeyboardInput
+local Method_SetSize                   = getmetatable(dummy).__index.SetSize
+local Method_SetWidth                  = getmetatable(dummy).__index.SetWidth
+local Method_SetHeight                 = getmetatable(dummy).__index.SetHeight
+local Method_SetPropagateMouseClicks   = getmetatable(dummy).__index.SetPropagateMouseClicks
+local Method_SetPropagateMouseMotion   = getmetatable(dummy).__index.SetPropagateMouseMotion
+local Method_SetPropagateKeyboardInput = getmetatable(dummy).__index.SetPropagateKeyboardInput
 
 
+-- Frame
+--------------------------------
+
+local cachedMetas = {}
+local sharedHandlers = {}
 
 local FrameMixin = {}
 do
@@ -63,6 +69,7 @@ do
         return boundConfig
     end
 
+
     -- Hierachy
     --------------------------------
 
@@ -80,7 +87,7 @@ do
     end
 
     function FrameMixin:GetFrameChildren()
-        return UIKit_FrameCache:GetFramesInLazyTable(self, "uk_children")
+        return UIKit_FrameCache.GetFramesInLazyTable(self, "uk_children")
     end
 
     function FrameMixin:AddFrameChild(frame)
@@ -99,12 +106,22 @@ do
         end
     end
 
+
     -- Accessor
     --------------------------------
 
     function FrameMixin:GetBackground()
         return self.Background
     end
+
+
+    -- Attribute
+    --------------------------------
+
+    function FrameMixin:GetID()
+        return self.uk_id
+    end
+
 
     -- Get
     --------------------------------
@@ -128,6 +145,7 @@ do
     function FrameMixin:GetMinHeight()
         return resolveBoundValue(self, self.uk_prop_minHeight, "height")
     end
+
 
     -- Fit Content
     --------------------------------
@@ -243,8 +261,9 @@ do
         local hasVisibleChildren = false
         local parentLeft, parentTop = self:GetLeft(), self:GetTop()
 
-        for _, child in pairs(children) do
-            if child:IsShown() and not child.uk_flag_excludeFromCalculations then
+        for i = 1, #children do
+            local child = children[i]
+            if child and child:IsShown() and not child.uk_flag_excludeFromCalculations then
                 local left, top, right, bottom = measureChildBounds(parentLeft, parentTop, child)
                 if left < minLeft then minLeft = left end
                 if top < minTop then minTop = top end
@@ -267,6 +286,7 @@ do
         end
     end
 
+
     -- Alias
     --------------------------------
 
@@ -287,6 +307,7 @@ do
         local registry = self.uk_aliasRegistry
         return registry and registry[aliasName]
     end
+
 
     -- Events
     --------------------------------
@@ -343,11 +364,12 @@ do
         end
     end
 
+
     -- Override
     --------------------------------
 
     function FrameMixin:SetSize(...)
-        SET_SIZE_FUNC(self, ...)
+        Method_SetSize(self, ...)
 
         -- If in UserUpdate mode, explicitly trigger layout updates
         if self.uk_flag_updateMode == UIKit_Enum.UpdateMode.UserUpdate then
@@ -356,7 +378,7 @@ do
     end
 
     function FrameMixin:SetWidth(...)
-        SET_WIDTH_FUNC(self, ...)
+        Method_SetWidth(self, ...)
 
         -- If in UserUpdate mode, explicitly trigger layout updates
         if self.uk_flag_updateMode == UIKit_Enum.UpdateMode.UserUpdate then
@@ -365,7 +387,7 @@ do
     end
 
     function FrameMixin:SetHeight(...)
-        SET_HEIGHT_FUNC(self, ...)
+        Method_SetHeight(self, ...)
 
         -- If in UserUpdate mode, explicitly trigger layout update
         if self.uk_flag_updateMode == UIKit_Enum.UpdateMode.UserUpdate then
@@ -423,28 +445,22 @@ do
 
     function FrameMixin:SetPropagateMouseClicks(propagate)
         if InCombatLockdown() then return end
-        SET_PROPAGATE_MOUSE_CLICKS_FUNC(self, propagate)
+        Method_SetPropagateMouseClicks(self, propagate)
     end
 
     function FrameMixin:SetPropagateMouseMotion(propagate)
         if InCombatLockdown() then return end
-        SET_PROPAGATE_MOUSE_MOTION_FUNC(self, propagate)
+        Method_SetPropagateMouseMotion(self, propagate)
     end
 
     function FrameMixin:SetPropagateKeyboardInput(propagate)
         if InCombatLockdown() then return end
-        SET_PROPAGATE_KEYBOARD_INPUT_FUNC(self, propagate)
+        Method_SetPropagateKeyboardInput(self, propagate)
     end
 end
 
 
-
-
-
-local cachedMetas = {}
-local sharedHandlers = {}
-
-function Frame:New(frameType, name, parent, template)
+function UIKit_Primitives_Frame.New(frameType, name, parent, template)
     name = name or "undefined"
 
 
@@ -457,7 +473,7 @@ function Frame:New(frameType, name, parent, template)
 
         meta = {
             __index = function(t, k)
-                local propFunc = Frame.FrameProps[k]
+                local propFunc = UIKit_Primitives_Frame.FrameProps[k]
                 if propFunc then
                     local handler = sharedHandlers[k]
                     if not handler then

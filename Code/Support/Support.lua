@@ -1,5 +1,6 @@
 local env           = select(2, ...)
 
+local CreateFrame   = CreateFrame
 local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 local ipairs        = ipairs
 local tinsert       = table.insert
@@ -8,8 +9,10 @@ local Support       = env.WPM:New("@/Support")
 local list          = {}
 
 
+-- Public API
+--------------------------------
 
-function Support:Add(addonName, loadFunc)
+function Support.Add(addonName, loadFunc)
     tinsert(list, {
         name     = addonName,
         loadFunc = loadFunc
@@ -17,6 +20,8 @@ function Support:Add(addonName, loadFunc)
 end
 
 
+-- Events
+--------------------------------
 
 local EL = CreateFrame("Frame")
 EL:RegisterEvent("PLAYER_ENTERING_WORLD")

@@ -1,17 +1,22 @@
-local env             = select(2, ...)
+local env          = select(2, ...)
 
-local tinsert         = table.insert
-local tremove         = table.remove
-local twipe           = table.wipe
+local tinsert      = table.insert
+local tremove      = table.remove
+local twipe        = table.wipe
 
-local Utils_Color     = env.WPM:Import("wpm_modules/utils/color")
+local Utils_Color  = env.WPM:Import("wpm_modules/utils/color")
 local UIKit_Define = env.WPM:Import("wpm_modules/ui-kit/define")
 local UIKit_Utils  = env.WPM:New("wpm_modules/ui-kit/utils")
+
 
 -- Calculation
 --------------------------------
 
-function UIKit_Utils:CalculateRelativePercentage(relativeTo, percentage, operator, delta)
+function UIKit_Utils:CalculateRelativePercentage(relativeTo, percentage, operator, delta, frame)
+    if type(delta) == "function" then
+        delta = delta(frame)
+    end
+
     delta = delta or 0
 
     local result = relativeTo * (percentage / 100)
@@ -34,9 +39,9 @@ function UIKit_Utils:ProcessColor(color)
         color.__processed = true
 
         if color == UIKit_Define.Color_RGBA then
-            return Utils_Color:ParseRGBA(color)
+            return Utils_Color.ParseRGBA(color)
         elseif color == UIKit_Define.Color_HEX then
-            return Utils_Color:ParseHex(color)
+            return Utils_Color.ParseHex(color)
         end
     end
 

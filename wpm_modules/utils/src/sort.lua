@@ -1,110 +1,92 @@
-local env = select(2, ...)
+local env          = select(2, ...)
 
-local pairs = pairs
-local tostring = tostring
-local tonumber = tonumber
-local table_sort = table.sort
+local pairs        = pairs
+local tostring     = tostring
+local tonumber     = tonumber
+local table_sort   = table.sort
 local string_lower = string.lower
-local string_find = string.find
+local string_find  = string.find
 
-local Utils_Sort = env.WPM:New("wpm_modules/utils/sort")
+local Utils_Sort   = env.WPM:New("wpm_modules/utils/sort")
+
+
+-- Shared
+--------------------------------
 
 local decoratedPool = {}
 
-local function extractSubVariable(list, subVariableList, len)
-    if len == 0 then
-        return list
-    end
 
-    local cur = list
-    for i = 1, len do
-        if cur == nil then return nil end
-        cur = cur[subVariableList[i]]
+-- Helpers
+--------------------------------
+
+local function resolveNestedPath(source, pathKeys, pathLength)
+    if pathLength == 0 then return source end
+
+    local current = source
+    for i = 1, pathLength do
+        if current == nil then return nil end
+        current = current[pathKeys[i]]
     end
-    return cur
+    return current
 end
 
-local function find_string(hay, needle)
+local function containsString(haystack, needle)
     if Utils_Sort.FindString then
-        return Utils_Sort:FindString(hay, needle)
+        return Utils_Sort.FindString(haystack, needle)
     end
-    return string_find(hay, needle, 1, true) ~= nil
+    return string_find(haystack, needle, 1, true) ~= nil
 end
 
--- Finds the position of a specified key in a table (keeps original semantics of using pairs order).
----@param tbl table
----@param indexValue any
----@return any index
-function Utils_Sort:FindKeyPositionInTable(tbl, indexValue)
-    if tbl == nil then return nil end
-    local idx = 0
-    for k in pairs(tbl) do
-        idx = idx + 1
-        if k == indexValue then return idx end
-    end
-    return nil
+local function compareNumberDescending(valueA, valueB)
+    if valueA == nil and valueB == nil then return false end
+    if valueA == nil then return false end
+    if valueB == nil then return true end
+    local numA, numB = tonumber(valueA) or valueA, tonumber(valueB) or valueB
+    return numA < numB
 end
 
--- Finds the position of a specified value in a table (keeps original semantics of using pairs order).
----@param tbl table
----@param indexValue any
----@return any index
-function Utils_Sort:FindValuePositionInTable(tbl, indexValue)
-    if tbl == nil then return nil end
-    local idx = 0
-    for _, v in pairs(tbl) do
-        idx = idx + 1
-        if v == indexValue then return idx end
-    end
-    return nil
+local function compareNumberAscending(valueA, valueB)
+    if valueA == nil and valueB == nil then return false end
+    if valueA == nil then return false end
+    if valueB == nil then return true end
+    local numA, numB = tonumber(valueA) or valueA, tonumber(valueB) or valueB
+    return numA > numB
 end
 
--- Returns a sub variable from a list (fast path and safe when subVariableList is nil/empty).
----@param list table
----@param subVariableList table
----@return any
-function Utils_Sort:GetSubVariableFromList(list, subVariableList)
-    local len = (subVariableList and #subVariableList) or 0
-    return extractSubVariable(list, subVariableList, len)
+local function compareAlphaDescending(valueA, valueB)
+    valueA = (valueA == nil) and "" or tostring(valueA)
+    valueB = (valueB == nil) and "" or tostring(valueB)
+    return string_lower(valueA) > string_lower(valueB)
 end
 
--- Finds the position of a variable value in a table (array-style).
----@param tbl table
----@param subVariableList table
----@param value any
-function Utils_Sort:FindVariableValuePositionInTable(tbl, subVariableList, value)
-    if tbl == nil then return nil end
-    local len = (subVariableList and #subVariableList) or 0
-    for i = 1, #tbl do
-        local sub = extractSubVariable(tbl[i], subVariableList, len)
-        if sub == value then return i end
-    end
-    return nil
+local function compareAlphaAscending(valueA, valueB)
+    valueA = (valueA == nil) and "" or tostring(valueA)
+    valueB = (valueB == nil) and "" or tostring(valueB)
+    return string_lower(valueA) < string_lower(valueB)
 end
 
--- Internal decorator-based sorter (reduces repeated GetSubVariableFromList calls).
-local function decorate_sort_and_unwrap(list, subVariableList, comparator)
+local function decorateSortAndUnwrap(list, pathKeys, comparator)
     if list == nil then return list end
-    local n = #list
-    if n <= 1 then return list end
 
-    local indices = subVariableList
-    local len = (indices and #indices) or 0
+    local listLength = #list
+    if listLength <= 1 then return list end
+
+    local pathLength = (pathKeys and #pathKeys) or 0
     local decorated = decoratedPool
 
-    for i = 1, n do
+    for i = 1, listLength do
         local entry = decorated[i]
         local value = list[i]
-        local key = extractSubVariable(value, indices, len)
+        local sortKey = resolveNestedPath(value, pathKeys, pathLength)
         if entry then
-            entry.key = key
+            entry.key = sortKey
             entry.val = value
         else
-            decorated[i] = { key = key, val = value }
+            decorated[i] = { key = sortKey, val = value }
         end
     end
 
-    for i = n + 1, #decorated do
+    for i = listLength + 1, #decorated do
         decorated[i] = nil
     end
 
@@ -112,119 +94,112 @@ local function decorate_sort_and_unwrap(list, subVariableList, comparator)
         return comparator(a.key, b.key)
     end)
 
-    for i = 1, n do
+    for i = 1, listLength do
         list[i] = decorated[i].val
     end
 
     return list
 end
 
--- Sorts a list by numbers.
----@param list table
----@param subVariableList table
----@param ascending? boolean: use ascending order
----@return table
-function Utils_Sort:SortListByNumber(list, subVariableList, ascending)
-    local function compareDescending(a, b)
-        if a == nil and b == nil then return false end
-        if a == nil then return false end
-        if b == nil then return true end
-        local na, nb = tonumber(a) or a, tonumber(b) or b
-        return na < nb
+
+-- API
+--------------------------------
+
+function Utils_Sort.FindKeyPositionInTable(tbl, targetKey)
+    if tbl == nil then return nil end
+
+    local position = 0
+    for key in pairs(tbl) do
+        position = position + 1
+        if key == targetKey then return position end
     end
-
-    local function compareAscending(a, b)
-        if a == nil and b == nil then return false end
-        if a == nil then return false end
-        if b == nil then return true end
-        local na, nb = tonumber(a) or a, tonumber(b) or b
-        return na > nb
-    end
-
-    local comp = ascending and compareAscending or compareDescending
-
-    return decorate_sort_and_unwrap(list, subVariableList, comp)
+    return nil
 end
 
--- Sorts a list by alphabetical order.
----@param list table
----@param subVariableList table
----@param descending? boolean: use descending order (Z-A)
----@return table
-function Utils_Sort:SortListByAlphabeticalOrder(list, subVariableList, descending)
-    local function compareDescending(a, b)
-        a = (a == nil) and "" or tostring(a)
-        b = (b == nil) and "" or tostring(b)
-        return string_lower(a) > string_lower(b)
+function Utils_Sort.FindValuePositionInTable(tbl, targetValue)
+    if tbl == nil then return nil end
+
+    local position = 0
+    for _, value in pairs(tbl) do
+        position = position + 1
+        if value == targetValue then return position end
     end
-
-    local function compareAscending(a, b)
-        a = (a == nil) and "" or tostring(a)
-        b = (b == nil) and "" or tostring(b)
-        return string_lower(a) < string_lower(b)
-    end
-
-    local comp = descending and compareDescending or compareAscending
-
-    return decorate_sort_and_unwrap(list, subVariableList, comp)
+    return nil
 end
 
--- Filters a list by a variable.
----@param list table
----@param subVariableList table
----@param value any: value to filter
----@param roughMatch? boolean: use rough matching
----@param caseSensitive? boolean: use case-sensitive matching (default: true)
----@param customCheck? function
----@return table
-function Utils_Sort:FilterListByVariable(list, subVariableList, value, roughMatch, caseSensitive, customCheck)
+function Utils_Sort.GetSubVariableFromList(list, pathKeys)
+    local pathLength = (pathKeys and #pathKeys) or 0
+    return resolveNestedPath(list, pathKeys, pathLength)
+end
+
+function Utils_Sort.FindVariableValuePositionInTable(tbl, pathKeys, targetValue)
+    if tbl == nil then return nil end
+
+    local pathLength = (pathKeys and #pathKeys) or 0
+    for i = 1, #tbl do
+        local resolved = resolveNestedPath(tbl[i], pathKeys, pathLength)
+        if resolved == targetValue then return i end
+    end
+    return nil
+end
+
+function Utils_Sort.SortListByNumber(list, pathKeys, ascending)
+    local comparator = ascending and compareNumberAscending or compareNumberDescending
+    return decorateSortAndUnwrap(list, pathKeys, comparator)
+end
+
+function Utils_Sort.SortListByAlphabeticalOrder(list, pathKeys, descending)
+    local comparator = descending and compareAlphaDescending or compareAlphaAscending
+    return decorateSortAndUnwrap(list, pathKeys, comparator)
+end
+
+function Utils_Sort.FilterListByVariable(list, pathKeys, filterValue, roughMatch, caseSensitive, customCheck)
     if not list then return {} end
-    local out = {}
-    local outSize = 0
-    local cs = (caseSensitive == nil) and true or caseSensitive
-    local rough = not not roughMatch
-    local indices = subVariableList
-    local len = (indices and #indices) or 0
 
-    local needle = value
-    if not cs and value ~= nil then
-        needle = string_lower(tostring(value))
+    local results = {}
+    local resultCount = 0
+    local isCaseSensitive = (caseSensitive == nil) and true or caseSensitive
+    local isRoughMatch = not not roughMatch
+    local pathLength = (pathKeys and #pathKeys) or 0
+
+    local needle = filterValue
+    if not isCaseSensitive and filterValue ~= nil then
+        needle = string_lower(tostring(filterValue))
     end
     local needleString = tostring(needle)
 
     for i = 1, #list do
         local entry = list[i]
+
         if customCheck then
             if customCheck(entry) then
-                outSize = outSize + 1
-                out[outSize] = entry
+                resultCount = resultCount + 1
+                results[resultCount] = entry
             end
         else
-            local sv = extractSubVariable(entry, indices, len)
-            if sv ~= nil then
-                if rough then
-                    local hay = tostring(sv)
-                    if not cs then hay = string_lower(hay) end
-                    if find_string(hay, needleString) then
-                        outSize = outSize + 1
-                        out[outSize] = entry
+            local resolved = resolveNestedPath(entry, pathKeys, pathLength)
+            if resolved ~= nil then
+                if isRoughMatch then
+                    local haystack = tostring(resolved)
+                    if not isCaseSensitive then haystack = string_lower(haystack) end
+                    if containsString(haystack, needleString) then
+                        resultCount = resultCount + 1
+                        results[resultCount] = entry
+                    end
+                elseif isCaseSensitive then
+                    if resolved == needle then
+                        resultCount = resultCount + 1
+                        results[resultCount] = entry
                     end
                 else
-                    if cs then
-                        if sv == needle then
-                            outSize = outSize + 1
-                            out[outSize] = entry
-                        end
-                    else
-                        if string_lower(tostring(sv)) == needleString then
-                            outSize = outSize + 1
-                            out[outSize] = entry
-                        end
+                    if string_lower(tostring(resolved)) == needleString then
+                        resultCount = resultCount + 1
+                        results[resultCount] = entry
                     end
                 end
             end
         end
     end
 
-    return out
+    return results
 end

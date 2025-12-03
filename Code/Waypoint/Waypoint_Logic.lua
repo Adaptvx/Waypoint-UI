@@ -30,11 +30,11 @@ local SavedVariables                            = env.WPM:Import("wpm_modules/sa
 local Utils_Formatting                          = env.WPM:Import("wpm_modules/utils/formatting")
 local LocalUtil                                 = env.WPM:Import("@/LocalUtil")
 local MapPin                                    = env.WPM:Import("@/MapPin")
-local WaypointDirector                          = env.WPM:Import("@/Waypoint/Director")
-local WaypointArrivalTime                       = env.WPM:Import("@/Waypoint/ArrivalTime")
-local WaypointEnum                              = env.WPM:Import("@/Waypoint/Enum")
-local WaypointCache                             = env.WPM:Import("@/Waypoint/Cache")
-local WaypointLogic                             = env.WPM:New("@/Waypoint/WaypointLogic")
+local Waypoint_Director                         = env.WPM:Import("@/Waypoint/Director")
+local Waypoint_ArrivalTime                      = env.WPM:Import("@/Waypoint/ArrivalTime")
+local Waypoint_Enum                             = env.WPM:Import("@/Waypoint/Enum")
+local Waypoint_Cache                            = env.WPM:Import("@/Waypoint/Cache")
+local Waypoint_Logic                            = env.WPM:New("@/Waypoint/Logic")
 
 
 
@@ -48,13 +48,12 @@ local cachedMode = nil
 local cachedNavFrame = nil
 local cachedContextIcon = nil
 
-
 -- Position
 --------------------------------
 
 do -- Waypoint / Pinpoint
     local function refreshWUIFrameAnchors()
-        local navFrame = WaypointCache:Get("navFrame")
+        local navFrame = Waypoint_Cache.navFrame
         cachedNavFrame = navFrame
         if not navFrame then return end
 
@@ -64,7 +63,7 @@ do -- Waypoint / Pinpoint
         WUIPinpointFrame:ClearAllPoints()
         WUIPinpointFrame:SetPoint("BOTTOM", navFrame, "TOP", 0, 75)
     end
-    CallbackRegistry:Add("WaypointDataProvider.NavFrameObtained", refreshWUIFrameAnchors, 10)
+    CallbackRegistry:Add("Waypoint_DataProvider.NavFrameObtained", refreshWUIFrameAnchors, 10)
 end
 
 do -- Navigator
@@ -209,7 +208,6 @@ do -- Navigator
 end
 
 
-
 -- Appearance
 --------------------------------
 
@@ -251,7 +249,7 @@ do -- Size
         local lastScale = nil
 
         WUIWaypointFrame:SetScript("OnUpdate", function()
-            local distance = WaypointCache:Get("distance")
+            local distance = Waypoint_Cache.Get("distance")
             if not distance then return end
 
             local scale = nil
@@ -298,7 +296,7 @@ do -- Color
     ---@param ContextIconTexture? table used to determine whether to apply recolor for specific context icon
     ---@return table|nil color
     ---@return boolean|nil recolor
-    function WaypointLogic.GetTintColorInfo(ContextIconTexture)
+    function Waypoint_Logic.GetTintColorInfo(ContextIconTexture)
         if not Setting then return end
 
         local Setting_CustomColor           = (Setting:GetVariable("CustomColor") == true)
@@ -322,8 +320,8 @@ do -- Color
         local recolor = nil
 
         local requestRecolor = ContextIconTexture and ContextIconTexture.requestRecolor or false
-        local trackingType = WaypointCache:Get("trackingType")
-        local pinType = WaypointCache:Get("pinType")
+        local trackingType = Waypoint_Cache.Get("trackingType")
+        local pinType = Waypoint_Cache.Get("pinType")
 
         if pinType == Enum.SuperTrackingType.Corpse then
             color = {
@@ -333,16 +331,16 @@ do -- Color
                 a = 1
             }
             recolor = requestRecolor or false
-        elseif trackingType == WaypointEnum.TrackingType.QuestComplete then
+        elseif trackingType == Waypoint_Enum.TrackingType.QuestComplete then
             color = ColorQuestComplete
             recolor = requestRecolor or RecolorQuestComplete
-        elseif trackingType == WaypointEnum.TrackingType.QuestCompleteRecurring then
+        elseif trackingType == Waypoint_Enum.TrackingType.QuestCompleteRecurring then
             color = ColorQuestCompleteRecurring
             recolor = requestRecolor or RecolorQuestCompleteRecurring
-        elseif trackingType == WaypointEnum.TrackingType.QuestCompleteImportant then
+        elseif trackingType == Waypoint_Enum.TrackingType.QuestCompleteImportant then
             color = ColorQuestCompleteImportant
             recolor = requestRecolor or RecolorQuestCompleteImportant
-        elseif trackingType == WaypointEnum.TrackingType.QuestIncomplete then
+        elseif trackingType == Waypoint_Enum.TrackingType.QuestIncomplete then
             color = ColorQuestIncomplete
             recolor = requestRecolor or RecolorQuestIncomplete
         else
@@ -353,11 +351,11 @@ do -- Color
         return color, recolor
     end
 
-    function WaypointLogic.UpdateColor()
+    function Waypoint_Logic.UpdateColor()
         if not cachedContextIcon then return end
 
         -- Set icon and tint
-        local tintColor, recolor = WaypointLogic.GetTintColorInfo(cachedContextIcon)
+        local tintColor, recolor = Waypoint_Logic.GetTintColorInfo(cachedContextIcon)
 
         WUIWaypointFrame:Appearance_SetTint(tintColor)
         WUIWaypointFrame:Appearance_SetRecolor(recolor)
@@ -367,17 +365,17 @@ do -- Color
         WUINavigatorFrame:Appearance_SetRecolor(recolor)
     end
 
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColor", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncomplete", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestComplete", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatable", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportant", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorOther", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncompleteTint", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteTint", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatableTint", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportantTint", WaypointLogic.UpdateColor)
-    SavedVariables.OnChange("WaypointDB_Global", "CustomColorOtherTint", WaypointLogic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColor", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncomplete", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestComplete", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatable", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportant", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorOther", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncompleteTint", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteTint", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatableTint", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportantTint", Waypoint_Logic.UpdateColor)
+    SavedVariables.OnChange("WaypointDB_Global", "CustomColorOtherTint", Waypoint_Logic.UpdateColor)
 end
 
 do -- Other
@@ -413,8 +411,8 @@ do -- Other
 
             -- Distance/Arrival Time text visibility
             local Setting_DistanceTextType = Config.DBGlobal:GetVariable("WaypointDistanceTextType")
-            local showDistanceText = (Setting_DistanceTextType == WaypointEnum.WaypointDistanceTextType.Distance) or (Setting_DistanceTextType == WaypointEnum.WaypointDistanceTextType.All)
-            local showArrivalTime = (Setting_DistanceTextType == WaypointEnum.WaypointDistanceTextType.ArrivalTime) or (Setting_DistanceTextType == WaypointEnum.WaypointDistanceTextType.All)
+            local showDistanceText = (Setting_DistanceTextType == Waypoint_Enum.WaypointDistanceTextType.Distance) or (Setting_DistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
+            local showArrivalTime = (Setting_DistanceTextType == Waypoint_Enum.WaypointDistanceTextType.ArrivalTime) or (Setting_DistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
 
             WUIWaypointFrame_Footer_Text:SetShown(showDistanceText)
             WUIWaypointFrame_Footer_SubtextFrame:SetShown(showArrivalTime)
@@ -437,7 +435,6 @@ do -- Other
         CallbackRegistry:Add("Preload.DatabaseReady", updateNavigatorAlpha)
     end
 end
-
 
 
 -- Interface
@@ -470,15 +467,15 @@ local function setWaypointDistanceText()
     if not Setting_WaypointDistanceText then return end
 
     local Setting_WaypointDistanceTextType = Config.DBGlobal:GetVariable("WaypointDistanceTextType")
-    local isDistance = (Setting_WaypointDistanceTextType == WaypointEnum.WaypointDistanceTextType.Distance) or (Setting_WaypointDistanceTextType == WaypointEnum.WaypointDistanceTextType.All)
-    local isArrivalTime = (Setting_WaypointDistanceTextType == WaypointEnum.WaypointDistanceTextType.ArrivalTime) or (Setting_WaypointDistanceTextType == WaypointEnum.WaypointDistanceTextType.All)
+    local isDistance = (Setting_WaypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.Distance) or (Setting_WaypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
+    local isArrivalTime = (Setting_WaypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.ArrivalTime) or (Setting_WaypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
 
 
     -- Distance
     --------------------------------
 
     if isDistance then
-        local distance = WaypointCache:Get("distance")
+        local distance = Waypoint_Cache.Get("distance")
         local oldText = WUIWaypointFrame_Footer_Text:GetText()
         local newText = tostring(LocalUtil:FormatDistance(distance))
 
@@ -491,10 +488,10 @@ local function setWaypointDistanceText()
     -- Arrival Time
     --------------------------------
 
-    local isValidArrivalTime = (WaypointArrivalTime:GetSeconds() > 0)
+    local isValidArrivalTime = (Waypoint_ArrivalTime:GetSeconds() > 0)
 
     if isArrivalTime and isValidArrivalTime then
-        local _, _, _, h, m, s = Utils_Formatting:FormatTime(WaypointArrivalTime:GetSeconds())
+        local _, _, _, h, m, s = Utils_Formatting.FormatTime(Waypoint_ArrivalTime:GetSeconds())
         WUIWaypointFrame_Footer_SubtextFrame_Text:SetText(h .. m .. s)
     else
         WUIWaypointFrame_Footer_SubtextFrame_Text:SetText("")
@@ -506,10 +503,10 @@ local function setPinpointInfoText()
     local Setting_PinpointExtendedInfo = Config.DBGlobal:GetVariable("PinpointInfoExtended")
 
 
-    local PinType = WaypointCache:Get("pinType")
-    local RedirectInfo = WaypointCache:Get("redirectInfo")
-    local PinName = WaypointCache:Get("pinName")
-    local PinDescription = WaypointCache:Get("pinDescription")
+    local PinType = Waypoint_Cache.Get("pinType")
+    local RedirectInfo = Waypoint_Cache.Get("redirectInfo")
+    local PinName = Waypoint_Cache.Get("pinName")
+    local PinDescription = Waypoint_Cache.Get("pinDescription")
 
     -- If pinpoint info is disabled, clear text and return
     local oldText = WUIPinpointFrame_Foreground_Content:GetText()
@@ -520,11 +517,11 @@ local function setPinpointInfoText()
         if RedirectInfo.valid then -- Redirect
             newText = RedirectInfo.text
         elseif PinType == Enum.SuperTrackingType.Quest then -- Quest
-            local questComplete = WaypointCache:Get("questComplete")
-            local questName = WaypointCache:Get("questName")
+            local questComplete = Waypoint_Cache.Get("questComplete")
+            local questName = Waypoint_Cache.Get("questName")
 
             if questComplete then
-                local questCompletionText = WaypointCache:Get("questCompletionText") or L["WaypointSystem - Pinpoint - Quest - Complete"]
+                local questCompletionText = Waypoint_Cache.Get("questCompletionText") or L["WaypointSystem - Pinpoint - Quest - Complete"]
 
                 if Setting_PinpointExtendedInfo then
                     newText = questName .. "\n" .. GenericEnum.ColorHEX.Gray .. questCompletionText .. "|r"
@@ -542,7 +539,7 @@ local function setPinpointInfoText()
                         objectiveType: QuestObjectiveType?
                 ]]
 
-                local allObjectives = WaypointCache:Get("questObjectiveInfo").objectives
+                local allObjectives = Waypoint_Cache.Get("questObjectiveInfo").objectives
 
                 -- Gather objective info and display incomplete tasks
                 local numObjectives = #allObjectives
@@ -584,20 +581,20 @@ end
 
 
 
-function WaypointLogic.UpdateFrameVisibility(mode)
+function Waypoint_Logic.UpdateFrameVisibility(event, mode)
     local Setting_NavigatorShow = Config.DBGlobal:GetVariable("NavigatorShow")
 
     cachedMode = mode
 
-    if mode == WaypointEnum.NavigationMode.Waypoint then
+    if mode == Waypoint_Enum.NavigationMode.Waypoint then
         CallbackRegistry:Trigger("WaypointAnimation.WaypointShow")
         CallbackRegistry:Trigger("WaypointAnimation.PinpointHide")
         CallbackRegistry:Trigger("WaypointAnimation.NavigatorHide")
-    elseif mode == WaypointEnum.NavigationMode.Pinpoint then
+    elseif mode == Waypoint_Enum.NavigationMode.Pinpoint then
         CallbackRegistry:Trigger("WaypointAnimation.WaypointHide")
         CallbackRegistry:Trigger("WaypointAnimation.PinpointShow")
         CallbackRegistry:Trigger("WaypointAnimation.NavigatorHide")
-    elseif mode == WaypointEnum.NavigationMode.Navigator and Setting_NavigatorShow then
+    elseif mode == Waypoint_Enum.NavigationMode.Navigator and Setting_NavigatorShow then
         CallbackRegistry:Trigger("WaypointAnimation.WaypointHide")
         CallbackRegistry:Trigger("WaypointAnimation.PinpointHide")
         CallbackRegistry:Trigger("WaypointAnimation.NavigatorShow")
@@ -607,30 +604,30 @@ function WaypointLogic.UpdateFrameVisibility(mode)
         CallbackRegistry:Trigger("WaypointAnimation.NavigatorHide")
     end
 
-    WaypointLogic.UnblockTransition()
+    Waypoint_Logic.UnblockTransition()
 end
-CallbackRegistry:Add("Waypoint.NavigationModeChanged", WaypointLogic.UpdateFrameVisibility)
-SavedVariables.OnChange("WaypointDB_Global", "NavigatorShow", function() WaypointLogic.UpdateFrameVisibility(WaypointDirector:GetNavigationMode()) end)
+CallbackRegistry:Add("Waypoint.NavigationModeChanged", Waypoint_Logic.UpdateFrameVisibility)
+SavedVariables.OnChange("WaypointDB_Global", "NavigatorShow", function() Waypoint_Logic.UpdateFrameVisibility(Waypoint_Director:GetNavigationMode()) end)
 
 
-function WaypointLogic.UpdateRealtime()
-    if cachedMode == WaypointEnum.NavigationMode.Waypoint then
+function Waypoint_Logic.UpdateRealtime()
+    if cachedMode == Waypoint_Enum.NavigationMode.Waypoint then
         setWaypointDistanceText()
     end
 end
-CallbackRegistry:Add("WaypointDataProvider.CacheRealtime", WaypointLogic.UpdateRealtime)
+CallbackRegistry:Add("Waypoint_DataProvider.CacheRealtime", Waypoint_Logic.UpdateRealtime)
 
 
-function WaypointLogic.UpdateContext()
+function Waypoint_Logic.UpdateContext()
     -- Obtain the current context icon; Redirect, Quest, Pin
-    local redirectInfo = WaypointCache:Get("redirectInfo")
-    local pinType = WaypointCache:Get("pinType")
+    local redirectInfo = Waypoint_Cache.Get("redirectInfo")
+    local pinType = Waypoint_Cache.Get("pinType")
     if redirectInfo and redirectInfo.valid then
-        cachedContextIcon = WaypointCache:Get("redirectContextIcon")
-    elseif pinType == Enum.SuperTrackingType.Quest and not WaypointCache:Get("questIsWorldQuest") then
-        cachedContextIcon = WaypointCache:Get("questContextIcon")
+        cachedContextIcon = Waypoint_Cache.Get("redirectContextIcon")
+    elseif pinType == Enum.SuperTrackingType.Quest and not Waypoint_Cache.Get("questIsWorldQuest") then
+        cachedContextIcon = Waypoint_Cache.Get("questContextIcon")
     else
-        cachedContextIcon = WaypointCache:Get("pinContextIcon")
+        cachedContextIcon = Waypoint_Cache.Get("pinContextIcon")
     end
     if not cachedContextIcon then return end
 
@@ -640,31 +637,31 @@ function WaypointLogic.UpdateContext()
     WUINavigatorFrame:Appearance_SetIcon(cachedContextIcon)
 
     -- Apply color
-    WaypointLogic.UpdateColor()
+    Waypoint_Logic.UpdateColor()
 
     -- Set pinpoint info text
     setPinpointInfoText()
 
 end
-CallbackRegistry:Add("Waypoint.ContextUpdate", WaypointLogic.UpdateContext, 10)
-SavedVariables.OnChange("WaypointDB_Global", "PinpointInfo", WaypointLogic.UpdateContext)
-SavedVariables.OnChange("WaypointDB_Global", "PinpointInfoExtended", WaypointLogic.UpdateContext)
+CallbackRegistry:Add("Waypoint.ContextUpdate", Waypoint_Logic.UpdateContext, 10)
+SavedVariables.OnChange("WaypointDB_Global", "PinpointInfo", Waypoint_Logic.UpdateContext)
+SavedVariables.OnChange("WaypointDB_Global", "PinpointInfoExtended", Waypoint_Logic.UpdateContext)
 
 
 
 
-function WaypointLogic.HideAllFrames()
+function Waypoint_Logic.HideAllFrames()
     WUIWaypointFrame:Hide()
     WUIPinpointFrame:Hide()
     WUINavigatorFrame:Hide()
 end
-CallbackRegistry:Add("Waypoint.HideAllFrames", WaypointLogic.HideAllFrames)
+CallbackRegistry:Add("Waypoint.HideAllFrames", Waypoint_Logic.HideAllFrames)
 
-function WaypointLogic.HideMainFrame()
+function Waypoint_Logic.HideMainFrame()
     WUIFrame:Hide()
 end
 
-function WaypointLogic.ShowMainFrame()
+function Waypoint_Logic.ShowMainFrame()
     WUIFrame:Show()
 
     -- Replay animations to address animation freezes
@@ -682,7 +679,6 @@ function WaypointLogic.ShowMainFrame()
 end
 
 
-
 -- Audio
 --------------------------------
 
@@ -696,7 +692,7 @@ local function playWaypointShowAudio()
         end
     end
 
-    Sound:PlaySound("Main", soundID)
+    Sound.PlaySound("Main", soundID)
 end
 
 local function playPinpointShowAudio()
@@ -709,9 +705,8 @@ local function playPinpointShowAudio()
         end
     end
 
-    Sound:PlaySound("Main", soundID)
+    Sound.PlaySound("Main", soundID)
 end
-
 
 
 -- Animation
@@ -723,15 +718,15 @@ local waypointAwaitOutro = false
 local pinpointAwaitIntro = false
 local pinpointAwaitOutro = false
 
-function WaypointLogic.BlockTransition()
+function Waypoint_Logic.BlockTransition()
     blockTransitionChange = true
 end
 
-function WaypointLogic.UnblockTransition()
+function Waypoint_Logic.UnblockTransition()
     blockTransitionChange = false
 end
 
-function WaypointLogic.ShowWaypoint()
+function Waypoint_Logic.ShowWaypoint()
     showWaypoint()
 
     if waypointAwaitIntro then
@@ -742,9 +737,9 @@ function WaypointLogic.ShowWaypoint()
         WUIWaypointFrame.Animation:Play(WUIWaypointFrame, "FADE_IN")
     end
 end
-CallbackRegistry:Add("WaypointAnimation.WaypointShow", WaypointLogic.ShowWaypoint)
+CallbackRegistry:Add("WaypointAnimation.WaypointShow", Waypoint_Logic.ShowWaypoint)
 
-function WaypointLogic.HideWaypoint()
+function Waypoint_Logic.HideWaypoint()
     if waypointAwaitOutro then
         waypointAwaitOutro = false
         WUIWaypointFrame.Animation:Play(WUIWaypointFrame, "OUTRO").onFinish(hideWaypoint)
@@ -752,9 +747,9 @@ function WaypointLogic.HideWaypoint()
         WUIWaypointFrame.Animation:Play(WUIWaypointFrame, "FADE_OUT").onFinish(hideWaypoint)
     end
 end
-CallbackRegistry:Add("WaypointAnimation.WaypointHide", WaypointLogic.HideWaypoint)
+CallbackRegistry:Add("WaypointAnimation.WaypointHide", Waypoint_Logic.HideWaypoint)
 
-function WaypointLogic.ShowPinpoint()
+function Waypoint_Logic.ShowPinpoint()
     showPinpoint()
 
     if pinpointAwaitIntro then
@@ -765,9 +760,9 @@ function WaypointLogic.ShowPinpoint()
         WUIPinpointFrame.Animation:Play(WUIPinpointFrame, "FADE_IN")
     end
 end
-CallbackRegistry:Add("WaypointAnimation.PinpointShow", WaypointLogic.ShowPinpoint)
+CallbackRegistry:Add("WaypointAnimation.PinpointShow", Waypoint_Logic.ShowPinpoint)
 
-function WaypointLogic.HidePinpoint()
+function Waypoint_Logic.HidePinpoint()
     if pinpointAwaitOutro then
         pinpointAwaitOutro = false
         WUIPinpointFrame.Animation:Play(WUIPinpointFrame, "OUTRO").onFinish(hidePinpoint)
@@ -775,20 +770,20 @@ function WaypointLogic.HidePinpoint()
         WUIPinpointFrame.Animation:Play(WUIPinpointFrame, "FADE_OUT").onFinish(hidePinpoint)
     end
 end
-CallbackRegistry:Add("WaypointAnimation.PinpointHide", WaypointLogic.HidePinpoint)
+CallbackRegistry:Add("WaypointAnimation.PinpointHide", Waypoint_Logic.HidePinpoint)
 
-function WaypointLogic.ShowNavigator()
+function Waypoint_Logic.ShowNavigator()
     showNavigator()
     WUINavigatorFrame.Animation:Play(WUINavigatorFrame, "FADE_IN")
 end
-CallbackRegistry:Add("WaypointAnimation.NavigatorShow", WaypointLogic.ShowNavigator)
+CallbackRegistry:Add("WaypointAnimation.NavigatorShow", Waypoint_Logic.ShowNavigator)
 
-function WaypointLogic.HideNavigator()
+function Waypoint_Logic.HideNavigator()
     WUINavigatorFrame.Animation:Play(WUINavigatorFrame, "FADE_OUT").onFinish(hideNavigator)
 end
-CallbackRegistry:Add("WaypointAnimation.NavigatorHide", WaypointLogic.HideNavigator)
+CallbackRegistry:Add("WaypointAnimation.NavigatorHide", Waypoint_Logic.HideNavigator)
 
-function WaypointLogic.TransitionWaypointToPinpoint()
+function Waypoint_Logic.TransitionWaypointToPinpoint()
     if blockTransitionChange then return end
 
     waypointAwaitIntro = false
@@ -796,9 +791,9 @@ function WaypointLogic.TransitionWaypointToPinpoint()
     pinpointAwaitIntro = true
     pinpointAwaitOutro = false
 end
-CallbackRegistry:Add("WaypointAnimation.WaypointToPinpoint", WaypointLogic.TransitionWaypointToPinpoint)
+CallbackRegistry:Add("WaypointAnimation.WaypointToPinpoint", Waypoint_Logic.TransitionWaypointToPinpoint)
 
-function WaypointLogic.TransitionPinpointToWaypoint()
+function Waypoint_Logic.TransitionPinpointToWaypoint()
     if blockTransitionChange then return end
 
     waypointAwaitIntro = true
@@ -806,21 +801,20 @@ function WaypointLogic.TransitionPinpointToWaypoint()
     pinpointAwaitIntro = false
     pinpointAwaitOutro = true
 end
-CallbackRegistry:Add("WaypointAnimation.PinpointToWaypoint", WaypointLogic.TransitionPinpointToWaypoint)
+CallbackRegistry:Add("WaypointAnimation.PinpointToWaypoint", Waypoint_Logic.TransitionPinpointToWaypoint)
 
-function WaypointLogic.New()
-    WaypointLogic.BlockTransition()
-    WaypointLogic.HideAllFrames()
+function Waypoint_Logic.New()
+    Waypoint_Logic.BlockTransition()
+    Waypoint_Logic.HideAllFrames()
 
     waypointAwaitIntro = true
     waypointAwaitOutro = false
     pinpointAwaitIntro = true
     pinpointAwaitOutro = false
 
-    WaypointLogic.UpdateFrameVisibility(WaypointDirector:GetNavigationMode())
+    Waypoint_Logic.UpdateFrameVisibility(Waypoint_Director:GetNavigationMode())
 end
-CallbackRegistry:Add("WaypointAnimation.New", WaypointLogic.New)
-
+CallbackRegistry:Add("WaypointAnimation.New", Waypoint_Logic.New)
 
 
 -- Additional Features
@@ -828,7 +822,7 @@ CallbackRegistry:Add("WaypointAnimation.New", WaypointLogic.New)
 
 do -- Hide SuperTrackedFrame while Waypoint is active
     local function hideSuperTrackedFrame()
-        if not WaypointDirector.isActive then return end
+        if not Waypoint_Director.isActive then return end
         SuperTrackedFrame:Hide()
     end
 
@@ -945,9 +939,9 @@ do -- Hide main WUI frame during cinematic or UI parent hidden
     EL:RegisterEvent("STOP_MOVIE")
     EL:SetScript("OnEvent", function(self, event, ...)
         if event == "CINEMATIC_START" or event == "PLAY_MOVIE" then
-            WaypointLogic.HideMainFrame()
+            Waypoint_Logic.HideMainFrame()
         else
-            WaypointLogic.ShowMainFrame()
+            Waypoint_Logic.ShowMainFrame()
         end
     end)
 
@@ -955,9 +949,9 @@ do -- Hide main WUI frame during cinematic or UI parent hidden
         local Setting_AlwaysShow = Config.DBGlobal:GetVariable("AlwaysShow")
 
         if visible or Setting_AlwaysShow then
-            WaypointLogic.ShowMainFrame()
+            Waypoint_Logic.ShowMainFrame()
         else
-            WaypointLogic.HideMainFrame()
+            Waypoint_Logic.HideMainFrame()
         end
     end)
 end
@@ -991,11 +985,10 @@ do -- Resize when font changes
 end
 
 
-
 -- Setup
 --------------------------------
 
-WaypointLogic:HideAllFrames()
+Waypoint_Logic:HideAllFrames()
 
 local function OnDatabaseLoaded()
     Setting = Config.DBGlobal

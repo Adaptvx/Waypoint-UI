@@ -1,15 +1,14 @@
-local env                                                                                                                  = select(2, ...)
-local MixinUtil                                                                                                            = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
+local env                                                                                                                          = select(2, ...)
+local MixinUtil                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
+local Path                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local GenericEnum                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
+local UIKit                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, Grid, LayoutVertical, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.LayoutVertical, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
 
-local Mixin                                                                                                                = MixinUtil.Mixin
+local Mixin                                                                                                                        = MixinUtil.Mixin
 
-local WaypointTemplates                                                                                                    = env.WPM:New("@/Waypoint/WaypointTemplates")
-
+local Waypoint_Templates                                                                                                           = env.WPM:New("@/Waypoint/Templates")
 
 
 -- Shared
@@ -20,7 +19,6 @@ local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "WaypointUITextur
 local FIT         = UIKit.Define.Fit{}
 
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
-
 
 
 
@@ -150,10 +148,10 @@ function PinpointArrowMixin:SetTint(color)
 end
 
 
-WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
+Waypoint_Templates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
-            VStack(name .. "VStack", {
+            LayoutVertical(name .. "LayoutVertical", {
                 Frame(name .. "Arrow1", {
                     Frame(name .. "Arrow1Texture", {
 
@@ -164,7 +162,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
                         :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
-                        :_updateMode(UIKit.Enum.UpdateMode.None)
+
                 })
                     :id("Arrow1", id)
                     :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
@@ -180,7 +178,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
                         :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
-                        :_updateMode(UIKit.Enum.UpdateMode.None)
+
                 })
                     :id("Arrow2", id)
                     :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
@@ -196,7 +194,7 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
                         :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
                         :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                         :frameLevel(1)
-                        :_updateMode(UIKit.Enum.UpdateMode.None)
+
                 })
                     :id("Arrow3", id)
                     :size(PA_ARROW_SIZE, PA_ARROW_SIZE)
@@ -221,7 +219,6 @@ WaypointTemplates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...)
     Mixin(frame, PinpointArrowMixin)
     return frame
 end)
-
 
 
 
@@ -272,7 +269,7 @@ function ContextIconMixin:SetInfo(ContextIconTexture)
 end
 
 
-WaypointTemplates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
+Waypoint_Templates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. "Background", {
@@ -282,16 +279,14 @@ WaypointTemplates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
                 :point(UIKit.Enum.Point.Center)
                 :size(CI_BACKGROUND_SIZE, CI_BACKGROUND_SIZE)
                 :background(CI_FOREGROUND_TEXTURE)
-                :frameLevel(2)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :frameLevel(2),
 
             Frame(name .. "Image")
                 :id("Image", id)
                 :point(UIKit.Enum.Point.Center)
                 :background(TEXTURE_NIL)
                 :frameLevel(3)
-                :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE),
 
             children
         })

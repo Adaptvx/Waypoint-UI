@@ -7,11 +7,12 @@ local SetCVar                 = SetCVar
 local GetCVar                 = GetCVar
 
 local CallbackRegistry        = env.WPM:Import("wpm_modules/callback-registry")
-local Utils_Blizzard          = env.WPM:Import("wpm_modules/utils/blizzard")
 local SavedVariables          = env.WPM:Import("wpm_modules/saved-variables")
 local MapPin                  = env.WPM:Import("@/MapPin")
 
 
+-- Helpers
+--------------------------------
 
 local cachedSFXVolume = nil
 local cachedGuidePin = nil
@@ -64,6 +65,8 @@ local function locateGuidePin()
 end
 
 
+-- Shared
+--------------------------------
 
 local function handleAccept()
     placeUserNavigationAtGuidePin()
@@ -73,23 +76,25 @@ local function handleCancel()
     showGuidePin()
 end
 
-local ReplacePromptInfo = {
-    text           = L["Guide Pin Assistant - ReplacePrompt"],
-    options = {
+local REPLACE_PROMPT_INFO = {
+    text         = L["Guide Pin Assistant - ReplacePrompt"],
+    options      = {
         {
-            text = L["Guide Pin Assistant - ReplacePrompt - Yes"],
+            text     = L["Guide Pin Assistant - ReplacePrompt - Yes"],
             callback = handleAccept
         },
         {
-            text = L["Guide Pin Assistant - ReplacePrompt - No"],
+            text     = L["Guide Pin Assistant - ReplacePrompt - No"],
             callback = handleCancel
         }
     },
-    hideOnEscape   = true,
-    timeout        = 10
+    hideOnEscape = true,
+    timeout      = 10
 }
 
 
+-- Events
+--------------------------------
 
 local Events = CreateFrame("Frame")
 Events:RegisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
@@ -100,11 +105,13 @@ Events:SetScript("OnEvent", function(self, event)
     if not IsSuperTrackingAnything() then
         placeUserNavigationAtGuidePin()
     else
-        WUISharedPrompt:SetData(ReplacePromptInfo, cachedGuidePin.name)
+        WUISharedPrompt:Open(REPLACE_PROMPT_INFO, cachedGuidePin.name)
     end
 end)
 
 
+-- Settings
+--------------------------------
 
 local function updateToMatchSetting()
     local Setting_GuidePinAssistantEnabled = Config.DBGlobal:GetVariable("GuidePinAssistantEnabled")

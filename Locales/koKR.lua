@@ -161,4 +161,3 @@ L["Contributors - SyverGiswold - Description"] = "코드: 기능"
 L["Guide Pin Assistant - ReplacePrompt"] = "현재 웨이포인트를 \"%s\"로 교체하시겠습니까?"
 L["Guide Pin Assistant - ReplacePrompt - Yes"] = "확인"
 L["Guide Pin Assistant - ReplacePrompt - No"] = "취소"
-

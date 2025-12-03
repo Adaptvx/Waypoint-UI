@@ -7,14 +7,14 @@ local CVarUtil         = env.WPM:Import("wpm_modules/cvar-util")
 local SavedVariables   = env.WPM:Import("wpm_modules/saved-variables")
 local SlashCommand     = env.WPM:Import("wpm_modules/slash-command")
 local Path             = env.WPM:Import("wpm_modules/path")
-local Utils_InlineIcon      = env.WPM:Import("wpm_modules/utils/inlineIcon")
+local Utils_InlineIcon = env.WPM:Import("wpm_modules/utils/inlineIcon")
 local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
 
 env.NAME               = "Waypoint UI"
 env.ICON               = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT           = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING     = "1.1.0"
-env.VERSION_NUMBER     = 010100
+env.VERSION_STRING     = "1.1.1"
+env.VERSION_NUMBER     = 010101
 env.DEBUG_MODE         = false
 
 
@@ -111,7 +111,7 @@ do
 
         AutoTrackPlacedPinEnabled              = true,
         AutoTrackChatLinkPinEnabled            = true,
-        GuidePinAssistantEnabled               = true,
+        GuidePinAssistantEnabled               = true
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS  = {}
     local DB_LOCAL_DEFAULTS              = {
@@ -335,8 +335,7 @@ do
         else
             -- Migrate if new version
             SavedVariables.RegisterDatabase(NAME_GLOBAL).defaults(DB_GLOBAL_DEFAULTS).migrationPlan(DB_GLOBAL_MIGRATION)
-            SavedVariables.RegisterDatabase(NAME_GLOBAL_PERSISTENT).defaults(DB_GLOBAL_PERSISTENT_DEFAULTS)
-                .migrationPlan(DB_GLOBAL_PERSISTENT_MIGRATION)
+            SavedVariables.RegisterDatabase(NAME_GLOBAL_PERSISTENT).defaults(DB_GLOBAL_PERSISTENT_DEFAULTS).migrationPlan(DB_GLOBAL_PERSISTENT_MIGRATION)
         end
 
         SavedVariables.RegisterDatabase(NAME_LOCAL).defaults(DB_LOCAL_DEFAULTS)
@@ -357,8 +356,8 @@ do -- Slash Command
     local GetBestMapForUnit    = C_Map.GetBestMapForUnit
     local GetPlayerMapPosition = C_Map.GetPlayerMapPosition
 
-    local INLINE_ADDON_ICON    = Utils_InlineIcon:InlineIcon(Path.Root .. env.ICON_ALT, 16, 16)
-    local PATH_CHAT_DIVIDER    = Utils_InlineIcon:InlineIcon(Path.Root .. "/Art/Chat/chat-subdivider.png", 16, 16)
+    local INLINE_ADDON_ICON    = Utils_InlineIcon.InlineIcon(Path.Root .. env.ICON_ALT, 16, 16)
+    local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/chat-subdivider.png", 16, 16)
 
     local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON .. " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_2    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "<x> <y> <name>" .. "|r"
@@ -482,9 +481,9 @@ do -- Sound Handler
         local Setting_AudioGlobal = Config.DBGlobal:GetVariable("AudioGlobal")
 
         if Setting_AudioGlobal == true then
-            Sound:SetEnabled("Main", true)
+            Sound.SetEnabled("Main", true)
         elseif Setting_AudioGlobal == false then
-            Sound:SetEnabled("Main", false)
+            Sound.SetEnabled("Main", false)
         end
     end
 
@@ -501,16 +500,15 @@ do -- Font Handler
     local function updateFonts()
         UIFont.CustomFont:RefreshFontList()
 
-        local SelectedFontIndex = Config.DBGlobal:GetVariable("PrefFont")
-        local FontPaths = UIFont.CustomFont:GetFontPaths()
+        local selectedFontIndex = Config.DBGlobal:GetVariable("PrefFont")
+        local fontPath = UIFont.CustomFont.GetFontPathForIndex(selectedFontIndex)
 
-        local currentFontPath = FontPaths[SelectedFontIndex]
-        UIFont.UIFontObjectNormal8:SetFontFile(currentFontPath)
-        UIFont.UIFontObjectNormal10:SetFontFile(currentFontPath)
-        UIFont.UIFontObjectNormal12:SetFontFile(currentFontPath)
-        UIFont.UIFontObjectNormal14:SetFontFile(currentFontPath)
-        UIFont.UIFontObjectNormal16:SetFontFile(currentFontPath)
-        UIFont.UIFontObjectNormal18:SetFontFile(currentFontPath)
+        UIFont.UIFontObjectNormal8:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal10:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal12:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal14:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal16:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal18:SetFontFile(fontPath)
     end
 
     SavedVariables.OnChange("WaypointDB_Global", "PrefFont", updateFonts)

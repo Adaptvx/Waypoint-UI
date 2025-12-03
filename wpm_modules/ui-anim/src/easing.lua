@@ -6,6 +6,8 @@ local HALF_PI = pi * 0.5
 
 local UIAnim_Easing = env.WPM:New("wpm_modules/ui-anim/easing")
 
+
+
 do -- Linear
     function UIAnim_Easing.Linear(t)
         return t

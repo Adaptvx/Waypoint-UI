@@ -1,20 +1,26 @@
-local env                = select(2, ...)
-local Config             = env.Config
+local env                 = select(2, ...)
+local Config              = env.Config
 
-local tinsert            = table.insert
-local ipairs             = ipairs
+local tinsert             = table.insert
+local ipairs              = ipairs
 
-local CallbackRegistry   = env.WPM:Import("wpm_modules/callback-registry")
-local SettingEnum        = env.WPM:Import("@/Setting/Enum")
-local SettingWidgets     = env.WPM:Import("@/Setting/SettingWidgets")
-local SettingLogic       = env.WPM:Await("@/Setting/Logic")
-local SettingConstructor = env.WPM:New("@/Setting/Constructor")
+local CallbackRegistry    = env.WPM:Import("wpm_modules/callback-registry")
+local UIKit               = env.WPM:Import("wpm_modules/ui-kit")
+local Setting_Enum        = env.WPM:Import("@/Setting/Enum")
+local Setting_Widgets     = env.WPM:Import("@/Setting/Setting_Widgets")
+local Setting_Shared      = env.WPM:Import("@/Setting/Shared")
+local Setting_Logic       = env.WPM:Await("@/Setting/Logic")
+local Setting_Constructor = env.WPM:New("@/Setting/Constructor")
 
 
-SettingConstructor.Tabs = {}
-SettingConstructor.TabButtons = {}
+-- Shared
+--------------------------------
 
-local defaultParent = nil
+Setting_Constructor.Tabs = {}
+Setting_Constructor.TabButtons = {}
+
+local SettingFrame = _G[Setting_Shared.FRAME_NAME]
+local buildTarget = nil
 
 
 -- Helper
@@ -34,7 +40,6 @@ local function resolveValueThatIsFunctionOrValue(value)
     end
     return value
 end
-
 
 
 
@@ -59,12 +64,12 @@ function WidgetMixin:OnLoad(widgetInfo, root, tab)
 
     tinsert(root.__children, self)
 
-    CallbackRegistry:Add("Setting.Refresh", function(force)
+    CallbackRegistry:Add("Setting.Refresh", function(event, force)
         self:Refresh(force)
     end)
 
-    local isTitle = (widgetType == SettingEnum.WidgetType.Title)
-    local isContainer = (widgetType == SettingEnum.WidgetType.Container)
+    local isTitle = (widgetType == Setting_Enum.WidgetType.Title)
+    local isContainer = (widgetType == Setting_Enum.WidgetType.Container)
     local isWidgetElement = (not isTitle and not isContainer)
 
     -- Set transparency
@@ -174,7 +179,7 @@ local Build = {}
 
 do -- Tab
     local function TabButton_OnClick(self)
-        SettingLogic:OpenTabByIndex(self.__index)
+        Setting_Logic:OpenTabByIndex(self.__index)
     end
 
     function Build.Tab(widgetInfo, parent)
@@ -183,20 +188,20 @@ do -- Tab
 
 
         -- Create Widget
-        local tab = SettingWidgets.Tab()
+        local tab = Setting_Widgets.Tab()
         tab:parent(parent)
         tab:Hide()
 
-        local tabButton = SettingWidgets.TabButton()
-        tabButton:parent(isFooter and WUISettingFrame.Sidebar.Footer or WUISettingFrame.Sidebar.Tab)
+        local tabButton = Setting_Widgets.TabButton()
+        tabButton:parent(isFooter and SettingFrame.Sidebar.Footer or SettingFrame.Sidebar.Tab)
         tabButton:SetText(name)
         tabButton:HookMouseUp(TabButton_OnClick)
-        tabButton.__index = #SettingConstructor.Tabs + 1
+        tabButton.__index = #Setting_Constructor.Tabs + 1
 
 
         -- Add to tab list
-        tinsert(SettingConstructor.Tabs, tab)
-        tinsert(SettingConstructor.TabButtons, tabButton)
+        tinsert(Setting_Constructor.Tabs, tab)
+        tinsert(Setting_Constructor.TabButtons, tabButton)
 
 
         -- Variables
@@ -215,7 +220,7 @@ do -- Title
         assert(titleInfo, "Title is required!")
 
         -- Create Widget
-        local widget = SettingWidgets.Title()
+        local widget = Setting_Widgets.Title()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -235,7 +240,7 @@ do -- Container
 
 
         -- Create Widget
-        local widget = SettingWidgets.ContainerWithTitle()
+        local widget = Setting_Widgets.ContainerWithTitle()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -258,7 +263,7 @@ do -- Text
         local name = widgetInfo.widgetName or ""
 
         -- Create Widget
-        local widget = SettingWidgets.ElementText()
+        local widget = Setting_Widgets.ElementText()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -336,7 +341,7 @@ do -- Range
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementRange()
+        local widget = Setting_Widgets.ElementRange()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -381,7 +386,7 @@ do -- Button
 
         local refreshOnClick = self.__widgetRef.__refreshOnClick
         if refreshOnClick then
-            SettingConstructor:Refresh()
+            Setting_Constructor:Refresh()
         end
     end
 
@@ -396,7 +401,7 @@ do -- Button
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementButton()
+        local widget = Setting_Widgets.ElementButton()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -418,15 +423,15 @@ do -- Button
     end
 end
 
-do -- Checkbox
-    local function Checkbox_Refresh(self, force)
+do -- CheckButton
+    local function CheckButton_Refresh(self, force)
         if not force and hasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
-        self:GetCheckbox():SetChecked(value)
+        self:GetCheckButton():SetChecked(value)
     end
 
-    local function Checkbox_OnCheck(self, value)
+    local function CheckButton_OnCheck(self, value)
         local widget = self.__widgetRef
 
         if widget.__lastValue == value then return end
@@ -441,36 +446,36 @@ do -- Checkbox
         end
     end
 
-    function Build.Checkbox(widgetInfo, parent, root, tab)
+    function Build.CheckButton(widgetInfo, parent, root, tab)
         local name = widgetInfo.widgetName or ""
         local key = widgetInfo.key
         local set = widgetInfo.set
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementCheckbox()
+        local widget = Setting_Widgets.ElementCheckButton()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
         widget:OnLoad(widgetInfo, root, tab)
-        widget:SetUserInteractableObject(widget:GetCheckbox())
+        widget:SetUserInteractableObject(widget:GetCheckButton())
 
-        local checkbox = widget:GetCheckbox()
+        local checkButton = widget:GetCheckButton()
 
 
         -- Key
         widget:SetDBKey(key)
         widget:PullDBKeyToLocalValue()
 
-        checkbox.__widgetRef = widget
+        checkButton.__widgetRef = widget
         widget.__setFunc = set
 
-        checkbox:SetChecked(widget:GetLocalValue())
-        checkbox:HookCheck(Checkbox_OnCheck)
+        checkButton:SetChecked(widget:GetLocalValue())
+        checkButton:HookCheck(CheckButton_OnCheck)
 
 
         -- Refresh
-        widget:SetRefreshHandler(Checkbox_Refresh)
+        widget:SetRefreshHandler(CheckButton_Refresh)
 
 
         return widget
@@ -510,7 +515,7 @@ do -- Selection Menu
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementSelectionMenu()
+        local widget = Setting_Widgets.ElementSelectionMenu()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -527,7 +532,7 @@ do -- Selection Menu
         buttonSelectionMenu.__widgetRef = widget
         widget.__setFunc = set
 
-        buttonSelectionMenu:SetSelectionMenu(WUISettingFrame.SelectionMenu)
+        buttonSelectionMenu:SetSelectionMenu(SettingFrame.SelectionMenu)
         buttonSelectionMenu:SetData(resolveValueThatIsFunctionOrValue(selectionMenuData))
         buttonSelectionMenu:SetValue(widget:GetLocalValue())
         buttonSelectionMenu:HookValueChanged(SelectionMenu_OnValueChanged)
@@ -574,7 +579,7 @@ do -- Color Input
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementColorInput()
+        local widget = Setting_Widgets.ElementColorInput()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -644,7 +649,7 @@ do -- Input
 
 
         -- Create Widget
-        local widget = SettingWidgets.ElementInput()
+        local widget = Setting_Widgets.ElementInput()
         widget:parent(parent)
 
         Mixin(widget, WidgetMixin)
@@ -675,22 +680,20 @@ do -- Input
 end
 
 
-
-
 -- Scanning
 --------------------------------
 
 local BUILD_MAP = {
-    [SettingEnum.WidgetType.Tab]           = Build.Tab,
-    [SettingEnum.WidgetType.Title]         = Build.Title,
-    [SettingEnum.WidgetType.Container]     = Build.Container,
-    [SettingEnum.WidgetType.Text]          = Build.Text,
-    [SettingEnum.WidgetType.Range]         = Build.Range,
-    [SettingEnum.WidgetType.Button]        = Build.Button,
-    [SettingEnum.WidgetType.Checkbox]      = Build.Checkbox,
-    [SettingEnum.WidgetType.SelectionMenu] = Build.SelectionMenu,
-    [SettingEnum.WidgetType.ColorInput]    = Build.ColorInput,
-    [SettingEnum.WidgetType.Input]         = Build.Input
+    [Setting_Enum.WidgetType.Tab]           = Build.Tab,
+    [Setting_Enum.WidgetType.Title]         = Build.Title,
+    [Setting_Enum.WidgetType.Container]     = Build.Container,
+    [Setting_Enum.WidgetType.Text]          = Build.Text,
+    [Setting_Enum.WidgetType.Range]         = Build.Range,
+    [Setting_Enum.WidgetType.Button]        = Build.Button,
+    [Setting_Enum.WidgetType.CheckButton]   = Build.CheckButton,
+    [Setting_Enum.WidgetType.SelectionMenu] = Build.SelectionMenu,
+    [Setting_Enum.WidgetType.ColorInput]    = Build.ColorInput,
+    [Setting_Enum.WidgetType.Input]         = Build.Input
 }
 
 local function buildWidget(info, parent, root, tab)
@@ -705,7 +708,7 @@ end
 
 local function traverseAndBuildWidgetsFromTable(widgetTable, parent, root, currentTab)
     for _, info in ipairs(widgetTable) do
-        local isTab = info.widgetType == SettingEnum.WidgetType.Tab
+        local isTab = info.widgetType == Setting_Enum.WidgetType.Tab
 
         -- Build the widget using the appropriate method
         local widget, contentFrame = buildWidget(info, parent, root, currentTab)
@@ -722,20 +725,19 @@ local function traverseAndBuildWidgetsFromTable(widgetTable, parent, root, curre
 end
 
 
-
-
-
 -- API
 --------------------------------
 
-function SettingConstructor:SetBuildTargetFrame(frame)
-    defaultParent = frame
+function Setting_Constructor:SetBuildTargetFrame(frame)
+    buildTarget = frame
 end
 
-function SettingConstructor:Build(origin)
-    traverseAndBuildWidgetsFromTable(origin, defaultParent)
+function Setting_Constructor:Build(origin)
+    UIKit.BeginBatch()
+    traverseAndBuildWidgetsFromTable(origin, buildTarget)
+    UIKit.EndBatch()
 end
 
-function SettingConstructor:Refresh(force)
+function Setting_Constructor:Refresh(force)
     CallbackRegistry:Trigger("Setting.Refresh", force)
 end

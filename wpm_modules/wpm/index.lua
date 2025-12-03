@@ -1,13 +1,18 @@
 local env = select(2, ...)
 
-local package = {}
+local WPM = {}
+env.WPM = WPM
 
-function package:New(name)
+
+-- API
+--------------------------------
+
+function WPM:New(name)
 	env["wpm/" .. name] = {}
 	return env["wpm/" .. name]
 end
 
-function package:Import(name)
+function WPM:Import(name)
 	return env["wpm/" .. name]
 end
 
@@ -17,8 +22,6 @@ local awaitMetatable = {
     end
 }
 
-function package:Await(name)
+function WPM:Await(name)
     return setmetatable({ name = name }, awaitMetatable)
 end
-
-env.WPM = package

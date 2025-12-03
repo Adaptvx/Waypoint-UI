@@ -1,24 +1,21 @@
-local env                = select(2, ...)
+local env                 = select(2, ...)
 
-local WUISettingFrame    = WUISettingFrame
-local SettingsCanvas     = SettingsPanel.Container.SettingsCanvas
-local IsAddonLoaded      = C_AddOns.IsAddOnLoaded
+local SettingsCanvas      = SettingsPanel.Container.SettingsCanvas
+local IsAddonLoaded       = C_AddOns.IsAddOnLoaded
 
-local CallbackRegistry   = env.WPM:Import("wpm_modules/callback-registry")
-local SavedVariables     = env.WPM:Import("wpm_modules/saved-variables")
-local SettingConstructor = env.WPM:Await("@/Setting/Constructor")
-local SettingSchema      = env.WPM:Await("@/Setting/Schema")
-local SettingLogic       = env.WPM:New("@/Setting/Logic")
-
-
+local CallbackRegistry    = env.WPM:Import("wpm_modules/callback-registry")
+local SavedVariables      = env.WPM:Import("wpm_modules/saved-variables")
+local Setting_Shared      = env.WPM:Import("@/Setting/Shared")
+local Setting_Constructor = env.WPM:Await("@/Setting/Constructor")
+local Setting_Schema      = env.WPM:Await("@/Setting/Schema")
+local Setting_Logic       = env.WPM:New("@/Setting/Logic")
 
 
 -- Shared
 --------------------------------
 
 local isElvUILoaded = false
-
-
+local SettingFrame = _G[Setting_Shared.FRAME_NAME]
 
 
 -- Tab
@@ -30,15 +27,15 @@ local categoryId = nil
 
 local function getSelectedTabFrame()
     if not selectedTabIndex then return end
-    return SettingConstructor.Tabs[selectedTabIndex]
+    return Setting_Constructor.Tabs[selectedTabIndex]
 end
 
-function SettingLogic:OpenTabByIndex(index)
+function Setting_Logic:OpenTabByIndex(index)
     selectedTabIndex = index
 
-    for i = 1, #SettingConstructor.Tabs do
-        local tab = SettingConstructor.Tabs[i]
-        local tabButton = SettingConstructor.TabButtons[i]
+    for i = 1, #Setting_Constructor.Tabs do
+        local tab = Setting_Constructor.Tabs[i]
+        local tabButton = Setting_Constructor.TabButtons[i]
         local isSelected = i == index
 
 
@@ -55,7 +52,7 @@ function SettingLogic:OpenTabByIndex(index)
 
 
         -- Refresh widgets
-        SettingConstructor:Refresh(true)
+        Setting_Constructor:Refresh(true)
     end
 end
 
@@ -63,53 +60,47 @@ end
 -- Setup
 --------------------------------
 
-WUISettingFrameAnchor = CreateFrame("Frame", "WUISettingFrameAnchor", UIParent)
-local INSET = 8
+local SettingFrameAnchor = CreateFrame("Frame", nil, UIParent)
+local SettingFrameInset = 8
 local isSetup = false
 
-
-
-function SettingLogic.OpenSettingUI()
+function Setting_Logic.OpenSettingUI()
     if not categoryId then return end
     Settings.OpenToCategory(categoryId)
 end
 
-
-
 local function setupSettingUI()
-    SettingConstructor:SetBuildTargetFrame(WUISettingFrame.Content.Container)
-    SettingConstructor:Build(SettingSchema.SCHEMA)
+    Setting_Constructor:SetBuildTargetFrame(SettingFrame.Content.Container)
+    Setting_Constructor:Build(Setting_Schema.SCHEMA)
 
-    WUISettingFrame:SetParent(WUISettingFrameAnchor)
-    WUISettingFrame:SetPoint("CENTER", WUISettingFrameAnchor)
-    WUISettingFrame:SetSize(WUISettingFrameAnchor:GetSize())
-    WUISettingFrame:_Render()
+    SettingFrame:SetParent(SettingFrameAnchor)
+    SettingFrame:SetPoint("CENTER", SettingFrameAnchor)
+    SettingFrame:SetSize(SettingFrameAnchor:GetSize())
+    SettingFrame:_Render()
 
-    SettingLogic:OpenTabByIndex(1)
+    Setting_Logic:OpenTabByIndex(1)
 end
-
-
 
 
 
 local function OnShow(self)
     if not isElvUILoaded then isElvUILoaded = IsAddonLoaded("ElvUI") end
-    
 
 
-    WUISettingFrameAnchor:ClearAllPoints()
-    
+
+    SettingFrameAnchor:ClearAllPoints()
+
     if isElvUILoaded then
-        WUISettingFrameAnchor:SetAllPoints(SettingsCanvas)
+        SettingFrameAnchor:SetAllPoints(SettingsCanvas)
     else
-        WUISettingFrameAnchor:SetPoint("CENTER", SettingsCanvas, -INSET, INSET)
-        WUISettingFrameAnchor:SetSize(math.ceil(SettingsCanvas:GetWidth() + INSET * 2), math.ceil(SettingsCanvas:GetHeight() + INSET / 2))
+        SettingFrameAnchor:SetPoint("CENTER", SettingsCanvas, -SettingFrameInset, SettingFrameInset)
+        SettingFrameAnchor:SetSize(math.ceil(SettingsCanvas:GetWidth() + SettingFrameInset * 2), math.ceil(SettingsCanvas:GetHeight() + SettingFrameInset / 2))
     end
 
-    WUISettingFrame:Show()
+    SettingFrame:Show()
 
 
-    
+
     if not isSetup then
         setupSettingUI()
         isSetup = true
@@ -117,15 +108,15 @@ local function OnShow(self)
 end
 
 local function OnHide(self)
-    WUISettingFrame:Hide()
+    SettingFrame:Hide()
 end
 
 local function RenderUI()
-    if WUISettingFrame:IsShown() and isSetup then
-        WUISettingFrame:_Render()
+    if SettingFrame:IsShown() and isSetup then
+        SettingFrame:_Render()
 
-        for i = 1, #SettingConstructor.Tabs do
-            SettingConstructor.Tabs[i].hasRendered = false
+        for i = 1, #Setting_Constructor.Tabs do
+            Setting_Constructor.Tabs[i].hasRendered = false
         end
 
         local currentTab = getSelectedTabFrame()
@@ -136,26 +127,21 @@ local function RenderUI()
     end
 end
 
-
-
-
-WUISettingFrameAnchor:HookScript("OnShow", OnShow)
-WUISettingFrameAnchor:HookScript("OnHide", OnHide)
-WUISettingFrameAnchor:SetScript("OnEvent", RenderUI)
+SettingFrameAnchor:HookScript("OnShow", OnShow)
+SettingFrameAnchor:HookScript("OnHide", OnHide)
+SettingFrameAnchor:SetScript("OnEvent", RenderUI)
 CallbackRegistry:Add("WoWClient.OnUIScaleChanged", RenderUI)
-SavedVariables.OnChange("WaypointDB_Global", "PrefFont", RenderUI, 10)
-
-
+SavedVariables.OnChange(Setting_Shared.DB_GLOBAL_NAME, "PrefFont", RenderUI, 10)
 
 
 
 local function OnAddonLoaded()
     -- Hide frame
-    WUISettingFrameAnchor:Hide()
-    WUISettingFrame:Hide()
+    SettingFrameAnchor:Hide()
+    SettingFrame:Hide()
 
     -- Add to Blizzard in-game add-on setting page
-    local category = Settings.RegisterCanvasLayoutCategory(WUISettingFrameAnchor, env.NAME)
+    local category = Settings.RegisterCanvasLayoutCategory(SettingFrameAnchor, Setting_Shared.NAME)
     Settings.RegisterAddOnCategory(category)
 
     categoryId = category:GetID()

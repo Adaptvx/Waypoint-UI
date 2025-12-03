@@ -1,13 +1,11 @@
 local addonName, env      = ...
 local DebuggerIntegration = env.WPM:New("wpm_modules/debugger-integration")
 
-
 -- Variables
 --------------------------------
 
 local ENABLE = nil
 C_Timer.After(0, function() ENABLE = env.DEBUG_MODE or false end)
-
 
 
 -- Connection
@@ -25,7 +23,6 @@ local function attemptToConnect()
         return true
     end
 end
-
 
 -- API
 --------------------------------

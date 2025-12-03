@@ -1,9 +1,15 @@
-local env = select(2, ...)
-local Sound = env.WPM:New("wpm_modules/sound")
+local env    = select(2, ...)
+local Sound  = env.WPM:New("wpm_modules/sound")
+
+
+-- Shared
+--------------------------------
 
 local layers = {}
 
 
+-- Helpers
+--------------------------------
 
 local function initalizeLayer(layer)
     layers[layer] = true
@@ -15,15 +21,17 @@ local function isLayerEnabled(layer)
 end
 
 
+-- API
+--------------------------------
 
-function Sound:PlaySoundFile(layer, filePath, force)
+function Sound.PlaySoundFile(layer, filePath, force)
     assert(filePath, "Invalid variable `filePath`")
     if not force and isLayerEnabled(layer) == false then return end
 
     PlaySoundFile(filePath, "SFX")
 end
 
-function Sound:PlaySound(layer, soundID, force)
+function Sound.PlaySound(layer, soundID, force)
     assert(soundID, "Invalid variable `soundID`")
     if not tonumber(soundID) then return end
     if not force and isLayerEnabled(layer) == false then return end
@@ -31,23 +39,23 @@ function Sound:PlaySound(layer, soundID, force)
     PlaySound(soundID, "SFX")
 end
 
-function Sound:Enable(layer)
+function Sound.Enable(layer)
     layers[layer] = true
 end
 
-function Sound:Disable(layer)
+function Sound.Disable(layer)
     layers[layer] = false
 end
 
-function Sound:SetEnabled(layer, enabled)
+function Sound.SetEnabled(layer, enabled)
     if enabled == true then
-        self:Enable(layer)
+        Sound.Enable(layer)
     elseif enabled == false then
-        self:Disable(layer)
+        Sound.Disable(layer)
     end
 end
 
-function Sound:GetEnabled(layer)
+function Sound.GetEnabled(layer)
     if not layers[layer] then return nil end
     return layers[layer]
 end

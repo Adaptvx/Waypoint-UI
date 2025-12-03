@@ -16,7 +16,7 @@ do -- Screen Position Calculations
 
         local frameScale = frame:GetEffectiveScale()
         frameX, frameY = frameX * frameScale, frameY * frameScale
-        local deltaX, deltaY = Utils_General:GetMouseDelta(frameX, frameY)
+        local deltaX, deltaY = Utils_General.GetMouseDelta(frameX, frameY)
 
         local aspectRatio = GetScreenWidth() / GetScreenHeight()
         return (math.abs(deltaX) + math.abs(deltaY)) / aspectRatio

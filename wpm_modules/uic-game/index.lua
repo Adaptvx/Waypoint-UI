@@ -1,11 +1,11 @@
 local env                   = select(2, ...)
 local UICGameButton         = env.WPM:Import("wpm_modules/uic-game/button")
-local UICGameCheckbox       = env.WPM:Import("wpm_modules/uic-game/checkbox")
+local UICGameCheckButton    = env.WPM:Import("wpm_modules/uic-game/check-button")
 local UICGameRange          = env.WPM:Import("wpm_modules/uic-game/range")
-local UICGameScrollBar      = env.WPM:Import("wpm_modules/uic-game/scrollBar")
+local UICGameScrollBar      = env.WPM:Import("wpm_modules/uic-game/scroll-bar")
 local UICGameInput          = env.WPM:Import("wpm_modules/uic-game/input")
-local UICGameSelectionMenu  = env.WPM:Import("wpm_modules/uic-game/selectionMenu")
-local UICGameColorInput     = env.WPM:Import("wpm_modules/uic-game/colorInput")
+local UICGameSelectionMenu  = env.WPM:Import("wpm_modules/uic-game/selection-menu")
+local UICGameColorInput     = env.WPM:Import("wpm_modules/uic-game/color-input")
 local UICGamePrompt         = env.WPM:Import("wpm_modules/uic-game/prompt")
 local UICGame               = env.WPM:New("wpm_modules/uic-game")
 
@@ -17,7 +17,7 @@ UICGame.ButtonRedWithText   = UICGameButton.RedWithText
 UICGame.ButtonGreyWithText  = UICGameButton.GreyWithText
 UICGame.ButtonRedClose      = UICGameButton.RedClose
 UICGame.ButtonSelectionMenu = UICGameButton.SelectionMenu
-UICGame.Checkbox            = UICGameCheckbox.New
+UICGame.CheckButton         = UICGameCheckButton.New
 UICGame.ScrollBar           = UICGameScrollBar.New
 UICGame.Input               = UICGameInput.New
 UICGame.Range               = UICGameRange.New
@@ -26,15 +26,14 @@ UICGame.SelectionMenu       = UICGameSelectionMenu.New
 UICGame.ColorInput          = UICGameColorInput.New
 UICGame.Prompt              = UICGamePrompt.New
 
-
 -- Demo
 --------------------------------
 
 --[[
     local UIKit = env.WPM:Import("wpm_modules/ui-kit")
-    local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+    local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 
-    VStack{
+    LayoutVertical{
         -- Red Button with Text
         UICGame.ButtonRedWithText()
             :id("RedWithText")
@@ -55,9 +54,9 @@ UICGame.Prompt              = UICGamePrompt.New
             :id("SelectionMenuButton")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
 
-        -- Checkbox
-        UICGame.Checkbox()
-            :id("Checkbox")
+        -- CheckButton
+        UICGame.CheckButton()
+            :id("CheckButton")
             :size(UIKit.Define.Num{ value = 22 }, UIKit.Define.Num{ value = 22 }),
 
         -- Input
@@ -127,8 +126,8 @@ UICGame.Prompt              = UICGamePrompt.New
 
     E_Input = UIKit.GetElementById("Input")
 
-    E_Checkbox = UIKit.GetElementById("Checkbox")
-    E_Checkbox:SetChecked(true)
+    E_CheckButton = UIKit.GetElementById("CheckButton")
+    E_CheckButton:SetChecked(true)
 
     E_Range = UIKit.GetElementById("Range")
     E_Range:GetRange():SetMinMaxValues(0, 1)
@@ -140,7 +139,7 @@ UICGame.Prompt              = UICGamePrompt.New
     E_RangeWithText:SetText("Range")
 
     E_ColorInput = UIKit.GetElementById("ColorInput")
-    
+
     E_ScrollView = UIKit.GetElementById("ScrollView")
 
     E_ScrollBar = UIKit.GetElementById("ScrollBar")
@@ -159,7 +158,7 @@ UICGame.Prompt              = UICGamePrompt.New
         :_Render()
 
 
-        
+
     -- Dropdown Button to open menu
     --------------------------------
 

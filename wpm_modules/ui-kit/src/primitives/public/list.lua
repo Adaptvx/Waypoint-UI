@@ -1,16 +1,16 @@
-local env = select(2, ...)
-local MixinUtil = env.WPM:Import("wpm_modules/mixin-util")
-local Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local env                    = select(2, ...)
+local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin = MixinUtil.Mixin
-local tinsert = table.insert
-local ipairs = ipairs
+local Mixin                  = MixinUtil.Mixin
+local tinsert                = table.insert
+local ipairs                 = ipairs
 
-local List = env.WPM:New("wpm_modules/ui-kit/primitives/list")
-
-
+local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local UIKit_Primitives_List  = env.WPM:New("wpm_modules/ui-kit/primitives/list")
 
 
+-- List
+--------------------------------
 
 local ListMixin = {}
 do
@@ -72,7 +72,6 @@ do
 
         assert(self.uk_parent, "No parent set!")
         element:parent(self.uk_parent)
-        element:_Render()
 
         tinsert(self.__elementPool, element)
 
@@ -107,22 +106,17 @@ do
 end
 
 
-
-
-
-function List:New(name, parent)
+function UIKit_Primitives_List.New(name, parent)
     name = name or "undefined"
 
 
-    local frame = Frame:New("Frame", name, parent)
+    local frame = UIKit_Primitives_Frame.New("Frame", name, parent)
     Mixin(frame, ListMixin)
     frame:Init()
 
 
     return frame
 end
-
-
 
 
 --[[
@@ -144,7 +138,7 @@ end
     end
 
     Frame{
-        VStack{
+        LayoutVertical{
             List()
                 :id("List")
                 :poolPrefab(Element)

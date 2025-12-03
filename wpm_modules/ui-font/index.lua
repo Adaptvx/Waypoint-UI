@@ -6,11 +6,10 @@ local UIFont_CustomFont = env.WPM:Import("wpm_modules/ui-font/custom-font")
 local UIFont_FontUtil   = env.WPM:Import("wpm_modules/ui-font/font-util")
 local UIFont            = env.WPM:New("wpm_modules/ui-font")
 
-
 -- Predefined Fonts
 --------------------------------
 
-local UIFontNormal = React.New(UIKit.Define.FontFamily{ path = GameFontNormal:GetFont() })
+local UIFontNormal = React.New(GameFontNormal:GetFont())
 UIFont.UIFontNormal = UIFontNormal
 
 local function createUIFontObjectNormal(fontHeight)
@@ -39,7 +38,6 @@ UIFont.UIFontObjectNormal16 = UIFontObjectNormal16
 
 local UIFontObjectNormal18 = createUIFontObjectNormal(18)
 UIFont.UIFontObjectNormal18 = UIFontObjectNormal18
-
 
 -- API
 --------------------------------

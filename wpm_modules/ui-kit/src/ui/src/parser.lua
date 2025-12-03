@@ -1,50 +1,43 @@
-local env                 = select(2, ...)
-local Utils_LazyTable     = env.WPM:Import("wpm_modules/utils/lazy-table")
-local UIKit_FrameCache = env.WPM:Import("wpm_modules/ui-kit/frame-cache")
+local env                               = select(2, ...)
 
-local Frame               = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local Grid                = env.WPM:Import("wpm_modules/ui-kit/primitives/grid")
-local HStack              = env.WPM:Import("wpm_modules/ui-kit/primitives/hStack")
-local VStack              = env.WPM:Import("wpm_modules/ui-kit/primitives/vStack")
-local Text                = env.WPM:Import("wpm_modules/ui-kit/primitives/text")
-local LazyScrollView      = env.WPM:Import("wpm_modules/ui-kit/primitives/lazyScrollView")
-local ScrollView          = env.WPM:Import("wpm_modules/ui-kit/primitives/scrollView")
-local ScrollBar           = env.WPM:Import("wpm_modules/ui-kit/primitives/scrollBar")
-local Input               = env.WPM:Import("wpm_modules/ui-kit/primitives/input")
-local LinearSlider        = env.WPM:Import("wpm_modules/ui-kit/primitives/linearSlider")
-local InteractiveRect     = env.WPM:Import("wpm_modules/ui-kit/primitives/interactiveRect")
-local List                = env.WPM:Import("wpm_modules/ui-kit/primitives/list")
+local UIKit_Primitives_Frame            = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local UIKit_Primitives_LayoutGrid       = env.WPM:Import("wpm_modules/ui-kit/primitives/layout-grid")
+local UIKit_Primitives_LayoutHorizontal = env.WPM:Import("wpm_modules/ui-kit/primitives/layout-horizontal")
+local UIKit_Primitives_LayoutVertical   = env.WPM:Import("wpm_modules/ui-kit/primitives/layout-vertical")
+local UIKit_Primitives_Text             = env.WPM:Import("wpm_modules/ui-kit/primitives/text")
+local UIKit_Primitives_LazyScrollView   = env.WPM:Import("wpm_modules/ui-kit/primitives/lazy-scroll-view")
+local UIKit_Primitives_ScrollView       = env.WPM:Import("wpm_modules/ui-kit/primitives/scroll-view")
+local UIKit_Primitives_ScrollBar        = env.WPM:Import("wpm_modules/ui-kit/primitives/scroll-bar")
+local UIKit_Primitives_Input            = env.WPM:Import("wpm_modules/ui-kit/primitives/input")
+local UIKit_Primitives_LinearSlider     = env.WPM:Import("wpm_modules/ui-kit/primitives/linear-slider")
+local UIKit_Primitives_InteractiveRect  = env.WPM:Import("wpm_modules/ui-kit/primitives/interactive-rect")
+local UIKit_Primitives_List             = env.WPM:Import("wpm_modules/ui-kit/primitives/list")
 
-local UIKit_UI_Parser  = env.WPM:New("wpm_modules/ui-kit/ui/parser")
+local Utils_LazyTable                   = env.WPM:Import("wpm_modules/utils/lazy-table")
+local UIKit_FrameCache                  = env.WPM:Import("wpm_modules/ui-kit/frame-cache")
+local UIKit_UI_Parser                   = env.WPM:New("wpm_modules/ui-kit/ui/parser")
 
 
-
+-- Helper
+--------------------------------
 
 local FRAME_CONSTRUCTORS = {
-    Frame           = function(self, name) return Frame:New("Frame", name, nil) end,
-    Grid            = Grid.New,
-    HStack          = HStack.New,
-    VStack          = VStack.New,
-    Text            = Text.New,
-    LazyScrollView  = LazyScrollView.New,
-    ScrollView      = ScrollView.New,
-    ScrollBar       = ScrollBar.New,
-    Input           = Input.New,
-    LinearSlider    = LinearSlider.New,
-    InteractiveRect = InteractiveRect.New,
-    List            = List.New
+    Frame            = function(name) return UIKit_Primitives_Frame.New("Frame", name, nil) end,
+    LayoutGrid       = UIKit_Primitives_LayoutGrid.New,
+    LayoutHorizontal = UIKit_Primitives_LayoutHorizontal.New,
+    LayoutVertical   = UIKit_Primitives_LayoutVertical.New,
+    Text             = UIKit_Primitives_Text.New,
+    LazyScrollView   = UIKit_Primitives_LazyScrollView.New,
+    ScrollView       = UIKit_Primitives_ScrollView.New,
+    ScrollBar        = UIKit_Primitives_ScrollBar.New,
+    Input            = UIKit_Primitives_Input.New,
+    LinearSlider     = UIKit_Primitives_LinearSlider.New,
+    InteractiveRect  = UIKit_Primitives_InteractiveRect.New,
+    List             = UIKit_Primitives_List.New,
 }
 
-
-
-local id = 0
-
-local function isScrollContainer(frameType)
-    return frameType == "ScrollView" or frameType == "LazyScrollView"
-end
-
 local function getActualParentFrame(parentFrame, parentFrameType)
-    if isScrollContainer(parentFrameType) and parentFrame.GetContentFrame then
+    if (parentFrameType == "ScrollView" or parentFrameType == "LazyScrollView") and parentFrame.GetContentFrame then
         return parentFrame:GetContentFrame()
     end
 
@@ -58,14 +51,12 @@ local function setupRegularFrameParent(childFrame, parentFrame, parentFrameType)
     if alias then
         -- Parent to the alias instead of the main frame
         childFrame:SetParent(alias)
-        childFrame.uk_parent = alias
+        childFrame:SetFrameParent(alias)
     else
         -- Parent to the actual frame (or its ContentFrame for scroll view
         local actualParent = getActualParentFrame(parentFrame, parentFrameType)
         childFrame:SetParent(actualParent)
-
-        -- Store reference to the logical parent (always their main frame, not ContentFrame)
-        childFrame.uk_parent = parentFrame
+        childFrame:SetFrameParent(parentFrame)
     end
 
     if childFrame.uk_prop_frameLevel then
@@ -75,21 +66,11 @@ local function setupRegularFrameParent(childFrame, parentFrame, parentFrameType)
     end
 end
 
-local function attachChildToParent(childFrame, parentFrame, parentFrameType)
-    -- InteractiveRect uses a different parenting mechanism
-    if childFrame.uk_type == "InteractiveRect" then
-        childFrame:RegisterParent(parentFrame)
-        return
-    end
 
-    -- Regular frames with SetParent method
-    if childFrame and childFrame.SetParent then
-        setupRegularFrameParent(childFrame, parentFrame, parentFrameType)
-    end
+-- Parser
+--------------------------------
 
-    -- Track child in parent's children list (for all frame types)
-    parentFrame:AddFrameChild(childFrame)
-end
+local currentFrameID = 0
 
 function UIKit_UI_Parser:CreateFrameFromType(frameType, name, children)
     local constructor = FRAME_CONSTRUCTORS[frameType]
@@ -102,20 +83,32 @@ function UIKit_UI_Parser:CreateFrameFromType(frameType, name, children)
         name = nil
     end
 
-    id = id + 1
+    currentFrameID = currentFrameID + 1
     local frameName = name or "undefined"
-    local frame = constructor(nil, frameName)
-    UIKit_FrameCache:Add(id, frame)
+    local frame = constructor(frameName)
+    UIKit_FrameCache.Add(currentFrameID, frame)
 
-    frame.uk_id = id
+    frame.uk_id = currentFrameID
     frame.uk_type = frameType
     frame.uk_ready = false
     Utils_LazyTable.New(frame, "uk_children")
 
     -- Attach all children to this frame
     if children then
+        local childFrame
+
         for i = 1, #children do
-            attachChildToParent(children[i], frame, frameType)
+            childFrame = children[i]
+
+            if childFrame then
+                -- Regular frames with SetParent method
+                if childFrame and childFrame.SetParent then
+                    setupRegularFrameParent(childFrame, frame, frameType)
+                end
+
+                -- Track child in parent's children list (for all frame types)
+                frame:AddFrameChild(childFrame)
+            end
         end
     end
 

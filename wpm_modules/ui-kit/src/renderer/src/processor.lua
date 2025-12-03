@@ -1,10 +1,8 @@
-local env                           = select(2, ...)
-local UIKit_Renderer_Positioning = env.WPM:Import("wpm_modules/ui-kit/renderer/positioning")
+local env                        = select(2, ...)
 local UIKit_Define               = env.WPM:Import("wpm_modules/ui-kit/define")
 local UIKit_Utils                = env.WPM:Import("wpm_modules/ui-kit/utils")
-
+local UIKit_Renderer_Positioning = env.WPM:Import("wpm_modules/ui-kit/renderer/positioning")
 local UIKit_Renderer_Processor   = env.WPM:New("wpm_modules/ui-kit/renderer/processor")
-
 
 
 -- Size — Fit
@@ -20,20 +18,18 @@ end
 UIKit_Renderer_Processor.SizeFit = processSizeFit
 
 
-
-
 -- Size — Num / Percentage
 --------------------------------
 
 local function processSizeStatic(frame)
     local parent = frame:GetParent() or UIParent
-    
+
     local width = frame.uk_prop_width
     if width then
         if width == UIKit_Define.Num then
             frame:SetWidth(width.value)
         elseif width == UIKit_Define.Percentage then
-            frame:SetWidth(UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), width.value, width.operator, width.delta))
+            frame:SetWidth(UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), width.value, width.operator, width.delta, frame))
         end
     end
 
@@ -42,13 +38,11 @@ local function processSizeStatic(frame)
         if height == UIKit_Define.Num then
             frame:SetHeight(height.value)
         elseif height == UIKit_Define.Percentage then
-            frame:SetHeight(UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), height.value, height.operator, height.delta))
+            frame:SetHeight(UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), height.value, height.operator, height.delta, frame))
         end
     end
 end
 UIKit_Renderer_Processor.SizeStatic = processSizeStatic
-
-
 
 
 -- Size — Fill
@@ -60,9 +54,6 @@ end
 UIKit_Renderer_Processor.SizeFill = processSizeFill
 
 
-
-
-
 -- Point
 --------------------------------
 
@@ -72,23 +63,21 @@ end
 UIKit_Renderer_Processor.Point = processPositionPoint
 
 
-
 local function processPositionAnchor(frame)
     UIKit_Renderer_Positioning:SetAnchor(frame, frame.uk_prop_anchor)
 end
 UIKit_Renderer_Processor.Anchor = processPositionAnchor
 
 
-
 local function processPositionOffset(frame)
     local parent = frame:GetParent() or UIParent
-    
+
     local x = frame.uk_prop_x
     if x then
         if x == UIKit_Define.Num then
             UIKit_Renderer_Positioning:SetOffsetX(frame, x.value)
         elseif x == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning:SetOffsetX(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), x.value, x.operator, x.delta))
+            UIKit_Renderer_Positioning:SetOffsetX(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), x.value, x.operator, x.delta, frame))
         end
     end
 
@@ -97,13 +86,11 @@ local function processPositionOffset(frame)
         if y == UIKit_Define.Num then
             UIKit_Renderer_Positioning:SetOffsetY(frame, y.value)
         elseif y == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning:SetOffsetY(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), y.value, y.operator, y.delta))
+            UIKit_Renderer_Positioning:SetOffsetY(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), y.value, y.operator, y.delta, frame))
         end
     end
 end
 UIKit_Renderer_Processor.PositionOffset = processPositionOffset
-
-
 
 
 -- Layout Group
@@ -111,14 +98,11 @@ UIKit_Renderer_Processor.PositionOffset = processPositionOffset
 
 local function processUpdateLayout(frame)
     local frameType = frame.uk_type
-    if frameType == "Grid" or frameType == "VStack" or frameType == "HStack" then
+    if frameType == "LayoutGrid" or frameType == "LayoutVertical" or frameType == "LayoutHorizontal" then
         frame:RenderElements()
     end
 end
 UIKit_Renderer_Processor.Layout = processUpdateLayout
-
-
-
 
 
 -- Scroll Bar

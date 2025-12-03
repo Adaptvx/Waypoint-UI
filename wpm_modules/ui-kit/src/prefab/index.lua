@@ -1,14 +1,18 @@
-local env             = select(2, ...)
+local env            = select(2, ...)
 
-local assert          = assert
-local type            = type
+local assert         = assert
+local type           = type
 
-local Utils_Standard  = env.WPM:Import("wpm_modules/utils/standard")
-local UIKit_Prefab = env.WPM:New("wpm_modules/ui-kit/prefab")
+local Utils_Standard = env.WPM:Import("wpm_modules/utils/standard")
+local UIKit_Prefab   = env.WPM:New("wpm_modules/ui-kit/prefab")
 
-local EMPTY_TABLE = {}
+local EMPTY_TABLE    = { dummy = true }
 
-function UIKit_Prefab.New(constructor)
+
+-- Prefab Constructor Method
+--------------------------------
+
+local function newPrefabConstructor(constructor)
     assert(constructor, "Invalid variable `constructor`")
     assert(type(constructor) == "function", "Invalid variable `constructor`: Must be of type `function`")
 
@@ -27,4 +31,12 @@ function UIKit_Prefab.New(constructor)
         -- Return the constructor with the proper arguments
         return constructor(id, name, children or EMPTY_TABLE, ...)
     end
+end
+
+
+-- API
+--------------------------------
+
+function UIKit_Prefab.New(constructor)
+    return newPrefabConstructor(constructor)
 end

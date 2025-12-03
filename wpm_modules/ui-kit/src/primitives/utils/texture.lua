@@ -1,22 +1,23 @@
-local env       = select(2, ...)
-local MixinUtil = env.WPM:Import("wpm_modules/mixin-util")
-local Frame     = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local env                            = select(2, ...)
+local MixinUtil                      = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin     = MixinUtil.Mixin
-local type      = type
+local Mixin                          = MixinUtil.Mixin
+local type                           = type
 
-local Texture   = env.WPM:New("wpm_modules/ui-kit/primitives/utils/texture")
-
-
+local UIkit_Primitives_Frame         = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local UIKit_Primitives_Utils_Texture = env.WPM:New("wpm_modules/ui-kit/primitives/utils/texture")
 
 
+-- Shared
+--------------------------------
 
-local TEXTURE_METHODS = {
+local TEXTURE_PORT_METHODS = {
     "SetDesaturated"
 }
 
 
-
+-- Texture
+--------------------------------
 
 local TextureMixin = {}
 do
@@ -35,8 +36,8 @@ do
     -- Port
     --------------------------------
 
-    for i = 1, #TEXTURE_METHODS do
-        local method = TEXTURE_METHODS[i]
+    for i = 1, #TEXTURE_PORT_METHODS do
+        local method = TEXTURE_PORT_METHODS[i]
         TextureMixin[method] = function(self, ...)
             return self.__Texture[method](self.__Texture, ...)
         end
@@ -57,9 +58,6 @@ do
     function TextureMixin:SetTexture(texture)
         -- Set "Texture"
         self.__Texture:SetTexture(texture)
-        self.__Texture:SetTextureSliceMargins(0, 1, 0, 1)
-        self.__Texture:SetTextureSliceMode(Enum.UITextureSliceMode.Stretched)
-        self.__Texture:SetScale(1)
 
         -- Hide "Backdrop"
         if self.__Backdrop then self.__Backdrop:Hide() end
@@ -100,7 +98,7 @@ do
         -- Set "Backdrop"
         -- Creates a Backdrop instance if it doesn't exist
         if not self.__Backdrop then
-            self.__Backdrop = Frame("Frame", "$parent.Backdrop", self:GetParent(), "BackdropTemplate")
+            self.__Backdrop = UIkit_Primitives_Frame("Frame", "$parent.Backdrop", self:GetParent(), "BackdropTemplate")
             self.__Backdrop:SetAllPoints(self)
         end
         self.__Backdrop:Show()
@@ -182,9 +180,8 @@ do
 end
 
 
-
-function Texture:New(parent, isMaskTexture)
-    local frame = Frame:New("Frame", "$parent.Texture", parent)
+function UIKit_Primitives_Utils_Texture.New(parent, isMaskTexture)
+    local frame = UIkit_Primitives_Frame.New("Frame", "$parent.Texture", parent)
     Mixin(frame, TextureMixin)
     frame:SetAllPoints(parent)
     frame:SetFrameStrata(parent:GetFrameStrata())

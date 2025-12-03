@@ -1,35 +1,28 @@
-local env = select(2, ...)
+local env              = select(2, ...)
+
+local math_floor       = math.floor
 
 local Utils_Formatting = env.WPM:New("wpm_modules/utils/formatting")
 
--- Returns x amount coverted to gold, silver and copper.
----@param x number
----@return number: gold
----@return number: silver
----@return number: copper
-function Utils_Formatting:FormatMoney(x)
-    local gold = math.floor(x / 10000)
-    local silver = math.floor((x % 10000) / 100)
-    local copperAmount = x % 100
 
-    return gold, silver, copperAmount
+-- API
+--------------------------------
+
+function Utils_Formatting.FormatMoney(copperTotal)
+    local gold   = math_floor(copperTotal / 10000)
+    local silver = math_floor((copperTotal % 10000) / 100)
+    local copper = copperTotal % 100
+    return gold, silver, copper
 end
 
--- Returns hr, min, sec from seconds.
----@param seconds number
----@return number rawHr
----@return number rawMin
----@return number rawSec
----@return string strHr
----@return string strMin
----@return string strSec
-function Utils_Formatting:FormatTime(seconds)
-    local rawHr = math.floor(seconds / 3600)
-    local rawMin = math.floor((seconds % 3600) / 60)
-    local rawSec = seconds % 60
-    local strHr = rawHr > 0 and rawHr .. "h " or ""
-    local strMin = rawMin > 0 and rawMin .. "m " or ""
-    local strSec = rawSec > 0 and rawSec .. "s" or ""
+function Utils_Formatting.FormatTime(seconds)
+    local hours   = math_floor(seconds / 3600)
+    local minutes = math_floor((seconds % 3600) / 60)
+    local secs    = seconds % 60
 
-    return rawHr, rawMin, rawSec, strHr, strMin, strSec
+    local strHours   = hours > 0 and hours .. "h " or ""
+    local strMinutes = minutes > 0 and minutes .. "m " or ""
+    local strSeconds = secs > 0 and secs .. "s" or ""
+
+    return hours, minutes, secs, strHours, strMinutes, strSeconds
 end

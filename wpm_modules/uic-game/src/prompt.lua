@@ -1,21 +1,22 @@
-local env                                                                                                                  = select(2, ...)
-local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
-local MixinUtil                                                                                                            = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                               = env.WPM:Import("wpm_modules/ui-font")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
+local env                                                                                                                                          = select(2, ...)
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
+local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
+local CallbackRegistry                                                                                                                             = env.WPM:Import("wpm_modules/callback-registry")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
+local WoWClient                                                                                                                                    = env.WPM:Import("wpm_modules/wow-client")
 
-local Mixin                                                                                                                = MixinUtil.Mixin
-local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = MixinUtil.Mixin
+local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameButton                                                                                                        = env.WPM:Import("wpm_modules/uic-game/button")
-local UICGamePrompt                                                                                                        = env.WPM:New("wpm_modules/uic-game/prompt")
-
+local UICGameButton                                                                                                                                = env.WPM:Import("wpm_modules/uic-game/button")
+local UICGamePrompt                                                                                                                                = env.WPM:New("wpm_modules/uic-game/prompt")
 
 
 
@@ -26,8 +27,7 @@ local PATH  = Path.Root .. "/wpm_modules/uic-game/resources/"
 local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGamePanel.png" }
 
 
-Utils_Texture:PreloadAsset(PATH .. "UICGamePanel.png")
-
+Utils_Texture.PreloadAsset(PATH .. "UICGamePanel.png")
 
 -- Prompt Button
 --------------------------------
@@ -44,7 +44,6 @@ UICGamePrompt.Button = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
-
 
 
 -- Prompt
@@ -103,27 +102,23 @@ end)
 
 local PromptMixin = {}
 
-local function handleKeyDown(self, key)
-    if key == "ESCAPE" and self.hideOnEscape then
-        self:SetPropagateKeyboardInput(false)
-        self:OnEscape()
-        self:SetPropagateKeyboardInput(true)
-    end
-end
-
 function PromptMixin:OnLoad()
     self.hideOnEscape = false
 
-    -- self:SetScript("OnKeyDown", handleKeyDown)
-    -- self:AwaitSetPropagateKeyboardInput(true)
+    CallbackRegistry:Add("WoWClient.OnEscapePressed", function()
+        if self.hideOnEscape and self:IsShown() then
+            WoWClient.BlockKeyEvent()
+            self:OnEscape()
+        end
+    end)
 end
 
-function PromptMixin:Open()
+function PromptMixin:ShowPrompt()
     self:Show()
     PromptAnimation:Play(self, "INTRO")
 end
 
-function PromptMixin:Close()
+function PromptMixin:HidePrompt()
     if PromptAnimation:IsPlaying(self, "OUTRO") then return end
     if self.timeoutTimer then self.timeoutTimer:Cancel() end
 
@@ -133,11 +128,11 @@ function PromptMixin:Close()
 end
 
 function PromptMixin:OnEscape()
-    self:Close()
+    self:HidePrompt()
 end
 
 function PromptMixin:OnTimeout()
-    self:Close()
+    self:HidePrompt()
 end
 
 function PromptMixin:SetTimeout(seconds)
@@ -148,7 +143,7 @@ function PromptMixin:SetTimeout(seconds)
     end)
 end
 
-function PromptMixin:SetData(info, ...)
+function PromptMixin:Open(info, ...)
     --[[
         Expected table:
             text (string),
@@ -177,12 +172,16 @@ function PromptMixin:SetData(info, ...)
     self.Content.Text:SetText(textToDisplay)
     self.Content.ButtonContainer.List:SetData(info.options)
 
-    self:Open()
+    self:_Render()
+    self:ShowPrompt()
 end
 
 local function handleElementClick(self)
-    self.value.callback()
-    self:GetFrameParent().__parentRef:Close()
+    if self.value.callback then
+        self.value.callback()
+    end
+
+    self:GetFrameParent().__parentRef:HidePrompt()
 end
 
 local function handleElementUpdate(element, index, value)
@@ -197,7 +196,7 @@ end
 UICGamePrompt.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
-            VStack(name .. ".Content", {
+            LayoutVertical(name .. ".Content", {
                 Text(name .. ".Content.Text")
                     :id("Content.Text", id)
                     :size(PROMPT_TEXT_SIZE, PROMPT_TEXT_SIZE)
@@ -205,7 +204,7 @@ UICGamePrompt.New = UIKit.Prefab(function(id, name, children, ...)
                     :fontObject(UIFont.UIFontObjectNormal12)
                     :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-                HStack(name .. ".Content.ButtonContainer", {
+                LayoutHorizontal(name .. ".Content.ButtonContainer", {
                     List()
                         :id("Content.ButtonContainer.List", id)
                         :poolPrefab(UICGamePrompt.Button)

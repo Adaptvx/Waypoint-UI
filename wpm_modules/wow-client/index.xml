@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="src/events.lua"/>
 	<Script file="src/versioning.lua"/>
+	<Script file="src/keybind.lua"/>
 	
 	<Script file="index.lua"/>
 </Ui>

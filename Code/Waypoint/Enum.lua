@@ -1,20 +1,19 @@
 local env = select(2, ...)
-local WaypointEnum = env.WPM:New("@/Waypoint/Enum")
-
+local Waypoint_Enum = env.WPM:New("@/Waypoint/Enum")
 
 
 
 -- General
 --------------------------------
 
-WaypointEnum.NavigationMode = {
+Waypoint_Enum.NavigationMode = {
     Hidden    = -1,
     Waypoint  = 1,
     Pinpoint  = 2,
     Navigator = 3
 }
 
-WaypointEnum.TrackingType = {
+Waypoint_Enum.TrackingType = {
     QuestCompleteRecurring = 1,
     QuestCompleteImportant = 2,
     QuestComplete          = 3,
@@ -23,7 +22,7 @@ WaypointEnum.TrackingType = {
     Other                  = 6
 }
 
-WaypointEnum.State = {
+Waypoint_Enum.State = {
     Invalid        = 0,
     InvalidRange   = 1,
     QuestProximity = 2,
@@ -34,17 +33,16 @@ WaypointEnum.State = {
 
 
 
-
 -- Setting
 --------------------------------
 
-WaypointEnum.WaypointSystemType = {
+Waypoint_Enum.WaypointSystemType = {
     All      = 1,
     Waypoint = 2,
     Pinpoint = 3
 }
 
-WaypointEnum.WaypointDistanceTextType = {
+Waypoint_Enum.WaypointDistanceTextType = {
     All         = 1,
     Distance    = 2,
     ArrivalTime = 3,

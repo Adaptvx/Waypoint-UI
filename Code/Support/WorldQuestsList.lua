@@ -4,16 +4,20 @@ local Support         = env.WPM:Import("@/Support")
 local WorldQuestsList = env.WPM:New("@/Support/WorldQuestsList")
 
 
+-- Helpers
+--------------------------------
 
 local function removeWQLSlashCmd()
     SlashCommand:RemoveSlashCommand("WQLSlashWay")
 end
 
 
+-- Setup
+--------------------------------
 
 local function OnAddonLoad()
     C_Timer.After(10, function()
         removeWQLSlashCmd()
     end)
 end
-Support:Add("WorldQuestsList", OnAddonLoad)
+Support.Add("WorldQuestsList", OnAddonLoad)

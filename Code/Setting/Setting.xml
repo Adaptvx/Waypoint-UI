@@ -3,6 +3,8 @@
     <Script file="Define.lua"/>
     <Script file="Enum.lua"/>
 
+    <Script file="Setting_Shared.lua"/>
+    
     <Script file="Setting_Widgets.lua"/>
     <Script file="Setting_UI.lua"/>
     <Script file="Setting_Logic.lua"/>

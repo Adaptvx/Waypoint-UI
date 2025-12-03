@@ -2,6 +2,9 @@ local env = select(2, ...)
 local UIFont_FontUtil = env.WPM:New("wpm_modules/ui-font/font-util")
 
 
+-- Font
+--------------------------------
+
 local FontObjectMixin = {}
 
 function FontObjectMixin:SetFontFile(path)

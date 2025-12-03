@@ -1,15 +1,14 @@
-local env                                                                                                                  = select(2, ...)
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local UIFont                                                                                                               = env.WPM:Import("wpm_modules/ui-font")
-local MixinUtil                                                                                                            = env.WPM:Import("wpm_modules/mixin-util")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
-local WaypointTemplates                                                                                                    = env.WPM:Import("@/Waypoint/WaypointTemplates")
-local PinpointArrow, ContextIcon                                                                                           = WaypointTemplates.PinpointArrow, WaypointTemplates.ContextIcon
+local env                                                                                                                          = select(2, ...)
+local Path                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local UIFont                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
+local MixinUtil                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
+local UIKit                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, Grid, LayoutVertical, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.LayoutVertical, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
+local Waypoint_Templates                                                                                                           = env.WPM:Import("@/Waypoint/Templates")
+local PinpointArrow, ContextIcon                                                                                                   = Waypoint_Templates.PinpointArrow, Waypoint_Templates.ContextIcon
 
-local Mixin                                                                                                                = MixinUtil.Mixin
-
+local Mixin                                                                                                                        = MixinUtil.Mixin
 
 
 -- Shared
@@ -31,7 +30,6 @@ WUIFrame = Frame("WUIFrame", {
     })
     :id("WUIFrame")
     :_Render()
-
 
 
 -- Waypoint
@@ -58,16 +56,14 @@ do
                 :point(UIKit.Enum.Point.Center)
                 :size(P_FILL, P_FILL)
                 :frameLevel(5)
-                :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :backgroundBlendMode(UIKit.Enum.BlendMode.Add),
 
             Frame("WUIWaypointFrame.Wave")
                 :id("WUIWaypointFrame.Wave")
                 :point(UIKit.Enum.Point.Center)
                 :size(W_SIZE_WAVE, W_SIZE_WAVE)
                 :frameLevel(3)
-                :background(W_TEXTURE_WAVE)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :background(W_TEXTURE_WAVE),
 
             Frame("WUIWaypointFrame.Beam", {
                 Frame("WUIWaypointFrame.Beam.Mask")
@@ -75,8 +71,7 @@ do
                     :point(UIKit.Enum.Point.Center, UIKit.Enum.Point.Bottom)
                     :size(UIKit.Define.Num{ value = 100 }, UIKit.Define.Num{ value = 100 })
                     :maskBackground(W_TEXTURE_BEAM_MASK)
-                    :frameLevel(2)
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :frameLevel(2),
 
                 Frame("WUIWaypointFrame.Beam.Background")
                     :id("WUIWaypointFrame.Beam.Background")
@@ -84,16 +79,14 @@ do
                     :frameLevel(1)
                     :background(W_TEXTURE_BEAM)
                     :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
-                    :mask("WUIWaypointFrame.Beam.Mask")
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :mask("WUIWaypointFrame.Beam.Mask"),
 
                 Frame("WUIWaypointFrame.Beam.FX.Mask")
                     :id("WUIWaypointFrame.Beam.FX.Mask")
                     :point(UIKit.Enum.Point.Bottom)
                     :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 250 })
                     :maskBackground(W_TEXTURE_BEAM_FX_MASK)
-                    :frameLevel(2)
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :frameLevel(2),
 
                 Frame("WUIWaypointFrame.Beam.FX")
                     :id("WUIWaypointFrame.Beam.FX")
@@ -102,22 +95,20 @@ do
                     :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                     :background(W_TEXTURE_BEAM_FX)
                     :mask("WUIWaypointFrame.Beam.FX.Mask")
-                    :_updateMode(UIKit.Enum.UpdateMode.None)
+
             })
                 :id("WUIWaypointFrame.Beam")
                 :point(UIKit.Enum.Point.Bottom, UIKit.Enum.Point.Center)
                 :y(UIKit.Define.Num{ value = -25 })
                 :size(UIKit.Define.Num{ value = 50 }, UIKit.Define.Num{ value = 500 })
-                :frameLevel(2)
-                :_updateMode(UIKit.Enum.UpdateMode.None),
+                :frameLevel(2),
 
-            VStack("WUIWaypointFrame.Footer", {
+            LayoutVertical("WUIWaypointFrame.Footer", {
                 Text("WUIWaypointFrame.Footer.Text")
                     :id("WUIWaypointFrame.Footer.Text")
                     :fontObject(UIFont.UIFontObjectNormal8)
                     :textAlignment("CENTER", "MIDDLE")
-                    :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT)
-                    :_updateMode(UIKit.Enum.UpdateMode.None),
+                    :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT),
 
                 Frame("WUIWaypointFrame.Footer.SubtextFrame", {
                     Text("WUIWaypointFrame.Footer.SubtextFrame.Text")
@@ -126,11 +117,11 @@ do
                         :fontObject(UIFont.UIFontObjectNormal8)
                         :textAlignment("CENTER", "MIDDLE")
                         :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT)
-                        :_updateMode(UIKit.Enum.UpdateMode.None)
+
                 })
                     :id("WUIWaypointFrame.Footer.SubtextFrame")
                     :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT)
-                    :_updateMode(UIKit.Enum.UpdateMode.None)
+
             })
                 :id("WUIWaypointFrame.Footer")
                 :anchor("WUIWaypointFrame.ContextIcon")
@@ -146,13 +137,13 @@ do
             :id("WUIWaypointFrame.Container")
             :point(UIKit.Enum.Point.Center)
             :size(P_FILL, P_FILL)
-            :_updateMode(UIKit.Enum.UpdateMode.None)
+
     })
         :id("WUIWaypointFrame")
         :parent("WUIFrame")
         :frameStrata(UIKit.Enum.FrameStrata.Background, 1)
         :size(W_SIZE, W_SIZE)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
         :_Render()
 
 
@@ -418,6 +409,7 @@ do
     Mixin(WUIWaypointFrame, WaypointMixin)
 end
 
+
 -- Pinpoint
 --------------------------------
 
@@ -470,6 +462,7 @@ do
                     :maxWidth(P_MAXWIDTH_FOREGROUND_CONTENT)
                     :textVerticalSpacing(3)
                     :frameLevel(8)
+                    :_updateMode(UIKit.Enum.UpdateMode.All)
             })
                 :id("WUIPinpointFrame.Foreground")
                 :point(UIKit.Enum.Point.Center)
@@ -670,19 +663,19 @@ do
                 :frameLevel(3)
                 :size(N_SIZE_ARROW, N_SIZE_ARROW)
                 :background(N_TEXTURE_ARROW)
-                :_updateMode(UIKit.Enum.UpdateMode.None)
+
         })
             :id("WUINavigatorFrame.Container")
             :point(UIKit.Enum.Point.Center)
             :size(P_FILL, P_FILL)
-            :_updateMode(UIKit.Enum.UpdateMode.None)
+
     })
         :id("WUINavigatorFrame")
         :parent("WUIFrame")
         :frameStrata(UIKit.Enum.FrameStrata.Background, 1)
         :size(N_SIZE, N_SIZE)
         :clampedToScreen(true)
-        :_updateMode(UIKit.Enum.UpdateMode.None)
+
         :_Render()
 
     WUINavigatorFrame = UIKit.GetElementById("WUINavigatorFrame")

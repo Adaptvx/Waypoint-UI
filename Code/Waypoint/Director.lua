@@ -1,21 +1,21 @@
-local env                       = select(2, ...)
-local Config                    = env.Config
+local env                        = select(2, ...)
+local Config                     = env.Config
 
-local IsSuperTrackingAnything   = C_SuperTrack.IsSuperTrackingAnything
-local IsInInstance              = IsInInstance
-local CreateFrame               = CreateFrame
-local ipairs                    = ipairs
+local IsSuperTrackingAnything    = C_SuperTrack.IsSuperTrackingAnything
+local IsInInstance               = IsInInstance
+local CreateFrame                = CreateFrame
+local IsPlayerMoving             = IsPlayerMoving
+local ipairs                     = ipairs
 
-local SavedVariables            = env.WPM:Import("wpm_modules/saved-variables")
-local CallbackRegistry          = env.WPM:Import("wpm_modules/callback-registry")
-local WaypointCache             = env.WPM:Import("@/Waypoint/Cache")
-local WaypointDataProvider      = env.WPM:Import("@/Waypoint/DataProvider")
-local WaypointEnum              = env.WPM:Import("@/Waypoint/Enum")
-local WaypointDirector          = env.WPM:New("@/Waypoint/Director")
+local SavedVariables             = env.WPM:Import("wpm_modules/saved-variables")
+local CallbackRegistry           = env.WPM:Import("wpm_modules/callback-registry")
+local Waypoint_Cache             = env.WPM:Import("@/Waypoint/Cache")
+local Waypoint_DataProvider      = env.WPM:Import("@/Waypoint/DataProvider")
+local Waypoint_Enum              = env.WPM:Import("@/Waypoint/Enum")
+local Waypoint_Director          = env.WPM:New("@/Waypoint/Director")
 
-WaypointDirector.isActive       = false
-WaypointDirector.navigationMode = WaypointEnum.NavigationMode.Hidden -- Enum.NavigationMode.Waypoint | Enum.NavigationMode.Pinpoint | Enum.NavigationMode.Navigator
-
+Waypoint_Director.isActive       = false
+Waypoint_Director.navigationMode = Waypoint_Enum.NavigationMode.Hidden -- Enum.NavigationMode.Waypoint | Enum.NavigationMode.Pinpoint | Enum.NavigationMode.Navigator
 
 
 -- Event Listener
@@ -46,7 +46,6 @@ do
         "QUEST_DETAIL",
         "QUEST_FINISHED",
         "SUPER_TRACKING_CHANGED",
-        "SUPER_TRACKING_PATH_UPDATED",
         "PLAYER_STARTED_MOVING",
         "PLAYER_STOPPED_MOVING",
         "PLAYER_IS_GLIDING_CHANGED"
@@ -64,12 +63,11 @@ do
 
 
     local function onSlowUpdate()
-        WaypointDataProvider:AttemptToAcquireNavFrame()
-        WaypointDataProvider:CacheState()
+        Waypoint_DataProvider:CacheState()
 
         if not isMoving then
-            if WaypointCache:Get("state") ~= WaypointEnum.State.InvalidRange then
-                WaypointDataProvider:CacheRealtime()
+            if Waypoint_Cache.Get("state") ~= Waypoint_Enum.State.InvalidRange then
+                Waypoint_DataProvider:CacheRealtime()
             end
         end
 
@@ -104,7 +102,7 @@ do
 
     local moveUpdater = CreateFrame("Frame")
     moveUpdater:SetScript("OnUpdate", function()
-        WaypointDataProvider:CacheRealtime()
+        Waypoint_DataProvider:CacheRealtime()
     end)
 
     function moveUpdater:Enable()
@@ -136,19 +134,18 @@ do
     end
 
     local function onContextChange()
-        WaypointDataProvider:AttemptToAcquireNavFrame()
-        WaypointDataProvider:CacheRealtime()
-        WaypointDataProvider:CacheSuperTrackingInfo()
-        WaypointDataProvider:CacheQuestInfo()
-        WaypointDataProvider:CacheTrackingType()
-        WaypointDataProvider:CacheState()
+        Waypoint_DataProvider:CacheRealtime()
+        Waypoint_DataProvider:CacheSuperTrackingInfo()
+        Waypoint_DataProvider:CacheQuestInfo()
+        Waypoint_DataProvider:CacheTrackingType()
+        Waypoint_DataProvider:CacheState()
 
         CallbackRegistry:Trigger("Waypoint.ContextUpdate")
     end
 
     local function onSuperTrackingChange()
         CallbackRegistry:Trigger("Waypoint.SuperTrackingChanged")
-        WaypointDirector:AwaitDistance()
+        Waypoint_Director:AwaitDistance()
     end
 
     CallbackRegistry:Add("MapPin.NewUserNavigation", onSuperTrackingChange)
@@ -170,7 +167,7 @@ do
     end)
 
     distanceAwait:SetScript("OnUpdate", function(self)
-        if not WaypointDirector.isActive then return end
+        if not Waypoint_Director.isActive then return end
         if GetTime() - self.timeWhenShown < self.runtimeDelay then return end
         if GetTime() - self.timeWhenShown > self.timeoutDelay then
             distanceAwait:Hide()
@@ -190,19 +187,19 @@ do
     end)
 
     CallbackRegistry:Add("Waypoint.DistanceReady", onContextChange)
-    CallbackRegistry:Add("WaypointDataProvider.NavFrameObtained", function()
+    CallbackRegistry:Add("Waypoint_DataProvider.NavFrameObtained", function()
         if not distanceAwait:IsShown() then
             distanceAwait:Show()
         end
     end)
 
 
-    function WaypointDirector:AwaitDistance()
+    function Waypoint_Director:AwaitDistance()
         self.timeWhenShown = GetTime()
         distanceAwait:Show()
     end
 
-    function WaypointDirector:CancelDistanceAwait()
+    function Waypoint_Director:CancelDistanceAwait()
         distanceAwait:Hide()
     end
 
@@ -213,7 +210,9 @@ do
     -- Hook Events
     --------------------------------
 
-    local function onEvent(self, event, ...)
+    local function handleEvent(event)
+        if not Waypoint_Director.isActive then return end
+
         -- Context
         if event == "QUEST_POI_UPDATE" or
             event == "QUEST_LOG_UPDATE" or
@@ -224,19 +223,13 @@ do
             event == "QUEST_DETAIL" or
             event == "QUEST_FINISHED" then
             -- event == "SUPER_TRACKING_PATH_UPDATED" -- temporarily disabled
-            WaypointDirector:AwaitDistance()
-
-
-
-            -- Move
-        elseif event == "PLAYER_STARTED_MOVING" or
-            (event == "PLAYER_IS_GLIDING_CHANGED" and ... == true) then
-            onPlayerMove(true)
-        elseif event == "PLAYER_STOPPED_MOVING" or
-            (event == "PLAYER_IS_GLIDING_CHANGED" and ... == false) then
-            onPlayerMove(false)
+            Waypoint_Director:AwaitDistance()
         end
 
+        -- Movement
+        if event == "PLAYER_STARTED_MOVING" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_IS_GLIDING_CHANGED" then
+            onPlayerMove(IsPlayerMoving())
+        end
 
         -- Super Tracking
         if event == "SUPER_TRACKING_CHANGED" then
@@ -244,7 +237,13 @@ do
         end
     end
 
-    Events:SetScript("OnEvent", onEvent)
+    for i = 1, #EVENTS_TO_REGISTER do
+        CallbackRegistry:Add(EVENTS_TO_REGISTER[i], handleEvent)
+    end
+
+    Events:SetScript("OnEvent", function(self, event, ...)
+        CallbackRegistry:Trigger(event, ...)
+    end)
 
 
 
@@ -259,7 +258,7 @@ do
         end
 
         startTimers()
-        WaypointDirector:AwaitDistance()
+        Waypoint_Director:AwaitDistance()
     end
 
     function Events:Disable()
@@ -281,15 +280,15 @@ do
 
 
     local function reset()
-        WaypointDirector.navigationMode = WaypointEnum.NavigationMode.Hidden
-        lastNavigationMode = WaypointEnum.NavigationMode.Hidden
-        WaypointDirector:HideAllFrames()
+        Waypoint_Director.navigationMode = Waypoint_Enum.NavigationMode.Hidden
+        lastNavigationMode = Waypoint_Enum.NavigationMode.Hidden
+        Waypoint_Director:HideAllFrames()
 
         valueChecklistBeforeUpdating.hasDistanceInfo = false
         valueChecklistBeforeUpdating.hasClampInfo = false
 
-        WaypointCache:Clear()
-        -- WaypointDirector:CancelDistanceAwait()
+        Waypoint_Cache.Clear()
+        -- Waypoint_Director:CancelDistanceAwait()
     end
 
     CallbackRegistry:Add("Waypoint.SuperTrackingChanged", reset)
@@ -306,44 +305,44 @@ do
     local function resolveNavigationMode()
         local Setting_WaypointType = Config.DBGlobal:GetVariable("WaypointSystemType")
 
-        local state = WaypointCache:Get("state")
-        local isClamped = WaypointCache:Get("clamped")
+        local state = Waypoint_Cache.Get("state")
+        local isClamped = Waypoint_Cache.Get("clamped")
 
-        if state == WaypointEnum.State.Invalid or state == WaypointEnum.State.InvalidRange then
-            return WaypointEnum.NavigationMode.Hidden
+        if state == Waypoint_Enum.State.Invalid or state == Waypoint_Enum.State.InvalidRange then
+            return Waypoint_Enum.NavigationMode.Hidden
         elseif isClamped then
-            return WaypointEnum.NavigationMode.Navigator
-        elseif state == WaypointEnum.State.Proximity or state == WaypointEnum.State.QuestProximity then
-            if Setting_WaypointType == WaypointEnum.WaypointSystemType.Pinpoint or Setting_WaypointType == WaypointEnum.WaypointSystemType.All then
-                return WaypointEnum.NavigationMode.Pinpoint
+            return Waypoint_Enum.NavigationMode.Navigator
+        elseif state == Waypoint_Enum.State.Proximity or state == Waypoint_Enum.State.QuestProximity then
+            if Setting_WaypointType == Waypoint_Enum.WaypointSystemType.Pinpoint or Setting_WaypointType == Waypoint_Enum.WaypointSystemType.All then
+                return Waypoint_Enum.NavigationMode.Pinpoint
             else
-                return WaypointEnum.NavigationMode.Waypoint
+                return Waypoint_Enum.NavigationMode.Waypoint
             end
         else
-            if Setting_WaypointType == WaypointEnum.WaypointSystemType.Waypoint or Setting_WaypointType == WaypointEnum.WaypointSystemType.All then
-                return WaypointEnum.NavigationMode.Waypoint
+            if Setting_WaypointType == Waypoint_Enum.WaypointSystemType.Waypoint or Setting_WaypointType == Waypoint_Enum.WaypointSystemType.All then
+                return Waypoint_Enum.NavigationMode.Waypoint
             else
-                return WaypointEnum.NavigationMode.Pinpoint
+                return Waypoint_Enum.NavigationMode.Pinpoint
             end
         end
     end
 
     local function hasNavigationModeChanged(mode)
         local hasChanged = mode ~= lastNavigationMode
-        local isHidden = mode == WaypointEnum.NavigationMode.Hidden -- Force update when mode is hidden as without this, visibility issues sometimes occur while changing super track target inside quest blob
+        local isHidden = mode == Waypoint_Enum.NavigationMode.Hidden -- Force update when mode is hidden as without this, visibility issues sometimes occur while changing super track target inside quest blob
 
         return hasChanged or isHidden
     end
 
     local function triggerAppropriateTransitionCallback(mode)
-        if lastNavigationMode == WaypointEnum.NavigationMode.Waypoint and mode == WaypointEnum.NavigationMode.Pinpoint then
+        if lastNavigationMode == Waypoint_Enum.NavigationMode.Waypoint and mode == Waypoint_Enum.NavigationMode.Pinpoint then
             -- Waypoint > Pinpoint
             CallbackRegistry:Trigger("WaypointAnimation.WaypointToPinpoint")
-        elseif lastNavigationMode == WaypointEnum.NavigationMode.Pinpoint and mode == WaypointEnum.NavigationMode.Waypoint then
+        elseif lastNavigationMode == Waypoint_Enum.NavigationMode.Pinpoint and mode == Waypoint_Enum.NavigationMode.Waypoint then
             -- Pinpoint > Waypoint
 
             CallbackRegistry:Trigger("WaypointAnimation.PinpointToWaypoint")
-        elseif lastNavigationMode == WaypointEnum.NavigationMode.Hidden and mode ~= WaypointEnum.NavigationMode.Hidden then
+        elseif lastNavigationMode == Waypoint_Enum.NavigationMode.Hidden and mode ~= Waypoint_Enum.NavigationMode.Hidden then
             -- Hidden > (Waypoint/Pinpoint/Navigator)
             CallbackRegistry:Trigger("WaypointAnimation.New")
         end
@@ -355,25 +354,25 @@ do
 
         if hasNavigationModeChanged(mode) then
             triggerAppropriateTransitionCallback(mode)
-            WaypointDirector:SetNavigationMode(mode)
+            Waypoint_Director:SetNavigationMode(mode)
 
             lastNavigationMode = mode
         end
     end
 
-    CallbackRegistry:Add("WaypointDataProvider.StateChanged", function()
-        if not WaypointDirector.isActive then return end
+    CallbackRegistry:Add("Waypoint_DataProvider.StateChanged", function()
+        if not Waypoint_Director.isActive then return end
         updateNavigationMode()
     end)
 
-    CallbackRegistry:Add("WaypointDataProvider.ClampChanged", function()
-        if not WaypointDirector.isActive then return end
+    CallbackRegistry:Add("Waypoint_DataProvider.ClampChanged", function()
+        if not Waypoint_Director.isActive then return end
         valueChecklistBeforeUpdating.hasClampInfo = true
         updateNavigationMode()
     end)
 
     CallbackRegistry:Add("Waypoint.DistanceReady", function()
-        if not WaypointDirector.isActive then return end
+        if not Waypoint_Director.isActive then return end
         valueChecklistBeforeUpdating.hasDistanceInfo = true
         updateNavigationMode()
     end)
@@ -381,7 +380,6 @@ do
     SavedVariables.OnChange("WaypointDB_Global", "WaypointSystemType", updateNavigationMode)
     SavedVariables.OnChange("WaypointDB_Global", "DistanceThresholdHidden", updateNavigationMode)
 end
-
 
 
 -- Enable/Disable
@@ -405,16 +403,16 @@ local function shouldSetActive()
     return shouldShow
 end
 
-function WaypointDirector:UpdateActive()
+function Waypoint_Director:UpdateActive()
     local active = shouldSetActive()
 
-    if active ~= WaypointDirector.isActive then
-        WaypointDirector.isActive = active
+    if active ~= Waypoint_Director.isActive then
+        Waypoint_Director.isActive = active
         if active then
             Events:Enable()
         else
             Events:Disable()
-            WaypointDirector:SetNavigationMode(WaypointEnum.NavigationMode.Hidden)
+            Waypoint_Director:SetNavigationMode(Waypoint_Enum.NavigationMode.Hidden)
         end
 
         CallbackRegistry:Trigger("Waypoint.ActiveChanged", active)
@@ -422,23 +420,21 @@ function WaypointDirector:UpdateActive()
 end
 
 
-
 -- Navigation Mode
 --------------------------------
 
-function WaypointDirector:GetNavigationMode()
-    return WaypointDirector.navigationMode
+function Waypoint_Director:GetNavigationMode()
+    return Waypoint_Director.navigationMode
 end
 
-function WaypointDirector:SetNavigationMode(mode)
-    WaypointDirector.navigationMode = mode
+function Waypoint_Director:SetNavigationMode(mode)
+    Waypoint_Director.navigationMode = mode
     CallbackRegistry:Trigger("Waypoint.NavigationModeChanged", mode)
 end
 
-function WaypointDirector:HideAllFrames()
+function Waypoint_Director:HideAllFrames()
     CallbackRegistry:Trigger("Waypoint.HideAllFrames")
 end
-
 
 
 
@@ -446,12 +442,12 @@ end
 --------------------------------
 
 local function OnAddonLoad()
-    WaypointDirector:UpdateActive()
-    WaypointDirector:AwaitDistance()
+    Waypoint_Director:UpdateActive()
+    Waypoint_Director:AwaitDistance()
 
     local f = CreateFrame("Frame")
     f:SetScript("OnEvent", function(self, event, ...)
-        WaypointDirector:UpdateActive()
+        Waypoint_Director:UpdateActive()
     end)
     f:RegisterEvent("SUPER_TRACKING_CHANGED")
     f:RegisterEvent("ZONE_CHANGED")

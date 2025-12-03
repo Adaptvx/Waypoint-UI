@@ -6,9 +6,15 @@ local Mixin           = MixinUtil.Mixin
 local LazyTimer       = env.WPM:New("wpm_modules/lazy-timer")
 
 
-local dummyFrame = CreateFrame("Frame"); dummyFrame:Hide()
-local SET_SCRIPT_FUNC = getmetatable(dummyFrame).__index.SetScript
+-- Shared
+--------------------------------
 
+local dummy = CreateFrame("Frame"); dummy:Hide()
+local Method_SetScript = getmetatable(dummy).__index.SetScript
+
+
+-- Timer
+--------------------------------
 
 local TimerMixin = {}
 
@@ -27,19 +33,20 @@ local function handleOnUpdate(self, elapsed)
     if self.elapsed >= self.delay then
         self.elapsed = 0
 
-        SET_SCRIPT_FUNC(self, "OnUpdate", nil)
+        Method_SetScript(self, "OnUpdate", nil)
         self.action(self)
     end
 end
 
 function TimerMixin.Start(self, delay)
     self.delay = delay
-    SET_SCRIPT_FUNC(self, "OnUpdate", handleOnUpdate)
+    Method_SetScript(self, "OnUpdate", handleOnUpdate)
 end
 
 
-function LazyTimer:New()
+function LazyTimer.New()
     local timer = CreateFrame("Frame")
+
     Mixin(timer, TimerMixin)
     timer:OnLoad()
 

@@ -1,16 +1,17 @@
-local env                                                                                                                  = select(2, ...)
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
+local env                                                                                                                                          = select(2, ...)
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
 
-local UICGame                                                                                                              = env.WPM:Import("wpm_modules/uic-game")
+local UICGame                                                                                                                                      = env.WPM:Import("wpm_modules/uic-game")
+local Setting_Shared                                                                                                                               = env.WPM:Import("@/Setting/Shared")
 
 
 -- Shared
 --------------------------------
 
-local NAME = "WUISettingFrame"
+local FRAME_NAME = Setting_Shared.FRAME_NAME
 
 
 -- Frame
@@ -19,64 +20,78 @@ local NAME = "WUISettingFrame"
 local TEXTURE_DIVIDER = UIKit.Define.Texture{ path = Path.Root .. "/Art/Shape/Square.png" }
 
 
-Frame(NAME .. ".Frame", {
-    Frame(NAME .. ".Sidebar", {
-        Frame(NAME .. ".Sidebar.Divider")
-            :id(NAME .. ".Sidebar.Divider")
+Frame(FRAME_NAME .. ".Frame", {
+    Frame(FRAME_NAME .. ".Sidebar", {
+        Frame(FRAME_NAME .. ".Sidebar.Divider")
+            :id(FRAME_NAME .. ".Sidebar.Divider")
             :point(UIKit.Enum.Point.Right)
             :size(UIKit.Define.Num{ value = 2 }, UIKit.Define.Percentage{ value = 100 })
             :background(TEXTURE_DIVIDER)
             :backgroundColor(UIKit.Define.Color_RGBA{ r = 142.5, g = 142.5, b = 142.5, a = .2375 }),
 
-        Frame(NAME .. ".Sidebar.Content", {
-            VStack(NAME .. ".Sidebar.Tab")
-                :id(NAME .. ".Sidebar.Tab")
+        Frame(FRAME_NAME .. ".Sidebar.Content", {
+            LayoutVertical(FRAME_NAME .. ".Sidebar.Tab")
+                :id(FRAME_NAME .. ".Sidebar.Tab")
                 :point(UIKit.Enum.Point.Top)
                 :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Percentage{ value = 100, operator = "-", delta = 75 })
                 :layoutSpacing(UIKit.Define.Num{ value = 3 }),
 
-            VStack(NAME .. ".Sidebar.Footer")
-                :id(NAME .. ".Sidebar.Footer")
+            LayoutVertical(FRAME_NAME .. ".Sidebar.Footer")
+                :id(FRAME_NAME .. ".Sidebar.Footer")
                 :point(UIKit.Enum.Point.Bottom)
                 :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 75 })
                 :layoutAlignmentV(UIKit.Enum.Direction.Trailing)
                 :layoutSpacing(UIKit.Define.Num{ value = 3 })
         })
-            :id(NAME .. ".Sidebar.Content")
+            :id(FRAME_NAME .. ".Sidebar.Content")
             :size(UIKit.Define.Fill{ delta = 45 })
     })
-        :id(NAME .. ".Sidebar")
+        :id(FRAME_NAME .. ".Sidebar")
         :point(UIKit.Enum.Point.Left)
         :size(UIKit.Define.Num{ value = 212 }, UIKit.Define.Percentage{ value = 100 }),
 
-    Frame(NAME .. ".Content", {
-        Frame(NAME .. ".Content.Container")
-            :id(NAME .. ".Content.Container")
+    Frame(FRAME_NAME .. ".Content", {
+        Frame(FRAME_NAME .. ".Content.Container")
+            :id(FRAME_NAME .. ".Content.Container")
             :point(UIKit.Enum.Point.Center)
             :size(UIKit.Define.Percentage{ value = 100, operator = "-", delta = 35 }, UIKit.Define.Percentage{ value = 100 })
     })
-        :id(NAME .. ".Content")
+        :id(FRAME_NAME .. ".Content")
         :point(UIKit.Enum.Point.Right)
         :size(UIKit.Define.Percentage{ value = 100, operator = "-", delta = 212 }, UIKit.Define.Percentage{ value = 100 })
 })
-    :id(NAME)
+    :id(FRAME_NAME)
 
-WUISettingFrame = UIKit.GetElementById(NAME)
-WUISettingFrame.Sidebar = UIKit.GetElementById(NAME .. ".Sidebar")
-WUISettingFrame.Sidebar.Content = UIKit.GetElementById(NAME .. ".Sidebar.Content")
-WUISettingFrame.Sidebar.Image = UIKit.GetElementById(NAME .. ".Sidebar.Image")
-WUISettingFrame.Sidebar.Tab = UIKit.GetElementById(NAME .. ".Sidebar.Tab")
-WUISettingFrame.Sidebar.Footer = UIKit.GetElementById(NAME .. ".Sidebar.Footer")
-WUISettingFrame.Content = UIKit.GetElementById(NAME .. ".Content")
-WUISettingFrame.Content.Container = UIKit.GetElementById(NAME .. ".Content.Container")
+_G[FRAME_NAME] = UIKit.GetElementById(FRAME_NAME)
+_G[FRAME_NAME].Sidebar = UIKit.GetElementById(FRAME_NAME .. ".Sidebar")
+_G[FRAME_NAME].Sidebar.Content = UIKit.GetElementById(FRAME_NAME .. ".Sidebar.Content")
+_G[FRAME_NAME].Sidebar.Image = UIKit.GetElementById(FRAME_NAME .. ".Sidebar.Image")
+_G[FRAME_NAME].Sidebar.Tab = UIKit.GetElementById(FRAME_NAME .. ".Sidebar.Tab")
+_G[FRAME_NAME].Sidebar.Footer = UIKit.GetElementById(FRAME_NAME .. ".Sidebar.Footer")
+_G[FRAME_NAME].Content = UIKit.GetElementById(FRAME_NAME .. ".Content")
+_G[FRAME_NAME].Content.Container = UIKit.GetElementById(FRAME_NAME .. ".Content.Container")
 
+
+-- Prompt
+--------------------------------
+
+UICGame.Prompt(FRAME_NAME .. ".Prompt")
+    :id(FRAME_NAME .. ".Prompt")
+    :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog, 100)
+    :parent(UIParent)
+    :anchor(StaticPopup1)
+    :point(UIKit.Enum.Point.Center)
+    :_Render()
+
+_G[FRAME_NAME].Prompt = UIKit.GetElementById(FRAME_NAME .. ".Prompt")
+_G[FRAME_NAME].Prompt:Hide()
 
 
 -- Selection Menu
 --------------------------------
 
-WUISettingFrame.SelectionMenu = UICGame.SelectionMenu(NAME .. ".SelectionMenu")
-    :parent(WUISettingFrame)
+_G[FRAME_NAME].SelectionMenu = UICGame.SelectionMenu(FRAME_NAME .. ".SelectionMenu")
+    :parent(_G[FRAME_NAME])
     :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog)
     :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{})
     :_Render()

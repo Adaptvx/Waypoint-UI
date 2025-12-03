@@ -1,20 +1,20 @@
 local env              = select(2, ...)
 
-local table_insert     = table.insert
-local math_floor       = math.floor
+local tinsert     = table.insert
+local floor       = math.floor
 
 local CallbackRegistry = env.WPM:New("wpm_modules/callback-registry")
 local db               = {}
 
 
-
-
+-- Helpers
+--------------------------------
 
 local function insertCallback(callbacks, entry)
     local low, high = 1, #callbacks
 
     while low <= high do
-        local mid = math_floor((low + high) * 0.5)
+        local mid = floor((low + high) * 0.5)
         if entry.priority < callbacks[mid].priority then
             high = mid - 1
         else
@@ -22,11 +22,12 @@ local function insertCallback(callbacks, entry)
         end
     end
 
-    table_insert(callbacks, low, entry)
+    tinsert(callbacks, low, entry)
 end
 
 
-
+-- API
+--------------------------------
 
 function CallbackRegistry:Add(id, func, priority)
     local callbacks = db[id]
@@ -46,6 +47,6 @@ function CallbackRegistry:Trigger(id, ...)
     if not callbacks then return end
 
     for i = 1, #callbacks do
-        callbacks[i].func(...)
+        callbacks[i].func(id, ...)
     end
 end

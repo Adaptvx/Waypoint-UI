@@ -1,17 +1,21 @@
-local env       = select(2, ...)
-local MixinUtil = env.WPM:Import("wpm_modules/mixin-util")
-local Frame     = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local Input     = env.WPM:New("wpm_modules/ui-kit/primitives/input")
+local env                    = select(2, ...)
+local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin     = MixinUtil.Mixin
+local Mixin                  = MixinUtil.Mixin
+
+local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
+local UIKit_Primitives_Input = env.WPM:New("wpm_modules/ui-kit/primitives/input")
 
 
+-- Shared
+--------------------------------
 
 local dummy = CreateFrame("EditBox"); dummy:Hide()
-local SET_FONT_FUNC = getmetatable(dummy).__index.SetFont
+local Method_SetFont = getmetatable(dummy).__index.SetFont
 
 
-
+-- Input
+--------------------------------
 
 local InputMixin = {}
 do
@@ -46,8 +50,6 @@ do
     end
 
 
-
-
     -- Layout
     --------------------------------
 
@@ -60,8 +62,6 @@ do
             self:SetHeight(textHeight)
         end
     end
-
-
 
 
     -- Caret
@@ -78,8 +78,6 @@ do
     end
 
 
-
-
     -- Font
     --------------------------------
 
@@ -87,24 +85,22 @@ do
         if not path then return end
 
         local _, size, flags = self:GetFont()
-        SET_FONT_FUNC(self, path, size, flags)
+        Method_SetFont(self, path, size, flags)
     end
 
     function InputMixin:SetFontSize(size)
         if not size then return end
 
         local path, _, flags = self:GetFont()
-        SET_FONT_FUNC(self, path, size, flags)
+        Method_SetFont(self, path, size, flags)
     end
 
     function InputMixin:SetFontFlags(flags)
         if not flags then return end
 
         local path, size = self:GetFont()
-        SET_FONT_FUNC(self, path, size, flags)
+        Method_SetFont(self, path, size, flags)
     end
-
-
 
 
     -- Placeholder
@@ -155,9 +151,6 @@ do
     end
 end
 
-
-
-
 local function setupCustomCaret(self)
     self.__caretWidth = 2.5
 
@@ -166,7 +159,7 @@ local function setupCustomCaret(self)
         self.__Caret:Hide()
     end)
 
-    local caretAnchor = Frame:New("Frame", "$parent.CaretAnchor", self)
+    local caretAnchor = UIKit_Primitives_Frame.New("Frame", "$parent.CaretAnchor", self)
     caretAnchor:SetSize(self.__caretWidth, 12)
     caretAnchor:Hide()
 
@@ -235,11 +228,12 @@ local function handleHide(self)
     self.isVisible = false
 end
 
-function Input:New(name, parent)
+
+function UIKit_Primitives_Input.New(name, parent)
     name = name or "undefined"
 
 
-    local frame = Frame:New("EditBox", name, parent)
+    local frame = UIKit_Primitives_Frame.New("EditBox", name, parent)
     Mixin(frame, InputMixin)
     frame:Init()
     frame:SetFontObject("GameFontNormal")
@@ -261,7 +255,7 @@ function Input:New(name, parent)
     frame.__Placeholder = placeholder
     frame.__Caret       = select(2, frame:GetRegions())
     frame.__CaretAnchor = setupCustomCaret(frame)
-    
+
     frame:AddAlias("INPUT_TEXT", frame.__Text)
     frame:AddAlias("INPUT_PLACEHOLDER", frame.__Placeholder)
     frame:AddAlias("INPUT_CARET", frame.__CaretAnchor)

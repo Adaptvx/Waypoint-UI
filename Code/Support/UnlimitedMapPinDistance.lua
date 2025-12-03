@@ -3,6 +3,8 @@ local Support                 = env.WPM:Import("@/Support")
 local UnlimitedMapPinDistance = env.WPM:New("@/Support/UnlimitedMapPinDistance")
 
 
+-- Helpers
+--------------------------------
 
 local function hideUMPDFrame()
     assert(SuperTrackedFrame.Time, "Invalid variable `SuperTrackedFrame.Time`")
@@ -12,8 +14,10 @@ local function hideUMPDFrame()
 end
 
 
+-- Setup
+--------------------------------
 
 local function OnAddonLoad()
     hideUMPDFrame()
 end
-Support:Add("UnlimitedMapPinDistance", OnAddonLoad)
+Support.Add("UnlimitedMapPinDistance", OnAddonLoad)

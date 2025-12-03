@@ -1,4 +1,7 @@
 local env              = select(2, ...)
+
+local type             = type
+
 local UIKit_TagManager = env.WPM:Import("wpm_modules/ui-kit/tag-manager")
 local UIAnim_Easing    = env.WPM:Import("wpm_modules/ui-anim/easing")
 local UIAnim_Enum      = env.WPM:Import("wpm_modules/ui-anim/enum")
@@ -10,6 +13,10 @@ local PROP_WIDTH       = UIAnim_Enum.Property.Width
 local PROP_HEIGHT      = UIAnim_Enum.Property.Height
 local PROP_POSX        = UIAnim_Enum.Property.PosX
 local PROP_POSY        = UIAnim_Enum.Property.PosY
+
+local APPLY_METHOD     = 1
+local APPLY_POS_X      = 2
+local APPLY_POS_Y      = 3
 
 
 -- Target
@@ -29,7 +36,7 @@ function UIAnim_Processor.GetEasing(easingName)
 end
 
 
--- Property (Apply)
+-- Apply
 --------------------------------
 
 function UIAnim_Processor.Apply(target, property, value)
@@ -61,7 +68,7 @@ function UIAnim_Processor.Apply(target, property, value)
 end
 
 
--- Property (Read)
+-- Read
 --------------------------------
 
 function UIAnim_Processor.Read(target, property)
@@ -85,21 +92,24 @@ function UIAnim_Processor.Read(target, property)
     return 0
 end
 
+
+-- Prepare
+--------------------------------
+
 function UIAnim_Processor.PrepareApply(target, property)
     if not target then return end
 
     if property == PROP_ALPHA then
-        return target.SetAlpha and "method", target.SetAlpha
+        return target.SetAlpha and APPLY_METHOD, target.SetAlpha
     elseif property == PROP_SCALE then
-        return target.SetScale and "method", target.SetScale
+        return target.SetScale and APPLY_METHOD, target.SetScale
     elseif property == PROP_WIDTH then
-        return target.SetWidth and "method", target.SetWidth
+        return target.SetWidth and APPLY_METHOD, target.SetWidth
     elseif property == PROP_HEIGHT then
-        return target.SetHeight and "method", target.SetHeight
+        return target.SetHeight and APPLY_METHOD, target.SetHeight
     elseif property == PROP_POSX or property == PROP_POSY then
         if target.SetPoint and target.GetPoint then
-            local point, relativeTo, relativePoint = target:GetPoint()
-            return property == PROP_POSX and "x" or "y", target.SetPoint, point or "CENTER", relativeTo or UIParent, relativePoint or point or "CENTER"
+            return property == PROP_POSX and APPLY_POS_X or APPLY_POS_Y, target.SetPoint
         end
     end
 end

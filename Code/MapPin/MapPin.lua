@@ -28,7 +28,6 @@ local session = {
 }
 
 
-
 -- Helper
 --------------------------------
 
@@ -41,7 +40,6 @@ local function getUserWaypointPosition()
         pos   = userWaypoint.position
     }
 end
-
 
 
 -- Audio
@@ -57,9 +55,8 @@ local function playUserNavigationAudio()
         end
     end
 
-    Sound:PlaySound("Main", soundID)
+    Sound.PlaySound("Main", soundID)
 end
-
 
 
 -- User Navigation (/way)
@@ -110,7 +107,7 @@ function MapPin.GetUserNavigation()
     return session
 end
 
-local NewWayTimer = LazyTimer:New()
+local NewWayTimer = LazyTimer.New()
 NewWayTimer:SetAction(function()
     CallbackRegistry:Trigger("MapPin.NewUserNavigation")
 end)
@@ -147,6 +144,18 @@ function MapPin.IsUserNavigation()
 end
 
 
+-- Additional Features
+--------------------------------
+
+do -- Clear super track when user waypoint is cleared with `C_Map.ClearUserWaypoint`
+    local EL = CreateFrame("Frame")
+    EL:RegisterEvent("USER_WAYPOINT_UPDATED")
+    EL:SetScript("OnEvent", function(self, event, ...)
+        if not C_Map.HasUserWaypoint() then
+            C_SuperTrack.ClearAllSuperTracked()
+        end
+    end)
+end
 
 
 -- Setup

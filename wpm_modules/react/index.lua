@@ -19,20 +19,23 @@
     -- var changed to: 1
 ]]
 
-local env = select(2, ...)
+local env     = select(2, ...)
 
-local assert = assert
-local type = type
+local assert  = assert
+local type    = type
 local tinsert = table.insert
 
-local React = env.WPM:New("wpm_modules/react")
+local React   = env.WPM:New("wpm_modules/react")
+
+
+-- Shared
+--------------------------------
+
 local db = {}
 
 local function handleOnChange(self, func)
     assert(type(func) == "function", "Invalid variable `func`: Must be of type `function`")
     tinsert(self, func)
-    
-    -- Return index of added hook
     return #self
 end
 
@@ -40,7 +43,6 @@ local function handleSet(self, value)
     local indexed = db[self.__id]
     indexed.__value = value
 
-    -- Call all onChange hooks
     if #indexed > 0 then
         for i = 1, #indexed do
             indexed[i](indexed)
@@ -51,6 +53,10 @@ end
 local function handleGet(self)
     return db[self.__id].__value
 end
+
+
+-- API
+--------------------------------
 
 local idCounter = 0
 
@@ -66,7 +72,7 @@ function React.New(defaultValue)
     var.OnChange = handleOnChange
     var.Set = handleSet
     var.Get = handleGet
-    
+
     db[id] = var
 
     return db[id]

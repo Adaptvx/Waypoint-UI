@@ -1,20 +1,20 @@
-local env            = select(2, ...)
-local struct         = env.WPM:Import("wpm_modules/struct").New
-local WaypointDefine = env.WPM:New("@/Waypoint/Define")
+local env             = select(2, ...)
+local Struct          = env.WPM:Import("wpm_modules/struct").New
+local Waypoint_Define = env.WPM:New("@/Waypoint/Define")
 
 
-WaypointDefine.ContextIconTexture = struct{
+Waypoint_Define.ContextIconTexture = Struct{
     requestRecolor = false,
     type           = nil,
     path           = nil
 }
 
-WaypointDefine.ObjectiveInfo = struct{
+Waypoint_Define.ObjectiveInfo = Struct{
     objectives       = nil,
     isMultiObjective = nil
 }
 
-WaypointDefine.RedirectInfo = struct{
+Waypoint_Define.RedirectInfo = Struct{
     valid = nil,
     x     = nil,
     y     = nil,

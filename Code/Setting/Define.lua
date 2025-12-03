@@ -1,14 +1,14 @@
-local env = select(2, ...)
-local struct = env.WPM:Import("wpm_modules/struct").New
-local SettingDefine = env.WPM:New("@/Setting/Define")
+local env                = select(2, ...)
+local Struct             = env.WPM:Import("wpm_modules/struct").New
+local Setting_Define      = env.WPM:New("@/Setting/Define")
 
-SettingDefine.TitleInfo = struct{
+Setting_Define.TitleInfo  = Struct{
     imagePath = nil,
     text      = nil,
     subtext   = nil
 }
 
-SettingDefine.Descriptor = struct{
+Setting_Define.Descriptor = Struct{
     imageType   = nil,
     imagePath   = nil,
     description = nil

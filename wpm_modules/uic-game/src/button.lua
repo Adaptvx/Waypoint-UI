@@ -1,21 +1,19 @@
-local env                                                                                                                  = select(2, ...)
-local MixinUtil                                                                                                            = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                 = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                               = env.WPM:Import("wpm_modules/ui-font")
-local UIKit                                                                                                                = env.WPM:Import("wpm_modules/ui-kit")
-local Frame, Grid, VStack, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.VStack, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                               = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                       = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local GenericEnum                                                                                                          = env.WPM:Import("wpm_modules/generic-enum")
-local Utils_Texture                                                                                                        = env.WPM:Import("wpm_modules/utils/texture")
+local env                                                                                                                                          = select(2, ...)
+local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
 
-local Mixin                                                                                                                = MixinUtil.Mixin
-local CreateFromMixins                                                                                                     = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = MixinUtil.Mixin
+local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameButton                                                                                                        = env.WPM:New("wpm_modules/uic-game/button")
-
-
+local UICGameButton                                                                                                                                = env.WPM:New("wpm_modules/uic-game/button")
 
 
 -- Shared
@@ -27,7 +25,7 @@ local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameButton.pn
 local TEXTURE_NIL = UIKit.Define.Texture_NineSlice{ path = nil, inset = 1, scale = 1 }
 
 
-Utils_Texture:PreloadAsset(PATH .. "UICGameButton.png")
+Utils_Texture.PreloadAsset(PATH .. "UICGameButton.png")
 
 
 -- Base
@@ -118,7 +116,7 @@ function ButtonMixin:UpdateAnimation()
 end
 
 function ButtonMixin:PlayInteractSound()
-    Sound:PlaySound("UI", SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    Sound.PlaySound("UI", SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 end
 
 
@@ -218,8 +216,6 @@ UICGameButton.GreyBase1x = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
 -- Text
 --------------------------------
 
@@ -304,7 +300,6 @@ UICGameButton.GreyWithText = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
 -- Close
 --------------------------------
 
@@ -332,13 +327,11 @@ UICGameButton.RedClose = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
 -- Selection Menu
 --------------------------------
 
-local SM_ARROW_BACKGROUND = ATLAS{ left = 0 / 2048, top = 1024 / 1280, right = 256 / 2048, bottom = 1280 / 1280 }
-local SM_ARROW_SIZE       = UIKit.Define.Num{ value = 12 }
+local SM_ARROW_TEXTURE = ATLAS{ left = 0 / 2048, top = 1024 / 1280, right = 256 / 2048, bottom = 1280 / 1280 }
+local SM_ARROW_SIZE    = UIKit.Define.Num{ value = 12 }
 
 
 local ButtonSelectionMenuMixin = CreateFromMixins(UICSharedMixin.SelectionMenuRemote)
@@ -354,7 +347,7 @@ UICGameButton.SelectionMenu = UIKit.Prefab(function(id, name, children, ...)
             Frame(name .. ".Arrow")
                 :id("Arrow", id)
                 :point(UIKit.Enum.Point.Right)
-                :background(SM_ARROW_BACKGROUND)
+                :background(SM_ARROW_TEXTURE)
                 :size(SM_ARROW_SIZE, SM_ARROW_SIZE)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 

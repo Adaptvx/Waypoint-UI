@@ -1,74 +1,74 @@
-local env = select(2, ...)
+local env             = select(2, ...)
+
+local rawset          = rawset
+local rawget          = rawget
+local setmetatable    = setmetatable
+
 local Utils_LazyTable = env.WPM:New("wpm_modules/utils/lazy-table")
 
---[[
-        local parent = {}
-        parent["LT_name"] = 0
-        parent["LT_name_value1"] = ...
-        parent["LT_name_value2"] = ...
-]]
 
+-- Shared
+--------------------------------
 
-
-
-
--- Instantiates a new lazy table with the provided name under the parent table.
----@param parent table
----@param name string
-function Utils_LazyTable.New(parent, name)
-    parent["LT_" .. name] = 0
-end
-
--- Returns the length of the lazy table with the provided name under the parent table.
----@param parent table
----@param name string
-function Utils_LazyTable.Length(parent, name)
-    return parent["LT_" .. name]
-end
-
-
-
-
-
--- Inserts a value into the lazy table with the provided name under the parent table.
----@param parent table
----@param name string
----@param value any
-function Utils_LazyTable.Insert(parent, name, value)
-    if not parent["LT_" .. name] then
-        Utils_LazyTable.New(parent, name)
+local prefixCache = setmetatable({}, {
+    __index = function(self, name)
+        local prefix = "LT_" .. name
+        rawset(self, name, prefix)
+        return prefix
     end
-    parent["LT_" .. name] = parent["LT_" .. name] + 1
-    parent["LT_" .. name .. Utils_LazyTable.Length(parent, name)] = value
+})
+
+local indexKeyCache = {}
+
+
+-- Helpers
+--------------------------------
+
+local function getIndexKey(prefix, index)
+    local cache = indexKeyCache[prefix]
+    if not cache then
+        cache = {}
+        indexKeyCache[prefix] = cache
+    end
+
+    local key = cache[index]
+    if not key then
+        key = prefix .. index
+        cache[index] = key
+    end
+    return key
 end
 
--- Sets a value in the lazy table with the provided name under the parent table.
----@param parent table
----@param name string
----@param index number
----@param value any
+
+-- API
+--------------------------------
+
+function Utils_LazyTable.New(parent, name)
+    rawset(parent, prefixCache[name], 0)
+end
+
+function Utils_LazyTable.Length(parent, name)
+    return rawget(parent, prefixCache[name])
+end
+
+function Utils_LazyTable.Insert(parent, name, value)
+    local prefix = prefixCache[name]
+    local length = rawget(parent, prefix) or 0
+    length = length + 1
+    rawset(parent, prefix, length)
+    rawset(parent, getIndexKey(prefix, length), value)
+end
+
 function Utils_LazyTable.Set(parent, name, index, value)
-    parent["LT_" .. name .. index] = value
+    rawset(parent, getIndexKey(prefixCache[name], index), value)
 end
 
--- Removes a value from the lazy table with the provided name under the parent table.
----@param parent table
----@param name string
----@param index number
 function Utils_LazyTable.Remove(parent, name, index)
-    parent["LT_" .. name .. index] = nil
-    parent["LT_" .. name] = parent["LT_" .. name] - 1
+    local prefix = prefixCache[name]
+    rawset(parent, getIndexKey(prefix, index), nil)
+    rawset(parent, prefix, rawget(parent, prefix) - 1)
 end
 
-
-
-
-
-
--- Retrieves a value from the lazy table with the provided name under the parent table.
----@param parent table
----@param name string
----@param index number
 function Utils_LazyTable.Get(parent, name, index)
-    return parent["LT_" .. name .. index]
+    return rawget(parent, getIndexKey(prefixCache[name], index))
 end

@@ -1,31 +1,37 @@
-local env = select(2, ...)
+local env            = select(2, ...)
+
+local pairs          = pairs
+
 local Utils_Standard = env.WPM:New("wpm_modules/utils/standard")
 
--- Returns the length of a table.
----@param tbl table
----@return number length
+
+-- Shared
+--------------------------------
+
+local idCounter = 0
+
+
+-- API
+--------------------------------
+
 function Utils_Standard.GetTableLength(tbl)
-    local length = 0
+    local count = 0
     for _ in pairs(tbl) do
-        length = length + 1
+        count = count + 1
     end
-    return length
+    return count
 end
 
--- Reverses a table.
----@param tbl table
----@return table table
 function Utils_Standard.ReverseTable(tbl)
     local reversed = {}
-    local len = #tbl
-    for i = len, 1, -1 do
-        reversed[len - i + 1] = tbl[i]
+    local length = #tbl
+    for i = length, 1, -1 do
+        reversed[length - i + 1] = tbl[i]
     end
     return reversed
 end
 
--- Generates a random id.
----@return number id
 function Utils_Standard.GenerateRandomID()
-    return math.random(1, 99999999)
+    idCounter = idCounter + 1
+    return idCounter
 end

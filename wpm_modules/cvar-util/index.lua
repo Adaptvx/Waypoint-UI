@@ -17,7 +17,6 @@ CVarUtil.Enum  = {
 }
 
 
-
 -- Temporary cvar handler
 --------------------------------
 
@@ -76,7 +75,6 @@ TemporaryEL:SetScript("OnEvent", function(self, event, ...)
 end)
 
 
-
 -- Protected event handler
 --------------------------------
 
@@ -109,7 +107,6 @@ local ProtectedEL = CreateFrame("Frame")
 ProtectedEL:RegisterEvent("PLAYER_REGEN_ENABLED")
 ProtectedEL:SetScript("OnEvent", wash)
 ]]
-
 
 -- API
 --------------------------------
