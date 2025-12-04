@@ -3,7 +3,7 @@
 ## Notes: This is the way.
 ## Author: AdaptiveX
 ## IconTexture: Interface/AddOns/WaypointUI/Art/Icon/IconAltLight.png
-## Version: 1.1.1
+## Version: 1.1.2
 ## SavedVariables: WaypointDB_Global, WaypointDB_Global_Persistent
 ## SavedVariablesPerCharacter: WaypointDB_Local, WaypointDB_Local_Persistent
 ## AddonCompartmentFunc: WaypointUIAPI_OpenSettingUI

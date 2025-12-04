@@ -8,7 +8,7 @@ local WorldQuestsList = env.WPM:New("@/Support/WorldQuestsList")
 --------------------------------
 
 local function removeWQLSlashCmd()
-    SlashCommand:RemoveSlashCommand("WQLSlashWay")
+    SlashCommand.RemoveSlashCommand("WQLSlashWay")
 end
 
 

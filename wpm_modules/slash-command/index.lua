@@ -91,7 +91,7 @@ function SlashCommand.RemoveSlashCommand(name)
     removeCommand(name)
 end
 
-function SlashCommand:AddFromSchema(schema)
+function SlashCommand.AddFromSchema(schema)
     for i = 1, #schema do
         local entry = schema[i]
         assert(entry.name, "`AddFromSchema`: `name` is required")

@@ -13,8 +13,8 @@ local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
 env.NAME               = "Waypoint UI"
 env.ICON               = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT           = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING     = "1.1.1"
-env.VERSION_NUMBER     = 010101
+env.VERSION_STRING     = "1.1.2"
+env.VERSION_NUMBER     = 010102
 env.DEBUG_MODE         = false
 
 
@@ -470,7 +470,7 @@ do -- Slash Command
     }
 
     function SlashCmdRegister.LoadSchema()
-        SlashCommand:AddFromSchema(Schema)
+        SlashCommand.AddFromSchema(Schema)
     end
 end
 
