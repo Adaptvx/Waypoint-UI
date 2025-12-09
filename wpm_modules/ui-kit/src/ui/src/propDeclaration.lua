@@ -22,9 +22,9 @@ local FrameProps                = UIKit_Primitives_Frame.FrameProps
 local reactKeyCache = setmetatable({}, {
     __index = function(self, propName)
         local keys = {
-            prop     = "uk_prop_REACT_" .. propName,
-            args     = "uk_prop_REACT_ARGS_" .. propName,
-            index    = "uk_prop_REACT_" .. propName .. "_INDEX",
+            prop  = "uk_prop_REACT_" .. propName,
+            args  = "uk_prop_REACT_ARGS_" .. propName,
+            index = "uk_prop_REACT_" .. propName .. "_INDEX"
         }
         self[propName] = keys
         return keys
@@ -151,6 +151,13 @@ do
         assert(type(level) == "number", "Invalid variable `frameLevel`: Must be of type `number`")
         frame.uk_prop_frameLevel = level
         frame:SetFrameLevel(level)
+    end
+
+    -- React
+    FrameProps["topLevel"] = function(frame, topLevel)
+        topLevel = handleReact(frame, topLevel, "topLevel")
+        assert(type(topLevel) == "boolean", "Invalid variable `topLevel`: Must be of type `boolean`")
+        frame:SetToplevel(topLevel)
     end
 
     -- React
@@ -322,6 +329,11 @@ do
         frame.uk_prop_y = yPos
     end
 
+    FrameProps["position"] = function(frame, xPos, yPos)
+        frame:x(xPos)
+        frame:y(yPos)
+    end
+
     -- React
     FrameProps["width"] = function(frame, widthValue)
         widthValue = handleReact(frame, widthValue, "width")
@@ -410,7 +422,7 @@ do
         local existingBackground = frame:GetBackground()
         assert(not existingBackground or existingBackground.__isMaskTexture == false, "Error! Failed to set `background`: a mask texture background object already exists")
         frame.uk_prop_background = backgroundTexture
-        UIKit_Renderer_Background:SetBackground(frame, false)
+        UIKit_Renderer_Background.SetBackground(frame, false)
     end
 
     FrameProps["maskBackground"] = function(frame, backgroundTexture)
@@ -419,7 +431,7 @@ do
         local existingBackground = frame:GetBackground()
         assert(not existingBackground or existingBackground.__isMaskTexture, "Error! Failed to set `maskBackground`: a non-mask texture background object already exists")
         frame.uk_prop_background = backgroundTexture
-        UIKit_Renderer_Background:SetBackground(frame, true)
+        UIKit_Renderer_Background.SetBackground(frame, true)
     end
 
     FrameProps["backdropColor"] = function(frame, bgColor, borderColor)
@@ -427,35 +439,35 @@ do
         assert(isColorDefine(borderColor), "Invalid variable `border`: Must be a `Color_RGBA` or `Color_HEX`")
         frame.uk_prop_backdropColor_background = bgColor
         frame.uk_prop_backdropColor_border = borderColor
-        UIKit_Renderer_Background:SetBackdropColor(frame)
+        UIKit_Renderer_Background.SetBackdropColor(frame)
     end
 
     FrameProps["backgroundColor"] = function(frame, color)
         color = handleReact(frame, color, "backgroundColor")
         assert(isColorDefine(color), "Invalid variable `backgroundColor`: Must be a `Color_RGBA` or `Color_HEX`")
         frame.uk_prop_backgroundColor = color
-        UIKit_Renderer_Background:SetBackgroundColor(frame)
+        UIKit_Renderer_Background.SetBackgroundColor(frame)
     end
 
     FrameProps["backgroundRotation"] = function(frame, radians)
         radians = handleReact(frame, radians, "backgroundRotation")
         assert(type(radians) == "number", "Invalid variable `backgroundRotation`: Must be a number")
         frame.uk_prop_backgroundRotation = radians
-        UIKit_Renderer_Background:SetRotation(frame)
+        UIKit_Renderer_Background.SetRotation(frame)
     end
 
     FrameProps["backgroundBlendMode"] = function(frame, blendMode)
         blendMode = handleReact(frame, blendMode, "backgroundBlendMode")
         assert(type(blendMode) == "string", "Invalid variable `backgroundBlendMode`: Must be a string")
         frame.uk_prop_blendMode = blendMode
-        UIKit_Renderer_Background:SetBlendMode(frame)
+        UIKit_Renderer_Background.SetBlendMode(frame)
     end
 
     FrameProps["backgroundDesaturated"] = function(frame, desaturated)
         desaturated = handleReact(frame, desaturated, "backgroundDesaturated")
         assert(type(desaturated) == "boolean", "Invalid variable `backgroundDesaturated`: Must be a boolean")
         frame.uk_prop_desaturated = desaturated
-        UIKit_Renderer_Background:SetDesaturated(frame)
+        UIKit_Renderer_Background.SetDesaturated(frame)
     end
 
     FrameProps["mask"] = function(frame, maskFrame)
@@ -463,7 +475,7 @@ do
         maskFrame = resolveFrameReference(maskFrame)
         local maskBg = maskFrame.GetBackground and maskFrame:GetBackground()
         assert(maskFrame == UIKit_Define.Texture or (maskBg and maskBg.__isMaskTexture == true), "Invalid variable `mask`: Must be a `Texture` or a frame with a `maskBackground` object")
-        UIKit_Renderer_Background:SetMaskTexture(frame, maskFrame)
+        UIKit_Renderer_Background.SetMaskTexture(frame, maskFrame)
     end
 
     -- React
@@ -932,7 +944,7 @@ do
 
     FrameProps["poolPrefab"] = function(frame, prefabFunc)
         assert(isPoolableView(frame.uk_type), "Invalid variable `poolPrefab`: Must be called on `List` or `LazyScrollView`")
-        assert(type(prefabFunc) == "function", "Invalid variable `prefabFunc`: Must be a function")
+        assert(type(prefabFunc) == "function" or type(prefabFunc) == "table", "Invalid variable `prefabFunc`: Must be a function or a table")
         frame:SetPrefab(prefabFunc)
     end
 

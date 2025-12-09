@@ -12,7 +12,7 @@ local Mixin                                                                     
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
 local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local UICGame                                                                                                                                      = env.WPM:Import("wpm_modules/uic-game")
+local UICCommon                                                                                                                                      = env.WPM:Import("wpm_modules/uic-common")
 local Setting_Enum                                                                                                                                 = env.WPM:Import("@/Setting/Enum")
 local Setting_Widgets                                                                                                                              = env.WPM:New("@/Setting/Setting_Widgets")
 
@@ -45,7 +45,7 @@ local TAB_SCROLLBAR_WIDTH       = UIKit.Define.Num{ value = 10 }
 local TAB_SCROLLBAR_HEIGHT      = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 35 }
 
 
-local TabAnimation = UIAnim:New()
+local TabAnimation = UIAnim.New()
 local TabAnimation_Intro = UIAnim.Animate()
     :wait(.1)
 
@@ -91,7 +91,7 @@ Setting_Widgets.Tab = UIKit.Prefab(function(id, name, children, ...)
                 :layoutDirection(UIKit.Enum.Direction.Vertical)
                 :scrollInterpolation(10),
 
-            UICGame.ScrollBar(name .. ".ScrollBar", {
+            UICCommon.ScrollBar(name .. ".ScrollBar", {
 
             })
                 :id("ScrollBar", id)
@@ -672,7 +672,7 @@ end
 Setting_Widgets.ElementCheckButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.CheckButton(name .. ".CheckButton")
+            UICCommon.CheckButton(name .. ".CheckButton")
                 :id("CheckButton", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_100, E_ACTION_SIZE_100)
@@ -703,7 +703,7 @@ end
 Setting_Widgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.ButtonRedWithText(name .. ".Button")
+            UICCommon.ButtonRedWithText(name .. ".Button")
                 :id("Button", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)
@@ -735,7 +735,7 @@ end
 Setting_Widgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.RangeWithText(name .. ".Range")
+            UICCommon.RangeWithText(name .. ".Range")
                 :id("Range", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_75)
@@ -767,7 +767,7 @@ end
 Setting_Widgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.ButtonSelectionMenu(name .. ".ButtonSelectionMenu")
+            UICCommon.ButtonSelectionMenu(name .. ".ButtonSelectionMenu")
                 :id("ButtonSelectionMenu", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_500, E_ACTION_SIZE_125)
@@ -798,7 +798,7 @@ end
 Setting_Widgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.ColorInput(name .. ".ColorInput")
+            UICCommon.ColorInput(name .. ".ColorInput")
                 :id("ColorInput", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)
@@ -829,7 +829,7 @@ end
 Setting_Widgets.ElementInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Setting_Widgets.ElementBase(name, {
-            UICGame.Input(name .. ".Input")
+            UICCommon.Input(name .. ".Input")
                 :id("Input", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(E_ACTION_SIZE_750, E_ACTION_SIZE_125)

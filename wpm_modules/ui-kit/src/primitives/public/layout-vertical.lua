@@ -20,89 +20,99 @@ do
 
     function LayoutVerticalMixin:Init()
         self.__visibleChildren = {}
+        self.__cachedWidths = {}
+        self.__cachedHeights = {}
     end
 
 
     -- Layout
     --------------------------------
 
+    local function resolveSpacing(spacingSetting, referenceSize)
+        if not spacingSetting then return 0 end
+        local spacingType = spacingSetting == UIKit_Define.Num and "num"
+            or spacingSetting == UIKit_Define.Percentage and "percent"
+            or type(spacingSetting) == "number" and "raw"
+            or nil
+        if spacingType == "raw" then return spacingSetting end
+        if spacingType == "num" then return spacingSetting.value or 0 end
+        if spacingType == "percent" then
+            return UIKit_Utils:CalculateRelativePercentage(referenceSize, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
+        end
+        return 0
+    end
+
+
     function LayoutVerticalMixin:RenderElements()
-        local children = self:GetFrameChildren()
-        if not children then return end
+        local allChildren = self:GetFrameChildren()
+        if not allChildren then return end
 
         local visibleChildren = self.__visibleChildren
+        local cachedWidths = self.__cachedWidths
+        local cachedHeights = self.__cachedHeights
         wipe(visibleChildren)
 
-        -- Collect visible children and calculate dimensions
-        local totalChildHeight, maxChildWidth, visibleCount = 0, 0, 0
-        local nonZeroCount = 0
+        local totalChildrenHeight, maxChildWidth, visibleChildCount, sizedChildCount = 0, 0, 0, 0
 
-        for _, child in ipairs(children) do
-            if child and child:IsShown() and not child.uk_flag_excludeFromCalculations and child.uk_type ~= "List" then
-                visibleCount = visibleCount + 1
-                visibleChildren[visibleCount] = child
+        for childIndex = 1, #allChildren do
+            local child = allChildren[childIndex]
+            local isLayoutChild = child and child:IsShown() and not child.uk_flag_excludeFromCalculations and child.uk_type ~= "List"
+            if isLayoutChild then
+                visibleChildCount = visibleChildCount + 1
+                visibleChildren[visibleChildCount] = child
 
                 local childWidth, childHeight = child:GetSize()
-                childWidth = childWidth or 0
-                childHeight = childHeight or 0
-                totalChildHeight = totalChildHeight + childHeight
+                childWidth, childHeight = childWidth or 0, childHeight or 0
+
+                -- Cache sizes for reuse in positioning loop
+                cachedWidths[visibleChildCount] = childWidth
+                cachedHeights[visibleChildCount] = childHeight
+
+                totalChildrenHeight = totalChildrenHeight + childHeight
                 if childWidth > maxChildWidth then maxChildWidth = childWidth end
-                if childHeight > 0 then nonZeroCount = nonZeroCount + 1 end
+                if childHeight > 0 then sizedChildCount = sizedChildCount + 1 end
             end
         end
 
-        if visibleCount == 0 then return end
+        if visibleChildCount == 0 then return end
 
         local parent = self:GetParent()
         local containerWidth, containerHeight = self:GetSize()
-        if not containerWidth then
-            containerWidth = (parent and parent:GetWidth()) or UIParent:GetWidth()
-        end
-        if not containerHeight then
-            containerHeight = (parent and parent:GetHeight()) or UIParent:GetHeight()
-        end
+        containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
+        containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-        -- Calculate spacing
-        local spacingSetting = self:GetSpacing()
-        local spacing = type(spacingSetting) == "number" and spacingSetting
-            or spacingSetting == UIKit_Define.Num and (spacingSetting.value or 0)
-            or spacingSetting == UIKit_Define.Percentage and UIKit_Utils:CalculateRelativePercentage(self, containerHeight, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
-            or 0
+        local spacing = resolveSpacing(self:GetSpacing(), containerHeight)
+        local spacingGapCount = sizedChildCount > 1 and (sizedChildCount - 1) or 0
+        local contentHeight = totalChildrenHeight + spacingGapCount * spacing
 
-        local contentHeight = totalChildHeight + ((nonZeroCount > 0 and (nonZeroCount - 1) or 0) * spacing)
-
-        -- Apply fit-to-content sizing
-        local fitWidthToContent, fitHeightToContent = self:GetFitContent()
-        if fitWidthToContent then
+        local shouldFitWidth, shouldFitHeight = self:GetFitContent()
+        if shouldFitWidth then
             containerWidth = self:ResolveFitSize("width", maxChildWidth, self.uk_prop_width)
             self:SetWidth(containerWidth)
         end
-        if fitHeightToContent then
+        if shouldFitHeight then
             containerHeight = self:ResolveFitSize("height", contentHeight, self.uk_prop_height)
             self:SetHeight(containerHeight)
         end
 
-        -- Calculate start position based on vertical alignment
-        local alignmentV = self.uk_prop_layoutAlignmentV or "LEADING"
-        local currentY = alignmentV == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
-            or alignmentV == "TRAILING" and containerHeight - contentHeight
+        local horizontalAlignment = self.uk_prop_layoutAlignmentH or "LEADING"
+        local verticalAlignment = self.uk_prop_layoutAlignmentV or "LEADING"
+
+        local currentY = verticalAlignment == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
+            or verticalAlignment == "TRAILING" and (containerHeight - contentHeight)
             or 0
 
-        -- Position children
-        local alignmentH = self.uk_prop_layoutAlignmentH or "LEADING"
+        local hasPlacedSizedChild = false
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
+            local childWidth = cachedWidths[childIndex]
+            local childHeight = cachedHeights[childIndex]
 
-        local placedNonZero = 0
-        for index = 1, visibleCount do
-            local child = visibleChildren[index]
-            local childWidth, childHeight = child:GetSize()
-            childWidth = childWidth or 0
-            childHeight = childHeight or 0
-
-            local horizontalOffset = alignmentH == "JUSTIFIED" and (containerWidth - childWidth) * 0.5
-                or alignmentH == "TRAILING" and containerWidth - childWidth
+            local horizontalOffset = horizontalAlignment == "JUSTIFIED" and (containerWidth - childWidth) * 0.5
+                or horizontalAlignment == "TRAILING" and (containerWidth - childWidth)
                 or 0
 
-            if childHeight > 0 and placedNonZero > 0 then
+            if childHeight > 0 and hasPlacedSizedChild then
                 currentY = currentY + spacing
             end
 
@@ -110,9 +120,7 @@ do
             child:SetPoint("TOPLEFT", self, "TOPLEFT", horizontalOffset, -currentY)
 
             currentY = currentY + childHeight
-            if childHeight > 0 then
-                placedNonZero = placedNonZero + 1
-            end
+            if childHeight > 0 then hasPlacedSizedChild = true end
         end
     end
 

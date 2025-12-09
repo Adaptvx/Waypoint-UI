@@ -3,8 +3,8 @@ local env                      = select(2, ...)
 local LazyTimer                = env.WPM:Import("wpm_modules/lazy-timer")
 local UIKit_Renderer_Processor = env.WPM:Import("wpm_modules/ui-kit/renderer/processor")
 
-local band = bit.band
-local bor = bit.bor
+local band                     = bit.band
+local bor                      = bit.bor
 
 local Processor_SizeStatic     = UIKit_Renderer_Processor.SizeStatic
 local Processor_SizeFit        = UIKit_Renderer_Processor.SizeFit
@@ -25,26 +25,26 @@ UIKit_Renderer_Cleaner.onCooldown = false
 UIKit_Renderer_Cleaner.requiresDependencyPass = false
 
 
-local dirty = {}
-local dirtyCount = 0
-local waitingForWash = false
-local hasBackwardActions = false
-local batchDepth = 0
+local dirty                                   = {}
+local dirtyCount                              = 0
+local waitingForWash                          = false
+local hasBackwardActions                      = false
+local batchDepth                              = 0
 
-local FIELD_ACTIONS = "__cleaner_actions"
+local FIELD_ACTIONS                           = "__cleaner_actions"
 
 -- Bitmask action flags (powers of 2 for bitwise OR)
-local ACTION_SIZE_STATIC     = 1
-local ACTION_SIZE_FIT        = 2
-local ACTION_SIZE_FILL       = 4
-local ACTION_POSITION_OFFSET = 8
-local ACTION_ANCHOR          = 16
-local ACTION_POINT           = 32
-local ACTION_LAYOUT          = 64
-local ACTION_SCROLLBAR       = 128
+local ACTION_SIZE_STATIC                      = 1
+local ACTION_SIZE_FIT                         = 2
+local ACTION_SIZE_FILL                        = 4
+local ACTION_POSITION_OFFSET                  = 8
+local ACTION_ANCHOR                           = 16
+local ACTION_POINT                            = 32
+local ACTION_LAYOUT                           = 64
+local ACTION_SCROLLBAR                        = 128
 
 -- Mask for backward pass actions
-local BACKWARD_MASK = ACTION_SIZE_FIT + ACTION_LAYOUT
+local BACKWARD_MASK                           = ACTION_SIZE_FIT + ACTION_LAYOUT
 
 UIKit_Renderer_Cleaner.ACTION_SIZE_STATIC     = ACTION_SIZE_STATIC
 UIKit_Renderer_Cleaner.ACTION_SIZE_FIT        = ACTION_SIZE_FIT
@@ -147,7 +147,7 @@ function UIKit_Renderer_Cleaner.Wash()
     end
 
     -- PASS 2: Dependency resolution - only if needed
-    -- if requiresDependencyPass then
+    if requiresDependencyPass then
         for i = 1, dirtyCount do
             local frame = dirty[i]
             processForwardPass(frame, frame[FIELD_ACTIONS])
@@ -157,7 +157,7 @@ function UIKit_Renderer_Cleaner.Wash()
             local frame = dirty[i]
             processBackwardPass(frame, frame[FIELD_ACTIONS])
         end
-    -- end
+    end
 
     -- FINAL PASS: ScrollBar updates and cleanup
     for i = 1, dirtyCount do

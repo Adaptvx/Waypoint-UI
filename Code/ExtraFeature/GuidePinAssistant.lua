@@ -29,7 +29,7 @@ end
 
 local function placeUserNavigationAtGuidePin()
     if not cachedGuidePin then return end
-    MapPin.NewUserNavigation(cachedGuidePin.name, C_Map.GetBestMapForUnit("player"), cachedGuidePin.normalizedX * 100, cachedGuidePin.normalizedY * 100)
+    MapPin.NewUserNavigation(cachedGuidePin.name, C_Map.GetBestMapForUnit("player"), cachedGuidePin.normalizedX * 100, cachedGuidePin.normalizedY * 100, "GuidePin")
     hideGuidePin()
 end
 

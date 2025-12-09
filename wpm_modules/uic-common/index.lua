@@ -1,30 +1,30 @@
-local env                   = select(2, ...)
-local UICGameButton         = env.WPM:Import("wpm_modules/uic-game/button")
-local UICGameCheckButton    = env.WPM:Import("wpm_modules/uic-game/check-button")
-local UICGameRange          = env.WPM:Import("wpm_modules/uic-game/range")
-local UICGameScrollBar      = env.WPM:Import("wpm_modules/uic-game/scroll-bar")
-local UICGameInput          = env.WPM:Import("wpm_modules/uic-game/input")
-local UICGameSelectionMenu  = env.WPM:Import("wpm_modules/uic-game/selection-menu")
-local UICGameColorInput     = env.WPM:Import("wpm_modules/uic-game/color-input")
-local UICGamePrompt         = env.WPM:Import("wpm_modules/uic-game/prompt")
-local UICGame               = env.WPM:New("wpm_modules/uic-game")
+local env                     = select(2, ...)
+local UICCommonButton         = env.WPM:Import("wpm_modules/uic-common/button")
+local UICCommonCheckButton    = env.WPM:Import("wpm_modules/uic-common/check-button")
+local UICCommonRange          = env.WPM:Import("wpm_modules/uic-common/range")
+local UICCommonScrollBar      = env.WPM:Import("wpm_modules/uic-common/scroll-bar")
+local UICCommonInput          = env.WPM:Import("wpm_modules/uic-common/input")
+local UICCommonSelectionMenu  = env.WPM:Import("wpm_modules/uic-common/selection-menu")
+local UICCommonColorInput     = env.WPM:Import("wpm_modules/uic-common/color-input")
+local UICCommonPrompt         = env.WPM:Import("wpm_modules/uic-common/prompt")
+local UICCommon               = env.WPM:New("wpm_modules/uic-common")
 
-UICGame.ButtonRed           = UICGameButton.RedBase
-UICGame.ButtonGrey          = UICGameButton.GreyBase
-UICGame.ButtonRed1x         = UICGameButton.RedBase1x
-UICGame.ButtonGrey1x        = UICGameButton.GreyBase1x
-UICGame.ButtonRedWithText   = UICGameButton.RedWithText
-UICGame.ButtonGreyWithText  = UICGameButton.GreyWithText
-UICGame.ButtonRedClose      = UICGameButton.RedClose
-UICGame.ButtonSelectionMenu = UICGameButton.SelectionMenu
-UICGame.CheckButton         = UICGameCheckButton.New
-UICGame.ScrollBar           = UICGameScrollBar.New
-UICGame.Input               = UICGameInput.New
-UICGame.Range               = UICGameRange.New
-UICGame.RangeWithText       = UICGameRange.NewWithText
-UICGame.SelectionMenu       = UICGameSelectionMenu.New
-UICGame.ColorInput          = UICGameColorInput.New
-UICGame.Prompt              = UICGamePrompt.New
+UICCommon.ButtonRed           = UICCommonButton.RedBase
+UICCommon.ButtonGrey          = UICCommonButton.GreyBase
+UICCommon.ButtonRedSquare     = UICCommonButton.RedBaseSquare
+UICCommon.ButtonGreySquare    = UICCommonButton.GreyBaseSquare
+UICCommon.ButtonRedWithText   = UICCommonButton.RedWithText
+UICCommon.ButtonGreyWithText  = UICCommonButton.GreyWithText
+UICCommon.ButtonRedClose      = UICCommonButton.RedClose
+UICCommon.ButtonSelectionMenu = UICCommonButton.SelectionMenu
+UICCommon.CheckButton         = UICCommonCheckButton.New
+UICCommon.ScrollBar           = UICCommonScrollBar.New
+UICCommon.Input               = UICCommonInput.New
+UICCommon.Range               = UICCommonRange.New
+UICCommon.RangeWithText       = UICCommonRange.NewWithText
+UICCommon.SelectionMenu       = UICCommonSelectionMenu.New
+UICCommon.ColorInput          = UICCommonColorInput.New
+UICCommon.Prompt              = UICCommonPrompt.New
 
 -- Demo
 --------------------------------
@@ -35,47 +35,47 @@ UICGame.Prompt              = UICGamePrompt.New
 
     LayoutVertical{
         -- Red Button with Text
-        UICGame.ButtonRedWithText()
+        UICCommon.ButtonRedWithText()
             :id("RedWithText")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
 
         -- Grey Button with Text
-        UICGame.ButtonGreyWithText()
+        UICCommon.ButtonGreyWithText()
             :id("GreyWithText")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
 
         -- Red Close Button
-        UICGame.ButtonRedClose()
+        UICCommon.ButtonRedClose()
             :id("RedClose")
             :size(UIKit.Define.Num{ value = 32 }, UIKit.Define.Num{ value = 32 }),
 
         -- Selection Menu Button
-        UICGame.ButtonSelectionMenu()
+        UICCommon.ButtonSelectionMenu()
             :id("SelectionMenuButton")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
 
         -- CheckButton
-        UICGame.CheckButton()
+        UICCommon.CheckButton()
             :id("CheckButton")
             :size(UIKit.Define.Num{ value = 22 }, UIKit.Define.Num{ value = 22 }),
 
         -- Input
-        UICGame.Input()
+        UICCommon.Input()
             :id("Input")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{ delta = 17 }),
 
         -- Range
-        UICGame.Range()
+        UICCommon.Range()
             :id("Range")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 15 }),
 
         -- Range With Text
-        UICGame.RangeWithText()
+        UICCommon.RangeWithText()
             :id("RangeWithText")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 15 }),
 
         -- Color Input
-        UICGame.ColorInput()
+        UICCommon.ColorInput()
             :id("ColorInput")
             :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 })
     }
@@ -103,7 +103,7 @@ UICGame.Prompt              = UICGamePrompt.New
         :scrollInterpolation(5)
         :_Render()
 
-    UICGame.ScrollBar()
+    UICCommon.ScrollBar()
         :id("ScrollBar")
         :scrollBarTarget("ScrollView")
         :point(UIKit.Enum.Point.Right)
@@ -151,7 +151,7 @@ UICGame.Prompt              = UICGamePrompt.New
     --      Try: E_SelectionMenu:Open(initialIndex, data, onValueChange, onElementUpdateHandler, point, relativeTo, relativePoint, x, y)
     --------------------------------
 
-    E_SelectionMenu = UICGame.SelectionMenu()
+    E_SelectionMenu = UICCommon.SelectionMenu()
         :parent(UIParent)
         :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog)
         :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{ delta = 7 })
@@ -179,7 +179,7 @@ UICGame.Prompt              = UICGamePrompt.New
     -- Create a prompt
     --------------------------------
 
-    E_Prompt = UICGame.Prompt()
+    E_Prompt = UICCommon.Prompt()
         :parent(UIParent)
         :point(UIKit.Enum.Point.Center)
         :_Render()

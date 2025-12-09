@@ -52,7 +52,8 @@ L["Config - WaypointSystem - Waypoint"] = "Точка маршрута"
 L["Config - WaypointSystem - Waypoint - Footer - Type"] = "Дополнительная информация"
 L["Config - WaypointSystem - Waypoint - Footer - Type - Both"] = "Все"
 L["Config - WaypointSystem - Waypoint - Footer - Type - Distance"] = "Расстояние"
-L["Config - WaypointSystem - Waypoint - Footer - Type - ETA"] = "Время прибытия"
+L["Config - WaypointSystem - Waypoint - Footer - Type - ArrivalTime"] = "Время прибытия"
+L["Config - WaypointSystem - Waypoint - Footer - Type - DestinationName"] = "Destination Name"
 L["Config - WaypointSystem - Waypoint - Footer - Type - None"] = "Нет"
 L["Config - WaypointSystem - Pinpoint"] = "Точка привязки"
 L["Config - WaypointSystem - Pinpoint - Info"] = "Показать информацию"
@@ -162,7 +163,12 @@ L["Contributors - HectorZaGa - Description"] = "Код — Исправлени�
 L["Contributors - SyverGiswold"] = "SyverGiswold"
 L["Contributors - SyverGiswold - Description"] = "Код - Особенность"
 
--- Extension
+-- Extra Feature
 L["Guide Pin Assistant - ReplacePrompt"] = "Заменить текущую путевую точку на \"%s\"?"
 L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Замена"
 L["Guide Pin Assistant - ReplacePrompt - No"] = "Отмена"
+
+-- Supported Add-ons
+L["TomTom - ReplacePrompt"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
+L["TomTom - ReplacePrompt - Yes"] = "Replace"
+L["TomTom - ReplacePrompt - No"] = "Cancel"

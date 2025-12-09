@@ -5,7 +5,6 @@ local UIKit_Utils                 = env.WPM:Import("wpm_modules/ui-kit/utils")
 
 local Mixin                       = MixinUtil.Mixin
 local wipe                        = wipe
-local ipairs                      = ipairs
 local math                        = math
 local tonumber                    = tonumber
 local type                        = type
@@ -14,217 +13,216 @@ local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules/ui-kit/primitive
 local UIKit_Primitives_LayoutGrid = env.WPM:New("wpm_modules/ui-kit/primitives/layout-grid")
 
 
+-- Layout (Grid)
+--------------------------------
+
 local LayoutGridMixin = {}
 do
+    -- Init
+    --------------------------------
+
     function LayoutGridMixin:Init()
         self.__visibleChildren = {}
+        self.__columnWidths    = {}
+        self.__rowHeights      = {}
+        self.__columnOffsets   = {}
+        self.__rowOffsets      = {}
+        self.__cachedWidths    = {}
+        self.__cachedHeights   = {}
     end
 
 
+    -- Layout
+    --------------------------------
+
+    local function resolveSpacing(spacingSetting, refWidth, refHeight)
+        if not spacingSetting then return 0, 0 end
+        local spacingType = spacingSetting == UIKit_Define.Num and "num"
+            or spacingSetting == UIKit_Define.Percentage and "percent"
+            or type(spacingSetting) == "number" and "raw"
+            or nil
+        if spacingType == "raw" then
+            return spacingSetting, spacingSetting
+        elseif spacingType == "num" then
+            local val = spacingSetting.value or 0
+            return val, val
+        elseif spacingType == "percent" then
+            local pctVal, op, delta = spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta
+            return UIKit_Utils:CalculateRelativePercentage(refWidth, pctVal, op, delta),
+                UIKit_Utils:CalculateRelativePercentage(refHeight, pctVal, op, delta)
+        end
+        return 0, 0
+    end
+
+    local function computeGridDimensions(visibleChildCount, requestedColumns, requestedRows)
+        local columnCount, rowCount
+
+        if requestedColumns and requestedColumns > 0 then
+            columnCount = requestedColumns
+            rowCount = math.ceil(visibleChildCount / columnCount)
+        elseif requestedRows and requestedRows > 0 then
+            rowCount = requestedRows
+            columnCount = math.ceil(visibleChildCount / rowCount)
+        else
+            columnCount = math.max(1, math.floor(math.sqrt(visibleChildCount)))
+            rowCount = math.ceil(visibleChildCount / columnCount)
+        end
+
+        return math.max(1, columnCount), math.max(1, rowCount)
+    end
+
     function LayoutGridMixin:RenderElements()
-        local children = self:GetFrameChildren()
-        if not children then return end
+        local allChildren = self:GetFrameChildren()
+        if not allChildren then return end
 
         local visibleChildren = self.__visibleChildren
         wipe(visibleChildren)
 
-        local visibleCount = 0
-
-        for _, child in ipairs(children) do
-            if child and child:IsShown() and not child.uk_flag_excludeFromCalculations and child.uk_type ~= "List" then
-                visibleCount = visibleCount + 1
-                visibleChildren[visibleCount] = child
+        local visibleChildCount = 0
+        for childIndex = 1, #allChildren do
+            local child = allChildren[childIndex]
+            local isLayoutChild = child and child:IsShown() and not child.uk_flag_excludeFromCalculations and child.uk_type ~= "List"
+            if isLayoutChild then
+                visibleChildCount = visibleChildCount + 1
+                visibleChildren[visibleChildCount] = child
             end
         end
 
-        if visibleCount == 0 then return end
+        if visibleChildCount == 0 then return end
 
         local parent = self:GetParent()
         local containerWidth, containerHeight = self:GetSize()
-        if not containerWidth then
-            containerWidth = (parent and parent:GetWidth()) or UIParent:GetWidth()
-        end
-        if not containerHeight then
-            containerHeight = (parent and parent:GetHeight()) or UIParent:GetHeight()
-        end
+        containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
+        containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-        local rawColumns = tonumber(self.uk_LayoutGridColumns)
-        local rawRows = tonumber(self.uk_LayoutGridRows)
-        local columns = rawColumns and rawColumns > 0 and rawColumns or nil
-        local rows = rawRows and rawRows > 0 and rawRows or nil
+        local columnCount, rowCount = computeGridDimensions(
+            visibleChildCount,
+            tonumber(self.uk_LayoutGridColumns),
+            tonumber(self.uk_LayoutGridRows)
+        )
 
-        if columns then
-            rows = math.ceil(visibleCount / columns)
-        elseif rows then
-            columns = math.ceil(visibleCount / rows)
-        else
-            columns = math.max(1, math.floor(math.sqrt(visibleCount)))
-            rows = math.ceil(visibleCount / columns)
-        end
+        local columnWidths, rowHeights = self.__columnWidths, self.__rowHeights
+        for columnIndex = 1, columnCount do columnWidths[columnIndex] = 0 end
+        for rowIndex = 1, rowCount do rowHeights[rowIndex] = 0 end
 
-        if columns < 1 then columns = 1 end
-        if rows < 1 then rows = 1 end
+        local cachedWidths = self.__cachedWidths
+        local cachedHeights = self.__cachedHeights
 
-        local columnWidths = {}
-        local rowHeights = {}
-
-        for index = 1, visibleCount do
-            local child = visibleChildren[index]
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
             local childWidth, childHeight = child:GetSize()
-            childWidth = childWidth or 0
-            childHeight = childHeight or 0
+            childWidth, childHeight = childWidth or 0, childHeight or 0
 
-            local colIndex = ((index - 1) % columns) + 1
-            local rowIndex = math.floor((index - 1) / columns) + 1
+            -- Cache sizes for reuse in positioning loop
+            cachedWidths[childIndex] = childWidth
+            cachedHeights[childIndex] = childHeight
 
-            local currentColWidth = columnWidths[colIndex] or 0
-            if childWidth > currentColWidth then
-                columnWidths[colIndex] = childWidth
-            end
+            local columnIndex = ((childIndex - 1) % columnCount) + 1
+            local rowIndex = math.floor((childIndex - 1) / columnCount) + 1
 
-            local currentRowHeight = rowHeights[rowIndex] or 0
-            if childHeight > currentRowHeight then
-                rowHeights[rowIndex] = childHeight
-            end
+            if childWidth > columnWidths[columnIndex] then columnWidths[columnIndex] = childWidth end
+            if childHeight > rowHeights[rowIndex] then rowHeights[rowIndex] = childHeight end
         end
 
-        local spacingSetting = self:GetSpacing()
-        local spacingH, spacingV
-
-        if type(spacingSetting) == "number" then
-            spacingH, spacingV = spacingSetting, spacingSetting
-        elseif spacingSetting == UIKit_Define.Num then
-            local value = spacingSetting.value or 0
-            spacingH, spacingV = value, value
-        elseif spacingSetting == UIKit_Define.Percentage then
-            spacingH = UIKit_Utils:CalculateRelativePercentage(containerWidth, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta, self)
-            spacingV = UIKit_Utils:CalculateRelativePercentage(containerHeight, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta, self)
-        else
-            spacingH, spacingV = 0, 0
-        end
+        local horizontalSpacing, verticalSpacing = resolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
 
         local contentWidth, contentHeight = 0, 0
+        for columnIndex = 1, columnCount do contentWidth = contentWidth + columnWidths[columnIndex] end
+        for rowIndex = 1, rowCount do contentHeight = contentHeight + rowHeights[rowIndex] end
+        contentWidth = contentWidth + (columnCount - 1) * horizontalSpacing
+        contentHeight = contentHeight + (rowCount - 1) * verticalSpacing
 
-        for col = 1, columns do
-            contentWidth = contentWidth + (columnWidths[col] or 0)
-        end
-        for row = 1, rows do
-            contentHeight = contentHeight + (rowHeights[row] or 0)
-        end
-
-        if columns > 1 then
-            contentWidth = contentWidth + (columns - 1) * spacingH
-        end
-        if rows > 1 then
-            contentHeight = contentHeight + (rows - 1) * spacingV
-        end
-
-        local fitWidthToContent, fitHeightToContent = self:GetFitContent()
-        if fitWidthToContent then
+        local shouldFitWidth, shouldFitHeight = self:GetFitContent()
+        if shouldFitWidth then
             containerWidth = self:ResolveFitSize("width", contentWidth, self.uk_prop_width)
             self:SetWidth(containerWidth)
         end
-        if fitHeightToContent then
+        if shouldFitHeight then
             containerHeight = self:ResolveFitSize("height", contentHeight, self.uk_prop_height)
             self:SetHeight(containerHeight)
         end
 
-        local alignmentH = self.uk_prop_layoutAlignmentH or "LEADING"
-        local alignmentV = self.uk_prop_layoutAlignmentV or "LEADING"
+        local horizontalAlignment = self.uk_prop_layoutAlignmentH or "LEADING"
+        local verticalAlignment = self.uk_prop_layoutAlignmentV or "LEADING"
 
-        local startX = alignmentH == "JUSTIFIED" and (containerWidth - contentWidth) * 0.5
-            or alignmentH == "TRAILING" and (containerWidth - contentWidth)
+        local gridStartX = horizontalAlignment == "JUSTIFIED" and (containerWidth - contentWidth) * 0.5
+            or horizontalAlignment == "TRAILING" and (containerWidth - contentWidth)
+            or 0
+        local gridStartY = verticalAlignment == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
+            or verticalAlignment == "TRAILING" and (containerHeight - contentHeight)
             or 0
 
-        local startY = alignmentV == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
-            or alignmentV == "TRAILING" and (containerHeight - contentHeight)
-            or 0
-
-        local columnOffsets = {}
-        local rowOffsets = {}
-
-        local accumX = startX
-        for col = 1, columns do
-            columnOffsets[col] = accumX
-            accumX = accumX + (columnWidths[col] or 0) + spacingH
+        local columnOffsets, rowOffsets = self.__columnOffsets, self.__rowOffsets
+        local accumulatedX = gridStartX
+        for columnIndex = 1, columnCount do
+            columnOffsets[columnIndex] = accumulatedX
+            accumulatedX = accumulatedX + columnWidths[columnIndex] + horizontalSpacing
+        end
+        local accumulatedY = gridStartY
+        for rowIndex = 1, rowCount do
+            rowOffsets[rowIndex] = accumulatedY
+            accumulatedY = accumulatedY + rowHeights[rowIndex] + verticalSpacing
         end
 
-        local accumY = startY
-        for row = 1, rows do
-            rowOffsets[row] = accumY
-            accumY = accumY + (rowHeights[row] or 0) + spacingV
-        end
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
+            local childWidth = cachedWidths[childIndex]
+            local childHeight = cachedHeights[childIndex]
 
-        for index = 1, visibleCount do
-            local child = visibleChildren[index]
-            local childWidth, childHeight = child:GetSize()
-            childWidth = childWidth or 0
-            childHeight = childHeight or 0
+            local columnIndex = ((childIndex - 1) % columnCount) + 1
+            local rowIndex = math.floor((childIndex - 1) / columnCount) + 1
 
-            local colIndex = ((index - 1) % columns) + 1
-            local rowIndex = math.floor((index - 1) / columns) + 1
+            local cellWidth, cellHeight = columnWidths[columnIndex], rowHeights[rowIndex]
 
-            local cellWidth = columnWidths[colIndex] or 0
-            local cellHeight = rowHeights[rowIndex] or 0
-
-            local innerOffsetX = alignmentH == "JUSTIFIED" and (cellWidth - childWidth) * 0.5
-                or alignmentH == "TRAILING" and (cellWidth - childWidth)
+            local cellOffsetX = horizontalAlignment == "JUSTIFIED" and (cellWidth - childWidth) * 0.5
+                or horizontalAlignment == "TRAILING" and (cellWidth - childWidth)
+                or 0
+            local cellOffsetY = verticalAlignment == "JUSTIFIED" and (cellHeight - childHeight) * 0.5
+                or verticalAlignment == "TRAILING" and (cellHeight - childHeight)
                 or 0
 
-            if innerOffsetX < 0 then innerOffsetX = 0 end
-
-            local innerOffsetY = alignmentV == "JUSTIFIED" and (cellHeight - childHeight) * 0.5
-                or alignmentV == "TRAILING" and (cellHeight - childHeight)
-                or 0
-
-            if innerOffsetY < 0 then innerOffsetY = 0 end
-
-            local x = (columnOffsets[colIndex] or 0) + innerOffsetX
-            local y = (rowOffsets[rowIndex] or 0) + innerOffsetY
+            if cellOffsetX < 0 then cellOffsetX = 0 end
+            if cellOffsetY < 0 then cellOffsetY = 0 end
 
             child:ClearAllPoints()
-            child:SetPoint("TOPLEFT", self, "TOPLEFT", x, -y)
+            child:SetPoint("TOPLEFT", self, "TOPLEFT", columnOffsets[columnIndex] + cellOffsetX, -(rowOffsets[rowIndex] + cellOffsetY))
         end
     end
 
+
+    -- Property
+    --------------------------------
 
     function LayoutGridMixin:GetAlignmentH()
         return self.uk_prop_layoutAlignmentH or "LEADING"
     end
-
 
     function LayoutGridMixin:SetAlignmentH(layoutAlignmentH)
         self.uk_prop_layoutAlignmentH = layoutAlignmentH
         self:RenderElements()
     end
 
-
     function LayoutGridMixin:GetAlignmentV()
         return self.uk_prop_layoutAlignmentV or "LEADING"
     end
-
 
     function LayoutGridMixin:SetAlignmentV(layoutAlignmentV)
         self.uk_prop_layoutAlignmentV = layoutAlignmentV
         self:RenderElements()
     end
 
-
     function LayoutGridMixin:GetColumns()
         return self.uk_LayoutGridColumns
     end
-
 
     function LayoutGridMixin:SetColumns(columns)
         self.uk_LayoutGridColumns = tonumber(columns)
         self:RenderElements()
     end
 
-
     function LayoutGridMixin:GetRows()
         return self.uk_LayoutGridRows
     end
-
 
     function LayoutGridMixin:SetRows(rows)
         self.uk_LayoutGridRows = tonumber(rows)

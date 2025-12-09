@@ -4,7 +4,7 @@ local UIKit                                                                     
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
 
-local UICGame                                                                                                                                      = env.WPM:Import("wpm_modules/uic-game")
+local UICCommon                                                                                                                                      = env.WPM:Import("wpm_modules/uic-common")
 local Setting_Shared                                                                                                                               = env.WPM:Import("@/Setting/Shared")
 
 
@@ -75,7 +75,7 @@ _G[FRAME_NAME].Content.Container = UIKit.GetElementById(FRAME_NAME .. ".Content.
 -- Prompt
 --------------------------------
 
-UICGame.Prompt(FRAME_NAME .. ".Prompt")
+UICCommon.Prompt(FRAME_NAME .. ".Prompt")
     :id(FRAME_NAME .. ".Prompt")
     :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog, 100)
     :parent(UIParent)
@@ -90,7 +90,7 @@ _G[FRAME_NAME].Prompt:Hide()
 -- Selection Menu
 --------------------------------
 
-_G[FRAME_NAME].SelectionMenu = UICGame.SelectionMenu(FRAME_NAME .. ".SelectionMenu")
+_G[FRAME_NAME].SelectionMenu = UICCommon.SelectionMenu(FRAME_NAME .. ".SelectionMenu")
     :parent(_G[FRAME_NAME])
     :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog)
     :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{})

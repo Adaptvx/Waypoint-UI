@@ -150,139 +150,123 @@ do
     -- Fit Content
     --------------------------------
 
-    local function getBoundLimits(frame, axis)
-        if axis == "width" then return frame:GetMinWidth(), frame:GetMaxWidth() end
-        return frame:GetMinHeight(), frame:GetMaxHeight()
+    local function clampWithBoundsAndDelta(size, minBound, maxBound, delta)
+        if minBound and size < minBound then size = minBound end
+        if maxBound and size > maxBound then size = maxBound end
+
+        size = size + delta
+
+        if minBound and size < minBound then size = minBound end
+        if maxBound and size > maxBound + delta then size = maxBound + delta end
+
+        return size > 0 and size or 0
     end
 
-    local function applyDeltaAndClamp(frame, axis, measuredSize, prop)
-        local minSize, maxSize = getBoundLimits(frame, axis)
-        local baseSize = measuredSize or 0
+    local function getChildBoundsRelativeToParent(parentLeft, parentTop, child)
+        local childLeft, childBottom, childWidth, childHeight = child:GetRect()
 
-        if minSize and baseSize < minSize then baseSize = minSize end
-        if maxSize and baseSize > maxSize then baseSize = maxSize end
+        if childLeft then
+            local relativeLeft = childLeft - parentLeft
+            local relativeRight = relativeLeft + childWidth
+            local relativeTop = parentTop - (childBottom + childHeight)
+            local relativeBottom = relativeTop + childHeight
 
-        local delta = (prop == UIKit_Define.Fit and prop.delta) or 0
-        local adjustedSize = baseSize + delta
+            if relativeLeft > relativeRight then relativeLeft, relativeRight = relativeRight, relativeLeft end
+            if relativeTop > relativeBottom then relativeTop, relativeBottom = relativeBottom, relativeTop end
 
-        if minSize and adjustedSize < minSize then adjustedSize = minSize end
-        if maxSize then
-            local maxLimit = maxSize + delta
-            if adjustedSize > maxLimit then adjustedSize = maxLimit end
+            return relativeLeft, relativeTop, relativeRight, relativeBottom
         end
 
-        return adjustedSize > 0 and adjustedSize or 0
-    end
+        local width, height = child:GetWidth() or 0, child:GetHeight() or 0
+        local rawLeft, rawRight = child:GetLeft(), child:GetRight()
+        local rawTop, rawBottom = child:GetTop(), child:GetBottom()
 
-    local function resolveHorizontalBounds(parentLeft, width, rawLeft, rawRight)
+        local relativeLeft, relativeRight
         if rawLeft and rawRight then
-            local left = rawLeft - parentLeft
-            local right = rawRight - parentLeft
-            return left < right and left or right, left > right and left or right
+            relativeLeft = rawLeft - parentLeft
+            relativeRight = rawRight - parentLeft
+            if relativeLeft > relativeRight then relativeLeft, relativeRight = relativeRight, relativeLeft end
+        elseif rawLeft then
+            relativeLeft = rawLeft - parentLeft
+            relativeRight = relativeLeft + width
+        elseif rawRight then
+            relativeRight = rawRight - parentLeft
+            relativeLeft = relativeRight - width
+        else
+            relativeLeft, relativeRight = 0, width
         end
 
-        if rawLeft then
-            local left = rawLeft - parentLeft
-            return left, left + width
-        end
-
-        if rawRight then
-            local right = rawRight - parentLeft
-            return right - width, right
-        end
-
-        return 0, width
-    end
-
-    local function resolveVerticalBounds(parentTop, height, rawTop, rawBottom)
+        local relativeTop, relativeBottom
         if rawTop and rawBottom then
-            local top = parentTop - rawTop
-            local bottom = parentTop - rawBottom
-            return top < bottom and top or bottom, top > bottom and top or bottom
+            relativeTop = parentTop - rawTop
+            relativeBottom = parentTop - rawBottom
+            if relativeTop > relativeBottom then relativeTop, relativeBottom = relativeBottom, relativeTop end
+        elseif rawTop then
+            relativeTop = parentTop - rawTop
+            relativeBottom = relativeTop + height
+        elseif rawBottom then
+            relativeBottom = parentTop - rawBottom
+            relativeTop = relativeBottom - height
+        else
+            relativeTop, relativeBottom = 0, height
         end
 
-        if rawTop then
-            local top = parentTop - rawTop
-            return top, top + height
-        end
-
-        if rawBottom then
-            local bottom = parentTop - rawBottom
-            return bottom - height, bottom
-        end
-
-        return 0, height
+        return relativeLeft, relativeTop, relativeRight, relativeBottom
     end
 
-    local function measureChildBounds(parentLeft, parentTop, child)
-        local rectLeft, rectBottom, rectWidth, rectHeight = child:GetRect()
-        if rectLeft then
-            local rectRight = rectLeft + rectWidth
-            local rectTop = rectBottom + rectHeight
-            local left = rectLeft - parentLeft
-            local right = rectRight - parentLeft
-            local top = parentTop - rectTop
-            local bottom = parentTop - rectBottom
-
-            if left > right then left, right = right, left end
-            if top > bottom then top, bottom = bottom, top end
-
-            return left, top, right, bottom
+    function FrameMixin:ResolveFitSize(axis, measuredSize, sizeProp)
+        local minBound, maxBound
+        if axis == "width" then
+            minBound, maxBound = self:GetMinWidth(), self:GetMaxWidth()
+        else
+            minBound, maxBound = self:GetMinHeight(), self:GetMaxHeight()
         end
-
-        local width = child:GetWidth() or 0
-        local height = child:GetHeight() or 0
-        local left, right = resolveHorizontalBounds(parentLeft, width, child:GetLeft(), child:GetRight())
-        local top, bottom = resolveVerticalBounds(parentTop, height, child:GetTop(), child:GetBottom())
-
-        return left, top, right, bottom
-    end
-
-    function FrameMixin:ResolveFitSize(axis, measuredSize, prop)
-        return applyDeltaAndClamp(self, axis, measuredSize or 0, prop)
+        local delta = (sizeProp == UIKit_Define.Fit and sizeProp.delta) or 0
+        return clampWithBoundsAndDelta(measuredSize or 0, minBound, maxBound, delta)
     end
 
     function FrameMixin:GetFitContent()
-        local widthProp = self.uk_prop_width
-        local heightProp = self.uk_prop_height
-        return widthProp == UIKit_Define.Fit or false, heightProp == UIKit_Define.Fit or false
+        return self.uk_prop_width == UIKit_Define.Fit, self.uk_prop_height == UIKit_Define.Fit
     end
 
-    function FrameMixin:FitContent(fitX, fitY, children)
-        local shouldFitWidth, shouldFitHeight = self:GetFitContent()
-        fitX = fitX == nil and shouldFitWidth or fitX
-        fitY = fitY == nil and shouldFitHeight or fitY
-        if not fitX and not fitY then return end
+    function FrameMixin:FitContent(shouldFitWidth, shouldFitHeight, childFrames)
+        local defaultFitWidth, defaultFitHeight = self:GetFitContent()
+        shouldFitWidth = shouldFitWidth == nil and defaultFitWidth or shouldFitWidth
+        shouldFitHeight = shouldFitHeight == nil and defaultFitHeight or shouldFitHeight
+        if not shouldFitWidth and not shouldFitHeight then return end
 
-        children = children or self:GetFrameChildren()
-        if not children then return end
+        childFrames = childFrames or self:GetFrameChildren()
+        if not childFrames then return end
 
-        local minLeft, minTop, maxRight, maxBottom = math_huge, math_huge, -math_huge, -math_huge
-        local hasVisibleChildren = false
+        local boundsMinLeft, boundsMinTop = math_huge, math_huge
+        local boundsMaxRight, boundsMaxBottom = -math_huge, -math_huge
+        local foundVisibleChild = false
         local parentLeft, parentTop = self:GetLeft(), self:GetTop()
 
-        for i = 1, #children do
-            local child = children[i]
+        for i = 1, #childFrames do
+            local child = childFrames[i]
             if child and child:IsShown() and not child.uk_flag_excludeFromCalculations then
-                local left, top, right, bottom = measureChildBounds(parentLeft, parentTop, child)
-                if left < minLeft then minLeft = left end
-                if top < minTop then minTop = top end
-                if right > maxRight then maxRight = right end
-                if bottom > maxBottom then maxBottom = bottom end
-                hasVisibleChildren = true
+                local left, top, right, bottom = getChildBoundsRelativeToParent(parentLeft, parentTop, child)
+                if left < boundsMinLeft then boundsMinLeft = left end
+                if top < boundsMinTop then boundsMinTop = top end
+                if right > boundsMaxRight then boundsMaxRight = right end
+                if bottom > boundsMaxBottom then boundsMaxBottom = bottom end
+                foundVisibleChild = true
             end
         end
 
-        if fitX then
-            local width = hasVisibleChildren and (maxRight - minLeft) or 0
-            local newWidth = self:ResolveFitSize("width", width > 0 and width or 0, self.uk_prop_width)
-            if self:GetWidth() ~= newWidth then self:SetWidth(newWidth) end
+        if shouldFitWidth then
+            local contentWidth = foundVisibleChild and (boundsMaxRight - boundsMinLeft) or 0
+            if contentWidth < 0 then contentWidth = 0 end
+            local resolvedWidth = self:ResolveFitSize("width", contentWidth, self.uk_prop_width)
+            if self:GetWidth() ~= resolvedWidth then self:SetWidth(resolvedWidth) end
         end
 
-        if fitY then
-            local height = hasVisibleChildren and (maxBottom - minTop) or 0
-            local newHeight = self:ResolveFitSize("height", height > 0 and height or 0, self.uk_prop_height)
-            if self:GetHeight() ~= newHeight then self:SetHeight(newHeight) end
+        if shouldFitHeight then
+            local contentHeight = foundVisibleChild and (boundsMaxBottom - boundsMinTop) or 0
+            if contentHeight < 0 then contentHeight = 0 end
+            local resolvedHeight = self:ResolveFitSize("height", contentHeight, self.uk_prop_height)
+            if self:GetHeight() ~= resolvedHeight then self:SetHeight(resolvedHeight) end
         end
     end
 

@@ -11,27 +11,28 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameCheckButton                                                                                                                           = env.WPM:New("wpm_modules/uic-game/check-button")
-
+local UICCommonCheckButton                                                                                                                           = env.WPM:New("wpm_modules/uic-common/check-button")
 
 
 -- Shared
 --------------------------------
 
-local PATH                           = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS                          = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameCheckButton.png", inset = 75, scale = 1 }
-local BACKGROUND                     = ATLAS{ left = 0 / 768, top = 0 / 512, right = 256 / 768, bottom = 256 / 512 }
-local BACKGROUND_HIGHLIGHTED         = ATLAS{ left = 256 / 768, top = 0 / 512, right = 512 / 768, bottom = 256 / 512 }
-local BACKGROUND_DISABLED            = ATLAS{ left = 512 / 768, top = 0 / 512, right = 768 / 768, bottom = 256 / 512 }
-local BACKGROUND_CHECKED             = ATLAS{ left = 0 / 768, top = 256 / 512, right = 256 / 768, bottom = 512 / 512 }
-local BACKGROUND_CHECKED_HIGHLIGHTED = ATLAS{ left = 256 / 768, top = 256 / 512, right = 512 / 768, bottom = 512 / 512 }
-local BACKGROUND_CHECKED_DISABLED    = ATLAS{ left = 512 / 768, top = 256 / 512, right = 768 / 768, bottom = 512 / 512 }
+local PATH                           = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS                          = UIKit.Define.Texture_Atlas{ path = PATH .. "check-button.png", inset = 75, scale = 1 }
 
+Utils_Texture.PreloadAsset(PATH .. "check-button.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameCheckButton.png")
 
 -- Base
 --------------------------------
+
+local BACKGROUND                     = ATLAS{ left = 0 / 192, top = 0 / 128, right = 64 / 192, bottom = 64 / 128 }
+local BACKGROUND_HIGHLIGHTED         = ATLAS{ left = 64 / 192, top = 0 / 128, right = 128 / 192, bottom = 64 / 128 }
+local BACKGROUND_DISABLED            = ATLAS{ left = 128 / 192, top = 0 / 128, right = 192 / 192, bottom = 64 / 128 }
+local BACKGROUND_CHECKED             = ATLAS{ left = 0 / 192, top = 64 / 128, right = 64 / 192, bottom = 128 / 128 }
+local BACKGROUND_CHECKED_HIGHLIGHTED = ATLAS{ left = 64 / 192, top = 64 / 128, right = 128 / 192, bottom = 128 / 128 }
+local BACKGROUND_CHECKED_DISABLED    = ATLAS{ left = 128 / 192, top = 64 / 128, right = 192 / 192, bottom = 128 / 128 }
+
 
 local CheckButtonMixin = CreateFromMixins(UICSharedMixin.CheckButtonMixin)
 
@@ -88,8 +89,7 @@ function CheckButtonMixin:PlayInteractSound()
 end
 
 
-
-UICGameCheckButton.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonCheckButton.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name)
         :background(BACKGROUND)

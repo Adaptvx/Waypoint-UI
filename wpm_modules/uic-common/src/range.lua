@@ -13,35 +13,32 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameRange                                                                                                                                 = env.WPM:New("wpm_modules/uic-game/range")
-
+local UICCommonRange                                                                                                                                 = env.WPM:New("wpm_modules/uic-common/range")
 
 
 -- Shared
 --------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameRange.png" }
+local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "range.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 local FILL        = UIKit.Define.Fill{}
 local P_FILL      = UIKit.Define.Percentage{ value = 100 }
 
+Utils_Texture.PreloadAsset(PATH .. "range.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameRange.png")
 
 -- Stepper Button
 --------------------------------
 
-local BACKGROUND_ARROW_LEFT              = ATLAS{ inset = 128, scale = 1, left = 0 / 1024, top = 256 / 1024, right = 256 / 1024, bottom = 512 / 1024 }
-local BACKGROUND_ARROW_LEFT_HIGHLIGHTED  = ATLAS{ inset = 128, scale = 1, left = 256 / 1024, top = 256 / 1024, right = 512 / 1024, bottom = 512 / 1024 }
-local BACKGROUND_ARROW_LEFT_PUSHED       = ATLAS{ inset = 128, scale = 1, left = 512 / 1024, top = 256 / 1024, right = 768 / 1024, bottom = 512 / 1024 }
-local BACKGROUND_ARROW_LEFT_DISABLED     = ATLAS{ inset = 128, scale = 1, left = 768 / 1024, top = 256 / 1024, right = 1024 / 1024, bottom = 512 / 1024 }
-local BACKGROUND_ARROW_RIGHT             = ATLAS{ inset = 128, scale = 1, left = 0 / 1024, top = 512 / 1024, right = 256 / 1024, bottom = 768 / 1024 }
-local BACKGROUND_ARROW_RIGHT_HIGHLIGHTED = ATLAS{ inset = 128, scale = 1, left = 256 / 1024, top = 512 / 1024, right = 512 / 1024, bottom = 768 / 1024 }
-local BACKGROUND_ARROW_RIGHT_PUSHED      = ATLAS{ inset = 128, scale = 1, left = 512 / 1024, top = 512 / 1024, right = 768 / 1024, bottom = 768 / 1024 }
-local BACKGROUND_ARROW_RIGHT_DISABLED    = ATLAS{ inset = 128, scale = 1, left = 768 / 1024, top = 512 / 1024, right = 1024 / 1024, bottom = 768 / 1024 }
-
-
+local BACKGROUND_ARROW_LEFT              = ATLAS{ inset = 0, scale = 1, left = 0 / 256, top = 64 / 256, right = 64 / 256, bottom = 128 / 256 }
+local BACKGROUND_ARROW_LEFT_HIGHLIGHTED  = ATLAS{ inset = 0, scale = 1, left = 64 / 256, top = 64 / 256, right = 128 / 256, bottom = 128 / 256 }
+local BACKGROUND_ARROW_LEFT_PUSHED       = ATLAS{ inset = 0, scale = 1, left = 128 / 256, top = 64 / 256, right = 192 / 256, bottom = 128 / 256 }
+local BACKGROUND_ARROW_LEFT_DISABLED     = ATLAS{ inset = 0, scale = 1, left = 192 / 256, top = 64 / 256, right = 256 / 256, bottom = 128 / 256 }
+local BACKGROUND_ARROW_RIGHT             = ATLAS{ inset = 0, scale = 1, left = 0 / 256, top = 128 / 256, right = 64 / 256, bottom = 192 / 256 }
+local BACKGROUND_ARROW_RIGHT_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 64 / 256, top = 128 / 256, right = 128 / 256, bottom = 192 / 256 }
+local BACKGROUND_ARROW_RIGHT_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 128 / 256, top = 128 / 256, right = 192 / 256, bottom = 192 / 256 }
+local BACKGROUND_ARROW_RIGHT_DISABLED    = ATLAS{ inset = 0, scale = 1, left = 192 / 256, top = 128 / 256, right = 256 / 256, bottom = 192 / 256 }
 
 
 local StepperButtonMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
@@ -107,9 +104,7 @@ function StepperButtonMixin:PlayInteractSound()
 end
 
 
-
-
-UICGameRange.StepperButton = UIKit.Prefab(function(id, name, children, ...)
+UICCommonRange.StepperButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name)
         :background(TEXTURE_NIL)
@@ -120,20 +115,20 @@ UICGameRange.StepperButton = UIKit.Prefab(function(id, name, children, ...)
     return frame
 end)
 
+
 -- Range
 --------------------------------
 
-local BACKGROUND                   = ATLAS{ inset = 128, scale = .0425, left = 0 / 1024, top = 768 / 1024, right = 512 / 1024, bottom = 1024 / 1024 }
-local BACKGROUND_THUMB             = ATLAS{ inset = 128, scale = 1, left = 0 / 1024, top = 0 / 1024, right = 256 / 1024, bottom = 256 / 1024 }
-local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 128, scale = 1, left = 256 / 1024, top = 0 / 1024, right = 512 / 1024, bottom = 256 / 1024 }
-local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 128, scale = 1, left = 512 / 1024, top = 0 / 1024, right = 768 / 1024, bottom = 256 / 1024 }
-local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 128, scale = 1, left = 768 / 1024, top = 0 / 1024, right = 1024 / 1024, bottom = 256 / 1024 }
+local BACKGROUND                   = ATLAS{ inset = 32, scale = .125, left = 0 / 256, top = 192 / 256, right = 128 / 256, bottom = 256 / 256 }
+local BACKGROUND_THUMB             = ATLAS{ inset = 0, scale = 1, left = 0 / 256, top = 0 / 256, right = 64 / 256, bottom = 64 / 256 }
+local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 64 / 256, top = 0 / 256, right = 128 / 256, bottom = 64 / 256 }
+local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 128 / 256, top = 0 / 256, right = 192 / 256, bottom = 64 / 256 }
+local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 0, scale = 1, left = 192 / 256, top = 0 / 256, right = 256 / 256, bottom = 64 / 256 }
 local THUMB_SIZE                   = 16
 local STEPPER_BTN_SIZE             = UIKit.Define.Num{ value = 16 }
 local RANGE_WIDTH                  = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 28 }
 local RANGE_HEIGHT                 = UIKit.Define.Percentage{ value = 100 }
 local TRACK_SIZE                   = UIKit.Define.Fill{ delta = 6 }
-
 
 
 local RangeSliderMixin = CreateFromMixins(UICSharedMixin.RangeMixin)
@@ -184,7 +179,7 @@ function RangeMixin:GetRange()
 end
 
 
-UICGameRange.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonRange.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             LinearSlider(name .. ".Range", {
@@ -212,13 +207,13 @@ UICGameRange.New = UIKit.Prefab(function(id, name, children, ...)
                 :linearSliderOrientation(UIKit.Enum.Orientation.Horizontal)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-            UICGameRange.StepperButton(name .. ".ForwardButton")
+            UICCommonRange.StepperButton(name .. ".ForwardButton")
                 :id("ForwardButton", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(STEPPER_BTN_SIZE, STEPPER_BTN_SIZE)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-            UICGameRange.StepperButton(name .. ".BackwardButton")
+            UICCommonRange.StepperButton(name .. ".BackwardButton")
                 :id("BackwardButton", id)
                 :point(UIKit.Enum.Point.Left)
                 :size(STEPPER_BTN_SIZE, STEPPER_BTN_SIZE)
@@ -239,6 +234,7 @@ UICGameRange.New = UIKit.Prefab(function(id, name, children, ...)
 
     return frame
 end)
+
 
 -- Range With Text
 --------------------------------
@@ -263,7 +259,7 @@ function RangeWithTextMixin:GetText()
 end
 
 
-UICGameRange.NewWithText = UIKit.Prefab(function(id, name, children, ...)
+UICCommonRange.NewWithText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Text(name .. ".Text")
@@ -274,7 +270,7 @@ UICGameRange.NewWithText = UIKit.Prefab(function(id, name, children, ...)
                 :textAlignment("RIGHT", "MIDDLE")
                 :textColor(TEXT_COLOR)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
-            UICGameRange.New(name .. ".Range")
+            UICCommonRange.New(name .. ".Range")
                 :id("Range", id)
                 :point(UIKit.Enum.Point.Right)
                 :size(RWT_RANGE_WIDTH, P_FILL)

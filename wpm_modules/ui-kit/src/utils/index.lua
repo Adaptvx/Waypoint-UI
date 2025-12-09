@@ -1,8 +1,7 @@
 local env          = select(2, ...)
 
 local tinsert      = table.insert
-local tremove      = table.remove
-local twipe        = table.wipe
+local wipe         = wipe
 
 local Utils_Color  = env.WPM:Import("wpm_modules/utils/color")
 local UIKit_Define = env.WPM:Import("wpm_modules/ui-kit/define")
@@ -62,8 +61,8 @@ local function wash()
         dirty[i](dirtyFrame[i])
     end
 
-    twipe(dirty)
-    twipe(dirtyFrame)
+    wipe(dirty)
+    wipe(dirtyFrame)
 end
 
 local EL = CreateFrame("Frame")

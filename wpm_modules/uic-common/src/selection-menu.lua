@@ -12,24 +12,23 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameSelectionMenu                                                                                                                         = env.WPM:New("wpm_modules/uic-game/selection-menu")
-
+local UICCommonSelectionMenu                                                                                                                       = env.WPM:New("wpm_modules/uic-common/selection-menu")
 
 
 -- Shared
 --------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameSelectionMenu.png" }
+local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "selection-menu.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 
+Utils_Texture.PreloadAsset(PATH .. "selection-menu.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameSelectionMenu.png")
 
 -- Row
 --------------------------------
 
-local ROW_BACKGROUND                   = ATLAS{ inset = 128, scale = .0525, left = 512 / 768, right = 768 / 768, top = 0 / 768, bottom = 256 / 768 }
+local ROW_BACKGROUND                   = ATLAS{ inset = 32, scale = .175, left = 256 / 320, right = 320 / 320, top = 0 / 192, bottom = 64 / 192 }
 local ROW_BACKGROUND_COLOR             = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = 0 }
 local ROW_BACKGROUND_COLOR_HIGHLIGHTED = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = .25 }
 local ROW_BACKGROUND_COLOR_PUSHED      = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = .175 }
@@ -121,7 +120,7 @@ function RowMixin:UpdateAnimation()
     self.Text:SetPoint("CENTER", self, 0, buttonState == "PUSHED" and TEXT_Y_PUSHED or TEXT_Y)
 end
 
-UICGameSelectionMenu.Row = UIKit.Prefab(function(id, name, children, ...)
+UICCommonSelectionMenu.Row = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Text(name .. ".Text", {
@@ -138,7 +137,7 @@ UICGameSelectionMenu.Row = UIKit.Prefab(function(id, name, children, ...)
         :backgroundColor(ROW_BACKGROUND_COLOR)
         :size(ROW_WIDTH, ROW_HEIGHT)
 
-        
+
     frame.Text = UIKit.GetElementById("Text", id)
     Mixin(frame, RowMixin)
     frame:OnLoad()
@@ -147,23 +146,21 @@ UICGameSelectionMenu.Row = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
 -- Content Arrow
 --------------------------------
 
-local ARROW_BACKGROUND             = ATLAS{ inset = 0, scale = 1, left = 0 / 768, right = 256 / 768, top = 512 / 768, bottom = 768 / 768 }
-local ARROW_BACKGROUND_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 256 / 768, right = 512 / 768, top = 512 / 768, bottom = 768 / 768 }
-local ARROW_BACKGROUND_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 512 / 768, right = 768 / 768, top = 512 / 768, bottom = 768 / 768 }
+local ARROW_BACKGROUND             = ATLAS{ inset = 0, scale = 1, left = 128 / 320, right = 192 / 320, top = 128 / 192, bottom = 192 / 192 }
+local ARROW_BACKGROUND_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 192 / 320, right = 256 / 320, top = 128 / 192, bottom = 192 / 192 }
+local ARROW_BACKGROUND_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 256 / 320, right = 320 / 320, top = 128 / 192, bottom = 192 / 192 }
 local ARROW_SIZE                   = UIKit.Define.Num{ value = 11 }
 
-local OVERLAY_BACKGROUND_UP        = ATLAS{ inset = 128, scale = 1, left = 0 / 768, right = 256 / 768, top = 256 / 768, bottom = 512 / 768 }
-local OVERLAY_BACKGROUND_DOWN      = ATLAS{ inset = 128, scale = 1, left = 256 / 768, right = 512 / 768, top = 256 / 768, bottom = 512 / 768 }
+local OVERLAY_BACKGROUND_UP        = ATLAS{ inset = 32, scale = 1, left = 0 / 320, right = 64 / 320, top = 128 / 192, bottom = 192 / 192 }
+local OVERLAY_BACKGROUND_DOWN      = ATLAS{ inset = 32, scale = 1, left = 64 / 320, right = 128 / 320, top = 128 / 192, bottom = 192 / 192 }
 local OVERLAY_WIDTH                = UIKit.Define.Percentage{ value = 100 }
 local OVERLAY_HEIGHT               = UIKit.Define.Num{ value = 35 }
 
 
-
-local ContentArrowAnimation = UIAnim:New()
+local ContentArrowAnimation = UIAnim.New()
 
 local ContentArrowIntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
@@ -185,7 +182,6 @@ end)
 ContentArrowAnimation:State("OUTRO", function(frame)
     ContentArrowOutroAlpha:Play(frame)
 end)
-
 
 
 local ContentArrowMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
@@ -250,7 +246,7 @@ function ContentArrowMixin:isOpen()
     return self.parent:IsShown()
 end
 
-UICGameSelectionMenu.ContentArrow = UIKit.Prefab(function(id, name, children, ...)
+UICCommonSelectionMenu.ContentArrow = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Arrow")
@@ -270,12 +266,10 @@ UICGameSelectionMenu.ContentArrow = UIKit.Prefab(function(id, name, children, ..
 end)
 
 
-
-
 -- Selection Menu
 --------------------------------
 
-local MENU_BACKGROUND            = ATLAS{ inset = { 150, 150, 128, 128 }, scale = .375, left = 0 / 768, right = 512 / 768, top = 0 / 768, bottom = 256 / 768 }
+local MENU_BACKGROUND            = ATLAS{ inset = { 82, 82, 58, 58 }, scale = .7, left = 0 / 320, right = 256 / 320, top = 0 / 192, bottom = 128 / 192 }
 local MENU_BACKGROUND_SIZE       = UIKit.Define.Fill{ left = -55, right = -55, top = -40, bottom = -40 }
 local MENU_LIST_WIDTH            = UIKit.Define.Percentage{ value = 100 }
 local MENU_LIST_HEIGHT           = UIKit.Define.Fit{}
@@ -285,8 +279,7 @@ local MENU_CONTENT_SCROLL_WIDTH  = UIKit.Define.Percentage{ value = 100 }
 local MENU_CONTENT_SCROLL_HEIGHT = UIKit.Define.Fit{}
 
 
-
-local SelectionMenuAnimation = UIAnim:New()
+local SelectionMenuAnimation = UIAnim.New()
 
 local IntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
@@ -323,7 +316,6 @@ SelectionMenuAnimation:State("OUTRO", function(frame)
     OutroAlpha:Play(frame.Content)
     OutroTranslate:Play(frame.Content)
 end)
-
 
 
 local SelectionMenuMixin = {}
@@ -446,7 +438,7 @@ function SelectionMenuMixin:IsOpen()
 end
 
 
-UICGameSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Content", {
@@ -469,18 +461,18 @@ UICGameSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
                     :scrollViewContentHeight(MENU_CONTENT_SCROLL_HEIGHT)
                     :scrollInterpolation(10)
                     :scrollDirection(UIKit.Enum.Direction.Vertical)
-                    :poolPrefab(UICGameSelectionMenu.Row)
+                    :poolPrefab(UICCommonSelectionMenu.Row)
                     :lazyScrollViewElementHeight(28)
                     :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-                UICGameSelectionMenu.ContentArrow(name .. ".ArrowUp")
+                UICCommonSelectionMenu.ContentArrow(name .. ".ArrowUp")
                     :id("ArrowUp", id)
                     :frameLevel(5)
                     :point(UIKit.Enum.Point.Top)
                     :_excludeFromCalculations()
                     :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
-                UICGameSelectionMenu.ContentArrow(name .. ".ArrowDown")
+                UICCommonSelectionMenu.ContentArrow(name .. ".ArrowDown")
                     :id("ArrowDown", id)
                     :frameLevel(5)
                     :point(UIKit.Enum.Point.Bottom)

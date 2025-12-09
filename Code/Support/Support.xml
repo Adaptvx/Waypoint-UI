@@ -4,4 +4,5 @@
 	<Script file="WorldQuestsList.lua"/>
 	<Script file="UnlimitedMapPinDistance.lua"/>
 	<Script file="MapPinEnhanced.lua"/>
+	<Script file="TomTom.lua"/>
 </Ui>

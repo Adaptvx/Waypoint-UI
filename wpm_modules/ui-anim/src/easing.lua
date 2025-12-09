@@ -1,11 +1,12 @@
 local env = select(2, ...)
 
-local sin, cos, sqrt = math.sin, math.cos, math.sqrt
+local sin = math.sin
+local cos = math.cos
+local sqrt = math.sqrt
 local pi = math.pi
 local HALF_PI = pi * 0.5
 
 local UIAnim_Easing = env.WPM:New("wpm_modules/ui-anim/easing")
-
 
 
 do -- Linear

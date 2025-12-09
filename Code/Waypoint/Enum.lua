@@ -2,7 +2,6 @@ local env = select(2, ...)
 local Waypoint_Enum = env.WPM:New("@/Waypoint/Enum")
 
 
-
 -- General
 --------------------------------
 
@@ -32,7 +31,6 @@ Waypoint_Enum.State = {
 }
 
 
-
 -- Setting
 --------------------------------
 
@@ -43,8 +41,9 @@ Waypoint_Enum.WaypointSystemType = {
 }
 
 Waypoint_Enum.WaypointDistanceTextType = {
-    All         = 1,
-    Distance    = 2,
-    ArrivalTime = 3,
-    None        = 4
+    All             = 1,
+    Distance        = 2,
+    ArrivalTime     = 3,
+    DestinationName = 4,
+    None            = 5
 }

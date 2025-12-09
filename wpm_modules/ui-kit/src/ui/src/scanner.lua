@@ -3,6 +3,20 @@ local UIKit_Enum             = env.WPM:Import("wpm_modules/ui-kit/enum")
 local UIKit_Renderer         = env.WPM:Import("wpm_modules/ui-kit/renderer")
 local UIKit_Renderer_Cleaner = env.WPM:Import("wpm_modules/ui-kit/renderer/cleaner")
 local UIKit_UI_Scanner       = env.WPM:New("wpm_modules/ui-kit/ui/scanner")
+
+
+-- Shared
+--------------------------------
+
+local UpdateMode_None                     = UIKit_Enum.UpdateMode.None
+local UpdateMode_All                      = UIKit_Enum.UpdateMode.All
+local UpdateMode_ExcludeVisibilityChanged = UIKit_Enum.UpdateMode.ExcludeVisibilityChanged
+local UpdateMode_ChildrenVisibilityChanged = UIKit_Enum.UpdateMode.ChildrenVisibilityChanged
+
+local BLOCK_VISIBILITY_MODES = {
+    [UpdateMode_None] = true,
+    [UpdateMode_ExcludeVisibilityChanged] = true,
+}
  
 
 -- Helpers
@@ -14,16 +28,16 @@ local function handleVisibilityChanged(frame)
     while parentFrame do
         local parentUpdateMode = parentFrame.uk_flag_updateMode
 
-        if not parentUpdateMode or parentUpdateMode == UIKit_Enum.UpdateMode.None or parentUpdateMode == UIKit_Enum.UpdateMode.ExcludeVisibilityChanged then
+        if not parentUpdateMode or BLOCK_VISIBILITY_MODES[parentUpdateMode] then
             return
         end
 
-        if parentUpdateMode == UIKit_Enum.UpdateMode.ChildrenVisibilityChanged then
+        if parentUpdateMode == UpdateMode_ChildrenVisibilityChanged then
             UIKit_UI_Scanner.ScanFrame(parentFrame)
             return
         end
 
-        if parentUpdateMode == UIKit_Enum.UpdateMode.All then
+        if parentUpdateMode == UpdateMode_All then
             parentFrame = parentFrame.uk_parent
         else
             return
@@ -34,7 +48,7 @@ end
 local function setupFrame(frame)
     local frameType = frame.uk_type
     local frameUpdateMode = frame.uk_flag_updateMode
-    local isUpdateAll = frameUpdateMode == UIKit_Enum.UpdateMode.All
+    local isUpdateAll = frameUpdateMode == UpdateMode_All
 
     if isUpdateAll then
         if frameType == "Input" then
@@ -48,7 +62,7 @@ local function setupFrame(frame)
         end
     end
 
-    if isUpdateAll or frameUpdateMode == UIKit_Enum.UpdateMode.ChildrenVisibilityChanged then
+    if isUpdateAll or frameUpdateMode == UpdateMode_ChildrenVisibilityChanged then
         frame:HookScript("OnShow", handleVisibilityChanged)
         frame:HookScript("OnHide", handleVisibilityChanged)
     end
@@ -80,9 +94,8 @@ function UIKit_UI_Scanner.SetupFrameRecursive(rootFrame)
     if aliasRegistry then
         for _, aliasFrame in pairs(aliasRegistry) do
             if aliasFrame.GetObjectType and aliasFrame:GetObjectType() == "Frame" then
-                if setupFrame(aliasFrame) then
-                    UIKit_UI_Scanner.SetupFrameRecursive(aliasFrame)
-                end
+                setupFrame(aliasFrame)
+                UIKit_UI_Scanner.SetupFrameRecursive(aliasFrame)
             end
         end
     end
@@ -103,7 +116,7 @@ function UIKit_UI_Scanner.ScanFrame(frame)
 end
 
 function UIKit_UI_Scanner.ScanFrameFromEvent(frame)
-    if frame.uk_flag_updateMode == UIKit_Enum.UpdateMode.All then
+    if frame.uk_flag_updateMode == UpdateMode_All then
         UIKit_UI_Scanner.ScanFrame(frame)
     end
 end

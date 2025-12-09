@@ -1,5 +1,7 @@
 local env              = select(2, ...)
 
+local IsAddOnLoaded    = C_AddOns.IsAddOnLoaded
+
 local Sound            = env.WPM:Import("wpm_modules/sound")
 local CallbackRegistry = env.WPM:Import("wpm_modules/callback-registry")
 local UIFont           = env.WPM:Import("wpm_modules/ui-font")
@@ -10,15 +12,13 @@ local Path             = env.WPM:Import("wpm_modules/path")
 local Utils_InlineIcon = env.WPM:Import("wpm_modules/utils/inlineIcon")
 local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
 
-env.NAME               = "Waypoint UI"
-env.ICON               = Path.Root .. "/Art/Icon/Icon.png"
-env.ICON_ALT           = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING     = "1.1.2"
-env.VERSION_NUMBER     = 010102
-env.DEBUG_MODE         = false
 
-
-
+env.NAME           = "Waypoint UI"
+env.ICON           = Path.Root .. "/Art/Icon/Icon.png"
+env.ICON_ALT       = Path.Root .. "/Art/Icon/IconAltLight.png"
+env.VERSION_STRING = "1.2.0"
+env.VERSION_NUMBER = 010200
+env.DEBUG_MODE     = false
 
 
 local L = {}; env.L = L -- Locales
@@ -82,7 +82,7 @@ do
         WaypointDistanceText                   = true,
         WaypointDistanceTextType               = 1,
         WaypointDistanceTextScale              = 1,
-        WaypointDistanceTextAlpha              = .5,
+        WaypointDistanceTextAlpha              = .7,
         PinpointAllowInQuestArea               = false,
         PinpointScale                          = 1,
         PinpointInfo                           = true,
@@ -353,20 +353,22 @@ end
 
 local SlashCmdRegister = {}
 do -- Slash Command
+
+    -- /way
+    --------------------------------
+
     local GetBestMapForUnit    = C_Map.GetBestMapForUnit
     local GetPlayerMapPosition = C_Map.GetPlayerMapPosition
 
-    local INLINE_ADDON_ICON    = Utils_InlineIcon.InlineIcon(Path.Root .. env.ICON_ALT, 16, 16)
-    local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/chat-subdivider.png", 16, 16)
+    local INLINE_ADDON_ICON    = Utils_InlineIcon.InlineIcon(env.ICON_ALT, 16, 16)
+    local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/Subdivider.png", 16, 16)
 
     local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON .. " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_2    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "<x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_3    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "reset" .. "|r"
 
 
-
-
-    local function PrintPosition()
+    local function printPosition()
         local playerMapID = GetBestMapForUnit("player")
         local playerPosition = playerMapID and GetPlayerMapPosition(playerMapID, "player") or nil
 
@@ -391,55 +393,86 @@ do -- Slash Command
         DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_MSG_2)
         DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_MSG_3)
 
-        PrintPosition()
+        printPosition()
     end
 
-    -- /way handler
-    local function handleSlashCmd_Way(msg, tokens)
-        if #tokens == 0 then
-            throwSlashWayError()
-            return
+    -- locale-aware decimal separator normalization (e.g. "50,5" -> "50.5" or vice versa)
+    local localeUsesDecimalPoint = tonumber("1.1") ~= nil
+    local invalidDecimalPattern = "(%d)" .. (localeUsesDecimalPoint and "," or ".") .. "(%d)"
+    local validDecimalReplacement = "%1" .. (localeUsesDecimalPoint and "." or ",") .. "%2"
+    local tokens = {}
+
+    local function handleSlashCmd_Way(inputMessage)
+        if IsAddOnLoaded("TomTom") then return end
+        if not inputMessage or inputMessage == "" then return throwSlashWayError() end
+
+        -- normalize input: separate comma-joined coords and fix decimal separators
+        local normalizedInput = inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern, validDecimalReplacement)
+
+        wipe(tokens)
+        for word in normalizedInput:gmatch("%S+") do tokens[#tokens + 1] = word end
+        if #tokens == 0 then return throwSlashWayError() end
+
+        -- handle reset/clear commands
+        local commandLower = tokens[1]:lower()
+        if commandLower == "reset" or commandLower == "clear" then
+            return WaypointUIAPI.Navigation.ClearUserNavigation()
         end
 
-        local firstToken = tokens[1]:lower()
-        if firstToken == "reset" or firstToken == "clear" then
-            WaypointUIAPI.Navigation.ClearUserNavigation()
-            return
+        -- helper: safely convert token at index to number
+        local function parseTokenAsNumber(index)
+            return tokens[index] and tonumber(tokens[index])
         end
 
-        local token1, token2, token3 = tokens[1], tokens[2], tokens[3]
-        local mapID, x, y, name = nil, nil, nil, ""
+        local zoneMapId, coordX, coordY, labelName = nil, nil, nil, nil
+        local firstToken = tokens[1]
+        local tokenCount = #tokens
 
-        -- <#mapID> <x> <y>
-        if token1 and token2 and token3 and tonumber(token2) and tonumber(token3) then
-            local token1Formatted = token1:gsub("#", "")
-            local token1Number = tonumber(token1Formatted)
+        -- format: #<mapID> <x> <y> [name]
+        if firstToken:sub(1, 1) == "#" then
+            zoneMapId = tonumber(firstToken:sub(2))
+            coordX, coordY = parseTokenAsNumber(2), parseTokenAsNumber(3)
+            if not (zoneMapId and coordX and coordY) then return throwSlashWayError() end
+            if tokenCount > 3 then labelName = table.concat(tokens, " ", 4) end
 
-            if not token1Number then
-                throwSlashWayError()
-                return
+            -- format: <x> <y> [name] OR <mapID> <x> <y> [name]
+        elseif tonumber(firstToken) then
+            local num1, num2, num3 = tonumber(firstToken), parseTokenAsNumber(2), parseTokenAsNumber(3)
+            if not (num1 and num2) then return throwSlashWayError() end
+
+            if num3 then
+                zoneMapId, coordX, coordY = num1, num2, num3
+                if tokenCount > 3 then labelName = table.concat(tokens, " ", 4) end
+            else
+                zoneMapId, coordX, coordY = GetBestMapForUnit("player"), num1, num2
+                if tokenCount > 2 then labelName = table.concat(tokens, " ", 3) end
             end
 
-            mapID, x, y = token1Number, token2, token3
-            for i = 4, #tokens do
-                name = (#name > 0) and (name .. " " .. tokens[i]) or tokens[i]
-            end
-
-            -- <x> <y>
-        elseif token1 and token2 and tonumber(token1) and tonumber(token2) then
-            mapID, x, y = GetBestMapForUnit("player"), token1, token2
-            for i = 3, #tokens do
-                name = (#name > 0) and (name .. " " .. tokens[i]) or tokens[i]
-            end
+            -- format: <name> <x> <y> (name prefix before coordinates)
         else
-            throwSlashWayError()
-            return
+            local coordStartIndex = nil
+            for i = 1, tokenCount do
+                if tonumber(tokens[i]) then
+                    coordStartIndex = i; break
+                end
+            end
+            if not coordStartIndex then return throwSlashWayError() end
+
+            coordX, coordY = parseTokenAsNumber(coordStartIndex), parseTokenAsNumber(coordStartIndex + 1)
+            if not (coordX and coordY) then return throwSlashWayError() end
+
+            zoneMapId = GetBestMapForUnit("player")
+            labelName = coordStartIndex > 1 and table.concat(tokens, " ", 1, coordStartIndex - 1) or nil
         end
 
-        WaypointUIAPI.Navigation.NewUserNavigation(name, mapID, x, y)
+        if not (zoneMapId and coordX and coordY) then return throwSlashWayError() end
+        WaypointUIAPI.Navigation.NewUserNavigation(labelName, zoneMapId, coordX, coordY)
     end
+
 
     -- /waypoint /wp
+    --------------------------------
+
     local function handleSlashCmd_Waypoint(msg, tokens)
         if #tokens >= 1 then
             local firstToken = tokens[1]:lower()
@@ -451,6 +484,8 @@ do -- Slash Command
     end
 
 
+    -- Load
+    --------------------------------
 
     local Schema = {
         -- /way

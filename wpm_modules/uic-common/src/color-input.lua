@@ -11,34 +11,29 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameColorInput                                                                                                                            = env.WPM:New("wpm_modules/uic-game/color-input")
-
+local UICCommonColorInput                                                                                                                            = env.WPM:New("wpm_modules/uic-common/color-input")
 
 
 -- Shared
 --------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameColorInput.png", inset = 128, scale = .125 }
+local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "color-input.png", inset = 37, scale = .5 }
 local TEXTURE_NIL = UIKit.Define.Texture_NineSlice{ path = nil, inset = 1, scale = 1 }
 
+Utils_Texture.PreloadAsset(PATH .. "color-input.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameColorInput.png")
 
 -- Base
 --------------------------------
 
 local CONTENT_SIZE                = UIKit.Define.Percentage{ value = 100 }
 
-local BACKGROUND_FRAME            = ATLAS{ left = 0 / 768, right = 256 / 768, top = 0 / 512, bottom = 256 / 512 }
-local BACKGROUND_FRAME_DISABLED   = ATLAS{ left = 256 / 768, right = 512 / 768, top = 0 / 512, bottom = 256 / 512 }
-local BACKGROUND_FILL             = ATLAS{ left = 0 / 768, right = 256 / 768, top = 256 / 512, bottom = 512 / 512 }
-local BACKGROUND_FILL_HIGHLIGHTED = ATLAS{ left = 256 / 768, right = 512 / 768, top = 256 / 512, bottom = 512 / 512 }
-local BACKGROUND_FILL_PUSHED      = ATLAS{ left = 512 / 768, right = 768 / 768, top = 256 / 512, bottom = 512 / 512 }
-local ALPHA_ENABLED               = 1
-local ALPHA_DISABLED              = .5
-
-
+local BACKGROUND_FRAME            = ATLAS{ left = 0 / 384, right = 128 / 384, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_FRAME_DISABLED   = ATLAS{ left = 256 / 384, right = 384 / 384, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_FILL             = ATLAS{ left = 0 / 384, right = 128 / 384, top = 64 / 128, bottom = 128 / 128 }
+local BACKGROUND_FILL_PUSHED      = ATLAS{ left = 128 / 384, right = 256 / 384, top = 64 / 128, bottom = 128 / 128 }
+local BACKGROUND_FILL_DISABLED    = ATLAS{ left = 256 / 384, right = 384 / 384, top = 64 / 128, bottom = 128 / 128 }
 
 
 local ColorInputMixin = CreateFromMixins(UICSharedMixin.ColorInputMixin)
@@ -64,13 +59,13 @@ function ColorInputMixin:UpdateAnimation()
     local enabled = self:IsEnabled()
 
     self:background(enabled and BACKGROUND_FRAME or BACKGROUND_FRAME_DISABLED)
-    self.Fill:SetAlpha(enabled and ALPHA_ENABLED or ALPHA_DISABLED)
-    if not enabled then return end
+    if not enabled then
+        self.Fill:background(BACKGROUND_FILL_DISABLED)
+        return
+    end
 
-    if buttonState == "NORMAL" then
+    if buttonState == "NORMAL" or buttonState == "HIGHLIGHTED" then
         self.Fill:background(BACKGROUND_FILL)
-    elseif buttonState == "HIGHLIGHTED" then
-        self.Fill:background(BACKGROUND_FILL_HIGHLIGHTED)
     elseif buttonState == "PUSHED" then
         self.Fill:background(BACKGROUND_FILL_PUSHED)
     end
@@ -81,8 +76,7 @@ function ColorInputMixin:PlayInteractSound()
 end
 
 
-
-UICGameColorInput.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonColorInput.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Fill", {

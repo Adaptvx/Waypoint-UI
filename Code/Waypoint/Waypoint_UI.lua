@@ -14,12 +14,12 @@ local Mixin                                                                     
 -- Shared
 --------------------------------
 
-local PATH = Path.Root .. "/Art/Waypoint/"
-local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "WaypointUITextureAtlas.png" }
+local PATH   = Path.Root .. "/Art/Waypoint/"
+local ATLAS  = UIKit.Define.Texture_Atlas{ path = PATH .. "WaypointUITextureAtlas.png" }
 
 local P_FILL = UIKit.Define.Percentage{ value = 100 }
-local FILL = UIKit.Define.Fill{}
-local FIT = UIKit.Define.Fit{}
+local FILL   = UIKit.Define.Fill{}
+local FIT    = UIKit.Define.Fit{}
 
 
 -- Parent
@@ -36,17 +36,17 @@ WUIFrame = Frame("WUIFrame", {
 --------------------------------
 
 do
-    local W_TEXTURE_BEAM         = ATLAS{ left = 768 / 1792, right = 1280 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
-    local W_TEXTURE_BEAM_MASK    = UIKit.Define.Texture{ path = PATH .. "WaypointBeamMask.png" }
-    local W_TEXTURE_BEAM_FX      = ATLAS{ left = 1280 / 1792, right = 1792 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
-    local W_TEXTURE_BEAM_FX_MASK = UIKit.Define.Texture{ path = PATH .. "WaypointBeamFXMask.png" }
-    local W_TEXTURE_WAVE         = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-    local W_SIZE                 = UIKit.Define.Num{ value = 45 }
-    local W_SIZE_WAVE            = UIKit.Define.Num{ value = 75 }
-    local W_WIDTH_FOOTER         = UIKit.Define.Num{ value = 100 }
-    local W_HEIGHT_FOOTER        = UIKit.Define.Num{ value = 37.5 }
-    local W_WIDTH_FOOTER_TEXT    = UIKit.Define.Num{ value = 100 }
-    local W_HEIGHT_FOOTER_TEXT   = UIKit.Define.Num{ value = 11 }
+    local BEAM_BACKGROUND         = ATLAS{ left = 768 / 1792, right = 1280 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
+    local BEAM_BACKGROUND_MASK    = UIKit.Define.Texture{ path = PATH .. "WaypointBeamMask.png" }
+    local BEAM_FX_BACKGROUND      = ATLAS{ left = 1280 / 1792, right = 1792 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
+    local BEAM_FX_BACKGROUND_MASK = UIKit.Define.Texture{ path = PATH .. "WaypointBeamFXMask.png" }
+    local WAVE_BACKGROUND         = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
+    local WAYPOINT_SIZE           = UIKit.Define.Num{ value = 45 }
+    local WAVE_SIZE               = UIKit.Define.Num{ value = 75 }
+    local FOOTER_WIDTH            = UIKit.Define.Num{ value = 100 }
+    local FOOTER_HEIGHT           = UIKit.Define.Num{ value = 37.5 }
+    local FOOTER_TEXT_WIDTH       = UIKit.Define.Num{ value = 100 }
+    local FOOTER_TEXT_HEIGHT      = UIKit.Define.Num{ value = 11 }
 
 
     Frame("WUIWaypointFrame", {
@@ -61,23 +61,23 @@ do
             Frame("WUIWaypointFrame.Wave")
                 :id("WUIWaypointFrame.Wave")
                 :point(UIKit.Enum.Point.Center)
-                :size(W_SIZE_WAVE, W_SIZE_WAVE)
+                :size(WAVE_SIZE, WAVE_SIZE)
                 :frameLevel(3)
-                :background(W_TEXTURE_WAVE),
+                :background(WAVE_BACKGROUND),
 
             Frame("WUIWaypointFrame.Beam", {
                 Frame("WUIWaypointFrame.Beam.Mask")
                     :id("WUIWaypointFrame.Beam.Mask")
                     :point(UIKit.Enum.Point.Center, UIKit.Enum.Point.Bottom)
                     :size(UIKit.Define.Num{ value = 100 }, UIKit.Define.Num{ value = 100 })
-                    :maskBackground(W_TEXTURE_BEAM_MASK)
+                    :maskBackground(BEAM_BACKGROUND_MASK)
                     :frameLevel(2),
 
                 Frame("WUIWaypointFrame.Beam.Background")
                     :id("WUIWaypointFrame.Beam.Background")
                     :size(FILL)
                     :frameLevel(1)
-                    :background(W_TEXTURE_BEAM)
+                    :background(BEAM_BACKGROUND)
                     :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
                     :mask("WUIWaypointFrame.Beam.Mask"),
 
@@ -85,7 +85,7 @@ do
                     :id("WUIWaypointFrame.Beam.FX.Mask")
                     :point(UIKit.Enum.Point.Bottom)
                     :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 250 })
-                    :maskBackground(W_TEXTURE_BEAM_FX_MASK)
+                    :maskBackground(BEAM_FX_BACKGROUND_MASK)
                     :frameLevel(2),
 
                 Frame("WUIWaypointFrame.Beam.FX")
@@ -93,7 +93,7 @@ do
                     :size(FILL)
                     :frameLevel(2)
                     :backgroundBlendMode(UIKit.Enum.BlendMode.Add)
-                    :background(W_TEXTURE_BEAM_FX)
+                    :background(BEAM_FX_BACKGROUND)
                     :mask("WUIWaypointFrame.Beam.FX.Mask")
 
             })
@@ -104,30 +104,33 @@ do
                 :frameLevel(2),
 
             LayoutVertical("WUIWaypointFrame.Footer", {
-                Text("WUIWaypointFrame.Footer.Text")
-                    :id("WUIWaypointFrame.Footer.Text")
+                Text("WUIWaypointFrame.Footer.InfoText")
+                    :id("WUIWaypointFrame.Footer.InfoText")
                     :fontObject(UIFont.UIFontObjectNormal8)
                     :textAlignment("CENTER", "MIDDLE")
-                    :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT),
+                    :size(FOOTER_TEXT_WIDTH, FOOTER_TEXT_HEIGHT),
 
-                Frame("WUIWaypointFrame.Footer.SubtextFrame", {
-                    Text("WUIWaypointFrame.Footer.SubtextFrame.Text")
-                        :id("WUIWaypointFrame.Footer.SubtextFrame.Text")
-                        :point(UIKit.Enum.Point.Center)
-                        :fontObject(UIFont.UIFontObjectNormal8)
-                        :textAlignment("CENTER", "MIDDLE")
-                        :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT)
+                Text("WUIWaypointFrame.Footer.DistanceText")
+                    :id("WUIWaypointFrame.Footer.DistanceText")
+                    :fontObject(UIFont.UIFontObjectNormal8)
+                    :textAlignment("CENTER", "MIDDLE")
+                    :size(FOOTER_TEXT_WIDTH, FOOTER_TEXT_HEIGHT)
+                    :alpha(.5),
 
-                })
-                    :id("WUIWaypointFrame.Footer.SubtextFrame")
-                    :size(W_WIDTH_FOOTER_TEXT, W_HEIGHT_FOOTER_TEXT)
+                Text("WUIWaypointFrame.Footer.ArrivalTimeText")
+                    :id("WUIWaypointFrame.Footer.ArrivalTimeText")
+                    :point(UIKit.Enum.Point.Center)
+                    :fontObject(UIFont.UIFontObjectNormal8)
+                    :textAlignment("CENTER", "MIDDLE")
+                    :size(FOOTER_TEXT_WIDTH, FOOTER_TEXT_HEIGHT)
+                    :alpha(.5)
 
             })
                 :id("WUIWaypointFrame.Footer")
                 :anchor("WUIWaypointFrame.ContextIcon")
                 :point(UIKit.Enum.Point.Top, UIKit.Enum.Point.Bottom)
                 :y(UIKit.Define.Num{ value = 0 })
-                :size(W_WIDTH_FOOTER, W_HEIGHT_FOOTER)
+                :size(FOOTER_WIDTH, FOOTER_HEIGHT)
                 :layoutSpacing(UIKit.Define.Num{ value = 0 })
                 :frameLevel(4)
                 :ignoreParentScale(true)
@@ -142,32 +145,29 @@ do
         :id("WUIWaypointFrame")
         :parent("WUIFrame")
         :frameStrata(UIKit.Enum.FrameStrata.Background, 1)
-        :size(W_SIZE, W_SIZE)
+        :size(WAYPOINT_SIZE, WAYPOINT_SIZE)
 
         :_Render()
 
-
-    WUIWaypointFrame                          = UIKit.GetElementById("WUIWaypointFrame")
-    WUIWaypointFrame.Container                = UIKit.GetElementById("WUIWaypointFrame.Container")
-    WUIWaypointFrame.ContextIcon              = UIKit.GetElementById("WUIWaypointFrame.ContextIcon")
-    WUIWaypointFrame.Wave                     = UIKit.GetElementById("WUIWaypointFrame.Wave")
-    WUIWaypointFrame.WaveTexture              = WUIWaypointFrame.Wave:GetBackground()
-    WUIWaypointFrame.Beam                     = UIKit.GetElementById("WUIWaypointFrame.Beam")
-    WUIWaypointFrame.Beam.Background          = UIKit.GetElementById("WUIWaypointFrame.Beam.Background")
-    WUIWaypointFrame.Beam.BackgroundTexture   = WUIWaypointFrame.Beam.Background:GetBackground()
-    WUIWaypointFrame.Beam.Mask                = UIKit.GetElementById("WUIWaypointFrame.Beam.Mask")
-    WUIWaypointFrame.Beam.FX                  = UIKit.GetElementById("WUIWaypointFrame.Beam.FX")
-    WUIWaypointFrame.Beam.FXMask              = UIKit.GetElementById("WUIWaypointFrame.Beam.FX.Mask")
-    WUIWaypointFrame.Beam.FXTexture           = WUIWaypointFrame.Beam.FX:GetBackground()
-    WUIWaypointFrame.Footer                   = UIKit.GetElementById("WUIWaypointFrame.Footer")
-    WUIWaypointFrame.Footer.Text              = UIKit.GetElementById("WUIWaypointFrame.Footer.Text")
-    WUIWaypointFrame.Footer.SubtextFrame      = UIKit.GetElementById("WUIWaypointFrame.Footer.SubtextFrame")
-    WUIWaypointFrame.Footer.SubtextFrame.Text = UIKit.GetElementById("WUIWaypointFrame.Footer.SubtextFrame.Text")
-
+    WUIWaypointFrame                        = UIKit.GetElementById("WUIWaypointFrame")
+    WUIWaypointFrame.Container              = UIKit.GetElementById("WUIWaypointFrame.Container")
+    WUIWaypointFrame.ContextIcon            = UIKit.GetElementById("WUIWaypointFrame.ContextIcon")
+    WUIWaypointFrame.Wave                   = UIKit.GetElementById("WUIWaypointFrame.Wave")
+    WUIWaypointFrame.WaveTexture            = WUIWaypointFrame.Wave:GetBackground()
+    WUIWaypointFrame.Beam                   = UIKit.GetElementById("WUIWaypointFrame.Beam")
+    WUIWaypointFrame.Beam.Background        = UIKit.GetElementById("WUIWaypointFrame.Beam.Background")
+    WUIWaypointFrame.Beam.BackgroundTexture = WUIWaypointFrame.Beam.Background:GetBackground()
+    WUIWaypointFrame.Beam.Mask              = UIKit.GetElementById("WUIWaypointFrame.Beam.Mask")
+    WUIWaypointFrame.Beam.FX                = UIKit.GetElementById("WUIWaypointFrame.Beam.FX")
+    WUIWaypointFrame.Beam.FXMask            = UIKit.GetElementById("WUIWaypointFrame.Beam.FX.Mask")
+    WUIWaypointFrame.Beam.FXTexture         = WUIWaypointFrame.Beam.FX:GetBackground()
+    WUIWaypointFrame.Footer                 = UIKit.GetElementById("WUIWaypointFrame.Footer")
+    WUIWaypointFrame.Footer.InfoText        = UIKit.GetElementById("WUIWaypointFrame.Footer.InfoText")
+    WUIWaypointFrame.Footer.DistanceText    = UIKit.GetElementById("WUIWaypointFrame.Footer.DistanceText")
+    WUIWaypointFrame.Footer.ArrivalTimeText = UIKit.GetElementById("WUIWaypointFrame.Footer.ArrivalTimeText")
 
 
-
-    local WaypointAnimation = UIAnim:New()
+    local WaypointAnimation = UIAnim.New()
     do
         local function applyDefaultState(frame)
             frame:SetAlpha(1)
@@ -269,7 +269,7 @@ do
         end)
     end
 
-    local WaypointAnimation_Hover = UIAnim:New()
+    local WaypointAnimation_Hover = UIAnim.New()
     do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
@@ -292,7 +292,7 @@ do
     end
 
     do -- Wave
-        local WaveAnimation = UIAnim:New()
+        local WaveAnimation = UIAnim.New()
         local Intro = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
@@ -337,7 +337,7 @@ do
     end
 
     do -- Beam FX Mask
-        local BeamFXMaskAnimation = UIAnim:New()
+        local BeamFXMaskAnimation = UIAnim.New()
         local Translate = UIAnim.Animate()
             :property(UIAnim.Enum.Property.PosY)
             :easing(UIAnim.Enum.Easing.Linear)
@@ -364,8 +364,6 @@ do
     end
 
 
-
-
     local WaypointMixin = {}
     WaypointMixin.Animation = WaypointAnimation
     WaypointMixin.Animation_Hover = WaypointAnimation_Hover
@@ -390,8 +388,9 @@ do
         self.ContextIcon:SetTint(color)
         self.WaveTexture:SetColor(color)
         self.Beam.BackgroundTexture:SetColor(color)
-        self.Footer.Text:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
-        self.Footer.SubtextFrame.Text:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
+        self.Footer.InfoText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
+        self.Footer.DistanceText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
+        self.Footer.ArrivalTimeText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
     end
 
     function WaypointMixin:Appearance_SetBeam(enable, opacity)
@@ -400,10 +399,12 @@ do
     end
 
     function WaypointMixin:Appearance_SetText(alpha, scale)
-        self.Footer.Text:SetAlpha(alpha)
-        self.Footer.Text:SetScale(scale)
-        self.Footer.SubtextFrame.Text:SetAlpha(alpha)
-        self.Footer.SubtextFrame.Text:SetScale(scale)
+        self.Footer.InfoText:SetAlpha(alpha)
+        self.Footer.InfoText:SetScale(scale)
+        self.Footer.DistanceText:SetAlpha(alpha)
+        self.Footer.DistanceText:SetScale(scale)
+        self.Footer.ArrivalTimeText:SetAlpha(alpha)
+        self.Footer.ArrivalTimeText:SetScale(scale)
     end
 
     Mixin(WUIWaypointFrame, WaypointMixin)
@@ -414,12 +415,11 @@ end
 --------------------------------
 
 do
-    local P_BACKGROUND                  = ATLAS{ inset = 75, scale = .125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
-    local P_SIZE_CONTEXT                = UIKit.Define.Num{ value = 57 }
-    local P_SIZE_FOREGROUND             = UIKit.Define.Fit{ delta = 23 }
-    local P_SIZE_FOREGROUND_CONTENT     = UIKit.Define.Fit{}
-    local P_MAXWIDTH_FOREGROUND_CONTENT = UIKit.Define.Num{ value = 325 }
-
+    local CONTEXT_SIZE                = UIKit.Define.Num{ value = 57 }
+    local FOREGROUND_BACKGROUND       = ATLAS{ inset = 75, scale = .125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
+    local FOREGROUND_SIZE             = UIKit.Define.Fit{ delta = 23 }
+    local FOREGROUND_CONTENT          = UIKit.Define.Fit{}
+    local FOREGROUND_CONTENT_MAXWIDTH = UIKit.Define.Num{ value = 325 }
 
 
     Frame("WUIPinpointFrame", {
@@ -427,7 +427,7 @@ do
             Frame("WUIPinpointFrame.Background", {
                 ContextIcon("WUIPinpointFrame.Background.ContextIcon")
                     :id("WUIPinpointFrame.Background.ContextIcon")
-                    :size(P_SIZE_CONTEXT, P_SIZE_CONTEXT)
+                    :size(CONTEXT_SIZE, CONTEXT_SIZE)
                     :point(UIKit.Enum.Point.Center)
                     :frameLevel(3),
 
@@ -448,7 +448,7 @@ do
             Frame("WUIPinpointFrame.Foreground", {
                 Frame("WUIPinpointFrame.Foreground.Background")
                     :id("WUIPinpointFrame.Foreground.Background")
-                    :background(P_BACKGROUND)
+                    :background(FOREGROUND_BACKGROUND)
                     :size(FILL)
                     :frameLevel(6)
                     :_excludeFromCalculations(),
@@ -458,15 +458,15 @@ do
                     :point(UIKit.Enum.Point.Center)
                     :textAlignment("LEFT", "MIDDLE")
                     :fontObject(UIFont.UIFontObjectNormal10)
-                    :size(P_SIZE_FOREGROUND_CONTENT, P_SIZE_FOREGROUND_CONTENT)
-                    :maxWidth(P_MAXWIDTH_FOREGROUND_CONTENT)
+                    :size(FOREGROUND_CONTENT, FOREGROUND_CONTENT)
+                    :maxWidth(FOREGROUND_CONTENT_MAXWIDTH)
                     :textVerticalSpacing(3)
                     :frameLevel(8)
                     :_updateMode(UIKit.Enum.UpdateMode.All)
             })
                 :id("WUIPinpointFrame.Foreground")
                 :point(UIKit.Enum.Point.Center)
-                :size(P_SIZE_FOREGROUND, P_SIZE_FOREGROUND)
+                :size(FOREGROUND_SIZE, FOREGROUND_SIZE)
                 :frameLevel(5)
         })
             :id("WUIPinpointFrame.Container")
@@ -491,10 +491,7 @@ do
     WUIPinpointFrame.Foreground.Content = UIKit.GetElementById("WUIPinpointFrame.Foreground.Content")
 
 
-
-
-
-    local PinpointAnimation = UIAnim:New()
+    local PinpointAnimation = UIAnim.New()
     do
         local function applyDefaultState(frame)
             frame.Container:SetAlpha(1)
@@ -582,7 +579,7 @@ do
         end)
     end
 
-    local PinpointAnimation_Hover = UIAnim:New()
+    local PinpointAnimation_Hover = UIAnim.New()
     do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
@@ -604,8 +601,6 @@ do
             Disabled:Play(frame.Container)
         end)
     end
-
-
 
 
     local PinpointMixin = {}
@@ -643,10 +638,9 @@ end
 --------------------------------
 
 do
-    local N_SIZE = UIKit.Define.Num{ value = 45 }
-    local N_SIZE_ARROW = UIKit.Define.Num{ value = 57 }
-    local N_TEXTURE_ARROW = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 512 / 2560, bottom = 768 / 2560 }
-
+    local NAVIGATOR_SIZE   = UIKit.Define.Num{ value = 45 }
+    local ARROW_BACKGROUND = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 512 / 2560, bottom = 768 / 2560 }
+    local ARROW_SIZE       = UIKit.Define.Num{ value = 57 }
 
 
     Frame("WUINavigatorFrame", {
@@ -661,8 +655,8 @@ do
                 :id("WUINavigatorFrame.Arrow")
                 :point(UIKit.Enum.Point.Center)
                 :frameLevel(3)
-                :size(N_SIZE_ARROW, N_SIZE_ARROW)
-                :background(N_TEXTURE_ARROW)
+                :size(ARROW_SIZE, ARROW_SIZE)
+                :background(ARROW_BACKGROUND)
 
         })
             :id("WUINavigatorFrame.Container")
@@ -673,7 +667,7 @@ do
         :id("WUINavigatorFrame")
         :parent("WUIFrame")
         :frameStrata(UIKit.Enum.FrameStrata.Background, 1)
-        :size(N_SIZE, N_SIZE)
+        :size(NAVIGATOR_SIZE, NAVIGATOR_SIZE)
         :clampedToScreen(true)
 
         :_Render()
@@ -685,10 +679,7 @@ do
     WUINavigatorFrame.ArrowTexture = UIKit.GetElementById("WUINavigatorFrame.Arrow"):GetBackground()
 
 
-
-
-
-    local NavigatorAnimation = UIAnim:New()
+    local NavigatorAnimation = UIAnim.New()
     do
         -- Instant
         --------------------------------
@@ -723,7 +714,7 @@ do
         end)
     end
 
-    local NavigatorAnimation_Hover = UIAnim:New()
+    local NavigatorAnimation_Hover = UIAnim.New()
     do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
@@ -745,9 +736,6 @@ do
             Disabled:Play(frame.Container)
         end)
     end
-
-
-
 
 
     local NavigatorMixin = {}

@@ -5,31 +5,31 @@ local UIKit_Renderer_Positioning = env.WPM:New("wpm_modules/ui-kit/renderer/posi
 -- Position
 --------------------------------
 
-function UIKit_Renderer_Positioning:SetPoint(frame, point, relativePoint)
+function UIKit_Renderer_Positioning.SetPoint(frame, point, relativePoint)
     local _, relativeTo, _, offsetX, offsetY = frame:GetPoint()
     frame:ClearAllPoints()
     frame:SetPoint(point, relativeTo or frame:GetParent() or UIParent, relativePoint or point, offsetX or 0, offsetY or 0)
 end
 
-function UIKit_Renderer_Positioning:SetAnchor(frame, anchorFrame)
+function UIKit_Renderer_Positioning.SetAnchor(frame, anchorFrame)
     local point, _, relativePoint, offsetX, offsetY = frame:GetPoint()
     frame:ClearAllPoints()
     frame:SetPoint(point or "TOPLEFT", anchorFrame, relativePoint or point, offsetX or 0, offsetY or 0)
 end
 
-function UIKit_Renderer_Positioning:SetOffset(frame, x, y)
+function UIKit_Renderer_Positioning.SetOffset(frame, x, y)
     local point, relativeTo, relativePoint = frame:GetPoint()
     frame:ClearAllPoints()
     frame:SetPoint(point or "TOPLEFT", relativeTo or frame:GetParent(), relativePoint or point, x, y)
 end
 
-function UIKit_Renderer_Positioning:SetOffsetX(frame, x)
+function UIKit_Renderer_Positioning.SetOffsetX(frame, x)
     local point, relativeTo, relativePoint, _, offsetY = frame:GetPoint()
     frame:ClearAllPoints()
     frame:SetPoint(point or "TOPLEFT", relativeTo or frame:GetParent(), relativePoint or point, x, offsetY or 0)
 end
 
-function UIKit_Renderer_Positioning:SetOffsetY(frame, y)
+function UIKit_Renderer_Positioning.SetOffsetY(frame, y)
     local point, relativeTo, relativePoint, offsetX = frame:GetPoint()
     frame:ClearAllPoints()
     frame:SetPoint(point or "TOPLEFT", relativeTo or frame:GetParent(), relativePoint or point, offsetX or 0, y)
@@ -39,7 +39,7 @@ end
 -- Sizing
 --------------------------------
 
-function UIKit_Renderer_Positioning:Fill(frame, insets)
+function UIKit_Renderer_Positioning.Fill(frame, insets)
     if frame.uk_fillApplied and frame.uk_lastParent == frame:GetParent() then return end
     frame.uk_fillApplied = true
     frame.uk_lastParent = frame:GetParent()

@@ -49,7 +49,7 @@ UIKit_Renderer_Processor.SizeStatic = processSizeStatic
 --------------------------------
 
 local function processSizeFill(frame)
-    UIKit_Renderer_Positioning:Fill(frame, frame.uk_prop_fill)
+    UIKit_Renderer_Positioning.Fill(frame, frame.uk_prop_fill)
 end
 UIKit_Renderer_Processor.SizeFill = processSizeFill
 
@@ -58,13 +58,13 @@ UIKit_Renderer_Processor.SizeFill = processSizeFill
 --------------------------------
 
 local function processPositionPoint(frame)
-    UIKit_Renderer_Positioning:SetPoint(frame, frame.uk_prop_point, frame.uk_prop_point_relative)
+    UIKit_Renderer_Positioning.SetPoint(frame, frame.uk_prop_point, frame.uk_prop_point_relative)
 end
 UIKit_Renderer_Processor.Point = processPositionPoint
 
 
 local function processPositionAnchor(frame)
-    UIKit_Renderer_Positioning:SetAnchor(frame, frame.uk_prop_anchor)
+    UIKit_Renderer_Positioning.SetAnchor(frame, frame.uk_prop_anchor)
 end
 UIKit_Renderer_Processor.Anchor = processPositionAnchor
 
@@ -75,18 +75,18 @@ local function processPositionOffset(frame)
     local x = frame.uk_prop_x
     if x then
         if x == UIKit_Define.Num then
-            UIKit_Renderer_Positioning:SetOffsetX(frame, x.value)
+            UIKit_Renderer_Positioning.SetOffsetX(frame, x.value)
         elseif x == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning:SetOffsetX(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), x.value, x.operator, x.delta, frame))
+            UIKit_Renderer_Positioning.SetOffsetX(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), x.value, x.operator, x.delta, frame))
         end
     end
 
     local y = frame.uk_prop_y
     if y then
         if y == UIKit_Define.Num then
-            UIKit_Renderer_Positioning:SetOffsetY(frame, y.value)
+            UIKit_Renderer_Positioning.SetOffsetY(frame, y.value)
         elseif y == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning:SetOffsetY(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), y.value, y.operator, y.delta, frame))
+            UIKit_Renderer_Positioning.SetOffsetY(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), y.value, y.operator, y.delta, frame))
         end
     end
 end

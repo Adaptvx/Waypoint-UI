@@ -11,24 +11,23 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameScrollBar                                                                                                                             = env.WPM:New("wpm_modules/uic-game/scroll-bar")
-
+local UICCommonScrollBar                                                                                                                             = env.WPM:New("wpm_modules/uic-common/scroll-bar")
 
 
 -- Shared
 --------------------------------
 
-local PATH                         = Path.Root .. "/wpm_modules/uic-game/resources/"
+local PATH                         = Path.Root .. "/wpm_modules/uic-common/resources/"
 local FILL                         = UIKit.Define.Fill{}
-local ATLAS                        = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameScrollBar.png" }
-local BACKGROUND                   = ATLAS{ inset = 128, scale = .125, left = 0 / 1280, right = 256 / 1280, top = 0 / 512, bottom = 512 / 512 }
-local BACKGROUND_THUMB             = ATLAS{ inset = 128, scale = .0975, left = 256 / 1280, right = 512 / 1280, top = 0 / 512, bottom = 256 / 512 }
-local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 128, scale = .0975, left = 512 / 1280, right = 768 / 1280, top = 0 / 512, bottom = 256 / 512 }
-local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 128, scale = .0975, left = 768 / 1280, right = 1024 / 1280, top = 0 / 512, bottom = 256 / 512 }
-local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 128, scale = .0975, left = 1024 / 1280, right = 1280 / 1280, top = 0 / 512, bottom = 256 / 512 }
+local ATLAS                        = UIKit.Define.Texture_Atlas{ path = PATH .. "scroll-bar.png" }
+local BACKGROUND                   = ATLAS{ inset = 32, scale = 1, left = 0 / 320, right = 64 / 320, top = 0 / 128, bottom = 128 / 128 }
+local BACKGROUND_THUMB             = ATLAS{ inset = 32, scale = 1, left = 64 / 320, right = 128 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 32, scale = 1, left = 128 / 320, right = 192 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 32, scale = 1, left = 192 / 320, right = 256 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 32, scale = 1, left = 256 / 320, right = 320 / 320, top = 0 / 128, bottom = 64 / 128 }
 
+Utils_Texture.PreloadAsset(PATH .. "scroll-bar.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameScrollBar.png")
 
 -- Scroll Bar
 --------------------------------
@@ -45,7 +44,6 @@ function ScrollBarMixin:OnLoad()
 
     self:HookButtonStateChange(self.UpdateAnimation)
     self:HookEnableChange(self.UpdateAnimation)
-    self:HookMouseDown(self.PlayInteractSound)
     self:HookMouseUp(self.PlayInteractSound)
     self:UpdateAnimation()
 end
@@ -70,7 +68,7 @@ function ScrollBarMixin:PlayInteractSound()
 end
 
 
-UICGameScrollBar.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonScrollBar.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         ScrollBar(name, {
             InteractiveRect(name .. ".Hitbox")

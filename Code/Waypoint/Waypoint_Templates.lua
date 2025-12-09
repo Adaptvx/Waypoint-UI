@@ -21,7 +21,6 @@ local FIT         = UIKit.Define.Fit{}
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 
 
-
 -- Pinpoint Arrow
 --------------------------------
 
@@ -29,7 +28,7 @@ local PA_ARROW_BACKGROUND = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 
 local PA_ARROW_SIZE       = UIKit.Define.Num{ value = 15 }
 
 
-local PAAnimation = UIAnim:New()
+local PAAnimation = UIAnim.New()
 local PAAnimation_Arrow1Intro = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
     :duration(.5)
@@ -221,7 +220,6 @@ Waypoint_Templates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...
 end)
 
 
-
 -- Context Icon
 --------------------------------
 
@@ -286,9 +284,7 @@ Waypoint_Templates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
                 :point(UIKit.Enum.Point.Center)
                 :background(TEXTURE_NIL)
                 :frameLevel(3)
-                :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE),
-
-            children
+                :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE)
         })
 
     frame.BackgroundTexture = UIKit.GetElementById("BackgroundTexture", id):GetBackground()

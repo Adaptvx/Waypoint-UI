@@ -1,6 +1,14 @@
 local addonName, env = ...
+
+local CreateFrame = CreateFrame
+local GetTime = GetTime
+
 local CallbackRegistry = env.WPM:Import("wpm_modules/callback-registry")
 local WoWClient_Events = env.WPM:New("wpm_modules/wow-client/events")
+
+
+-- Events
+--------------------------------
 
 do -- UI Scale Changed
     local lastChangedTime = 0

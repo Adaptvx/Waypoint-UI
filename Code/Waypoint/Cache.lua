@@ -7,6 +7,7 @@ local Waypoint_Cache = env.WPM:New("@/Waypoint/Cache")
 
 Waypoint_Cache.navFrame = nil
 
+
 -- Cache
 --------------------------------
 

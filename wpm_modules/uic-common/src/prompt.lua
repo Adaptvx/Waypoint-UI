@@ -15,19 +15,18 @@ local WoWClient                                                                 
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameButton                                                                                                                                = env.WPM:Import("wpm_modules/uic-game/button")
-local UICGamePrompt                                                                                                                                = env.WPM:New("wpm_modules/uic-game/prompt")
-
+local UICCommonButton                                                                                                                                = env.WPM:Import("wpm_modules/uic-common/button")
+local UICCommonPrompt                                                                                                                                = env.WPM:New("wpm_modules/uic-common/prompt")
 
 
 -- Shared
 --------------------------------
 
-local PATH  = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGamePanel.png" }
+local PATH  = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "panel.png" }
 
+Utils_Texture.PreloadAsset(PATH .. "panel.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGamePanel.png")
 
 -- Prompt Button
 --------------------------------
@@ -36,10 +35,9 @@ local BTN_WIDTH  = UIKit.Define.Num{ value = 125 }
 local BTN_HEIGHT = UIKit.Define.Num{ value = 25 }
 
 
-
-UICGamePrompt.Button = UIKit.Prefab(function(id, name, children, ...)
+UICCommonPrompt.Button = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        UICGameButton.RedWithText(name)
+        UICCommonButton.RedWithText(name)
         :size(BTN_WIDTH, BTN_HEIGHT)
 
     return frame
@@ -49,10 +47,10 @@ end)
 -- Prompt
 --------------------------------
 
-local PROMPT_BACKGROUND       = ATLAS{ inset = 64, scale = .375, left = 512 / 1024, top = 512 / 1024, right = 768 / 1024, bottom = 768 / 1024 }
+local PROMPT_BACKGROUND       = ATLAS{ inset = 64, scale = .425, left = 256 / 512, top = 256 / 512, right = 384 / 512, bottom = 384 / 512 }
 local PROMPT_BACKGROUND_COLOR = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .875 }
-local PROMPT_WIDTH            = UIKit.Define.Fit{ delta = 54 }
-local PROMPT_HEIGHT           = UIKit.Define.Fit{ delta = 54 }
+local PROMPT_WIDTH            = UIKit.Define.Fit{ delta = 46 }
+local PROMPT_HEIGHT           = UIKit.Define.Fit{ delta = 46 }
 local PROMPT_CONTENT_SPACING  = UIKit.Define.Num{ value = 9 }
 local PROMPT_CONTENT_SIZE     = UIKit.Define.Fit{}
 local PROMPT_TEXT_SIZE        = UIKit.Define.Fit{}
@@ -61,8 +59,7 @@ local PROMPT_BUTTON_SPACING   = UIKit.Define.Num{ value = 5 }
 local PROMPT_BUTTON_SIZE      = UIKit.Define.Fit{}
 
 
-
-local PromptAnimation = UIAnim:New()
+local PromptAnimation = UIAnim.New()
 
 local IntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
@@ -97,7 +94,6 @@ PromptAnimation:State("OUTRO", function(frame)
     OutroAlpha:Play(frame)
     OutroTranslate:Play(frame)
 end)
-
 
 
 local PromptMixin = {}
@@ -193,7 +189,7 @@ local function handleElementUpdate(element, index, value)
 end
 
 
-UICGamePrompt.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonPrompt.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             LayoutVertical(name .. ".Content", {
@@ -207,7 +203,7 @@ UICGamePrompt.New = UIKit.Prefab(function(id, name, children, ...)
                 LayoutHorizontal(name .. ".Content.ButtonContainer", {
                     List()
                         :id("Content.ButtonContainer.List", id)
-                        :poolPrefab(UICGamePrompt.Button)
+                        :poolPrefab(UICCommonPrompt.Button)
                         :poolOnElementUpdate(handleElementUpdate)
                         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
                 })

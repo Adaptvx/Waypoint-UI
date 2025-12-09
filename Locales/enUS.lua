@@ -52,7 +52,8 @@ L["Config - WaypointSystem - Waypoint"] = "Waypoint"
 L["Config - WaypointSystem - Waypoint - Footer - Type"] = "Additional Info"
 L["Config - WaypointSystem - Waypoint - Footer - Type - Both"] = "All"
 L["Config - WaypointSystem - Waypoint - Footer - Type - Distance"] = "Distance"
-L["Config - WaypointSystem - Waypoint - Footer - Type - ETA"] = "Arrival Time"
+L["Config - WaypointSystem - Waypoint - Footer - Type - ArrivalTime"] = "Arrival Time"
+L["Config - WaypointSystem - Waypoint - Footer - Type - DestinationName"] = "Destination Name"
 L["Config - WaypointSystem - Waypoint - Footer - Type - None"] = "None"
 L["Config - WaypointSystem - Pinpoint"] = "Pinpoint"
 L["Config - WaypointSystem - Pinpoint - Info"] = "Show Destination Info"
@@ -165,6 +166,10 @@ L["Contributors - SyverGiswold - Description"] = "Code - Feature"
 
 -- Extra Feature
 L["Guide Pin Assistant - ReplacePrompt"] = "Do you want to replace your current waypoint with \"%s\"?"
-L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Accept"
+L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Replace"
 L["Guide Pin Assistant - ReplacePrompt - No"] = "Cancel"
 
+-- Supported Add-ons
+L["TomTom - ReplacePrompt"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
+L["TomTom - ReplacePrompt - Yes"] = "Replace"
+L["TomTom - ReplacePrompt - No"] = "Cancel"

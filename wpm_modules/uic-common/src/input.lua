@@ -11,28 +11,27 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameInput                                                                                                                                 = env.WPM:New("wpm_modules/uic-game/input")
-
+local UICCommonInput                                                                                                                                 = env.WPM:New("wpm_modules/uic-common/input")
 
 
 -- Shared
 --------------------------------
 
-local PATH  = Path.Root .. "/wpm_modules/uic-game/resources/"
-local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameInput.png", inset = 128, scale = .125 }
+local PATH  = Path.Root .. "/wpm_modules/uic-common/resources/"
+local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "input.png", inset = 37, scale = .5 }
 local FIT   = UIKit.Define.Fit{}
 local FILL  = UIKit.Define.Fill{}
 
+Utils_Texture.PreloadAsset(PATH .. "input.png")
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameInput.png")
 
 -- Base
 --------------------------------
 
-local BACKGROUND             = ATLAS{ left = 0 / 768, top = 0 / 512, right = 256 / 768, bottom = 256 / 512 }
-local BACKGROUND_HIGHLIGHTED = ATLAS{ left = 256 / 768, top = 0 / 512, right = 512 / 768, bottom = 256 / 512 }
-local BACKGROUND_DISABLED    = ATLAS{ left = 512 / 768, top = 0 / 512, right = 768 / 768, bottom = 256 / 512 }
-local BACKGROUND_CARET       = ATLAS{ left = 0 / 512, top = 256 / 512, right = 256 / 512, bottom = 512 / 512 }
+local BACKGROUND             = ATLAS{ left = 0 / 192, top = 0 / 128, right = 64 / 192, bottom = 64 / 128 }
+local BACKGROUND_HIGHLIGHTED = ATLAS{ left = 64 / 192, top = 0 / 128, right = 128 / 192, bottom = 64 / 128 }
+local BACKGROUND_DISABLED    = ATLAS{ left = 128 / 192, top = 0 / 128, right = 192 / 192, bottom = 64 / 128 }
+local BACKGROUND_CARET       = ATLAS{ left = 0 / 192, top = 64 / 128, right = 64 / 192, bottom = 128 / 128 }
 local TEXT_COLOR             = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
 local CARET_COLOR            = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
 local PLACEHOLDER_COLOR      = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 }
@@ -41,8 +40,7 @@ local INPUT_SIZE             = UIKit.Define.Percentage{ value = 100, operator = 
 local BACKGROUND_SIZE        = UIKit.Define.Fill{ delta = 0 }
 
 
-
-local CaretAnimation = UIAnim:New()
+local CaretAnimation = UIAnim.New()
 
 local Blink = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
@@ -56,7 +54,6 @@ local Blink = UIAnim.Animate()
 CaretAnimation:State("NORMAL", function(frame)
     Blink:Play(frame)
 end)
-
 
 
 local InputMixin = CreateFromMixins(UICSharedMixin.InputMixin)
@@ -74,7 +71,6 @@ function InputMixin:OnLoad()
     self:HookFocusChange(self.UpdateAnimation)
     self:UpdateAnimation()
 end
-
 
 function InputMixin:UpdateAnimation()
     local focused = self:IsFocused()
@@ -107,8 +103,7 @@ function InputMixin:SetPlaceholder(value)
 end
 
 
-
-UICGameInput.New = UIKit.Prefab(function(id, name, children, ...)
+UICCommonInput.New = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             InteractiveRect(name .. ".Hitbox")

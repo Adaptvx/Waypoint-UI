@@ -257,13 +257,18 @@ do
             Events:RegisterEvent(event)
         end
 
+        -- Sync movement state with actual player state
+        if IsPlayerMoving() then
+            moveUpdater:Enable()
+        end
+
         startTimers()
         Waypoint_Director:AwaitDistance()
     end
 
     function Events:Disable()
         Events:UnregisterAllEvents()
-        moveUpdater:Hide()
+        moveUpdater:Disable()
 
         stopTimers()
     end

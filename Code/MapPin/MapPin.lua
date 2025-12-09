@@ -19,12 +19,15 @@ local LazyTimer                           = env.WPM:Import("wpm_modules/lazy-tim
 local MapPin                              = env.WPM:New("@/MapPin")
 
 
+-- Shared
+--------------------------------
 
 local session = {
-    ["name"]  = nil,
-    ["mapID"] = nil,
-    ["x"]     = nil,
-    ["y"]     = nil
+    name  = nil,
+    mapID = nil,
+    x     = nil,
+    y     = nil,
+    flags = nil
 }
 
 
@@ -77,12 +80,13 @@ function MapPin.ClearDestination()
     end
 end
 
-function MapPin.SetUserNavigation(name, mapID, x, y)
+function MapPin.SetUserNavigation(name, mapID, x, y, flags)
     session = {
         name  = name,
         mapID = mapID,
         x     = x,
-        y     = y
+        y     = y,
+        flags = flags
     }
 
     Config.DBLocal:SetVariable("slashWayCache", session)
@@ -96,7 +100,8 @@ function MapPin.GetUserNavigation()
             name  = nil,
             mapID = nil,
             x     = nil,
-            y     = nil
+            y     = nil,
+            flags = nil
         }
 
         Config.DBLocal:SetVariable("slashWayCache", session)
@@ -112,13 +117,13 @@ NewWayTimer:SetAction(function()
     CallbackRegistry:Trigger("MapPin.NewUserNavigation")
 end)
 
-function MapPin.NewUserNavigation(name, mapID, x, y)
+function MapPin.NewUserNavigation(name, mapID, x, y, flags)
     if not CanSetUserWaypointOnMap(mapID) then return end
 
     local pos = CreateVector2D(x / 100, y / 100)
     local mapPoint = UiMapPoint.CreateFromVector2D(mapID, pos)
 
-    MapPin.SetUserNavigation(name, mapID, pos.x, pos.y)
+    MapPin.SetUserNavigation(name, mapID, pos.x, pos.y, flags)
     SetUserWaypoint(mapPoint)
     SetSuperTrackedUserWaypoint(true)
 
@@ -141,6 +146,17 @@ function MapPin.IsUserNavigation()
     local yMatch     = string.format("%.1f", userWaypoint.pos.y * 100) == string.format("%.1f", currentUserNavigationInfo.y * 100)
 
     return (pinTracked and mapIDMatch and xMatch and yMatch)
+end
+
+
+-- Super Track
+--------------------------------
+
+function MapPin.ToggleSuperTrackedPinDisplay(shown)
+    for pin in WorldMapFrame:EnumeratePinsByTemplate("WaypointLocationPinTemplate") do
+        pin:SetAlpha(shown and 1 or 0)
+        pin:EnableMouse(shown)
+    end
 end
 
 

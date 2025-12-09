@@ -13,51 +13,50 @@ local Utils_Texture                                                             
 local Mixin                                                                                                                                        = MixinUtil.Mixin
 local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
 
-local UICGameButton                                                                                                                                = env.WPM:New("wpm_modules/uic-game/button")
+local UICCommonButton                                                                                                                              = env.WPM:New("wpm_modules/uic-common/button")
 
 
 -- Shared
 --------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-game/resources/"
+local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
 local FILL        = UIKit.Define.Fill{}
-local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "UICGameButton.png", inset = 75, scale = .125 }
+local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "button.png", inset = 37, scale = .5 }
 local TEXTURE_NIL = UIKit.Define.Texture_NineSlice{ path = nil, inset = 1, scale = 1 }
 
 
-Utils_Texture.PreloadAsset(PATH .. "UICGameButton.png")
+Utils_Texture.PreloadAsset(PATH .. "button.png")
 
 
 -- Base
 --------------------------------
 
-local CONTENT_SIZE                        = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 19 }
-local CONTENT_SIZE_1x                     = UIKit.Define.Percentage{ value = 100 }
+local CONTENT_SIZE                            = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 19 }
+local CONTENT_SIZE_SQUARE                     = UIKit.Define.Percentage{ value = 100 }
 
-local BASE_BACKGROUND_RED                 = ATLAS{ left = 0 / 2048, top = 0 / 1280, right = 512 / 2048, bottom = 256 / 1280 }
-local BASE_BACKGROUND_RED_HIGHLIGHTED     = ATLAS{ left = 512 / 2048, top = 0 / 1280, right = 1024 / 2048, bottom = 256 / 1280 }
-local BASE_BACKGROUND_RED_PUSHED          = ATLAS{ left = 1024 / 2048, top = 0 / 1280, right = 1536 / 2048, bottom = 256 / 1280 }
-local BASE_BACKGROUND_RED_DISABLED        = ATLAS{ left = 1536 / 2048, top = 0 / 1280, right = 2048 / 2048, bottom = 256 / 1280 }
-local BASE_BACKGROUND_RED_1x              = ATLAS{ left = 0 / 2048, top = 512 / 1280, right = 256 / 2048, bottom = 768 / 1280 }
-local BASE_BACKGROUND_RED_1x_HIGHLIGHED   = ATLAS{ left = 256 / 2048, top = 512 / 1280, right = 512 / 2048, bottom = 768 / 1280 }
-local BASE_BACKGROUND_RED_1x_PUSHED       = ATLAS{ left = 512 / 2048, top = 512 / 1280, right = 768 / 2048, bottom = 768 / 1280 }
-local BASE_BACKGROUND_RED_1x_DISABLED     = ATLAS{ left = 768 / 2048, top = 512 / 1280, right = 1024 / 2048, bottom = 768 / 1280 }
+local BASE_BACKGROUND_RED                     = ATLAS{ left = 0 / 512, top = 0 / 320, right = 128 / 512, bottom = 64 / 320 }
+local BASE_BACKGROUND_RED_HIGHLIGHTED         = ATLAS{ left = 128 / 512, top = 0 / 320, right = 256 / 512, bottom = 64 / 320 }
+local BASE_BACKGROUND_RED_PUSHED              = ATLAS{ left = 256 / 512, top = 0 / 320, right = 384 / 512, bottom = 64 / 320 }
+local BASE_BACKGROUND_RED_DISABLED            = ATLAS{ left = 384 / 512, top = 0 / 320, right = 512 / 512, bottom = 64 / 320 }
+local BASE_BACKGROUND_RED_SQUARE              = ATLAS{ left = 0 / 512, top = 128 / 320, right = 64 / 512, bottom = 192 / 320 }
+local BASE_BACKGROUND_RED_SQUARE_HIGHLIGHED   = ATLAS{ left = 64 / 512, top = 128 / 320, right = 128 / 512, bottom = 192 / 320 }
+local BASE_BACKGROUND_RED_SQUARE_PUSHED       = ATLAS{ left = 128 / 512, top = 128 / 320, right = 192 / 512, bottom = 192 / 320 }
+local BASE_BACKGROUND_RED_SQUARE_DISABLED     = ATLAS{ left = 192 / 512, top = 128 / 320, right = 256 / 512, bottom = 192 / 320 }
 
-local BASE_BACKGROUND_GREY                = ATLAS{ left = 0 / 2048, top = 256 / 1280, right = 512 / 2048, bottom = 512 / 1280 }
-local BASE_BACKGROUND_GREY_HIGHLIGHTED    = ATLAS{ left = 512 / 2048, top = 256 / 1280, right = 1024 / 2048, bottom = 512 / 1280 }
-local BASE_BACKGROUND_GREY_PUSHED         = ATLAS{ left = 1024 / 2048, top = 256 / 1280, right = 1536 / 2048, bottom = 512 / 1280 }
-local BASE_BACKGROUND_GREY_DISABLED       = ATLAS{ left = 1536 / 2048, top = 256 / 1280, right = 2048 / 2048, bottom = 512 / 1280 }
-local BASE_BACKGROUND_GREY_1x             = ATLAS{ left = 0 / 2048, top = 768 / 1280, right = 256 / 2048, bottom = 1024 / 1280 }
-local BASE_BACKGROUND_GREY_1x_HIGHLIGHTED = ATLAS{ left = 256 / 2048, top = 768 / 1280, right = 512 / 2048, bottom = 1024 / 1280 }
-local BASE_BACKGROUND_GREY_1x_PUSHED      = ATLAS{ left = 512 / 2048, top = 768 / 1280, right = 768 / 2048, bottom = 1024 / 1280 }
-local BASE_BACKGROUND_GREY_1x_DISABLED    = ATLAS{ left = 768 / 2048, top = 768 / 1280, right = 1024 / 2048, bottom = 1024 / 1280 }
+local BASE_BACKGROUND_GREY                    = ATLAS{ left = 0 / 512, top = 64 / 320, right = 128 / 512, bottom = 128 / 320 }
+local BASE_BACKGROUND_GREY_HIGHLIGHTED        = ATLAS{ left = 128 / 512, top = 64 / 320, right = 256 / 512, bottom = 128 / 320 }
+local BASE_BACKGROUND_GREY_PUSHED             = ATLAS{ left = 256 / 512, top = 64 / 320, right = 384 / 512, bottom = 128 / 320 }
+local BASE_BACKGROUND_GREY_DISABLED           = ATLAS{ left = 384 / 512, top = 64 / 320, right = 512 / 512, bottom = 128 / 320 }
+local BASE_BACKGROUND_GREY_SQUARE             = ATLAS{ left = 0 / 512, top = 192 / 320, right = 64 / 512, bottom = 256 / 320 }
+local BASE_BACKGROUND_GREY_SQUARE_HIGHLIGHTED = ATLAS{ left = 64 / 512, top = 192 / 320, right = 128 / 512, bottom = 256 / 320 }
+local BASE_BACKGROUND_GREY_SQUARE_PUSHED      = ATLAS{ left = 128 / 512, top = 192 / 320, right = 192 / 512, bottom = 256 / 320 }
+local BASE_BACKGROUND_GREY_SQUARE_DISABLED    = ATLAS{ left = 192 / 512, top = 192 / 320, right = 256 / 512, bottom = 256 / 320 }
 
-local CONTENT_Y                           = 0
-local CONTENT_Y_HIGHLIGHTED               = 0
-local CONTENT_Y_PRESSED                   = -1
-local CONTENT_ALPHA_ENABLED               = 1
-local CONTENT_ALPHA_DISABLED              = .5
-
+local CONTENT_Y                               = 0
+local CONTENT_Y_HIGHLIGHTED                   = 0
+local CONTENT_Y_PRESSED                       = -1
+local CONTENT_ALPHA_ENABLED                   = 1
+local CONTENT_ALPHA_DISABLED                  = .5
 
 
 local ButtonMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
@@ -80,7 +79,7 @@ function ButtonMixin:UpdateAnimation()
 
     if not enabled then
         local texture =
-            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_DISABLED or BASE_BACKGROUND_GREY_1x_DISABLED) or
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_SQUARE_DISABLED or BASE_BACKGROUND_GREY_SQUARE_DISABLED) or
             (self.isRed and BASE_BACKGROUND_RED_DISABLED or BASE_BACKGROUND_GREY_DISABLED)
 
         self.Texture:background(texture)
@@ -88,7 +87,7 @@ function ButtonMixin:UpdateAnimation()
         self.Content:SetPoint("CENTER", self, "CENTER", 0, CONTENT_Y)
     elseif buttonState == "NORMAL" then
         local texture =
-            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x or BASE_BACKGROUND_GREY_1x) or
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_SQUARE or BASE_BACKGROUND_GREY_SQUARE) or
             (self.isRed and BASE_BACKGROUND_RED or BASE_BACKGROUND_GREY)
 
         self.Texture:background(texture)
@@ -96,7 +95,7 @@ function ButtonMixin:UpdateAnimation()
         self.Content:SetPoint("CENTER", self, "CENTER", 0, CONTENT_Y)
     elseif buttonState == "HIGHLIGHTED" then
         local texture =
-            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_HIGHLIGHED or BASE_BACKGROUND_GREY_1x_HIGHLIGHTED) or
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_SQUARE_HIGHLIGHED or BASE_BACKGROUND_GREY_SQUARE_HIGHLIGHTED) or
             (self.isRed and BASE_BACKGROUND_RED_HIGHLIGHTED or BASE_BACKGROUND_GREY_HIGHLIGHTED)
 
         self.Texture:background(texture)
@@ -104,7 +103,7 @@ function ButtonMixin:UpdateAnimation()
         self.Content:SetPoint("CENTER", self, "CENTER", -CONTENT_Y_HIGHLIGHTED, CONTENT_Y_HIGHLIGHTED)
     elseif buttonState == "PUSHED" then
         local texture =
-            self.is1x and (self.isRed and BASE_BACKGROUND_RED_1x_PUSHED or BASE_BACKGROUND_GREY_1x_PUSHED) or
+            self.is1x and (self.isRed and BASE_BACKGROUND_RED_SQUARE_PUSHED or BASE_BACKGROUND_GREY_SQUARE_PUSHED) or
             (self.isRed and BASE_BACKGROUND_RED_PUSHED or BASE_BACKGROUND_GREY_PUSHED)
 
         self.Texture:background(texture)
@@ -120,8 +119,7 @@ function ButtonMixin:PlayInteractSound()
 end
 
 
-
-UICGameButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Content", {
@@ -144,32 +142,7 @@ UICGameButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
     return frame
 end)
 
-UICGameButton.RedBase1x = UIKit.Prefab(function(id, name, children, ...)
-    local frame =
-        Frame(name, {
-            Frame(name .. ".Content", {
-                unpack(children)
-            })
-                :id("Content", id)
-                :point(UIKit.Enum.Point.Center)
-                :size(CONTENT_SIZE_1x, CONTENT_SIZE_1x)
-                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
-        })
-        :background(TEXTURE_NIL)
-        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
-
-    frame.Texture = frame:GetBackground()
-    frame.Content = UIKit.GetElementById("Content", id)
-
-    Mixin(frame, ButtonMixin)
-    frame:OnLoad(true, true)
-
-    return frame
-end)
-
-
-
-UICGameButton.GreyBase = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.GreyBase = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Content", {
@@ -192,7 +165,7 @@ UICGameButton.GreyBase = UIKit.Prefab(function(id, name, children, ...)
     return frame
 end)
 
-UICGameButton.GreyBase1x = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.RedBaseSquare = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
             Frame(name .. ".Content", {
@@ -200,7 +173,30 @@ UICGameButton.GreyBase1x = UIKit.Prefab(function(id, name, children, ...)
             })
                 :id("Content", id)
                 :point(UIKit.Enum.Point.Center)
-                :size(CONTENT_SIZE_1x, CONTENT_SIZE_1x)
+                :size(CONTENT_SIZE_SQUARE, CONTENT_SIZE_SQUARE)
+                :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+        })
+        :background(TEXTURE_NIL)
+        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+
+    frame.Texture = frame:GetBackground()
+    frame.Content = UIKit.GetElementById("Content", id)
+
+    Mixin(frame, ButtonMixin)
+    frame:OnLoad(true, true)
+
+    return frame
+end)
+
+UICCommonButton.GreyBaseSquare = UIKit.Prefab(function(id, name, children, ...)
+    local frame =
+        Frame(name, {
+            Frame(name .. ".Content", {
+                unpack(children)
+            })
+                :id("Content", id)
+                :point(UIKit.Enum.Point.Center)
+                :size(CONTENT_SIZE_SQUARE, CONTENT_SIZE_SQUARE)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
         })
         :background(TEXTURE_NIL)
@@ -223,7 +219,6 @@ local VARIANT_RED_TEXT_COLOR              = UIKit.Define.Color_RGBA{ r = Generic
 local VARIANT_RED_TEXT_COLOR_HIGHLIGHTED  = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
 local VARIANT_GRAY_TEXT_COLOR             = UIKit.Define.Color_RGBA{ r = 216, g = 216, b = 216, a = 1 }
 local VARIANT_GRAY_TEXT_COLOR_HIGHLIGHTED = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
-
 
 
 local ButtonTextMixin = {}
@@ -257,9 +252,10 @@ function ButtonTextMixin:GetText()
     return self.Text:GetText()
 end
 
-UICGameButton.RedWithText = UIKit.Prefab(function(id, name, children, ...)
+
+UICCommonButton.RedWithText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        UICGameButton.RedBase(name, {
+        UICCommonButton.RedBase(name, {
             Text(name .. ".Text")
                 :id("Text", id)
                 :fontObject(UIFont.UIFontObjectNormal12)
@@ -279,9 +275,9 @@ UICGameButton.RedWithText = UIKit.Prefab(function(id, name, children, ...)
     return frame
 end)
 
-UICGameButton.GreyWithText = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.GreyWithText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        UICGameButton.GreyBase(name, {
+        UICCommonButton.GreyBase(name, {
             Text(name .. ".Text")
                 :id("Text", id)
                 :fontObject(UIFont.UIFontObjectNormal12)
@@ -303,13 +299,13 @@ end)
 -- Close
 --------------------------------
 
-local C_TEXTURE = ATLAS{ left = 256 / 2048, top = 1024 / 1280, right = 512 / 2048, bottom = 1280 / 1280 }
+local C_TEXTURE = ATLAS{ left = 64 / 512, top = 256 / 320, right = 128 / 512, bottom = 320 / 320 }
 local C_SIZE = UIKit.Define.Percentage{ value = 62 }
 
 
-UICGameButton.RedClose = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.RedClose = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        UICGameButton.RedBase1x(name, {
+        UICCommonButton.RedBaseSquare(name, {
             Frame(name .. ".Close")
                 :id("Close", id)
                 :point(UIKit.Enum.Point.Center)
@@ -330,7 +326,7 @@ end)
 -- Selection Menu
 --------------------------------
 
-local SM_ARROW_TEXTURE = ATLAS{ left = 0 / 2048, top = 1024 / 1280, right = 256 / 2048, bottom = 1280 / 1280 }
+local SM_ARROW_TEXTURE = ATLAS{ left = 0 / 512, top = 256 / 320, right = 64 / 512, bottom = 320 / 320 }
 local SM_ARROW_SIZE    = UIKit.Define.Num{ value = 12 }
 
 
@@ -341,9 +337,9 @@ function ButtonSelectionMenuMixin:OnLoad()
 end
 
 
-UICGameButton.SelectionMenu = UIKit.Prefab(function(id, name, children, ...)
+UICCommonButton.SelectionMenu = UIKit.Prefab(function(id, name, children, ...)
     local frame =
-        UICGameButton.GreyWithText(name, {
+        UICCommonButton.GreyWithText(name, {
             Frame(name .. ".Arrow")
                 :id("Arrow", id)
                 :point(UIKit.Enum.Point.Right)

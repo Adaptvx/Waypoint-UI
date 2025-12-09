@@ -706,7 +706,7 @@ end
 
 
 --[[
-local BACKGROUND = UIKit.Define.Texture_NineSlice{ path = Path.Root .. "/wpm_modules/uic-game/resources/InputCaret.png", inset = 128, scale = 1 }
+local BACKGROUND = UIKit.Define.Texture_NineSlice{ path = Path.Root .. "/wpm_modules/uic-common/resources/InputCaret.png", inset = 128, scale = 1 }
 
 local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
     local frame =
