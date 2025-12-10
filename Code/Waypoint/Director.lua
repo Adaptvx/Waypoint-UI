@@ -151,8 +151,6 @@ do
     CallbackRegistry:Add("MapPin.NewUserNavigation", onSuperTrackingChange)
 
 
-
-
     -- Distance Await
     --------------------------------
 
@@ -167,12 +165,9 @@ do
     end)
 
     distanceAwait:SetScript("OnUpdate", function(self)
-        if not Waypoint_Director.isActive then return end
+        if not Waypoint_Director.isActive then self:Hide() return end
         if GetTime() - self.timeWhenShown < self.runtimeDelay then return end
-        if GetTime() - self.timeWhenShown > self.timeoutDelay then
-            distanceAwait:Hide()
-            return
-        end
+        if GetTime() - self.timeWhenShown > self.timeoutDelay then self:Hide() return end
 
         -- Check if distance information is available
         local distance = C_Navigation.GetDistance()
@@ -181,7 +176,7 @@ do
         -- Refresh cache information
         onContextChange()
 
-        distanceAwait:Hide()
+        self:Hide()
         CallbackRegistry:Trigger("Waypoint.DistanceReady")
 
     end)

@@ -118,6 +118,7 @@ NewWayTimer:SetAction(function()
 end)
 
 function MapPin.NewUserNavigation(name, mapID, x, y, flags)
+    if not mapID or not x or not y then return end
     if not CanSetUserWaypointOnMap(mapID) then return end
 
     local pos = CreateVector2D(x / 100, y / 100)
@@ -146,6 +147,14 @@ function MapPin.IsUserNavigation()
     local yMatch     = string.format("%.1f", userWaypoint.pos.y * 100) == string.format("%.1f", currentUserNavigationInfo.y * 100)
 
     return (pinTracked and mapIDMatch and xMatch and yMatch)
+end
+
+function MapPin.IsUserNavigationFlagged(flag)
+    local currentUserNavigationInfo = MapPin.GetUserNavigation()
+    if MapPin.IsUserNavigation() and currentUserNavigationInfo and currentUserNavigationInfo.flags == flag then
+        return true
+    end
+    return false
 end
 
 

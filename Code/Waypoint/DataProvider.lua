@@ -119,7 +119,11 @@ do -- Context Icon
         elseif poiInfo and poiInfo.atlasName then
             return Waypoint_Define.ContextIconTexture{ type = "ATLAS", path = poiInfo.atlasName }
         elseif MapPin.IsUserNavigation() then
-            return Waypoint_Define.ContextIconTexture{ type = "TEXTURE", path = PATH_CONTEXT_ICON .. "Navigation.png", requestRecolor = true }
+            if MapPin.IsUserNavigationFlagged("TomTom_Waypoint") then
+                return Waypoint_Define.ContextIconTexture{ type = "TEXTURE", path = PATH_CONTEXT_ICON .. "TomTomArrow.png", requestRecolor = true }
+            else
+                return Waypoint_Define.ContextIconTexture{ type = "TEXTURE", path = PATH_CONTEXT_ICON .. "Navigation.png", requestRecolor = true }
+            end
         elseif pinType == Enum.SuperTrackingType.UserWaypoint then
             return Waypoint_Define.ContextIconTexture{ type = "TEXTURE", path = PATH_CONTEXT_ICON .. "MapPin.png", requestRecolor = true }
         elseif poiType == Enum.SuperTrackingMapPinType.DigSite then

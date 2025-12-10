@@ -1,10 +1,10 @@
-local env            = select(2, ...)
+local env          = select(2, ...)
 
-local type           = type
-local getmetatable   = getmetatable
-local string_gmatch  = string.gmatch
+local type         = type
+local getmetatable = getmetatable
+local gmatch       = string.gmatch
 
-local SlashCommand   = env.WPM:New("wpm_modules/slash-command")
+local SlashCommand = env.WPM:New("wpm_modules/slash-command")
 
 
 -- Shared
@@ -19,7 +19,7 @@ local commandIndexes = {}
 local function parseTokens(message)
     local tokens = {}
     local count = 0
-    for token in string_gmatch(message, "%S+") do
+    for token in gmatch(message, "%S+") do
         count = count + 1
         tokens[count] = token
     end

@@ -11,13 +11,14 @@ local SlashCommand     = env.WPM:Import("wpm_modules/slash-command")
 local Path             = env.WPM:Import("wpm_modules/path")
 local Utils_InlineIcon = env.WPM:Import("wpm_modules/utils/inlineIcon")
 local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
+local Support_TomTom   = env.WPM:Await("@/Support/TomTom")
 
 
 env.NAME           = "Waypoint UI"
 env.ICON           = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT       = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING = "1.2.0"
-env.VERSION_NUMBER = 010200
+env.VERSION_STRING = "1.2.1"
+env.VERSION_NUMBER = 010201
 env.DEBUG_MODE     = false
 
 
@@ -335,7 +336,8 @@ do
         else
             -- Migrate if new version
             SavedVariables.RegisterDatabase(NAME_GLOBAL).defaults(DB_GLOBAL_DEFAULTS).migrationPlan(DB_GLOBAL_MIGRATION)
-            SavedVariables.RegisterDatabase(NAME_GLOBAL_PERSISTENT).defaults(DB_GLOBAL_PERSISTENT_DEFAULTS).migrationPlan(DB_GLOBAL_PERSISTENT_MIGRATION)
+            SavedVariables.RegisterDatabase(NAME_GLOBAL_PERSISTENT).defaults(DB_GLOBAL_PERSISTENT_DEFAULTS)
+                .migrationPlan(DB_GLOBAL_PERSISTENT_MIGRATION)
         end
 
         SavedVariables.RegisterDatabase(NAME_LOCAL).defaults(DB_LOCAL_DEFAULTS)
@@ -353,7 +355,6 @@ end
 
 local SlashCmdRegister = {}
 do -- Slash Command
-
     -- /way
     --------------------------------
 
@@ -363,7 +364,8 @@ do -- Slash Command
     local INLINE_ADDON_ICON    = Utils_InlineIcon.InlineIcon(env.ICON_ALT, 16, 16)
     local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/Subdivider.png", 16, 16)
 
-    local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON .. " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
+    local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON ..
+    " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_2    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "<x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_3    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "reset" .. "|r"
 
@@ -403,11 +405,15 @@ do -- Slash Command
     local tokens = {}
 
     local function handleSlashCmd_Way(inputMessage)
-        if IsAddOnLoaded("TomTom") then return end
+        if IsAddOnLoaded("TomTom") then
+            Support_TomTom.PlaceWaypointAtSession()
+            return
+        end
         if not inputMessage or inputMessage == "" then return throwSlashWayError() end
 
         -- normalize input: separate comma-joined coords and fix decimal separators
-        local normalizedInput = inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern, validDecimalReplacement)
+        local normalizedInput = inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern,
+            validDecimalReplacement)
 
         wipe(tokens)
         for word in normalizedInput:gmatch("%S+") do tokens[#tokens + 1] = word end
