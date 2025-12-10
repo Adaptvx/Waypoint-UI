@@ -124,6 +124,9 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin"] = "Suivi automatique d'u
 L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "Suit automatiquement un repère cartographique lorsqu'il est cliqué d'un lien."
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "Suivi des guides"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Active la navigation pour les repères placés par les gardes PNJs des capitales."
+L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
 
 L["Config - About"] = "À propos"
 L["Config - About - Contributors"] = "Contributeurs"

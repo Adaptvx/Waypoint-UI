@@ -1,5 +1,6 @@
 local env            = select(2, ...)
 local L              = env.L
+local Config         = env.Config
 
 local LazyTimer      = env.WPM:Import("wpm_modules/lazy-timer")
 local MapPin         = env.WPM:Import("@/MapPin")
@@ -38,6 +39,10 @@ local REPLACE_PROMPT_INFO = {
 -- Helpers
 --------------------------------
 
+local function isEnabled()
+    return Config.DBGlobal:GetVariable("TomTomSupportEnabled") == true
+end
+
 function Support_TomTom.PlaceWaypointAtSession()
     MapPin.NewUserNavigation(TomTomWaypointInfo.name, TomTomWaypointInfo.mapID, TomTomWaypointInfo.x, TomTomWaypointInfo.y, "TomTom_Waypoint")
     Support_TomTom.UpdateSuperTrackPinVisibility()
@@ -70,6 +75,8 @@ HandleCrazyArrowTimer:SetAction(function()
 end)
 
 local function OnSetCrazyArrow(_, uid, _, title)
+    if not isEnabled() then return end
+
     lastSetCrazyArrowTime = GetTime()
 
     TomTomWaypointInfo.name = title
@@ -81,6 +88,8 @@ local function OnSetCrazyArrow(_, uid, _, title)
 end
 
 local function OnClearCrazyArrow()
+    if not isEnabled() then return end
+
     if MapPin.IsUserNavigationFlagged("TomTom_Waypoint") then
         MapPin.ClearUserNavigation()
     end

@@ -124,6 +124,9 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin"] = "自動追蹤來自連
 L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "當點擊地圖標記連結時自動追蹤。"
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "追蹤導引標記"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "當守衛NPC放置一個城市導引時，啟用Waypoint UI的導航。"
+L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
 
 L["Config - About"] = "關於"
 L["Config - About - Contributors"] = "貢獻者"

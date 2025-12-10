@@ -10,6 +10,7 @@ local UICCommon = env.WPM:Import("wpm_modules/uic-common")
 
 UICCommon.Prompt("WUISharedPrompt")
     :id("WUISharedPrompt")
+    :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog)
     :parent(UIParent)
     :anchor(StaticPopup1)
     :point(UIKit.Enum.Point.Center)

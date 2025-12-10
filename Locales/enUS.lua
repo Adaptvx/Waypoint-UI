@@ -124,6 +124,9 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin"] = "Auto-Track Pin from L
 L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "Automatically track the pin placed by clicking a map-pin link."
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "Track Guide Pin"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Enable Waypoint UI navigation for city guide pins placed by guard NPCs."
+L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
 
 L["Config - About"] = "About"
 L["Config - About - Contributors"] = "Contributors"

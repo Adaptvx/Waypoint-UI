@@ -17,8 +17,8 @@ local Support_TomTom   = env.WPM:Await("@/Support/TomTom")
 env.NAME           = "Waypoint UI"
 env.ICON           = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT       = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING = "1.2.1"
-env.VERSION_NUMBER = 010201
+env.VERSION_STRING = "1.2.2"
+env.VERSION_NUMBER = 010202
 env.DEBUG_MODE     = false
 
 
@@ -112,7 +112,8 @@ do
 
         AutoTrackPlacedPinEnabled              = true,
         AutoTrackChatLinkPinEnabled            = true,
-        GuidePinAssistantEnabled               = true
+        GuidePinAssistantEnabled               = true,
+        TomTomSupportEnabled                   = false,
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS  = {}
     local DB_LOCAL_DEFAULTS              = {
@@ -365,7 +366,7 @@ do -- Slash Command
     local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/Subdivider.png", 16, 16)
 
     local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON ..
-    " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
+        " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_2    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "<x> <y> <name>" .. "|r"
     local INVALID_WAY_MSG_3    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "reset" .. "|r"
 
@@ -413,7 +414,7 @@ do -- Slash Command
 
         -- normalize input: separate comma-joined coords and fix decimal separators
         local normalizedInput = inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern,
-            validDecimalReplacement)
+                                                                                  validDecimalReplacement)
 
         wipe(tokens)
         for word in normalizedInput:gmatch("%S+") do tokens[#tokens + 1] = word end

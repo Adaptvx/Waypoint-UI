@@ -124,6 +124,9 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin"] = "Автоотслеж�
 L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "Автоматически начинать отслеживание метки при клике на ссылку с координатами в чате."
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "Отслеживание меток городских стражников"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Включить навигацию через интерфейс путевых точек для меток, которые ставят стражники в городах (гиды)."
+L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
 
 L["Config - About"] = "О нас"
 L["Config - About - Contributors"] = "Участники"
