@@ -125,8 +125,8 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "Rastrei
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "Rastrear marcador de guia"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Habilita a navegação do Waypoint UI para marcadores de guia colocados no mapa por NPCs guardas."
 L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
-L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
-L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Rastrear marcadores do TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Habilita o suporte para rastrear marcadores do TomTom com o Waypoint UI. Você pode rastrear marcadores do TomTom clicando com o botão direito em qualquer marcador do Tomtom no mapa mundial, depois clique em 'Set as waypoint arrow' no menu."
 
 L["Config - About"] = "Sobre"
 L["Config - About - Contributors"] = "Contribuidores"
@@ -168,11 +168,11 @@ L["Contributors - SyverGiswold"] = "SyverGiswold"
 L["Contributors - SyverGiswold - Description"] = "Code - Feature"
 
 -- Extra Feature
-L["Guide Pin Assistant - ReplacePrompt"] = "Do you want to replace your current waypoint with \"%s\"?"
-L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Replace"
-L["Guide Pin Assistant - ReplacePrompt - No"] = "Cancel"
+L["Guide Pin Assistant - ReplacePrompt"] = "Deseja substituir seu marcador de mapa atual por \"%s\"?"
+L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Substituir"
+L["Guide Pin Assistant - ReplacePrompt - No"] = "Cancelar"
 
 -- Supported Add-ons
-L["TomTom - ReplacePrompt"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
-L["TomTom - ReplacePrompt - Yes"] = "Replace"
-L["TomTom - ReplacePrompt - No"] = "Cancel"
+L["TomTom - ReplacePrompt"] = "Deseja substituir seu marcador de mapa atual com o marcador do TomTom \"%s\"?"
+L["TomTom - ReplacePrompt - Yes"] = "Substituir"
+L["TomTom - ReplacePrompt - No"] = "Cancelar"
