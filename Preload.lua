@@ -17,8 +17,8 @@ local Support_TomTom   = env.WPM:Await("@/Support/TomTom")
 env.NAME           = "Waypoint UI"
 env.ICON           = Path.Root .. "/Art/Icon/Icon.png"
 env.ICON_ALT       = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING = "1.2.2"
-env.VERSION_NUMBER = 010202
+env.VERSION_STRING = "1.2.3"
+env.VERSION_NUMBER = 010203
 env.DEBUG_MODE     = false
 
 
@@ -113,7 +113,8 @@ do
         AutoTrackPlacedPinEnabled              = true,
         AutoTrackChatLinkPinEnabled            = true,
         GuidePinAssistantEnabled               = true,
-        TomTomSupportEnabled                   = false,
+        TomTomSupportEnabled                   = true,
+        TomTomAutoReplaceWaypoint              = true
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS  = {}
     local DB_LOCAL_DEFAULTS              = {

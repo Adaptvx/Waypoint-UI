@@ -112,11 +112,6 @@ function MapPin.GetUserNavigation()
     return session
 end
 
-local NewWayTimer = LazyTimer.New()
-NewWayTimer:SetAction(function()
-    CallbackRegistry:Trigger("MapPin.NewUserNavigation")
-end)
-
 function MapPin.NewUserNavigation(name, mapID, x, y, flags)
     if not mapID or not x or not y then return end
     if not CanSetUserWaypointOnMap(mapID) then return end
@@ -128,7 +123,7 @@ function MapPin.NewUserNavigation(name, mapID, x, y, flags)
     SetUserWaypoint(mapPoint)
     SetSuperTrackedUserWaypoint(true)
 
-    NewWayTimer:Start(0) -- Delay to make sure the game has tracked the new target
+    CallbackRegistry:Trigger("MapPin.NewUserNavigation")
 
     playUserNavigationAudio()
 end

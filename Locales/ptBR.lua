@@ -127,6 +127,8 @@ L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Habilita a
 L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
 L["Config - ExtraFeature - TomTomSupport - Enable"] = "Rastrear marcadores do TomTom"
 L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Habilita o suporte para rastrear marcadores do TomTom com o Waypoint UI. Você pode rastrear marcadores do TomTom clicando com o botão direito em qualquer marcador do Tomtom no mapa mundial, depois clique em 'Set as waypoint arrow' no menu."
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint"] = "Auto-Replace Waypoint"
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint - Description"] = "Automatically track the TomTom waypoint with Waypoint UI."
 
 L["Config - About"] = "Sobre"
 L["Config - About - Contributors"] = "Contribuidores"
@@ -168,11 +170,11 @@ L["Contributors - SyverGiswold"] = "SyverGiswold"
 L["Contributors - SyverGiswold - Description"] = "Code - Feature"
 
 -- Extra Feature
-L["Guide Pin Assistant - ReplacePrompt"] = "Deseja substituir seu marcador de mapa atual por \"%s\"?"
-L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Substituir"
-L["Guide Pin Assistant - ReplacePrompt - No"] = "Cancelar"
+L["Guide Pin Assistant - ReplacePrompt"] = "Do you want to replace your current waypoint with \"%s\"?"
+L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Replace"
+L["Guide Pin Assistant - ReplacePrompt - No"] = "Cancel"
 
 -- Supported Add-ons
-L["TomTom - ReplacePrompt"] = "Deseja substituir seu marcador de mapa atual com o marcador do TomTom \"%s\"?"
-L["TomTom - ReplacePrompt - Yes"] = "Substituir"
-L["TomTom - ReplacePrompt - No"] = "Cancelar"
+L["TomTom - ReplacePrompt"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
+L["TomTom - ReplacePrompt - Yes"] = "Replace"
+L["TomTom - ReplacePrompt - No"] = "Cancel"

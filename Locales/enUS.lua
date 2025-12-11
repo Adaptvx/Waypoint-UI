@@ -127,6 +127,8 @@ L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Enable Way
 L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
 L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
 L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint"] = "Auto-Replace Waypoint"
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint - Description"] = "Automatically track the TomTom waypoint with Waypoint UI."
 
 L["Config - About"] = "About"
 L["Config - About - Contributors"] = "Contributors"

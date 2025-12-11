@@ -51,7 +51,7 @@ local env            = select(2, ...)
 local Config         = env.Config
 local L              = env.L
 
-local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
+local IsAddOnLoaded  = C_AddOns.IsAddOnLoaded
 
 local Path           = env.WPM:Import("wpm_modules/path")
 local Sound          = env.WPM:Import("wpm_modules/sound")
@@ -775,7 +775,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName = L["Config - ExtraFeature - TomTomSupport"],
                 widgetType = Setting_Enum.WidgetType.Container,
-                showWhen = function() return IsAddOnLoaded("TomTom") end,
+                showWhen   = function() return IsAddOnLoaded("TomTom") end,
 
                 children   = {
                     {
@@ -783,6 +783,14 @@ Setting_Schema.SCHEMA = {
                         widgetDescription = Setting_Define.Descriptor{ description = L["Config - ExtraFeature - TomTomSupport - Enable - Description"] },
                         widgetType        = Setting_Enum.WidgetType.CheckButton,
                         key               = "TomTomSupportEnabled"
+                    },
+                    {
+                        widgetName        = L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint"],
+                        widgetDescription = Setting_Define.Descriptor{ description = L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint - Description"] },
+                        widgetType        = Setting_Enum.WidgetType.CheckButton,
+                        key               = "TomTomAutoReplaceWaypoint",
+                        showWhen          = function() return Config.DBGlobal:GetVariable("TomTomSupportEnabled") == true end,
+                        indent            = 1
                     }
                 }
             }
