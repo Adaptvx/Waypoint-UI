@@ -125,10 +125,10 @@ L["Config - ExtraFeature - Pin - AutoTrackChatLinkPin - Description"] = "Suit au
 L["Config - ExtraFeature - Pin - GuidePinAssistant"] = "Suivi des guides"
 L["Config - ExtraFeature - Pin - GuidePinAssistant - Description"] = "Active la navigation pour les repères placés par les gardes PNJs des capitales."
 L["Config - ExtraFeature - TomTomSupport"] = "TomTom"
-L["Config - ExtraFeature - TomTomSupport - Enable"] = "Track TomTom Waypoints"
-L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Enables support for tracking TomTom waypoints with Waypoint UI. You can track a TomTom waypoint by right-clicking on any TomTom waypoint on the world map, and selecting `Set as waypoint arrow` from the context menu."
-L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint"] = "Auto-Replace Waypoint"
-L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint - Description"] = "Automatically track the TomTom waypoint with Waypoint UI."
+L["Config - ExtraFeature - TomTomSupport - Enable"] = "Suivre les points de passage TomTom"
+L["Config - ExtraFeature - TomTomSupport - Enable - Description"] = "Active le suivi des repères TomTom à travers Waypoint UI. Vous pouvez suivre un repère TomTom en cliquant avec le bouton droit sur n'importe quel repère TomTom sur la carte et en sélectionnant « Set as waypoint arrow » dans le menu contextuel."
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint"] = "Remplacement automatique du point de passage"
+L["Config - ExtraFeature - TomTomSupport - AutoReplaceWaypoint - Description"] = "Suivi automatique des repères TomTom à travers Waypoint UI."
 
 L["Config - About"] = "À propos"
 L["Config - About - Contributors"] = "Contributeurs"
@@ -171,10 +171,10 @@ L["Contributors - SyverGiswold - Description"] = "Code - Feature"
 
 -- Extra Feature
 L["Guide Pin Assistant - ReplacePrompt"] = "Voulez-vous remplacer votre point de passage actuel par « %s » ?"
-L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Oui"
-L["Guide Pin Assistant - ReplacePrompt - No"] = "Non"
+L["Guide Pin Assistant - ReplacePrompt - Yes"] = "Remplacer"
+L["Guide Pin Assistant - ReplacePrompt - No"] = "Annuler"
 
 -- Supported Add-ons
-L["TomTom - ReplacePrompt"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
-L["TomTom - ReplacePrompt - Yes"] = "Replace"
-L["TomTom - ReplacePrompt - No"] = "Cancel"
+L["TomTom - ReplacePrompt"] = "Voulez-vous remplacer votre point de passage actuel par le repère TomTom « %s » ?"
+L["TomTom - ReplacePrompt - Yes"] = "Remplacer"
+L["TomTom - ReplacePrompt - No"] = "Annuler"
