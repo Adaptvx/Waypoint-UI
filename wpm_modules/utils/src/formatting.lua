@@ -2,11 +2,11 @@ local env              = select(2, ...)
 
 local math_floor       = math.floor
 
-local Utils_Formatting = env.WPM:New("wpm_modules/utils/formatting")
+local Utils_Formatting = env.WPM:New("wpm_modules\\utils\\formatting")
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Formatting.FormatMoney(copperTotal)
     local gold   = math_floor(copperTotal / 10000)

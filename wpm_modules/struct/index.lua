@@ -1,36 +1,36 @@
-local env              = select(2, ...)
+local env          = select(2, ...)
 
-local type             = type
-local next             = next
-local rawget           = rawget
-local rawset           = rawset
-local setmetatable     = setmetatable
+local type         = type
+local next         = next
+local rawget       = rawget
+local rawset       = rawset
+local setmetatable = setmetatable
 
-local Struct           = env.WPM:New("wpm_modules/struct")
+local Struct       = env.WPM:New("wpm_modules\\struct")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local cachedMetatables = setmetatable({}, { __mode = "k" })
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function isStruct(value)
+local function IsStruct(value)
     return type(value) == "table" and rawget(value, "isStruct")
 end
 
-local function compareById(structA, structB)
+local function CompareById(structA, structB)
     return structA and structB and structA.id == structB.id
 end
 
-local function getOrCreateInstanceMetatable(definition)
+local function GetOrCreateInstanceMetatable(definition)
     local metatable = cachedMetatables[definition]
     if metatable then return metatable end
 
-    local function indexHandler(instance, key)
+    local function IndexHandler(instance, key)
         local value = rawget(instance, key)
         if value ~= nil then return value end
 
@@ -38,7 +38,7 @@ local function getOrCreateInstanceMetatable(definition)
         if not schema then return nil end
 
         local defaultValue = rawget(schema, key)
-        if isStruct(defaultValue) then
+        if IsStruct(defaultValue) then
             local substruct = defaultValue({})
             rawset(instance, key, substruct)
             return substruct
@@ -47,11 +47,11 @@ local function getOrCreateInstanceMetatable(definition)
         return defaultValue
     end
 
-    local function newindexHandler(instance, key, value)
+    local function NewindexHandler(instance, key, value)
         local schema = rawget(instance, "definition")
         if schema then
             local defaultValue = rawget(schema, key)
-            if isStruct(defaultValue) and type(value) == "table" and not isStruct(value) then
+            if IsStruct(defaultValue) and type(value) == "table" and not IsStruct(value) then
                 local existing = rawget(instance, key)
                 if existing then
                     for subKey, subValue in next, value do
@@ -66,7 +66,7 @@ local function getOrCreateInstanceMetatable(definition)
         rawset(instance, key, value)
     end
 
-    local function callHandler(instance, updates)
+    local function CallHandler(instance, updates)
         if type(updates) ~= "table" then return instance end
 
         local schema = rawget(instance, "definition")
@@ -77,14 +77,14 @@ local function getOrCreateInstanceMetatable(definition)
             definition = schema,
             isStruct   = true
         }
-        setmetatable(clone, getOrCreateInstanceMetatable(schema))
+        setmetatable(clone, GetOrCreateInstanceMetatable(schema))
 
         for key, defaultValue in next, schema do
             if type(defaultValue) ~= "function" and key ~= "isStruct" then
                 local existing = rawget(instance, key)
                 if existing ~= nil then
                     rawset(clone, key, existing)
-                elseif not isStruct(defaultValue) then
+                elseif not IsStruct(defaultValue) then
                     rawset(clone, key, defaultValue)
                 end
             end
@@ -104,33 +104,33 @@ local function getOrCreateInstanceMetatable(definition)
     end
 
     metatable = {
-        __index    = indexHandler,
-        __newindex = newindexHandler,
-        __call     = callHandler,
-        __eq       = compareById
+        __index    = IndexHandler,
+        __newindex = NewindexHandler,
+        __call     = CallHandler,
+        __eq       = CompareById
     }
 
     cachedMetatables[definition] = metatable
     return metatable
 end
 
-local function indexDefinition(structType, key)
+local function IndexDefinition(structType, key)
     return rawget(structType.definition, key)
 end
 
-local function createInstance(structType, initialValues)
-    local schema   = rawget(structType, "definition")
-    local instance = initialValues or {}
+local function CreateInstance(structType, initialValues)
+    local schema        = rawget(structType, "definition")
+    local instance      = initialValues or {}
 
     instance.id         = rawget(structType, "id")
     instance.definition = schema
     instance.isStruct   = true
 
-    setmetatable(instance, getOrCreateInstanceMetatable(schema))
+    setmetatable(instance, GetOrCreateInstanceMetatable(schema))
 
     for key, defaultValue in next, schema do
         if rawget(instance, key) == nil and type(defaultValue) ~= "function" and key ~= "isStruct" then
-            if not isStruct(defaultValue) then
+            if not IsStruct(defaultValue) then
                 instance[key] = defaultValue
             end
         end
@@ -140,14 +140,14 @@ local function createInstance(structType, initialValues)
 end
 
 local definitionMetatable = {
-    __index = indexDefinition,
-    __eq    = compareById,
-    __call  = createInstance
+    __index = IndexDefinition,
+    __eq    = CompareById,
+    __call  = CreateInstance
 }
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local structID = 0
 

@@ -5,12 +5,12 @@ local MPE_DATABASE           = MapPinEnhancedDB
 local CreateFrame            = CreateFrame
 local pairs, ipairs          = pairs, ipairs
 
-local Support                = env.WPM:Import("@/Support")
-local Support_MapPinEnhanced = env.WPM:New("@/Support/MapPinEnhanced")
+local Support                = env.WPM:Import("@\\Support")
+local Support_MapPinEnhanced = env.WPM:New("@\\Support\\MapPinEnhanced")
 
 
 -- Methods
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Support_MapPinEnhanced.SetupEvents()
     MPE_TRACKER_FRAME:HookScript("OnShow", function()
@@ -36,17 +36,17 @@ end
 ]]
 
 -- Setup
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local function OnAddonLoad()
-    local EL = CreateFrame("Frame")
-    EL:RegisterEvent("SUPER_TRACKING_CHANGED")
-    EL:SetScript("OnEvent", function(self, event)
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("SUPER_TRACKING_CHANGED")
+    f:SetScript("OnEvent", function(self, event)
         if event == "SUPER_TRACKING_CHANGED" then
             Support_MapPinEnhanced.GetReferences()
             Support_MapPinEnhanced.SetupEvents()
 
-            EL:Hide()
+            f:Hide()
         end
     end)
 

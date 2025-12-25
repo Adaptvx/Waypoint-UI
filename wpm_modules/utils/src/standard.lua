@@ -2,17 +2,17 @@ local env            = select(2, ...)
 
 local pairs          = pairs
 
-local Utils_Standard = env.WPM:New("wpm_modules/utils/standard")
+local Utils_Standard = env.WPM:New("wpm_modules\\utils\\standard")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local idCounter = 0
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Standard.GetTableLength(tbl)
     local count = 0

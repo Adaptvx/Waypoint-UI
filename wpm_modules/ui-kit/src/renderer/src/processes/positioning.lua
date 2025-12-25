@@ -1,9 +1,9 @@
 local env                        = select(2, ...)
-local UIKit_Renderer_Positioning = env.WPM:New("wpm_modules/ui-kit/renderer/positioning")
+local UIKit_Renderer_Positioning = env.WPM:New("wpm_modules\\ui-kit\\renderer\\positioning")
 
 
 -- Position
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_Renderer_Positioning.SetPoint(frame, point, relativePoint)
     local _, relativeTo, _, offsetX, offsetY = frame:GetPoint()
@@ -37,7 +37,7 @@ end
 
 
 -- Sizing
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_Renderer_Positioning.Fill(frame, insets)
     if frame.uk_fillApplied and frame.uk_lastParent == frame:GetParent() then return end

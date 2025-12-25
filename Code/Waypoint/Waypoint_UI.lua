@@ -1,20 +1,19 @@
 local env                                                                                                                          = select(2, ...)
-local Path                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local UIFont                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
-local MixinUtil                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local UIKit                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Path                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local UIFont                                                                                                                       = env.WPM:Import("wpm_modules\\ui-font")
+local UIKit                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, Grid, LayoutVertical, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.LayoutVertical, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local Waypoint_Templates                                                                                                           = env.WPM:Import("@/Waypoint/Templates")
+local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local Waypoint_Templates                                                                                                           = env.WPM:Import("@\\Waypoint\\Templates")
 local PinpointArrow, ContextIcon                                                                                                   = Waypoint_Templates.PinpointArrow, Waypoint_Templates.ContextIcon
 
-local Mixin                                                                                                                        = MixinUtil.Mixin
+local Mixin                                                                                                                        = Mixin
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH   = Path.Root .. "/Art/Waypoint/"
+local PATH   = Path.Root .. "\\Art\\Waypoint\\"
 local ATLAS  = UIKit.Define.Texture_Atlas{ path = PATH .. "WaypointUITextureAtlas.png" }
 
 local P_FILL = UIKit.Define.Percentage{ value = 100 }
@@ -23,7 +22,7 @@ local FIT    = UIKit.Define.Fit{}
 
 
 -- Parent
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 WUIFrame = Frame("WUIFrame", {
 
@@ -33,7 +32,7 @@ WUIFrame = Frame("WUIFrame", {
 
 
 -- Waypoint
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 do
     local BEAM_BACKGROUND         = ATLAS{ left = 768 / 1792, right = 1280 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
@@ -41,12 +40,12 @@ do
     local BEAM_FX_BACKGROUND      = ATLAS{ left = 1280 / 1792, right = 1792 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
     local BEAM_FX_BACKGROUND_MASK = UIKit.Define.Texture{ path = PATH .. "WaypointBeamFXMask.png" }
     local WAVE_BACKGROUND         = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-    local WAYPOINT_SIZE           = UIKit.Define.Num{ value = 45 }
-    local WAVE_SIZE               = UIKit.Define.Num{ value = 75 }
-    local FOOTER_WIDTH            = UIKit.Define.Num{ value = 100 }
-    local FOOTER_HEIGHT           = UIKit.Define.Num{ value = 37.5 }
-    local FOOTER_TEXT_WIDTH       = UIKit.Define.Num{ value = 100 }
-    local FOOTER_TEXT_HEIGHT      = UIKit.Define.Num{ value = 11 }
+    local WAYPOINT_SIZE           = 45
+    local WAVE_SIZE               = 75
+    local FOOTER_WIDTH            = 100
+    local FOOTER_HEIGHT           = 37.5
+    local FOOTER_TEXT_WIDTH       = 100
+    local FOOTER_TEXT_HEIGHT      = 11
 
 
     Frame("WUIWaypointFrame", {
@@ -69,7 +68,7 @@ do
                 Frame("WUIWaypointFrame.Beam.Mask")
                     :id("WUIWaypointFrame.Beam.Mask")
                     :point(UIKit.Enum.Point.Center, UIKit.Enum.Point.Bottom)
-                    :size(UIKit.Define.Num{ value = 100 }, UIKit.Define.Num{ value = 100 })
+                    :size(100, 100)
                     :maskBackground(BEAM_BACKGROUND_MASK)
                     :frameLevel(2),
 
@@ -84,7 +83,7 @@ do
                 Frame("WUIWaypointFrame.Beam.FX.Mask")
                     :id("WUIWaypointFrame.Beam.FX.Mask")
                     :point(UIKit.Enum.Point.Bottom)
-                    :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 250 })
+                    :size(UIKit.Define.Percentage{ value = 100 }, 250)
                     :maskBackground(BEAM_FX_BACKGROUND_MASK)
                     :frameLevel(2),
 
@@ -99,8 +98,8 @@ do
             })
                 :id("WUIWaypointFrame.Beam")
                 :point(UIKit.Enum.Point.Bottom, UIKit.Enum.Point.Center)
-                :y(UIKit.Define.Num{ value = -25 })
-                :size(UIKit.Define.Num{ value = 50 }, UIKit.Define.Num{ value = 500 })
+                :y(-25)
+                :size(50, 500)
                 :frameLevel(2),
 
             LayoutVertical("WUIWaypointFrame.Footer", {
@@ -115,7 +114,7 @@ do
                     :fontObject(UIFont.UIFontObjectNormal8)
                     :textAlignment("CENTER", "MIDDLE")
                     :size(FOOTER_TEXT_WIDTH, FOOTER_TEXT_HEIGHT)
-                    :alpha(.5),
+                    :alpha(0.5),
 
                 Text("WUIWaypointFrame.Footer.ArrivalTimeText")
                     :id("WUIWaypointFrame.Footer.ArrivalTimeText")
@@ -123,18 +122,18 @@ do
                     :fontObject(UIFont.UIFontObjectNormal8)
                     :textAlignment("CENTER", "MIDDLE")
                     :size(FOOTER_TEXT_WIDTH, FOOTER_TEXT_HEIGHT)
-                    :alpha(.5)
+                    :alpha(0.5)
 
             })
                 :id("WUIWaypointFrame.Footer")
                 :anchor("WUIWaypointFrame.ContextIcon")
                 :point(UIKit.Enum.Point.Top, UIKit.Enum.Point.Bottom)
-                :y(UIKit.Define.Num{ value = 0 })
+                :y(0)
                 :size(FOOTER_WIDTH, FOOTER_HEIGHT)
-                :layoutSpacing(UIKit.Define.Num{ value = 0 })
+                :layoutSpacing(0)
                 :frameLevel(4)
                 :ignoreParentScale(true)
-                :alpha(.5)
+                :alpha(0.5)
                 :_updateMode(UIKit.Enum.UpdateMode.ChildrenVisibilityChanged)
         })
             :id("WUIWaypointFrame.Container")
@@ -169,7 +168,7 @@ do
 
     local WaypointAnimation = UIAnim.New()
     do
-        local function applyDefaultState(frame)
+        local function ApplyDefaultState(frame)
             frame:SetAlpha(1)
             frame.ContextIcon:SetScale(1)
             frame.Beam.Mask:SetScale(50)
@@ -178,33 +177,33 @@ do
         end
 
         -- Instant
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         WaypointAnimation:State("INSTANT", function(frame)
-            applyDefaultState(frame)
+            ApplyDefaultState(frame)
         end)
 
         -- Fade In
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeIn = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :to(1)
 
         WaypointAnimation:State("FADE_IN", function(frame)
             FadeIn:Play(frame)
-            applyDefaultState(frame)
+            ApplyDefaultState(frame)
         end)
 
         -- Fade Out
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeOut = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :to(0)
 
         WaypointAnimation:State("FADE_OUT", function(frame)
@@ -213,7 +212,7 @@ do
         end)
 
         -- Intro
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local IntroFade = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
@@ -224,14 +223,14 @@ do
         local IntroContextIconScale = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Scale)
             :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(.5)
+            :duration(0.5)
             :from(2.25)
             :to(1)
         local IntroBeamMaskScale = UIAnim.Animate()
-            :wait(.175)
+            :wait(0.175)
             :property(UIAnim.Enum.Property.Scale)
             :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(.5)
+            :duration(0.5)
             :from(1)
             :to(50)
 
@@ -247,17 +246,17 @@ do
         end)
 
         -- Outro
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local OutroFade = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.25)
+            :duration(0.25)
             :to(0)
         local OutroBeamMaskScale = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Scale)
             :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(.5)
+            :duration(0.5)
             :to(1)
 
         WaypointAnimation:State("OUTRO", function(frame)
@@ -274,12 +273,12 @@ do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
-            :to(.25)
+            :duration(0.375)
+            :to(0.25)
         local Disabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
+            :duration(0.375)
             :to(1)
 
         WaypointAnimation_Hover:State("ENABLED", function(frame)
@@ -296,9 +295,9 @@ do
         local Intro = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.75)
+            :duration(0.75)
             :loop(UIAnim.Enum.Looping.Reset)
-            :loopDelayEnd(.75)
+            :loopDelayEnd(0.75)
             :from(0)
             :to(1)
         local Scale = UIAnim.Animate()
@@ -306,14 +305,14 @@ do
             :easing(UIAnim.Enum.Easing.CubicInOut)
             :duration(1.5)
             :loop(UIAnim.Enum.Looping.Reset)
-            :from(.1)
+            :from(0.1)
             :to(1.25)
         local Outro = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.75)
+            :duration(0.75)
             :loop(UIAnim.Enum.Looping.Reset)
-            :loopDelayStart(.75)
+            :loopDelayStart(0.75)
             :from(1)
             :to(0)
 
@@ -412,14 +411,14 @@ end
 
 
 -- Pinpoint
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 do
-    local CONTEXT_SIZE                = UIKit.Define.Num{ value = 57 }
-    local FOREGROUND_BACKGROUND       = ATLAS{ inset = 75, scale = .125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
+    local CONTEXT_SIZE                = 57
+    local FOREGROUND_BACKGROUND       = ATLAS{ inset = 75, scale = 0.125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
     local FOREGROUND_SIZE             = UIKit.Define.Fit{ delta = 23 }
     local FOREGROUND_CONTENT          = UIKit.Define.Fit{}
-    local FOREGROUND_CONTENT_MAXWIDTH = UIKit.Define.Num{ value = 325 }
+    local FOREGROUND_CONTENT_MAXWIDTH = 325
 
 
     Frame("WUIPinpointFrame", {
@@ -436,7 +435,7 @@ do
                     :anchor("WUIPinpointFrame.Background.ContextIcon")
                     :point(UIKit.Enum.Point.Top, UIKit.Enum.Point.Bottom)
                     :size(FIT, FIT)
-                    :y(UIKit.Define.Num{ value = 10 })
+                    :y(10)
                     :frameLevel(2)
             })
                 :id("WUIPinpointFrame.Background")
@@ -493,41 +492,41 @@ do
 
     local PinpointAnimation = UIAnim.New()
     do
-        local function applyDefaultState(frame)
+        local function ApplyDefaultState(frame)
             frame.Container:SetAlpha(1)
             frame.Background.Arrow:Play()
         end
 
         -- Instant
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         PinpointAnimation:State("INSTANT", function(frame)
             frame:SetAlpha(1)
-            applyDefaultState(frame)
+            ApplyDefaultState(frame)
         end)
 
         -- Fade In
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeIn = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :from(0)
             :to(1)
 
         PinpointAnimation:State("FADE_IN", function(frame)
             FadeIn:Play(frame)
-            applyDefaultState(frame)
+            ApplyDefaultState(frame)
         end)
 
         -- Fade Out
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeOut = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :to(0)
 
         PinpointAnimation:State("FADE_OUT", function(frame)
@@ -536,12 +535,12 @@ do
         end)
 
         -- Intro
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local Intro = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.5)
+            :duration(0.5)
             :to(1)
 
         local IntroTranslate = UIAnim.Animate()
@@ -558,18 +557,18 @@ do
         end)
 
         -- Outro
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local OUTRO_ALPHA = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.25)
+            :duration(0.25)
             :to(0)
 
         local OUTRO_POS_Y = UIAnim.Animate()
             :property(UIAnim.Enum.Property.PosY)
             :easing(UIAnim.Enum.Easing.ExpoInOut)
-            :duration(.25)
+            :duration(0.25)
             :to(-12.5)
 
         PinpointAnimation:State("OUTRO", function(frame)
@@ -584,13 +583,13 @@ do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
-            :to(.25)
+            :duration(0.375)
+            :to(0.25)
 
         local Disabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
+            :duration(0.375)
             :to(1)
 
         PinpointAnimation_Hover:State("ENABLED", function(frame)
@@ -635,12 +634,12 @@ end
 
 
 -- Navigator
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 do
-    local NAVIGATOR_SIZE   = UIKit.Define.Num{ value = 45 }
+    local NAVIGATOR_SIZE   = 45
     local ARROW_BACKGROUND = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 512 / 2560, bottom = 768 / 2560 }
-    local ARROW_SIZE       = UIKit.Define.Num{ value = 57 }
+    local ARROW_SIZE       = 57
 
 
     Frame("WUINavigatorFrame", {
@@ -682,31 +681,31 @@ do
     local NavigatorAnimation = UIAnim.New()
     do
         -- Instant
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         NavigatorAnimation:State("INSTANT", function(frame)
             frame:SetAlpha(1)
         end)
 
         -- Fade In
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeIn = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :to(1)
 
         NavigatorAnimation:State("FADE_IN", function(frame)
             FadeIn:Play(frame)
         end)
 
-        --------------------------------
+        ----------------------------------------------------------------------------------------------------
 
         local FadeOut = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.Linear)
-            :duration(.175)
+            :duration(0.175)
             :to(0)
 
         NavigatorAnimation:State("FADE_OUT", function(frame)
@@ -719,13 +718,13 @@ do
         local Enabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
-            :to(.25)
+            :duration(0.375)
+            :to(0.25)
 
         local Disabled = UIAnim.Animate()
             :property(UIAnim.Enum.Property.Alpha)
             :easing(UIAnim.Enum.Easing.QuartInOut)
-            :duration(.375)
+            :duration(0.375)
             :to(1)
 
         NavigatorAnimation_Hover:State("ENABLED", function(frame)

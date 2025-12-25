@@ -1,15 +1,14 @@
 local env                            = select(2, ...)
-local MixinUtil                      = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                          = MixinUtil.Mixin
+local Mixin                          = Mixin
 local type                           = type
 
-local UIkit_Primitives_Frame         = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_Utils_Texture = env.WPM:New("wpm_modules/ui-kit/primitives/utils/texture")
+local UIkit_Primitives_Frame         = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_Utils_Texture = env.WPM:New("wpm_modules\\ui-kit\\primitives\\utils\\texture")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local TEXTURE_PORT_METHODS = {
     "SetDesaturated"
@@ -17,12 +16,12 @@ local TEXTURE_PORT_METHODS = {
 
 
 -- Texture
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local TextureMixin = {}
 do
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextureMixin:GetTextureObject()
         return self.__Texture
@@ -34,7 +33,7 @@ do
     end
 
     -- Port
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     for i = 1, #TEXTURE_PORT_METHODS do
         local method = TEXTURE_PORT_METHODS[i]
@@ -45,7 +44,7 @@ do
 
 
     -- Set
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextureMixin:SetMaskFromTexture(texture)
         self.__Texture:SetMask(texture)
@@ -127,7 +126,7 @@ do
     end
 
     -- Color
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextureMixin:SetColor(r, g, b, a)
         local colorR, colorG, colorB, colorA
@@ -162,7 +161,7 @@ do
     end
 
     -- Property
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextureMixin:SetRotation(rotation)
         if self.__Backdrop then

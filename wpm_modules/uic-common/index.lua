@@ -1,20 +1,20 @@
 local env                     = select(2, ...)
-local UICCommonButton         = env.WPM:Import("wpm_modules/uic-common/button")
-local UICCommonCheckButton    = env.WPM:Import("wpm_modules/uic-common/check-button")
-local UICCommonRange          = env.WPM:Import("wpm_modules/uic-common/range")
-local UICCommonScrollBar      = env.WPM:Import("wpm_modules/uic-common/scroll-bar")
-local UICCommonInput          = env.WPM:Import("wpm_modules/uic-common/input")
-local UICCommonSelectionMenu  = env.WPM:Import("wpm_modules/uic-common/selection-menu")
-local UICCommonColorInput     = env.WPM:Import("wpm_modules/uic-common/color-input")
-local UICCommonPrompt         = env.WPM:Import("wpm_modules/uic-common/prompt")
-local UICCommon               = env.WPM:New("wpm_modules/uic-common")
+local UICCommonButton         = env.WPM:Import("wpm_modules\\uic-common\\button")
+local UICCommonCheckButton    = env.WPM:Import("wpm_modules\\uic-common\\check-button")
+local UICCommonRange          = env.WPM:Import("wpm_modules\\uic-common\\range")
+local UICCommonScrollBar      = env.WPM:Import("wpm_modules\\uic-common\\scroll-bar")
+local UICCommonInput          = env.WPM:Import("wpm_modules\\uic-common\\input")
+local UICCommonSelectionMenu  = env.WPM:Import("wpm_modules\\uic-common\\selection-menu")
+local UICCommonColorInput     = env.WPM:Import("wpm_modules\\uic-common\\color-input")
+local UICCommonPrompt         = env.WPM:Import("wpm_modules\\uic-common\\prompt")
+local UICCommon               = env.WPM:New("wpm_modules\\uic-common")
 
 UICCommon.ButtonRed           = UICCommonButton.RedBase
-UICCommon.ButtonGrey          = UICCommonButton.GreyBase
+UICCommon.ButtonGray          = UICCommonButton.GrayBase
 UICCommon.ButtonRedSquare     = UICCommonButton.RedBaseSquare
-UICCommon.ButtonGreySquare    = UICCommonButton.GreyBaseSquare
+UICCommon.ButtonGraySquare    = UICCommonButton.GrayBaseSquare
 UICCommon.ButtonRedWithText   = UICCommonButton.RedWithText
-UICCommon.ButtonGreyWithText  = UICCommonButton.GreyWithText
+UICCommon.ButtonGrayWithText  = UICCommonButton.GrayWithText
 UICCommon.ButtonRedClose      = UICCommonButton.RedClose
 UICCommon.ButtonSelectionMenu = UICCommonButton.SelectionMenu
 UICCommon.CheckButton         = UICCommonCheckButton.New
@@ -27,63 +27,63 @@ UICCommon.ColorInput          = UICCommonColorInput.New
 UICCommon.Prompt              = UICCommonPrompt.New
 
 -- Demo
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 --[[
-    local UIKit = env.WPM:Import("wpm_modules/ui-kit")
+    local UIKit = env.WPM:Import("wpm_modules\\ui-kit")
     local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
 
     LayoutVertical{
         -- Red Button with Text
         UICCommon.ButtonRedWithText()
             :id("RedWithText")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
+            :size(175, 32),
 
-        -- Grey Button with Text
-        UICCommon.ButtonGreyWithText()
-            :id("GreyWithText")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
+        -- Gray Button with Text
+        UICCommon.ButtonGrayWithText()
+            :id("GrayWithText")
+            :size(175, 32),
 
         -- Red Close Button
         UICCommon.ButtonRedClose()
             :id("RedClose")
-            :size(UIKit.Define.Num{ value = 32 }, UIKit.Define.Num{ value = 32 }),
+            :size(32, 32),
 
         -- Selection Menu Button
         UICCommon.ButtonSelectionMenu()
             :id("SelectionMenuButton")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 }),
+            :size(175, 32),
 
         -- CheckButton
         UICCommon.CheckButton()
             :id("CheckButton")
-            :size(UIKit.Define.Num{ value = 22 }, UIKit.Define.Num{ value = 22 }),
+            :size(22, 22),
 
         -- Input
         UICCommon.Input()
             :id("Input")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{ delta = 17 }),
+            :size(175, UIKit.Define.Fit{ delta = 17 }),
 
         -- Range
         UICCommon.Range()
             :id("Range")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 15 }),
+            :size(175, 15),
 
         -- Range With Text
         UICCommon.RangeWithText()
             :id("RangeWithText")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 15 }),
+            :size(175, 15),
 
         -- Color Input
         UICCommon.ColorInput()
             :id("ColorInput")
-            :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Num{ value = 32 })
+            :size(175, 32)
     }
         :point(UIKit.Enum.Point.Center)
         :parent(UIParent)
         :size(UIKit.Define.Percentage{ value = 50 }, UIKit.Define.Percentage{ value = 50 })
         :layoutDirection(UIKit.Enum.Direction.Vertical)
-        :layoutSpacing(UIKit.Define.Num{ value = 5 })
+        :layoutSpacing(5)
         :_Render()
 
 
@@ -92,14 +92,14 @@ UICCommon.Prompt              = UICCommonPrompt.New
 
         }
             :point(UIKit.Enum.Point.Top)
-            :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 100 })
+            :size(UIKit.Define.Percentage{ value = 100 }, 100)
     }
         :id("ScrollView")
         :point(UIKit.Enum.Point.Center)
-        :size(UIKit.Define.Num{ value = 375 }, UIKit.Define.Num{ value = 250 })
+        :size(375, 250)
         :scrollDirection(UIKit.Enum.Direction.Vertical)
         :scrollViewContentWidth(UIKit.Define.Percentage{ value = 100 })
-        :scrollViewContentHeight(UIKit.Define.Num{ value = 575 })
+        :scrollViewContentHeight(575)
         :scrollInterpolation(5)
         :_Render()
 
@@ -107,20 +107,20 @@ UICCommon.Prompt              = UICCommonPrompt.New
         :id("ScrollBar")
         :scrollBarTarget("ScrollView")
         :point(UIKit.Enum.Point.Right)
-        :size(UIKit.Define.Num{ value = 7 }, UIKit.Define.Num{ value = 575 })
+        :size(7, 575)
         :scrollDirection(UIKit.Enum.Direction.Vertical)
         :_Render()
 
 
 
     -- Set Values
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     E_RedWithText = UIKit.GetElementById("RedWithText")
     E_RedWithText:SetText("Button")
 
-    E_GreyWithText = UIKit.GetElementById("GreyWithText")
-    E_GreyWithText:SetText("Button")
+    E_GrayWithText = UIKit.GetElementById("GrayWithText")
+    E_GrayWithText:SetText("Button")
 
     E_RedClose = UIKit.GetElementById("RedClose")
 
@@ -131,11 +131,11 @@ UICCommon.Prompt              = UICCommonPrompt.New
 
     E_Range = UIKit.GetElementById("Range")
     E_Range:GetRange():SetMinMaxValues(0, 1)
-    E_Range:GetRange():SetValue(.5)
+    E_Range:GetRange():SetValue(0.5)
 
     E_RangeWithText = UIKit.GetElementById("RangeWithText")
     E_RangeWithText:GetRange():SetMinMaxValues(0, 1)
-    E_RangeWithText:GetRange():SetValue(.5)
+    E_RangeWithText:GetRange():SetValue(0.5)
     E_RangeWithText:SetText("Range")
 
     E_ColorInput = UIKit.GetElementById("ColorInput")
@@ -149,18 +149,18 @@ UICCommon.Prompt              = UICCommonPrompt.New
 
     -- Create a selection menu
     --      Try: E_SelectionMenu:Open(initialIndex, data, onValueChange, onElementUpdateHandler, point, relativeTo, relativePoint, x, y)
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     E_SelectionMenu = UICCommon.SelectionMenu()
         :parent(UIParent)
         :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog)
-        :size(UIKit.Define.Num{ value = 175 }, UIKit.Define.Fit{ delta = 7 })
+        :size(175, UIKit.Define.Fit{ delta = 7 })
         :_Render()
 
 
 
     -- Dropdown Button to open menu
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local value = 1
 
@@ -177,7 +177,7 @@ UICCommon.Prompt              = UICCommonPrompt.New
 
 
     -- Create a prompt
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     E_Prompt = UICCommon.Prompt()
         :parent(UIParent)

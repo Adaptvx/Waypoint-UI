@@ -1,16 +1,15 @@
 local env                              = select(2, ...)
-local MixinUtil                        = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                            = MixinUtil.Mixin
+local Mixin                            = Mixin
 local tinsert                          = table.insert
 local tremove                          = table.remove
 
-local UIKit_Primitives_Frame           = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_InteractiveRect = env.WPM:New("wpm_modules/ui-kit/primitives/interactive-rect")
+local UIKit_Primitives_Frame           = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_InteractiveRect = env.WPM:New("wpm_modules\\ui-kit\\primitives\\interactive-rect")
 
 
 -- Interactive Rect
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local InteractiveRectMixin = {}
 
@@ -78,27 +77,27 @@ function InteractiveRectMixin:RemoveOnMouseUp(callback)
     if #self.__mouseUpHooks == 0 then self.__mouseUpHooks = nil end
 end
 
-local function processCallback(var)
+local function ProcessCallback(var)
     if not var then return end
     for i = 1, #var do
         var[i]()
     end
 end
 
-local function handleEnter(self)
-    processCallback(self.__enterHooks)
+local function HandleEnter(self)
+    ProcessCallback(self.__enterHooks)
 end
 
-local function handleLeave(self)
-    processCallback(self.__leaveHooks)
+local function HandleLeave(self)
+    ProcessCallback(self.__leaveHooks)
 end
 
-local function handleMouseDown(self)
-    processCallback(self.__mouseDownHooks)
+local function HandleMouseDown(self)
+    ProcessCallback(self.__mouseDownHooks)
 end
 
-local function handleMouseUp(self)
-    processCallback(self.__mouseUpHooks)
+local function HandleMouseUp(self)
+    ProcessCallback(self.__mouseUpHooks)
 end
 
 
@@ -113,12 +112,12 @@ function UIKit_Primitives_InteractiveRect.New(name, parent)
     frame:AwaitSetPropagateMouseMotion(true)
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    frame:SetScript("OnEnter", handleEnter)
-    frame:SetScript("OnLeave", handleLeave)
-    frame:SetScript("OnMouseDown", handleMouseDown)
-    frame:SetScript("OnMouseUp", handleMouseUp)
+    frame:SetScript("OnEnter", HandleEnter)
+    frame:SetScript("OnLeave", HandleLeave)
+    frame:SetScript("OnMouseDown", HandleMouseDown)
+    frame:SetScript("OnMouseUp", HandleMouseUp)
 
 
     return frame

@@ -1,27 +1,26 @@
 local env                           = select(2, ...)
-local MixinUtil                     = env.WPM:Import("wpm_modules/mixin-util")
 
 local math_min                      = math.min
 local math_max                      = math.max
-local Mixin                         = MixinUtil.Mixin
+local Mixin                         = Mixin
 
-local UIKit_Primitives_LinearSlider = env.WPM:Import("wpm_modules/ui-kit/primitives/linear-slider")
-local UIKit_Primitives_ScrollBar    = env.WPM:New("wpm_modules/ui-kit/primitives/scroll-bar")
+local UIKit_Primitives_LinearSlider = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\linear-slider")
+local UIKit_Primitives_ScrollBar    = env.WPM:New("wpm_modules\\ui-kit\\primitives\\scroll-bar")
 
 
 -- Scroll Bar
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ScrollBarMixin = {}
 do
     -- Update
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function clamp(value)
+    local function Clamp(value)
         return math_max(0, math_min(1, value))
     end
 
-    local function getCursorScale(frame)
+    local function GetCursorScale(frame)
         local scale = frame:GetEffectiveScale() or 1
         return scale ~= 0 and (1 / scale) or 1
     end
@@ -84,7 +83,7 @@ do
         end
 
         local scrollableRange = contentSize - frameSize
-        local offset = (scrollableRange > 0) and clamp(scrollPosition / scrollableRange) or 0
+        local offset = (scrollableRange > 0) and Clamp(scrollPosition / scrollableRange) or 0
 
         self:SetValue(offset)
         self:SetThumbSize()
@@ -107,7 +106,7 @@ do
 
 
     -- Handler
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollBarMixin.OnTrackMouseDown(self, button)
         if self.__thumbDragTravel then
@@ -125,7 +124,7 @@ do
         if not trackLeft or not trackBottom then return end
 
         local cursorX, cursorY = GetCursorPosition()
-        local cursorScale = getCursorScale(self)
+        local cursorScale = GetCursorScale(self)
         local relativePosition
 
         if isVertical then
@@ -134,13 +133,13 @@ do
             relativePosition = ((cursorX * cursorScale) - trackLeft) / trackSize
         end
 
-        self:SetValue(clamp(relativePosition))
+        self:SetValue(Clamp(relativePosition))
         self:SetTargetScroll()
     end
 
 
     -- Get
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollBarMixin:GetVertical()
         return self.__isVertical
@@ -152,7 +151,7 @@ do
 
 
     -- Set
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollBarMixin:SetVertical(value)
         self:SetOrientation(value and "VERTICAL" or "HORIZONTAL")
@@ -179,9 +178,9 @@ do
 
 
     -- Thumb Drag
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function onThumbDragUpdate(self)
+    local function OnThumbDragUpdate(self)
         local dragTravel = self.__thumbDragTravel
         if not dragTravel then return end
 
@@ -198,7 +197,7 @@ do
     end
 
     function ScrollBarMixin:UpdateThumbDrag()
-        if self:IsEnabled() then onThumbDragUpdate(self) end
+        if self:IsEnabled() then OnThumbDragUpdate(self) end
     end
 
     function ScrollBarMixin:OnThumbMouseDown(button)
@@ -216,7 +215,7 @@ do
         local thumbTravel = trackSize - thumbSize
         if thumbTravel <= 0 then return end
 
-        local cursorScale = getCursorScale(self)
+        local cursorScale = GetCursorScale(self)
         local cursorX, cursorY = GetCursorPosition()
 
         self.__thumbDragMin = minValue
@@ -228,7 +227,7 @@ do
         self.__thumbDragValueOrigin = self:GetValue()
         self.__thumbDragDirection = isVertical and -1 or 1
 
-        self:SetScript("OnUpdate", onThumbDragUpdate)
+        self:SetScript("OnUpdate", OnThumbDragUpdate)
         self:UpdateThumbDrag()
     end
 
@@ -252,14 +251,14 @@ function UIKit_Primitives_ScrollBar.New(name, parent)
 
 
     -- Initialize
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     scrollBar.__isVertical = true
     scrollBar.__target = nil
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     scrollBar:HookEvent("OnTrackMouseDown", scrollBar.OnTrackMouseDown)
     scrollBar:HookEvent("OnThumbMouseDown", scrollBar.OnThumbMouseDown)

@@ -53,24 +53,24 @@ local L              = env.L
 
 local IsAddOnLoaded  = C_AddOns.IsAddOnLoaded
 
-local Path           = env.WPM:Import("wpm_modules/path")
-local Sound          = env.WPM:Import("wpm_modules/sound")
-local UIFont         = env.WPM:Import("wpm_modules/ui-font")
-local LocalUtil      = env.WPM:Import("@/LocalUtil")
-local Waypoint_Enum  = env.WPM:Import("@/Waypoint/Enum")
-local Setting_Define = env.WPM:Import("@/Setting/Define")
-local Setting_Enum   = env.WPM:Import("@/Setting/Enum")
-local Setting_Shared = env.WPM:Import("@/Setting/Shared")
-local Setting_Schema = env.WPM:New("@/Setting/Schema")
+local Path           = env.WPM:Import("wpm_modules\\path")
+local Sound          = env.WPM:Import("wpm_modules\\sound")
+local UIFont         = env.WPM:Import("wpm_modules\\ui-font")
+local LocalUtil      = env.WPM:Import("@\\LocalUtil")
+local Waypoint_Enum  = env.WPM:Import("@\\Waypoint\\Enum")
+local Setting_Define = env.WPM:Import("@\\Setting\\Define")
+local Setting_Enum   = env.WPM:Import("@\\Setting\\Enum")
+local Setting_Shared = env.WPM:Import("@\\Setting\\Shared")
+local Setting_Schema = env.WPM:New("@\\Setting\\Schema")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local SETTING_PROMPT = _G[Setting_Shared.FRAME_NAME].Prompt
 
 
-local function handleAccept()
+local function HandleAccept()
     Config.DBGlobal:Wipe()
     ReloadUI()
 end
@@ -80,7 +80,7 @@ local RESET_SETTING_PROMPT_INFO = {
     options      = {
         {
             text     = L["Config - General - Other - ResetPrompt - Yes"],
-            callback = handleAccept
+            callback = HandleAccept
         },
         {
             text     = L["Config - General - Other - ResetPrompt - No"],
@@ -93,14 +93,14 @@ local RESET_SETTING_PROMPT_INFO = {
 
 
 -- Schema
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function alwaysTrue() return true end
-local function alwaysFalse() return false end
-local function calculateDistance(yds) return function() return LocalUtil:CalculateDistance(yds) end end
-local function formatDistance(value) return LocalUtil:FormatDistance(value) end
-local function formatPercentage(value) return string.format("%.0f", value * 100) .. "%" end
-local function getIcon(name) return Path.Root .. "/Art/Setting/Icon/" .. name .. ".png" end
+local function AlwaysTrue() return true end
+local function AlwaysFalse() return false end
+local function CalculateDistance(yds) return function() return LocalUtil:CalculateDistance(yds) end end
+local function FormatDistance(value) return LocalUtil:FormatDistance(value) end
+local function FormatPercentage(value) return string.format("%0.0f", value * 100) .. "%" end
+local function GetIcon(name) return Path.Root .. "\\Art\\Setting\\Icon\\" .. name .. ".png" end
 
 
 Setting_Schema.SCHEMA = {
@@ -111,7 +111,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName       = L["Config - General - Title"],
                 widgetType       = Setting_Enum.WidgetType.Title,
-                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = getIcon("Cog"), text = L["Config - General - Title"], subtext = L["Config - General - Title - Subtext"] }
+                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = GetIcon("Cog"), text = L["Config - General - Title"], subtext = L["Config - General - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - General - Preferences"],
@@ -155,7 +155,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName       = L["Config - WaypointSystem - Title"],
                 widgetType       = Setting_Enum.WidgetType.Title,
-                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = getIcon("Waypoint"), text = L["Config - WaypointSystem - Title"], subtext = L["Config - WaypointSystem - Title - Subtext"] }
+                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = GetIcon("Waypoint"), text = L["Config - WaypointSystem - Title"], subtext = L["Config - WaypointSystem - Title - Subtext"] }
             },
             {
 
@@ -194,10 +194,10 @@ Setting_Schema.SCHEMA = {
                         widgetName                     = L["Config - WaypointSystem - General - Transition Distance"],
                         widgetDescription              = Setting_Define.Descriptor{ description = L["Config - WaypointSystem - General - Transition Distance - Description"] },
                         widgetType                     = Setting_Enum.WidgetType.Range,
-                        widgetRange_min                = calculateDistance(50),
-                        widgetRange_max                = calculateDistance(500),
-                        widgetRange_step               = calculateDistance(5),
-                        widgetRange_textFormattingFunc = formatDistance,
+                        widgetRange_min                = CalculateDistance(50),
+                        widgetRange_max                = CalculateDistance(500),
+                        widgetRange_step               = CalculateDistance(5),
+                        widgetRange_textFormattingFunc = FormatDistance,
                         key                            = "DistanceThresholdPinpoint",
                         showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointSystemType") == Waypoint_Enum.WaypointSystemType.All end
                     },
@@ -205,10 +205,10 @@ Setting_Schema.SCHEMA = {
                         widgetName                     = L["Config - WaypointSystem - General - Hide Distance"],
                         widgetDescription              = Setting_Define.Descriptor{ description = L["Config - WaypointSystem - General - Hide Distance - Description"] },
                         widgetType                     = Setting_Enum.WidgetType.Range,
-                        widgetRange_min                = calculateDistance(1),
-                        widgetRange_max                = calculateDistance(100),
+                        widgetRange_min                = CalculateDistance(1),
+                        widgetRange_max                = CalculateDistance(100),
                         widgetRange_step               = 1,
-                        widgetRange_textFormattingFunc = formatDistance,
+                        widgetRange_textFormattingFunc = FormatDistance,
                         key                            = "DistanceThresholdHidden"
                     }
                 }
@@ -280,7 +280,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName       = L["Config - Appearance - Title"],
                 widgetType       = Setting_Enum.WidgetType.Title,
-                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = getIcon("Brush"), text = L["Config - Appearance - Title"], subtext = L["Config - Appearance - Title - Subtext"] }
+                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = GetIcon("Brush"), text = L["Config - Appearance - Title"], subtext = L["Config - Appearance - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - Appearance - Waypoint"],
@@ -291,20 +291,20 @@ Setting_Schema.SCHEMA = {
                         widgetName                     = L["Config - Appearance - Waypoint - Scale"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
                         widgetDescription              = Setting_Define.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Description"] },
-                        widgetRange_min                = .5,
+                        widgetRange_min                = 0.5,
                         widgetRange_max                = 5,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointScale"
                     },
                     {
                         widgetName                     = L["Config - Appearance - Waypoint - Scale - Min"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
                         widgetDescription              = Setting_Define.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Min - Description"] },
-                        widgetRange_min                = .125,
+                        widgetRange_min                = 0.125,
                         widgetRange_max                = 1,
-                        widgetRange_step               = .125,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.125,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointScaleMin",
                         indent                         = 1
                     },
@@ -314,8 +314,8 @@ Setting_Schema.SCHEMA = {
                         widgetDescription              = Setting_Define.Descriptor{ description = L["Config - Appearance - Waypoint - Scale - Max - Description"] },
                         widgetRange_min                = 1,
                         widgetRange_max                = 2,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointScaleMax",
                         indent                         = 1
                     },
@@ -332,10 +332,10 @@ Setting_Schema.SCHEMA = {
                                 true
                         end,
                         indent                         = 1,
-                        widgetRange_min                = .1,
+                        widgetRange_min                = 0.1,
                         widgetRange_max                = 1,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointBeamAlpha"
                     },
                     {
@@ -349,10 +349,10 @@ Setting_Schema.SCHEMA = {
                         widgetType                     = Setting_Enum.WidgetType.Range,
                         showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true and Config.DBGlobal:GetVariable("waypointwaypointDistanceTextType") ~= Waypoint_Enum.WaypointDistanceTextType.None end,
                         indent                         = 1,
-                        widgetRange_min                = .1,
+                        widgetRange_min                = 0.1,
                         widgetRange_max                = 2,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointDistanceTextScale"
                     },
                     {
@@ -362,8 +362,8 @@ Setting_Schema.SCHEMA = {
                         indent                         = 1,
                         widgetRange_min                = 0,
                         widgetRange_max                = 1,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "WaypointDistanceTextAlpha"
                     }
                 }
@@ -376,10 +376,10 @@ Setting_Schema.SCHEMA = {
                     {
                         widgetName                     = L["Config - Appearance - Pinpoint - Scale"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
-                        widgetRange_min                = .5,
+                        widgetRange_min                = 0.5,
                         widgetRange_max                = 2,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "PinpointScale",
                         indent                         = 0
                     }
@@ -394,28 +394,28 @@ Setting_Schema.SCHEMA = {
                         widgetName                     = L["Config - Appearance - Navigator - Scale"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
                         indent                         = 0,
-                        widgetRange_min                = .5,
+                        widgetRange_min                = 0.5,
                         widgetRange_max                = 2,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "NavigatorScale"
                     },
                     {
                         widgetName                     = L["Config - Appearance - Navigator - Alpha"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
-                        widgetRange_min                = .1,
+                        widgetRange_min                = 0.1,
                         widgetRange_max                = 1,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "NavigatorAlpha"
                     },
                     {
                         widgetName                     = L["Config - Appearance - Navigator - Distance"],
                         widgetType                     = Setting_Enum.WidgetType.Range,
-                        widgetRange_min                = .1,
+                        widgetRange_min                = 0.1,
                         widgetRange_max                = 3,
-                        widgetRange_step               = .1,
-                        widgetRange_textFormattingFunc = formatPercentage,
+                        widgetRange_step               = 0.1,
+                        widgetRange_textFormattingFunc = FormatPercentage,
                         key                            = "NavigatorDistance"
                     },
                     {
@@ -589,7 +589,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName       = L["Config - Audio - Title"],
                 widgetType       = Setting_Enum.WidgetType.Title,
-                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = getIcon("SpeakerOn"), text = L["Config - Audio - Title"], subtext = L["Config - Audio - Title - Subtext"] }
+                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = GetIcon("SpeakerOn"), text = L["Config - Audio - Title"], subtext = L["Config - Audio - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - Audio - General"],
@@ -743,7 +743,7 @@ Setting_Schema.SCHEMA = {
             {
                 widgetName       = L["Config - ExtraFeature - Title"],
                 widgetType       = Setting_Enum.WidgetType.Title,
-                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = getIcon("List"), text = L["Config - ExtraFeature - Title"], subtext = L["Config - ExtraFeature - Title - Subtext"] }
+                widgetTitle_info = Setting_Define.TitleInfo{ imagePath = GetIcon("List"), text = L["Config - ExtraFeature - Title"], subtext = L["Config - ExtraFeature - Title - Subtext"] }
             },
             {
                 widgetName = L["Config - ExtraFeature - Pin"],

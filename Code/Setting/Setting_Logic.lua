@@ -3,29 +3,29 @@ local env                 = select(2, ...)
 local SettingsCanvas      = SettingsPanel.Container.SettingsCanvas
 local IsAddonLoaded       = C_AddOns.IsAddOnLoaded
 
-local CallbackRegistry    = env.WPM:Import("wpm_modules/callback-registry")
-local SavedVariables      = env.WPM:Import("wpm_modules/saved-variables")
-local Setting_Shared      = env.WPM:Import("@/Setting/Shared")
-local Setting_Constructor = env.WPM:Await("@/Setting/Constructor")
-local Setting_Schema      = env.WPM:Await("@/Setting/Schema")
-local Setting_Logic       = env.WPM:New("@/Setting/Logic")
+local CallbackRegistry    = env.WPM:Import("wpm_modules\\callback-registry")
+local SavedVariables      = env.WPM:Import("wpm_modules\\saved-variables")
+local Setting_Shared      = env.WPM:Import("@\\Setting\\Shared")
+local Setting_Constructor = env.WPM:Await("@\\Setting\\Constructor")
+local Setting_Schema      = env.WPM:Await("@\\Setting\\Schema")
+local Setting_Logic       = env.WPM:New("@\\Setting\\Logic")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local isElvUILoaded = false
 local SettingFrame = _G[Setting_Shared.FRAME_NAME]
 
 
 -- Tab
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local selectedTabIndex = nil
 local categoryId = nil
 
 
-local function getSelectedTabFrame()
+local function GetSelectedTabFrame()
     if not selectedTabIndex then return end
     return Setting_Constructor.Tabs[selectedTabIndex]
 end
@@ -58,7 +58,7 @@ end
 
 
 -- Setup
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local SettingFrameAnchor = CreateFrame("Frame", nil, UIParent)
 local SettingFrameInset = 8
@@ -69,7 +69,7 @@ function Setting_Logic.OpenSettingUI()
     Settings.OpenToCategory(categoryId)
 end
 
-local function setupSettingUI()
+local function SetupSettingUI()
     Setting_Constructor:SetBuildTargetFrame(SettingFrame.Content.Container)
     Setting_Constructor:Build(Setting_Schema.SCHEMA)
 
@@ -102,7 +102,7 @@ local function OnShow(self)
 
 
     if not isSetup then
-        setupSettingUI()
+        SetupSettingUI()
         isSetup = true
     end
 end
@@ -119,7 +119,7 @@ local function RenderUI()
             Setting_Constructor.Tabs[i].hasRendered = false
         end
 
-        local currentTab = getSelectedTabFrame()
+        local currentTab = GetSelectedTabFrame()
         if currentTab then
             currentTab.hasRendered = true
             currentTab:_Render()
@@ -130,7 +130,7 @@ end
 SettingFrameAnchor:HookScript("OnShow", OnShow)
 SettingFrameAnchor:HookScript("OnHide", OnHide)
 SettingFrameAnchor:SetScript("OnEvent", RenderUI)
-CallbackRegistry:Add("WoWClient.OnUIScaleChanged", RenderUI)
+CallbackRegistry.Add("WoWClient.OnUIScaleChanged", RenderUI)
 SavedVariables.OnChange(Setting_Shared.DB_GLOBAL_NAME, "PrefFont", RenderUI, 10)
 
 
@@ -146,4 +146,4 @@ local function OnAddonLoaded()
 
     categoryId = category:GetID()
 end
-CallbackRegistry:Add("Preload.AddonReady", OnAddonLoaded)
+CallbackRegistry.Add("Preload.AddonReady", OnAddonLoaded)

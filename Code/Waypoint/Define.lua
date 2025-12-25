@@ -1,6 +1,6 @@
 local env             = select(2, ...)
-local Struct          = env.WPM:Import("wpm_modules/struct").New
-local Waypoint_Define = env.WPM:New("@/Waypoint/Define")
+local Struct          = env.WPM:Import("wpm_modules\\struct").New
+local Waypoint_Define = env.WPM:New("@\\Waypoint\\Define")
 
 
 Waypoint_Define.ContextIconTexture = Struct{

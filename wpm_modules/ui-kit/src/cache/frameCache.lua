@@ -1,21 +1,21 @@
 local env              = select(2, ...)
-local Utils_LazyTable  = env.WPM:Import("wpm_modules/utils/lazy-table")
+local Utils_LazyTable  = env.WPM:Import("wpm_modules\\utils\\lazy-table")
 
 local LazyTable_Length = Utils_LazyTable.Length
 local LazyTable_Get    = Utils_LazyTable.Get
 
-local UIKit_FrameCache = env.WPM:New("wpm_modules/ui-kit/frame-cache")
+local UIKit_FrameCache = env.WPM:New("wpm_modules\\ui-kit\\frame-cache")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local cache = {}
 local cacheVersion = 0
 
 
 -- Cache
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_FrameCache.Add(id, frame)
     cache[id] = frame

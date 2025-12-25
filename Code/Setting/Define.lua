@@ -1,6 +1,6 @@
 local env                = select(2, ...)
-local Struct             = env.WPM:Import("wpm_modules/struct").New
-local Setting_Define      = env.WPM:New("@/Setting/Define")
+local Struct             = env.WPM:Import("wpm_modules\\struct").New
+local Setting_Define      = env.WPM:New("@\\Setting\\Define")
 
 Setting_Define.TitleInfo  = Struct{
     imagePath = nil,

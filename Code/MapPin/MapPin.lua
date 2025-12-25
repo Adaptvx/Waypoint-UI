@@ -13,14 +13,14 @@ local CreateFrame                         = CreateFrame
 local hooksecurefunc                      = hooksecurefunc
 local tostring                            = tostring
 
-local Sound                               = env.WPM:Import("wpm_modules/sound")
-local CallbackRegistry                    = env.WPM:Import("wpm_modules/callback-registry")
-local LazyTimer                           = env.WPM:Import("wpm_modules/lazy-timer")
-local MapPin                              = env.WPM:New("@/MapPin")
+local Sound                               = env.WPM:Import("wpm_modules\\sound")
+local CallbackRegistry                    = env.WPM:Import("wpm_modules\\callback-registry")
+local LazyTimer                           = env.WPM:Import("wpm_modules\\lazy-timer")
+local MapPin                              = env.WPM:New("@\\MapPin")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local session = {
     name  = nil,
@@ -32,9 +32,9 @@ local session = {
 
 
 -- Helper
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function getUserWaypointPosition()
+local function GetUserWaypointPosition()
     local userWaypoint = C_Map.GetUserWaypoint()
     if not userWaypoint then return nil end
 
@@ -46,9 +46,9 @@ end
 
 
 -- Audio
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function playUserNavigationAudio()
+local function PlayUserNavigationAudio()
     local Setting_CustomAudio = Config.DBGlobal:GetVariable("AudioCustom")
     local soundID = env.Enum.Sound.NewUserNavigation
 
@@ -63,7 +63,7 @@ end
 
 
 -- User Navigation (/way)
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function MapPin.ClearUserNavigation()
     if MapPin.IsUserNavigation() then ClearUserWaypoint() end
@@ -116,30 +116,30 @@ function MapPin.NewUserNavigation(name, mapID, x, y, flags)
     if not mapID or not x or not y then return end
     if not CanSetUserWaypointOnMap(mapID) then return end
 
-    local pos = CreateVector2D(x / 100, y / 100)
+    local pos = CreateVector2D(math.min(x, 100) / 100, math.min(y, 100) / 100)
     local mapPoint = UiMapPoint.CreateFromVector2D(mapID, pos)
 
     MapPin.SetUserNavigation(name, mapID, pos.x, pos.y, flags)
     SetUserWaypoint(mapPoint)
     SetSuperTrackedUserWaypoint(true)
 
-    CallbackRegistry:Trigger("MapPin.NewUserNavigation")
+    CallbackRegistry.Trigger("MapPin.NewUserNavigation")
 
-    playUserNavigationAudio()
+    PlayUserNavigationAudio()
 end
 
 function MapPin.IsUserNavigation()
     if not HasUserWaypoint() then return false end
 
     local pinTracked                = GetHighestPrioritySuperTrackingType() == Enum.SuperTrackingType.UserWaypoint
-    local userWaypoint              = getUserWaypointPosition()
+    local userWaypoint              = GetUserWaypointPosition()
     local currentUserNavigationInfo = MapPin.GetUserNavigation()
 
     if not userWaypoint or not currentUserNavigationInfo or not currentUserNavigationInfo.mapID or not currentUserNavigationInfo.x or not currentUserNavigationInfo.y then return false end
 
     local mapIDMatch = tostring(userWaypoint.mapID) == tostring(currentUserNavigationInfo.mapID)
-    local xMatch     = string.format("%.1f", userWaypoint.pos.x * 100) == string.format("%.1f", currentUserNavigationInfo.x * 100)
-    local yMatch     = string.format("%.1f", userWaypoint.pos.y * 100) == string.format("%.1f", currentUserNavigationInfo.y * 100)
+    local xMatch     = string.format("%0.1f", userWaypoint.pos.x * 100) == string.format("%0.1f", currentUserNavigationInfo.x * 100)
+    local yMatch     = string.format("%0.1f", userWaypoint.pos.y * 100) == string.format("%0.1f", currentUserNavigationInfo.y * 100)
 
     return (pinTracked and mapIDMatch and xMatch and yMatch)
 end
@@ -154,7 +154,7 @@ end
 
 
 -- Super Track
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function MapPin.ToggleSuperTrackedPinDisplay(shown)
     for pin in WorldMapFrame:EnumeratePinsByTemplate("WaypointLocationPinTemplate") do
@@ -165,12 +165,12 @@ end
 
 
 -- Additional Features
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 do -- Clear super track when user waypoint is cleared with `C_Map.ClearUserWaypoint`
-    local EL = CreateFrame("Frame")
-    EL:RegisterEvent("USER_WAYPOINT_UPDATED")
-    EL:SetScript("OnEvent", function(self, event, ...)
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("USER_WAYPOINT_UPDATED")
+    f:SetScript("OnEvent", function(self, event, ...)
         if not C_Map.HasUserWaypoint() then
             C_SuperTrack.ClearAllSuperTracked()
         end
@@ -179,11 +179,11 @@ end
 
 
 -- Setup
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local function OnAddonLoad()
     MapPin.GetUserNavigation()
-    CallbackRegistry:Trigger("MapPin.Ready")
+    CallbackRegistry.Trigger("MapPin.Ready")
 end
 
-CallbackRegistry:Add("Preload.AddonReady", OnAddonLoad)
+CallbackRegistry.Add("Preload.AddonReady", OnAddonLoad)

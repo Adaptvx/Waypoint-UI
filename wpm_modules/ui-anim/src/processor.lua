@@ -1,11 +1,12 @@
 local env              = select(2, ...)
 
 local type             = type
+local math_pi          = math.pi
 
-local UIKit_TagManager = env.WPM:Import("wpm_modules/ui-kit/tag-manager")
-local UIAnim_Easing    = env.WPM:Import("wpm_modules/ui-anim/easing")
-local UIAnim_Enum      = env.WPM:Import("wpm_modules/ui-anim/enum")
-local UIAnim_Processor = env.WPM:New("wpm_modules/ui-anim/processor")
+local UIKit_TagManager = env.WPM:Import("wpm_modules\\ui-kit\\tag-manager")
+local UIAnim_Easing    = env.WPM:Import("wpm_modules\\ui-anim\\easing")
+local UIAnim_Enum      = env.WPM:Import("wpm_modules\\ui-anim\\enum")
+local UIAnim_Processor = env.WPM:New("wpm_modules\\ui-anim\\processor")
 
 local PROP_ALPHA       = UIAnim_Enum.Property.Alpha
 local PROP_SCALE       = UIAnim_Enum.Property.Scale
@@ -13,14 +14,16 @@ local PROP_WIDTH       = UIAnim_Enum.Property.Width
 local PROP_HEIGHT      = UIAnim_Enum.Property.Height
 local PROP_POSX        = UIAnim_Enum.Property.PosX
 local PROP_POSY        = UIAnim_Enum.Property.PosY
+local PROP_ROTATION    = UIAnim_Enum.Property.Rotation
 
 local APPLY_METHOD     = 1
 local APPLY_POS_X      = 2
 local APPLY_POS_Y      = 3
+local APPLY_ROTATION   = 4
 
 
 -- Target
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Processor.ResolveTarget(target)
     return type(target) == "string" and UIKit_TagManager.GetElementById(target) or target
@@ -28,7 +31,7 @@ end
 
 
 -- Easing
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Processor.GetEasing(easingName)
     local func = UIAnim_Easing[easingName]
@@ -37,7 +40,7 @@ end
 
 
 -- Apply
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Processor.Apply(target, property, value)
     if not target then return end
@@ -64,12 +67,14 @@ function UIAnim_Processor.Apply(target, property, value)
                 target:SetPoint(point, relativeTo, relativePoint, offsetX, value)
             end
         end
+    elseif property == PROP_ROTATION then
+        if target.SetRotation then target:SetRotation(value * math_pi / 180) end
     end
 end
 
 
 -- Read
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Processor.Read(target, property)
     if not target then return 0 end
@@ -87,6 +92,8 @@ function UIAnim_Processor.Read(target, property)
             local _, _, _, offsetX, offsetY = target:GetPoint()
             return property == PROP_POSX and (offsetX or 0) or (offsetY or 0)
         end
+    elseif property == PROP_ROTATION then
+        return target.GetRotation and (target:GetRotation() * 180 / math_pi) or 0
     end
 
     return 0
@@ -94,7 +101,7 @@ end
 
 
 -- Prepare
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Processor.PrepareApply(target, property)
     if not target then return end
@@ -111,5 +118,7 @@ function UIAnim_Processor.PrepareApply(target, property)
         if target.SetPoint and target.GetPoint then
             return property == PROP_POSX and APPLY_POS_X or APPLY_POS_Y, target.SetPoint
         end
+    elseif property == PROP_ROTATION then
+        return target.SetRotation and APPLY_ROTATION, target.SetRotation
     end
 end

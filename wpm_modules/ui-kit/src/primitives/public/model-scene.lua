@@ -1,14 +1,13 @@
 local env                         = select(2, ...)
-local MixinUtil                   = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                       = MixinUtil.Mixin
+local Mixin                       = Mixin
 
-local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_ModelScene = env.WPM:New("wpm_modules/ui-kit/primitives/model-scene")
+local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_ModelScene = env.WPM:New("wpm_modules\\ui-kit\\primitives\\model-scene")
 
 
 -- Model Scene
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ModelSceneMixin = {}
 do

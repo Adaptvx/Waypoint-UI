@@ -7,11 +7,11 @@ local math_min    = math.min
 local string_gsub = string.gsub
 local string_sub  = string.sub
 
-local Utils_Color = env.WPM:New("wpm_modules/utils/color")
+local Utils_Color = env.WPM:New("wpm_modules\\utils\\color")
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Color.StripColorCodes(text)
     if text == nil then return "" end
@@ -22,24 +22,24 @@ function Utils_Color.StripColorCodes(text)
     return stripped
 end
 
-function Utils_Color.ParseRGBA(rgba)
-    rgba.r = math_min(rgba.r / 255, 1)
-    rgba.g = math_min(rgba.g / 255, 1)
-    rgba.b = math_min(rgba.b / 255, 1)
-    rgba.a = math_min(rgba.a or 1, 1)
-    return rgba
+function Utils_Color.ParseRGBA(obj)
+    obj.r = math_min(obj.r / 255, 1)
+    obj.g = math_min(obj.g / 255, 1)
+    obj.b = math_min(obj.b / 255, 1)
+    obj.a = math_min(obj.a or 1, 1)
+    return obj
 end
 
-function Utils_Color.ParseHex(hex)
-    assert(type(hex) == "string", "`hex` must be a string")
+function Utils_Color.ParseHex(obj)
+    assert(obj and obj.hex, "Invalid `hex` format!")
 
-    hex = string_gsub(hex, "^#?%s*", "")
+    local hex = string_gsub(obj.hex, "^#?%s*", "")
     if #hex == 6 then hex = hex .. "FF" end
 
-    return {
-        r = tonumber(string_sub(hex, 1, 2), 16) / 255,
-        g = tonumber(string_sub(hex, 3, 4), 16) / 255,
-        b = tonumber(string_sub(hex, 5, 6), 16) / 255,
-        a = tonumber(string_sub(hex, 7, 8), 16) / 255
-    }
+    obj.a = tonumber(string_sub(hex, 1, 2), 16) / 255
+    obj.r = tonumber(string_sub(hex, 3, 4), 16) / 255
+    obj.g = tonumber(string_sub(hex, 5, 6), 16) / 255
+    obj.b = tonumber(string_sub(hex, 7, 8), 16) / 255
+
+    return obj
 end

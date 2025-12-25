@@ -1,5 +1,5 @@
 local env                                   = select(2, ...)
-local WoWClient_Versioning                  = env.WPM:New("wpm_modules/wow-client/versioning")
+local WoWClient_Versioning                  = env.WPM:New("wpm_modules\\wow-client\\versioning")
 
 local BUILD_NUMBER                          = select(4, GetBuildInfo())
 WoWClient_Versioning.IS_RETAIL              = BUILD_NUMBER >= 110000

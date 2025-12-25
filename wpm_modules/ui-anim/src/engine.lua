@@ -4,14 +4,15 @@ local CreateFrame                  = CreateFrame
 local type                         = type
 local setmetatable                 = setmetatable
 local error                        = error
+local math_pi                      = math.pi
 
-local UIAnim_Processor             = env.WPM:Import("wpm_modules/ui-anim/processor")
-local UIAnim_Enum                  = env.WPM:Import("wpm_modules/ui-anim/enum")
-local UIAnim_Engine                = env.WPM:New("wpm_modules/ui-anim/engine")
+local UIAnim_Processor             = env.WPM:Import("wpm_modules\\ui-anim\\processor")
+local UIAnim_Enum                  = env.WPM:Import("wpm_modules\\ui-anim\\enum")
+local UIAnim_Engine                = env.WPM:New("wpm_modules\\ui-anim\\engine")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local MIN_TICK                     = 1 / 60
 local STATE_WAIT                   = 0
@@ -21,6 +22,7 @@ local STATE_LOOP_DELAY             = 2
 local APPLY_METHOD                 = 1
 local APPLY_POS_X                  = 2
 local APPLY_POS_Y                  = 3
+local APPLY_ROTATION               = 4
 
 local LOOP_YOYO                    = UIAnim_Enum.Looping and UIAnim_Enum.Looping.Yoyo
 
@@ -47,9 +49,9 @@ local nextDefId                    = 0
 
 
 -- Internal
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function pushActive(instance)
+local function PushActive(instance)
     activeInstanceCount = activeInstanceCount + 1
     activeInstances[activeInstanceCount] = instance
     if not isRunning then
@@ -58,7 +60,7 @@ local function pushActive(instance)
     end
 end
 
-local function removeActive(index)
+local function RemoveActive(index)
     local lastIndex = activeInstanceCount
     local instance = activeInstances[index]
     if not instance then return end
@@ -76,7 +78,7 @@ local function removeActive(index)
             pendingCount = pendingCount - 1
             wrapperInfo.pendingCount = pendingCount
             if pendingCount == 0 then
-                notifyFinish(wrapperInfo)
+                NotifyFinish(wrapperInfo)
             end
         end
     end
@@ -92,7 +94,7 @@ local function removeActive(index)
     end
 end
 
-function notifyFinish(wrapperInfo)
+function NotifyFinish(wrapperInfo)
     if not wrapperInfo then return end
     local pendingCount = (wrapperInfo.pendingCount or 0) - 1
     wrapperInfo.pendingCount = pendingCount > 0 and pendingCount or 0
@@ -103,7 +105,7 @@ function notifyFinish(wrapperInfo)
     end
 end
 
-local function fastApply(instance, value)
+local function FastApply(instance, value)
     local applyKind = instance.applyKind
     if applyKind == APPLY_METHOD then
         instance.applyMethod(instance.target, value)
@@ -115,11 +117,13 @@ local function fastApply(instance, value)
         local target = instance.target
         local point, relativeTo, relativePoint, offsetX = target:GetPoint()
         instance.applyMethod(target, point, relativeTo or UIParent, relativePoint or point, offsetX or 0, value)
+    elseif applyKind == APPLY_ROTATION then
+        instance.applyMethod(instance.target, value * math_pi / 180)
     end
 end
 
 
-local function triggerStart(instance)
+local function TriggerStart(instance)
     local wrapperInfo = instance.wrapperInfo
     if not wrapperInfo or wrapperInfo.startNotified then return end
     wrapperInfo.startNotified = true
@@ -131,23 +135,23 @@ local function triggerStart(instance)
 end
 
 
-local function finalizeInstance(instance)
+local function FinalizeInstance(instance)
     if not instance or instance.loopType then return end
 
     local endValue = instance.dir == 1 and instance.to or instance.from
     if endValue ~= nil then
-        fastApply(instance, endValue)
+        FastApply(instance, endValue)
     end
 end
 
 
 -- Definition Prototype
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local DefProto = {}
 DefProto.__index = DefProto
 
-local function resetDefinition(definition)
+local function ResetDefinition(definition)
     definition.__property = nil
     definition.__duration = nil
     definition.__from = nil
@@ -161,15 +165,15 @@ local function resetDefinition(definition)
     return definition
 end
 
-local function allocateDefinition()
+local function AllocateDefinition()
     local definition = nil
     if definitionPoolCount > 0 then
         definition = definitionPool[definitionPoolCount]
         definitionPool[definitionPoolCount] = nil
         definitionPoolCount = definitionPoolCount - 1
-        resetDefinition(definition)
+        ResetDefinition(definition)
     else
-        definition = resetDefinition({})
+        definition = ResetDefinition({})
         nextDefId = nextDefId + 1
         definition.__id = nextDefId
         setmetatable(definition, DefProto)
@@ -177,7 +181,7 @@ local function allocateDefinition()
     return definition
 end
 
-local function releaseDefinition(definition)
+local function ReleaseDefinition(definition)
     if definitionPoolCount < 100 then
         definitionPoolCount = definitionPoolCount + 1
         definitionPool[definitionPoolCount] = definition
@@ -230,7 +234,7 @@ function DefProto:loopDelayEnd(seconds)
     return self
 end
 
-local function createInstance(definition, target)
+local function CreateInstance(definition, target)
     local instance = nil
     if instancePoolCount > 0 then
         instance = instancePool[instancePoolCount]
@@ -278,7 +282,7 @@ local function createInstance(definition, target)
         instance.timer = startDelay
     else
         instance.state = STATE_PLAY
-        triggerStart(instance)
+        TriggerStart(instance)
     end
 
     if not instance.from then
@@ -290,7 +294,7 @@ local function createInstance(definition, target)
     return instance
 end
 
-local function stopExistingDefinitionInstance(wrapper, definitionId, target)
+local function StopExistingDefinitionInstance(wrapper, definitionId, target)
     if not (wrapper and definitionId) then return end
 
     local instanceIndex = 1
@@ -298,8 +302,8 @@ local function stopExistingDefinitionInstance(wrapper, definitionId, target)
         local existingInstance = activeInstances[instanceIndex]
         if existingInstance and existingInstance.wrapper == wrapper and existingInstance.defId == definitionId then
             if (not target) or existingInstance.target == target then
-                finalizeInstance(existingInstance)
-                removeActive(instanceIndex)
+                FinalizeInstance(existingInstance)
+                RemoveActive(instanceIndex)
                 return
             end
         end
@@ -325,7 +329,7 @@ function DefProto:Play(target)
     end
 
     if currentWrapper and self.__id then
-        stopExistingDefinitionInstance(currentWrapper, self.__id, resolvedTarget)
+        StopExistingDefinitionInstance(currentWrapper, self.__id, resolvedTarget)
     end
 
     local isLooping = self.__loopType ~= nil
@@ -337,22 +341,22 @@ function DefProto:Play(target)
 
     if duration <= 0 then
         Processor_Apply(resolvedTarget, property, toValue)
-        if not isLooping and wrapperInfo then notifyFinish(wrapperInfo) end
+        if not isLooping and wrapperInfo then NotifyFinish(wrapperInfo) end
         return self
     end
 
-    local instance = createInstance(self, resolvedTarget)
+    local instance = CreateInstance(self, resolvedTarget)
     if not instance.target then
-        if not isLooping and wrapperInfo then notifyFinish(wrapperInfo) end
+        if not isLooping and wrapperInfo then NotifyFinish(wrapperInfo) end
         return self
     end
-    pushActive(instance)
+    PushActive(instance)
     return self
 end
 
 
 -- Wrapper Prototype
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local WrapperProto = {}
 WrapperProto.__index = WrapperProto
@@ -488,8 +492,8 @@ function WrapperProto:Stop()
     while instanceIndex <= activeInstanceCount do
         local animationInstance = activeInstances[instanceIndex]
         if animationInstance and animationInstance.wrapper == self then
-            finalizeInstance(animationInstance)
-            removeActive(instanceIndex)
+            FinalizeInstance(animationInstance)
+            RemoveActive(instanceIndex)
         else
             instanceIndex = instanceIndex + 1
         end
@@ -500,9 +504,9 @@ end
 
 
 -- Engine Update
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function stepInstance(instance, deltaTime)
+local function StepInstance(instance, deltaTime)
     local wrapperInfo = instance.wrapperInfo
     if wrapperInfo then
         if instance.runId ~= wrapperInfo.runId then
@@ -537,7 +541,7 @@ local function stepInstance(instance, deltaTime)
             instance.state = STATE_PLAY
             instance.t = 0
             instance.timer = 0
-            triggerStart(instance)
+            TriggerStart(instance)
 
         elseif instanceState == STATE_PLAY then
             local duration = instance.duration
@@ -561,15 +565,15 @@ local function stepInstance(instance, deltaTime)
             local toValue = instance.to
             local direction = instance.dir
             local interpolatedValue = direction == 1 and (fromValue + instance.delta * easedProgress) or (toValue - instance.delta * easedProgress)
-            fastApply(instance, interpolatedValue)
+            FastApply(instance, interpolatedValue)
 
             local target = instance.target
             if target.IsVisible and not target:IsVisible() then
                 if instance.hasBeenVisible then
                     if not instance.loopType and toValue ~= nil then
-                        fastApply(instance, toValue)
+                        FastApply(instance, toValue)
                     end
-                    if wrapperInfo then notifyFinish(wrapperInfo) end
+                    if wrapperInfo then NotifyFinish(wrapperInfo) end
                     return true
                 end
             else
@@ -580,8 +584,8 @@ local function stepInstance(instance, deltaTime)
                 local loopType = instance.loopType
                 if not loopType then
                     local endValue = direction == 1 and toValue or fromValue
-                    fastApply(instance, endValue)
-                    if wrapperInfo then notifyFinish(wrapperInfo) end
+                    FastApply(instance, endValue)
+                    if wrapperInfo then NotifyFinish(wrapperInfo) end
                     return true
                 end
 
@@ -597,7 +601,7 @@ local function stepInstance(instance, deltaTime)
                     instance.state = STATE_PLAY
                     instance.t = 0
                     instance.timer = 0
-                    triggerStart(instance)
+                    TriggerStart(instance)
                     local loopStartDelay = instance.loopDelayS
                     if loopStartDelay > 0 then
                         instance.state = STATE_WAIT
@@ -618,7 +622,7 @@ local function stepInstance(instance, deltaTime)
             instance.state = STATE_PLAY
             instance.t = 0
             instance.timer = 0
-            triggerStart(instance)
+            TriggerStart(instance)
             local loopStartDelay = instance.loopDelayS
             if loopStartDelay > 0 then
                 instance.state = STATE_WAIT
@@ -637,8 +641,8 @@ function UIAnim_Engine.OnUpdate(self, deltaTime)
     local instanceIndex = 1
     while instanceIndex <= activeInstanceCount do
         local instance = activeInstances[instanceIndex]
-        if not instance or stepInstance(instance, deltaTime) then
-            removeActive(instanceIndex)
+        if not instance or StepInstance(instance, deltaTime) then
+            RemoveActive(instanceIndex)
         else
             instanceIndex = instanceIndex + 1
         end
@@ -647,7 +651,7 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Engine.New()
     local wrapper = {}
@@ -677,15 +681,15 @@ function UIAnim_Engine.Animate()
                 stateDefinitions.idx = definitionIndex
                 local cachedDefinition = stateDefinitions[definitionIndex]
                 if cachedDefinition then
-                    resetDefinition(cachedDefinition)
+                    ResetDefinition(cachedDefinition)
                     return cachedDefinition
                 end
-                local newDefinition = allocateDefinition()
+                local newDefinition = AllocateDefinition()
                 stateDefinitions[definitionIndex] = newDefinition
                 return newDefinition
             end
         end
     end
 
-    return allocateDefinition()
+    return AllocateDefinition()
 end

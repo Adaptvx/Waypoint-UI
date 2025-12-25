@@ -1,7 +1,6 @@
 local env                         = select(2, ...)
-local MixinUtil                   = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                       = MixinUtil.Mixin
+local Mixin                       = Mixin
 local CreateFrame                 = CreateFrame
 local math                        = math
 local abs                         = math.abs
@@ -10,14 +9,14 @@ local max                         = math.max
 local min                         = math.min
 local IsShiftKeyDown              = IsShiftKeyDown
 
-local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_ScrollView = env.WPM:New("wpm_modules/ui-kit/primitives/scroll-view")
+local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_ScrollView = env.WPM:New("wpm_modules\\ui-kit\\primitives\\scroll-view")
 
 
 -- Helper
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function updateContentExtentEvents(frame)
+local function UpdateContentExtentEvents(frame)
     local hasContentAbove = frame:HasContentAbove()
     local hasContentBelow = frame:HasContentBelow()
     local hasContentLeft = frame:HasContentLeft()
@@ -44,12 +43,12 @@ end
 
 
 -- Scroll View
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ScrollViewMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:Init()
         self.__isVertical = true
@@ -69,7 +68,7 @@ do
 
 
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:GetContentFrame()
         return self.__ContentFrame
@@ -81,7 +80,7 @@ do
 
 
     -- Get
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:HasContentAbove()
         local verticalScroll = self:GetScrollFrame():GetVerticalScroll()
@@ -119,7 +118,7 @@ do
 
 
     -- Set
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:SetDirection(vertical, horizontal)
         self.__isVertical = vertical ~= false
@@ -132,7 +131,7 @@ do
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:CustomFitContent()
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -141,9 +140,9 @@ do
 
 
     -- Smooth Scrolling
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function smoothOnUpdate(frame, elapsed)
+    local function SmoothOnUpdate(frame, elapsed)
         local container = frame:GetParent()
         local scrollFrame = container:GetScrollFrame()
         local speed = container.__interpolateRatio
@@ -173,11 +172,11 @@ do
             frame:SetScript("OnUpdate", nil)
         end
 
-        updateContentExtentEvents(container)
+        UpdateContentExtentEvents(container)
     end
 
 
-    local function setScroll(self, isVertical, value, instant)
+    local function SetScroll(self, isVertical, value, instant)
         local contentFrame = self:GetContentFrame()
         local scrollFrame = self:GetScrollFrame()
         local contentSize = isVertical and contentFrame:GetHeight() or contentFrame:GetWidth()
@@ -200,7 +199,7 @@ do
                     self.uk_smoothFrame = smooth
                 end
                 if not smooth:GetScript("OnUpdate") then
-                    smooth:SetScript("OnUpdate", smoothOnUpdate)
+                    smooth:SetScript("OnUpdate", SmoothOnUpdate)
                 end
             else
                 if isVertical then
@@ -226,7 +225,7 @@ do
                 scrollFrame:SetHorizontalScroll(clampedValue)
             end
 
-            updateContentExtentEvents(self)
+            UpdateContentExtentEvents(self)
         end
     end
 
@@ -253,21 +252,21 @@ do
                 self.uk_smoothFrame = smooth
             end
             if not smooth:GetScript("OnUpdate") then
-                smooth:SetScript("OnUpdate", smoothOnUpdate)
+                smooth:SetScript("OnUpdate", SmoothOnUpdate)
             end
         end
     end
 
 
     -- Scroll
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewMixin:SetVerticalScroll(value, instant)
-        setScroll(self, true, value, instant)
+        SetScroll(self, true, value, instant)
     end
 
     function ScrollViewMixin:SetHorizontalScroll(value, instant)
-        setScroll(self, false, value, instant)
+        SetScroll(self, false, value, instant)
     end
 
     function ScrollViewMixin:GetVerticalScroll()
@@ -298,7 +297,7 @@ end
 local ScrollViewContentMixin = {}
 do
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewContentMixin:GetParent()
         return self.__parentRef
@@ -306,7 +305,7 @@ do
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ScrollViewContentMixin:CustomFitContent()
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -316,7 +315,7 @@ do
     end
 end
 
-local function mouseWheelHandler(self, delta)
+local function MouseWheelHandler(self, delta)
     local container = self:GetParent()
     if not container then return end
 
@@ -342,7 +341,7 @@ function UIKit_Primitives_ScrollView.New(name, parent)
 
 
     -- Scroll Frame
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local scrollFrame = UIKit_Primitives_Frame.New("ScrollFrame", "$parent.ScrollFrame", scrollView)
     scrollFrame:SetAllPoints(scrollView)
@@ -351,7 +350,7 @@ function UIKit_Primitives_ScrollView.New(name, parent)
 
 
     -- Content Frame
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local contentFrame = UIKit_Primitives_Frame.New("Frame", "$parent.ContentFrame", scrollFrame)
     contentFrame.uk_type = "ScrollViewContent"
@@ -361,16 +360,16 @@ function UIKit_Primitives_ScrollView.New(name, parent)
 
 
     -- References
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     scrollView.__ScrollFrame = scrollFrame
     scrollView.__ContentFrame = contentFrame
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    scrollFrame:SetScript("OnMouseWheel", mouseWheelHandler)
+    scrollFrame:SetScript("OnMouseWheel", MouseWheelHandler)
     scrollFrame:HookScript("OnVerticalScroll", function() scrollView:TriggerEvent("OnVerticalScroll") end)
     scrollFrame:HookScript("OnHorizontalScroll", function() scrollView:TriggerEvent("OnHorizontalScroll") end)
 

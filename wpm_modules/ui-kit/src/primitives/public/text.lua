@@ -1,17 +1,16 @@
 local env                    = select(2, ...)
-local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
-local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Define           = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_Enum             = env.WPM:Import("wpm_modules/ui-kit/enum")
-local UIKit_UI_Scanner       = env.WPM:Await("wpm_modules/ui-kit/ui/scanner")
+local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Define           = env.WPM:Import("wpm_modules\\ui-kit\\define")
+local UIKit_Enum             = env.WPM:Import("wpm_modules\\ui-kit\\enum")
+local UIKit_UI_Scanner       = env.WPM:Await("wpm_modules\\ui-kit\\ui\\scanner")
 
-local Mixin                  = MixinUtil.Mixin
+local Mixin                  = Mixin
 
-local UIKit_Primitives_Text  = env.WPM:New("wpm_modules/ui-kit/primitives/text")
+local UIKit_Primitives_Text  = env.WPM:New("wpm_modules\\ui-kit\\primitives\\text")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local dummy = CreateFrame("Frame"):CreateFontString(); dummy:Hide()
 local Method_SetText = getmetatable(dummy).__index.SetText
@@ -32,12 +31,12 @@ local TEXT_PORT_METHODS = {
 
 
 -- Text
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local TextMixin = {}
 do
     -- Port Methods
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     for i = 1, #TEXT_PORT_METHODS do
         local method = TEXT_PORT_METHODS[i]
@@ -48,7 +47,7 @@ do
 
 
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextMixin:Init()
         self.__fontObject = GameFontNormal
@@ -59,7 +58,7 @@ do
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextMixin:FitContent()
         local fitWidth, fitHeight = self:GetFitContent()
@@ -90,7 +89,7 @@ do
 
 
     -- Set
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextMixin:SetText(...)
         Method_SetText(self.__Text, ...)
@@ -118,7 +117,7 @@ do
 
 
     -- Font
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextMixin:SetFont(path)
         if not path then return end
@@ -148,7 +147,7 @@ do
 
 
     -- Internal
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function TextMixin:UpdateFont()
         if self.__fontObject then
@@ -173,20 +172,20 @@ function UIKit_Primitives_Text.New(name, parent)
 
 
     -- References
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     frame.__Text = fontString
 
 
     -- Defaults
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     fontString:SetWordWrap(true)
     fontString:SetTextColor(1, 1, 1, 1)
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     frame:RegisterEvent("UI_SCALE_CHANGED")
     frame:SetScript("OnEvent", frame.UpdateFont)

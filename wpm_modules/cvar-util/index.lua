@@ -5,7 +5,7 @@ local SetCVar  = SetCVar
 local wipe     = table.wipe
 local tinsert  = table.insert
 
-local CVarUtil = env.WPM:New("wpm_modules/cvar-util")
+local CVarUtil = env.WPM:New("wpm_modules\\cvar-util")
 
 CVarUtil.Enum  = {
     TemporaryType = {
@@ -18,7 +18,7 @@ CVarUtil.Enum  = {
 
 
 -- Temporary cvar handler
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local untilLogoutList = {}
 local untilCombatOrLogoutList = {}
@@ -30,28 +30,28 @@ local LIST_LOOKUP = {
     [CVarUtil.Enum.TemporaryType.ManualOrLogout]      = manualOrLogoutList
 }
 
-local function addToTemporaryList(temporaryType, name, originalValue)
+local function AddToTemporaryList(temporaryType, name, originalValue)
     local list = LIST_LOOKUP[temporaryType]
     if list then
         list[name] = originalValue
     end
 end
 
-local function clearTemporaryList(temporaryType)
+local function ClearTemporaryList(temporaryType)
     local list = LIST_LOOKUP[temporaryType]
     if list then
         wipe(list)
     end
 end
 
-local function removeFromTemporaryList(temporaryType, name)
+local function RemoveFromTemporaryList(temporaryType, name)
     local list = LIST_LOOKUP[temporaryType]
     if list then
         list[name] = nil
     end
 end
 
-local function washList(temporaryType)
+local function WashList(temporaryType)
     local list = LIST_LOOKUP[temporaryType]
     if list then
         for k, v in pairs(list) do
@@ -66,24 +66,24 @@ TemporaryEL:RegisterEvent("ADDONS_UNLOADING")
 TemporaryEL:RegisterEvent("PLAYER_REGEN_DISABLED")
 TemporaryEL:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDONS_UNLOADING" then
-        washList(CVarUtil.Enum.TemporaryType.UntilLogout)
-        washList(CVarUtil.Enum.TemporaryType.UntilCombatOrLogout)
-        washList(CVarUtil.Enum.TemporaryType.ManualOrLogout)
+        WashList(CVarUtil.Enum.TemporaryType.UntilLogout)
+        WashList(CVarUtil.Enum.TemporaryType.UntilCombatOrLogout)
+        WashList(CVarUtil.Enum.TemporaryType.ManualOrLogout)
     elseif event == "PLAYER_REGEN_DISABLED" then
-        washList(CVarUtil.Enum.TemporaryType.UntilCombatOrLogout)
+        WashList(CVarUtil.Enum.TemporaryType.UntilCombatOrLogout)
     end
 end)
 
 
 -- Protected event handler
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 --[[
 local dirtyNames = {}
 local dirtyValues = {}
 local dirtyTemporaryTypes = {}
 
-local function wash()
+local function Wash()
     if InCombatLockdown() or not dirtyNames or not dirtyValues or not dirtyTemporaryTypes then return end
 
     for i = 1, #dirtyNames do
@@ -105,11 +105,11 @@ end
 
 local ProtectedEL = CreateFrame("Frame")
 ProtectedEL:RegisterEvent("PLAYER_REGEN_ENABLED")
-ProtectedEL:SetScript("OnEvent", wash)
+ProtectedEL:SetScript("OnEvent", Wash)
 ]]
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function CVarUtil.GetCVar(name)
     return GetCVar(name)
@@ -120,14 +120,14 @@ function CVarUtil.SetCVar(name, value, temporaryType)
     SetCVar(name, value)
 
     if temporaryType ~= CVarUtil.Enum.TemporaryType.Permanent then
-        addToTemporaryList(temporaryType, name, previousValue)
+        AddToTemporaryList(temporaryType, name, previousValue)
     end
 end
 
 function CVarUtil.ResetManualCVars()
-    washList(CVarUtil.Enum.TemporaryType.ManualOrLogout)
+    WashList(CVarUtil.Enum.TemporaryType.ManualOrLogout)
 end
 
-CVarUtil.ClearTemporaryList      = clearTemporaryList
-CVarUtil.RemoveFromTemporaryList = removeFromTemporaryList
-CVarUtil.WashList                = washList
+CVarUtil.ClearTemporaryList      = ClearTemporaryList
+CVarUtil.RemoveFromTemporaryList = RemoveFromTemporaryList
+CVarUtil.WashList                = WashList

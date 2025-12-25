@@ -1,24 +1,23 @@
 local env                                                                                                                                          = select(2, ...)
-local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules\\generic-enum")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-font")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules\\utils\\texture")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICCommonSelectionMenu                                                                                                                       = env.WPM:New("wpm_modules/uic-common/selection-menu")
+local UICCommonSelectionMenu                                                                                                                       = env.WPM:New("wpm_modules\\uic-common\\selection-menu")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
+local PATH        = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
 local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "selection-menu.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 
@@ -26,18 +25,18 @@ Utils_Texture.PreloadAsset(PATH .. "selection-menu.png")
 
 
 -- Row
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local ROW_BACKGROUND                   = ATLAS{ inset = 32, scale = .175, left = 256 / 320, right = 320 / 320, top = 0 / 192, bottom = 64 / 192 }
+local ROW_BACKGROUND                   = ATLAS{ inset = 32, scale = 0.175, left = 256 / 320, right = 320 / 320, top = 0 / 192, bottom = 64 / 192 }
 local ROW_BACKGROUND_COLOR             = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = 0 }
-local ROW_BACKGROUND_COLOR_HIGHLIGHTED = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = .25 }
-local ROW_BACKGROUND_COLOR_PUSHED      = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = .175 }
+local ROW_BACKGROUND_COLOR_HIGHLIGHTED = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = 0.25 }
+local ROW_BACKGROUND_COLOR_PUSHED      = UIKit.Define.Color_RGBA{ r = 125, g = 125, b = 125, a = 0.175 }
 local ROW_WIDTH                        = UIKit.Define.Percentage{ value = 100 }
-local ROW_HEIGHT                       = UIKit.Define.Num{ value = 28 }
+local ROW_HEIGHT                       = 28
 local TEXT_SIZE                        = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
-local TEXT_COLOR                       = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .75 }
+local TEXT_COLOR                       = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.75 }
 local TEXT_COLOR_HIGHLIGHTED           = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
-local TEXT_COLOR_SELECTED              = UIKit.Define.Color_RGBA{ r = GenericEnum.ColorRGB.Yellow.r * 255, g = GenericEnum.ColorRGB.Yellow.g * 255, b = GenericEnum.ColorRGB.Yellow.b * 255, a = 1 }
+local TEXT_COLOR_SELECTED              = GenericEnum.UIColorRGB.NormalText
 local TEXT_Y_PUSHED                    = -1
 local TEXT_Y                           = 0
 
@@ -147,17 +146,17 @@ end)
 
 
 -- Content Arrow
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ARROW_BACKGROUND             = ATLAS{ inset = 0, scale = 1, left = 128 / 320, right = 192 / 320, top = 128 / 192, bottom = 192 / 192 }
 local ARROW_BACKGROUND_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 192 / 320, right = 256 / 320, top = 128 / 192, bottom = 192 / 192 }
 local ARROW_BACKGROUND_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 256 / 320, right = 320 / 320, top = 128 / 192, bottom = 192 / 192 }
-local ARROW_SIZE                   = UIKit.Define.Num{ value = 11 }
+local ARROW_SIZE                   = 11
 
 local OVERLAY_BACKGROUND_UP        = ATLAS{ inset = 32, scale = 1, left = 0 / 320, right = 64 / 320, top = 128 / 192, bottom = 192 / 192 }
 local OVERLAY_BACKGROUND_DOWN      = ATLAS{ inset = 32, scale = 1, left = 64 / 320, right = 128 / 320, top = 128 / 192, bottom = 192 / 192 }
 local OVERLAY_WIDTH                = UIKit.Define.Percentage{ value = 100 }
-local OVERLAY_HEIGHT               = UIKit.Define.Num{ value = 35 }
+local OVERLAY_HEIGHT               = 35
 
 
 local ContentArrowAnimation = UIAnim.New()
@@ -165,14 +164,14 @@ local ContentArrowAnimation = UIAnim.New()
 local ContentArrowIntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
     :easing(UIAnim.Enum.Easing.Linear)
-    :duration(.125)
+    :duration(0.125)
     :from(0)
     :to(1)
 
 local ContentArrowOutroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
     :easing(UIAnim.Enum.Easing.Linear)
-    :duration(.125)
+    :duration(0.125)
     :to(0)
 
 ContentArrowAnimation:State("INTRO", function(frame)
@@ -267,9 +266,9 @@ end)
 
 
 -- Selection Menu
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local MENU_BACKGROUND            = ATLAS{ inset = { 82, 82, 58, 58 }, scale = .7, left = 0 / 320, right = 256 / 320, top = 0 / 192, bottom = 128 / 192 }
+local MENU_BACKGROUND            = ATLAS{ inset = { 82, 82, 58, 58 }, scale = 0.7, left = 0 / 320, right = 256 / 320, top = 0 / 192, bottom = 128 / 192 }
 local MENU_BACKGROUND_SIZE       = UIKit.Define.Fill{ left = -55, right = -55, top = -40, bottom = -40 }
 local MENU_LIST_WIDTH            = UIKit.Define.Percentage{ value = 100 }
 local MENU_LIST_HEIGHT           = UIKit.Define.Fit{}
@@ -284,27 +283,27 @@ local SelectionMenuAnimation = UIAnim.New()
 local IntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
     :easing(UIAnim.Enum.Easing.ExpoOut)
-    :duration(.5)
+    :duration(0.5)
     :from(0)
     :to(1)
 
 local IntroTranslate = UIAnim.Animate()
     :property(UIAnim.Enum.Property.PosY)
     :easing(UIAnim.Enum.Easing.ExpoOut)
-    :duration(.5)
+    :duration(0.5)
     :from(7.5)
     :to(0)
 
 local OutroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
     :easing(UIAnim.Enum.Easing.ExpoOut)
-    :duration(.5)
+    :duration(0.5)
     :to(0)
 
 local OutroTranslate = UIAnim.Animate()
     :property(UIAnim.Enum.Property.PosY)
     :easing(UIAnim.Enum.Easing.ExpoOut)
-    :duration(.5)
+    :duration(0.5)
     :to(7.5)
 
 SelectionMenuAnimation:State("INTRO", function(frame)
@@ -320,7 +319,7 @@ end)
 
 local SelectionMenuMixin = {}
 
-local function handleGlobalMouseClick(self, button)
+local function OnGlobalMouseClick(self, button)
     if not self:IsShown() then return end -- Not already hidden as the event triggers while this frame is hidden?
     if self:IsMouseOver() then return end -- Not mouse over context menu
     if self.root and self.root:IsMouseOver() then return end -- Not mouse over root frame
@@ -360,7 +359,7 @@ function SelectionMenuMixin:OnLoad()
 
     -- Hide on click elsewhere
     self:RegisterEvent("GLOBAL_MOUSE_DOWN")
-    self:SetScript("OnEvent", handleGlobalMouseClick)
+    self:SetScript("OnEvent", OnGlobalMouseClick)
 end
 
 function SelectionMenuMixin:HandleElementUpdate(element, index, value)
@@ -447,7 +446,7 @@ UICCommonSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
                     :frameLevel(2)
                     :size(MENU_BACKGROUND_SIZE)
                     :background(MENU_BACKGROUND)
-                    :alpha(.925)
+                    :alpha(0.925)
                     :_excludeFromCalculations()
                     :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
@@ -456,7 +455,7 @@ UICCommonSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
                     :frameLevel(3)
                     :point(UIKit.Enum.Point.Center)
                     :size(MENU_LIST_WIDTH, MENU_LIST_HEIGHT)
-                    :maxHeight(UIKit.Define.Num{ value = 275 })
+                    :maxHeight(275)
                     :scrollViewContentWidth(MENU_CONTENT_SCROLL_WIDTH)
                     :scrollViewContentHeight(MENU_CONTENT_SCROLL_HEIGHT)
                     :scrollInterpolation(10)

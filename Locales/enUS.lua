@@ -1,5 +1,6 @@
 -- Base Localization
--- Languages with no translations will default to this:
+-- This file contains the default English strings.
+-- Other locales will fall back to these values if no translation is provided.
 
 
 
@@ -38,16 +39,16 @@ L["Config - WaypointSystem - Type - Both"] = "All"
 L["Config - WaypointSystem - Type - Waypoint"] = "Waypoint"
 L["Config - WaypointSystem - Type - Pinpoint"] = "Pinpoint"
 L["Config - WaypointSystem - General"] = "General"
-L["Config - WaypointSystem - General - AlwaysShow"] = "Always Show"
-L["Config - WaypointSystem - General - AlwaysShow - Description"] = "Always display the Waypoint, Pinpoint, and Navigator, even when the UI is hidden."
+L["Config - WaypointSystem - General - AlwaysShow"] = "Show when UI is Hidden"
+L["Config - WaypointSystem - General - AlwaysShow - Description"] = nil
 L["Config - WaypointSystem - General - RightClickToClear"] = "Right-Click To Clear"
-L["Config - WaypointSystem - General - RightClickToClear - Description"] = "Clear the tracked destination by right-clicking on the Waypoint, Pinpoint, or Navigator."
-L["Config - WaypointSystem - General - BackgroundPreview"] = "Background Preview"
-L["Config - WaypointSystem - General - BackgroundPreview - Description"] = "Lower the Waypoint, Pinpoint or Navigator opacity when highlighted."
-L["Config - WaypointSystem - General - Transition Distance"] = "Pinpoint Distance"
-L["Config - WaypointSystem - General - Transition Distance - Description"] = "Distance before Pinpoint will be shown instead of the Waypoint."
-L["Config - WaypointSystem - General - Hide Distance"] = "Minimum Distance"
-L["Config - WaypointSystem - General - Hide Distance - Description"] = "Distance before hiding the Waypoint, Pinpoint and Navigator."
+L["Config - WaypointSystem - General - RightClickToClear - Description"] = nil
+L["Config - WaypointSystem - General - BackgroundPreview"] = "Fade On Hover"
+L["Config - WaypointSystem - General - BackgroundPreview - Description"] = nil
+L["Config - WaypointSystem - General - Transition Distance"] = "Show Pinpoint At..."
+L["Config - WaypointSystem - General - Transition Distance - Description"] = nil
+L["Config - WaypointSystem - General - Hide Distance"] = "Hide At..."
+L["Config - WaypointSystem - General - Hide Distance - Description"] = nil
 L["Config - WaypointSystem - Waypoint"] = "Waypoint"
 L["Config - WaypointSystem - Waypoint - Footer - Type"] = "Additional Info"
 L["Config - WaypointSystem - Waypoint - Footer - Type - Both"] = "All"
@@ -58,9 +59,9 @@ L["Config - WaypointSystem - Waypoint - Footer - Type - None"] = "None"
 L["Config - WaypointSystem - Pinpoint"] = "Pinpoint"
 L["Config - WaypointSystem - Pinpoint - Info"] = "Show Destination Info"
 L["Config - WaypointSystem - Pinpoint - Info - Extended"] = "Show Extended Info"
-L["Config - WaypointSystem - Pinpoint - Info - Extended - Description"] = "Enable additional info such as the name and description."
+L["Config - WaypointSystem - Pinpoint - Info - Extended - Description"] = nil
 L["Config - WaypointSystem - Pinpoint - ShowInQuestArea"] = "Show In Quest Area"
-L["Config - WaypointSystem - Pinpoint - ShowInQuestArea - Description"] = "Allow the Pinpoint to be shown while inside a quest blob. This option may cause positioning inaccuracies."
+L["Config - WaypointSystem - Pinpoint - ShowInQuestArea - Description"] = "This option may cause positioning inaccuracies."
 L["Config - WaypointSystem - Navigator"] = "Navigator"
 L["Config - WaypointSystem - Navigator - Enable"] = "Show"
 L["Config - WaypointSystem - Navigator - Enable - Description"] = "When the Waypoint or Pinpoint is off-screen, show the Navigator to guide you towards the general direction."

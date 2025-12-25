@@ -1,38 +1,37 @@
 local env                                                                                                                                          = select(2, ...)
-local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local CallbackRegistry                                                                                                                             = env.WPM:Import("wpm_modules/callback-registry")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules\\generic-enum")
+local CallbackRegistry                                                                                                                             = env.WPM:Import("wpm_modules\\callback-registry")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules\\sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-font")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
-local WoWClient                                                                                                                                    = env.WPM:Import("wpm_modules/wow-client")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules\\utils\\texture")
+local WoWClient                                                                                                                                    = env.WPM:Import("wpm_modules\\wow-client")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICCommonButton                                                                                                                                = env.WPM:Import("wpm_modules/uic-common/button")
-local UICCommonPrompt                                                                                                                                = env.WPM:New("wpm_modules/uic-common/prompt")
+local UICCommonButton                                                                                                                                = env.WPM:Import("wpm_modules\\uic-common\\button")
+local UICCommonPrompt                                                                                                                                = env.WPM:New("wpm_modules\\uic-common\\prompt")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH  = Path.Root .. "/wpm_modules/uic-common/resources/"
+local PATH  = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
 local ATLAS = UIKit.Define.Texture_Atlas{ path = PATH .. "panel.png" }
 
 Utils_Texture.PreloadAsset(PATH .. "panel.png")
 
 
 -- Prompt Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local BTN_WIDTH  = UIKit.Define.Num{ value = 125 }
-local BTN_HEIGHT = UIKit.Define.Num{ value = 25 }
+local BTN_WIDTH  = 125
+local BTN_HEIGHT = 25
 
 
 UICCommonPrompt.Button = UIKit.Prefab(function(id, name, children, ...)
@@ -45,17 +44,17 @@ end)
 
 
 -- Prompt
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PROMPT_BACKGROUND       = ATLAS{ inset = 64, scale = .425, left = 256 / 512, top = 256 / 512, right = 384 / 512, bottom = 384 / 512 }
-local PROMPT_BACKGROUND_COLOR = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .875 }
+local PROMPT_BACKGROUND       = ATLAS{ inset = 64, scale = 0.425, left = 256 / 512, top = 256 / 512, right = 384 / 512, bottom = 384 / 512 }
+local PROMPT_BACKGROUND_COLOR = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.875 }
 local PROMPT_WIDTH            = UIKit.Define.Fit{ delta = 46 }
 local PROMPT_HEIGHT           = UIKit.Define.Fit{ delta = 46 }
-local PROMPT_CONTENT_SPACING  = UIKit.Define.Num{ value = 9 }
+local PROMPT_CONTENT_SPACING  = 9
 local PROMPT_CONTENT_SIZE     = UIKit.Define.Fit{}
 local PROMPT_TEXT_SIZE        = UIKit.Define.Fit{}
-local PROMPT_TEXT_MAX_WIDTH   = UIKit.Define.Num{ value = 325 }
-local PROMPT_BUTTON_SPACING   = UIKit.Define.Num{ value = 5 }
+local PROMPT_TEXT_MAX_WIDTH   = 325
+local PROMPT_BUTTON_SPACING   = 5
 local PROMPT_BUTTON_SIZE      = UIKit.Define.Fit{}
 
 
@@ -63,7 +62,7 @@ local PromptAnimation = UIAnim.New()
 
 local IntroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.325)
+    :duration(0.325)
     :from(0)
     :to(1)
 
@@ -76,13 +75,13 @@ local IntroTranslate = UIAnim.Animate()
 
 local OutroAlpha = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.325)
+    :duration(0.325)
     :to(0)
 
 local OutroTranslate = UIAnim.Animate()
     :property(UIAnim.Enum.Property.PosY)
     :easing(UIAnim.Enum.Easing.QuintInOut)
-    :duration(.375)
+    :duration(0.375)
     :to(-15)
 
 PromptAnimation:State("INTRO", function(frame)
@@ -101,7 +100,7 @@ local PromptMixin = {}
 function PromptMixin:OnLoad()
     self.hideOnEscape = false
 
-    CallbackRegistry:Add("WoWClient.OnEscapePressed", function()
+    CallbackRegistry.Add("WoWClient.OnEscapePressed", function()
         if self.hideOnEscape and self:IsShown() then
             WoWClient.BlockKeyEvent()
             self:OnEscape()
@@ -172,7 +171,7 @@ function PromptMixin:Open(info, ...)
     self:ShowPrompt()
 end
 
-local function handleElementClick(self)
+local function OnElementClick(self)
     if self.value.callback then
         self.value.callback()
     end
@@ -180,11 +179,11 @@ local function handleElementClick(self)
     self:GetFrameParent().__parentRef:HidePrompt()
 end
 
-local function handleElementUpdate(element, index, value)
+local function OnElementUpdate(element, index, value)
     element.index = index
     element.value = value
 
-    element:HookMouseUp(handleElementClick, true)
+    element:HookMouseUp(OnElementClick, true)
     element:SetText(value.text)
 end
 
@@ -204,7 +203,7 @@ UICCommonPrompt.New = UIKit.Prefab(function(id, name, children, ...)
                     List()
                         :id("Content.ButtonContainer.List", id)
                         :poolPrefab(UICCommonPrompt.Button)
-                        :poolOnElementUpdate(handleElementUpdate)
+                        :poolOnElementUpdate(OnElementUpdate)
                         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
                 })
                     :id("Content.ButtonContainer", id)

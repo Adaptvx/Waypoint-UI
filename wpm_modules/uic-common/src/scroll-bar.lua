@@ -1,23 +1,22 @@
 local env                                                                                                                                          = select(2, ...)
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules\\sound")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules\\utils\\texture")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICCommonScrollBar                                                                                                                             = env.WPM:New("wpm_modules/uic-common/scroll-bar")
+local UICCommonScrollBar                                                                                                                             = env.WPM:New("wpm_modules\\uic-common\\scroll-bar")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH                         = Path.Root .. "/wpm_modules/uic-common/resources/"
+local PATH                         = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
 local FILL                         = UIKit.Define.Fill{}
 local ATLAS                        = UIKit.Define.Texture_Atlas{ path = PATH .. "scroll-bar.png" }
 local BACKGROUND                   = ATLAS{ inset = 32, scale = 1, left = 0 / 320, right = 64 / 320, top = 0 / 128, bottom = 128 / 128 }
@@ -30,7 +29,7 @@ Utils_Texture.PreloadAsset(PATH .. "scroll-bar.png")
 
 
 -- Scroll Bar
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ScrollBarMixin = CreateFromMixins(UICSharedMixin.ScrollBarMixin)
 

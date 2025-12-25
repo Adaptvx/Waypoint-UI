@@ -4,8 +4,8 @@ local Config                          = env.Config
 local GetScreenWidth, GetScreenHeight = GetScreenWidth, GetScreenHeight
 local BreakUpLargeNumbers             = BreakUpLargeNumbers
 
-local Utils_General                   = env.WPM:Import("wpm_modules/utils/general")
-local LocalUtil                       = env.WPM:New("@/LocalUtil")
+local Utils_General                   = env.WPM:Import("wpm_modules\\utils\\general")
+local LocalUtil                       = env.WPM:New("@\\LocalUtil")
 
 
 do -- Screen Position Calculations
@@ -53,7 +53,7 @@ end
 do -- Conversion
     function LocalUtil:CalculateDistance(yds)
         if Config.DBGlobal:GetVariable("PrefMetric") then
-            return math.ceil(yds * .9144)
+            return math.ceil(yds * 0.9144)
         else
             return math.ceil(yds)
         end
@@ -62,7 +62,7 @@ do -- Conversion
     function LocalUtil:FormatDistance(yds)
         if Config.DBGlobal:GetVariable("PrefMetric") then
             local m = self:CalculateDistance(yds)
-            return m > 1000 and string.format("%.2f", m / 1000) .. "km" or m .. "m"
+            return m > 1000 and string.format("%0.2f", m / 1000) .. "km" or m .. "m"
         else
             return BreakUpLargeNumbers(math.ceil(yds)) .. " yds"
         end

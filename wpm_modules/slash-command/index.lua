@@ -4,19 +4,19 @@ local type         = type
 local getmetatable = getmetatable
 local gmatch       = string.gmatch
 
-local SlashCommand = env.WPM:New("wpm_modules/slash-command")
+local SlashCommand = env.WPM:New("wpm_modules\\slash-command")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local commandIndexes = {}
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function parseTokens(message)
+local function ParseTokens(message)
     local tokens = {}
     local count = 0
     for token in gmatch(message, "%S+") do
@@ -26,25 +26,25 @@ local function parseTokens(message)
     return tokens
 end
 
-local function registerCommand(name, slashText, callback, slotIndex)
+local function RegisterCommand(name, slashText, callback, slotIndex)
     _G["SLASH_" .. name .. slotIndex] = "/" .. slashText
     SlashCmdList[name] = function(message)
-        callback(message, parseTokens(message))
+        callback(message, ParseTokens(message))
     end
 end
 
-local function hookCommand(name, callback)
+local function HookCommand(name, callback)
     local existingHandler = SlashCmdList[name]
     if not existingHandler then return false end
 
     SlashCmdList[name] = function(message)
         existingHandler(message)
-        callback(message, parseTokens(message))
+        callback(message, ParseTokens(message))
     end
     return true
 end
 
-local function removeCommand(name)
+local function RemoveCommand(name)
     local slotIndex = 1
     local slashPrefix = "SLASH_" .. name
     while true do
@@ -69,10 +69,10 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function SlashCommand.GetTokens(message)
-    return parseTokens(message)
+    return ParseTokens(message)
 end
 
 function SlashCommand.GetSlashCommand(name)
@@ -80,15 +80,15 @@ function SlashCommand.GetSlashCommand(name)
 end
 
 function SlashCommand.AddSlashCommand(name, slashText, callback, slotIndex)
-    registerCommand(name, slashText, callback, slotIndex)
+    RegisterCommand(name, slashText, callback, slotIndex)
 end
 
 function SlashCommand.HookSlashCommand(name, callback)
-    return hookCommand(name, callback)
+    return HookCommand(name, callback)
 end
 
 function SlashCommand.RemoveSlashCommand(name)
-    removeCommand(name)
+    RemoveCommand(name)
 end
 
 function SlashCommand.AddFromSchema(schema)
@@ -98,18 +98,18 @@ function SlashCommand.AddFromSchema(schema)
         assert(entry.callback, "`AddFromSchema`: `callback` is required")
 
         if entry.hook and SlashCmdList[entry.hook] then
-            hookCommand(entry.hook, entry.callback)
+            HookCommand(entry.hook, entry.callback)
         else
             local commands = entry.command
             local name = entry.name
             if type(commands) == "table" then
                 for j = 1, #commands do
                     commandIndexes[name] = (commandIndexes[name] or 0) + 1
-                    registerCommand(name, commands[j], entry.callback, commandIndexes[name])
+                    RegisterCommand(name, commands[j], entry.callback, commandIndexes[name])
                 end
             else
                 commandIndexes[name] = (commandIndexes[name] or 0) + 1
-                registerCommand(name, commands, entry.callback, commandIndexes[name])
+                RegisterCommand(name, commands, entry.callback, commandIndexes[name])
             end
         end
     end

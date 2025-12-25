@@ -3,21 +3,21 @@ local env              = select(2, ...)
 local type             = type
 local find             = string.find
 
-local UIKit_TagManager = env.WPM:New("wpm_modules/ui-kit/tag-manager")
+local UIKit_TagManager = env.WPM:New("wpm_modules\\ui-kit\\tag-manager")
 UIKit_TagManager.Id    = { Registry = {} }
 UIKit_TagManager.Tag   = { Registry = {} }
 
 
 -- Helper
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function withGroup(value, groupID)
+local function WithGroup(value, groupID)
     return (value and groupID) and (value .. "_" .. groupID) or value
 end
 
 
 -- Group Capture String
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_TagManager.NewGroupCaptureString(id, groupID)
     return tostring(id .. "$groupID" .. groupID)
@@ -37,11 +37,11 @@ end
 
 
 -- Id
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_TagManager.Id.Add(frame, id, groupID)
     local registry = UIKit_TagManager.Id.Registry
-    local normalizedId = withGroup(id, groupID)
+    local normalizedId = WithGroup(id, groupID)
     local previousId = frame.uk_tagManager_id
 
     if previousId == normalizedId then return end
@@ -59,7 +59,7 @@ end
 
 function UIKit_TagManager.Id.Remove(id, groupID)
     local registry = UIKit_TagManager.Id.Registry
-    local normalizedId = withGroup(id, groupID)
+    local normalizedId = WithGroup(id, groupID)
     if not normalizedId then return end
 
     local frame = registry[normalizedId]
@@ -71,15 +71,15 @@ end
 
 
 -- Get
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_TagManager.GetElementById(id, groupID)
-    return UIKit_TagManager.Id.Registry[withGroup(id, groupID)]
+    return UIKit_TagManager.Id.Registry[WithGroup(id, groupID)]
 end
 
 
 -- Clean up
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_TagManager.CleanupFrame(frame)
     if not frame then return end

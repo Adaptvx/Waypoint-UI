@@ -9,7 +9,7 @@ local UiMapPoint_CreateFromVector2D = UiMapPoint.CreateFromVector2D
 
 
 -- Events
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 hooksecurefunc("SetItemRef", function(link, text, button, chatFrame)
     local Setting_AutoTrackChatLinkPinEnabled = Config.DBGlobal:GetVariable("AutoTrackChatLinkPinEnabled")

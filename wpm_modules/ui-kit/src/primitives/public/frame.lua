@@ -1,24 +1,23 @@
 local env                    = select(2, ...)
-local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
-local Utils_LazyTable        = env.WPM:Import("wpm_modules/utils/lazy-table")
-local UIKit_Define           = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_FrameCache       = env.WPM:Import("wpm_modules/ui-kit/frame-cache")
-local UIKit_Utils            = env.WPM:Import("wpm_modules/ui-kit/utils")
-local UIKit_Enum             = env.WPM:Import("wpm_modules/ui-kit/enum")
-local UIKit_UI_Scanner       = env.WPM:Await("wpm_modules/ui-kit/ui/scanner")
+local Utils_LazyTable        = env.WPM:Import("wpm_modules\\utils\\lazy-table")
+local UIKit_Define           = env.WPM:Import("wpm_modules\\ui-kit\\define")
+local UIKit_FrameCache       = env.WPM:Import("wpm_modules\\ui-kit\\frame-cache")
+local UIKit_Utils            = env.WPM:Import("wpm_modules\\ui-kit\\utils")
+local UIKit_Enum             = env.WPM:Import("wpm_modules\\ui-kit\\enum")
+local UIKit_UI_Scanner       = env.WPM:Await("wpm_modules\\ui-kit\\ui\\scanner")
 
-local Mixin                  = MixinUtil.Mixin
+local Mixin                  = Mixin
 local CreateFrame            = CreateFrame
 local math_huge              = math.huge
 local type                   = type
 local tinsert                = table.insert
 local tremove                = table.remove
 
-local UIKit_Primitives_Frame = env.WPM:New("wpm_modules/ui-kit/primitives/frame")
+local UIKit_Primitives_Frame = env.WPM:New("wpm_modules\\ui-kit\\primitives\\frame")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 UIKit_Primitives_Frame.FrameProps = {}
 
@@ -32,7 +31,7 @@ local Method_SetPropagateKeyboardInput = getmetatable(dummy).__index.SetPropagat
 
 
 -- Frame
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local cachedMetas = {}
 local sharedHandlers = {}
@@ -40,9 +39,9 @@ local sharedHandlers = {}
 local FrameMixin = {}
 do
     -- Helper
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function getParentSize(frame, axis)
+    local function GetParentSize(frame, axis)
         local parent = frame:GetParent()
         if not parent or not parent.GetWidth then
             parent = UIParent
@@ -51,17 +50,15 @@ do
         return (axis == "width" and parent:GetWidth() or parent:GetHeight()) or 0
     end
 
-    local function resolveBoundValue(frame, boundConfig, axis)
+    local function ResolveBoundValue(frame, boundConfig, axis)
         if not boundConfig then return nil end
 
-        if boundConfig == UIKit_Define.Num then
-            local value = boundConfig.value or 0
-            local delta = boundConfig.delta or 0
-            return value + delta
+        if type(boundConfig) == "number" then
+            return boundConfig
         end
 
         if boundConfig == UIKit_Define.Percentage then
-            local parentSize = getParentSize(frame, axis)
+            local parentSize = GetParentSize(frame, axis)
             if parentSize == 0 then return 0 end
             return UIKit_Utils:CalculateRelativePercentage(parentSize, boundConfig.value or 0, boundConfig.operator, boundConfig.delta)
         end
@@ -71,7 +68,7 @@ do
 
 
     -- Hierachy
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:SetFrameParent(parent)
         self.uk_parent = parent
@@ -108,7 +105,7 @@ do
 
 
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:GetBackground()
         return self.Background
@@ -116,7 +113,7 @@ do
 
 
     -- Attribute
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:GetID()
         return self.uk_id
@@ -124,33 +121,33 @@ do
 
 
     -- Get
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:GetSpacing()
         return self.uk_prop_layoutSpacing
     end
 
     function FrameMixin:GetMaxWidth()
-        return resolveBoundValue(self, self.uk_prop_maxWidth, "width")
+        return ResolveBoundValue(self, self.uk_prop_maxWidth, "width")
     end
 
     function FrameMixin:GetMaxHeight()
-        return resolveBoundValue(self, self.uk_prop_maxHeight, "height")
+        return ResolveBoundValue(self, self.uk_prop_maxHeight, "height")
     end
 
     function FrameMixin:GetMinWidth()
-        return resolveBoundValue(self, self.uk_prop_minWidth, "width")
+        return ResolveBoundValue(self, self.uk_prop_minWidth, "width")
     end
 
     function FrameMixin:GetMinHeight()
-        return resolveBoundValue(self, self.uk_prop_minHeight, "height")
+        return ResolveBoundValue(self, self.uk_prop_minHeight, "height")
     end
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function clampWithBoundsAndDelta(size, minBound, maxBound, delta)
+    local function ClampWithBoundsAndDelta(size, minBound, maxBound, delta)
         if minBound and size < minBound then size = minBound end
         if maxBound and size > maxBound then size = maxBound end
 
@@ -162,7 +159,7 @@ do
         return size > 0 and size or 0
     end
 
-    local function getChildBoundsRelativeToParent(parentLeft, parentTop, child)
+    local function GetChildBoundsRelativeToParent(parentLeft, parentTop, child)
         local childLeft, childBottom, childWidth, childHeight = child:GetRect()
 
         if childLeft then
@@ -222,7 +219,7 @@ do
             minBound, maxBound = self:GetMinHeight(), self:GetMaxHeight()
         end
         local delta = (sizeProp == UIKit_Define.Fit and sizeProp.delta) or 0
-        return clampWithBoundsAndDelta(measuredSize or 0, minBound, maxBound, delta)
+        return ClampWithBoundsAndDelta(measuredSize or 0, minBound, maxBound, delta)
     end
 
     function FrameMixin:GetFitContent()
@@ -246,7 +243,7 @@ do
         for i = 1, #childFrames do
             local child = childFrames[i]
             if child and child:IsShown() and not child.uk_flag_excludeFromCalculations then
-                local left, top, right, bottom = getChildBoundsRelativeToParent(parentLeft, parentTop, child)
+                local left, top, right, bottom = GetChildBoundsRelativeToParent(parentLeft, parentTop, child)
                 if left < boundsMinLeft then boundsMinLeft = left end
                 if top < boundsMinTop then boundsMinTop = top end
                 if right > boundsMaxRight then boundsMaxRight = right end
@@ -272,7 +269,7 @@ do
 
 
     -- Alias
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:AddAlias(aliasName, frame)
         if not aliasName or not frame then return end
@@ -294,7 +291,7 @@ do
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:HookEvent(event, func)
         if not event or type(func) ~= "function" then return end
@@ -350,7 +347,7 @@ do
 
 
     -- Override
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function FrameMixin:SetSize(...)
         Method_SetSize(self, ...)
@@ -379,51 +376,51 @@ do
         end
     end
 
-    local function propagateEnableMouseClick(self)
+    local function PropagateEnableMouseClick(self)
         self:SetPropagateMouseClicks(true)
     end
 
-    local function propagateDisableMouseClick(self)
+    local function PropagateDisableMouseClick(self)
         self:SetPropagateMouseClicks(false)
     end
 
-    local function propagateEnableMouseMotion(self)
+    local function PropagateEnableMouseMotion(self)
         self:SetPropagateMouseMotion(true)
     end
 
-    local function propagateDisableMouseMotion(self)
+    local function PropagateDisableMouseMotion(self)
         self:SetPropagateMouseMotion(false)
     end
 
-    local function propagateEnableKeyboardInput(self)
+    local function PropagateEnableKeyboardInput(self)
         self:SetPropagateKeyboardInput(true)
     end
 
-    local function propagateDisableKeyboardInput(self)
+    local function PropagateDisableKeyboardInput(self)
         self:SetPropagateKeyboardInput(false)
     end
 
     function FrameMixin:AwaitSetPropagateMouseClicks(propagate)
         if propagate then
-            UIKit_Utils:AwaitProtectedEvent(propagateEnableMouseClick, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateEnableMouseClick, self)
         else
-            UIKit_Utils:AwaitProtectedEvent(propagateDisableMouseClick, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateDisableMouseClick, self)
         end
     end
 
     function FrameMixin:AwaitSetPropagateMouseMotion(propagate)
         if propagate then
-            UIKit_Utils:AwaitProtectedEvent(propagateEnableMouseMotion, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateEnableMouseMotion, self)
         else
-            UIKit_Utils:AwaitProtectedEvent(propagateDisableMouseMotion, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateDisableMouseMotion, self)
         end
     end
 
     function FrameMixin:AwaitSetPropagateKeyboardInput(propagate)
         if propagate then
-            UIKit_Utils:AwaitProtectedEvent(propagateEnableKeyboardInput, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateEnableKeyboardInput, self)
         else
-            UIKit_Utils:AwaitProtectedEvent(propagateDisableKeyboardInput, self)
+            UIKit_Utils:AwaitProtectedEvent(PropagateDisableKeyboardInput, self)
         end
     end
 

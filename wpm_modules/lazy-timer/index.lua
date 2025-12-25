@@ -1,20 +1,19 @@
 local env             = select(2, ...)
-local MixinUtil       = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin           = MixinUtil.Mixin
+local Mixin           = Mixin
 
-local LazyTimer       = env.WPM:New("wpm_modules/lazy-timer")
+local LazyTimer       = env.WPM:New("wpm_modules\\lazy-timer")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local dummy = CreateFrame("Frame"); dummy:Hide()
 local Method_SetScript = getmetatable(dummy).__index.SetScript
 
 
 -- Timer
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local TimerMixin = {}
 
@@ -28,7 +27,7 @@ function TimerMixin.SetAction(self, action)
     self.action = action
 end
 
-local function handleOnUpdate(self, elapsed)
+local function OnUpdate(self, elapsed)
     self.elapsed = self.elapsed + elapsed
     if self.elapsed >= self.delay then
         self.elapsed = 0
@@ -40,7 +39,11 @@ end
 
 function TimerMixin.Start(self, delay)
     self.delay = delay
-    Method_SetScript(self, "OnUpdate", handleOnUpdate)
+    Method_SetScript(self, "OnUpdate", OnUpdate)
+end
+
+function TimerMixin.Stop(self)
+    Method_SetScript(self, "OnUpdate", nil)
 end
 
 

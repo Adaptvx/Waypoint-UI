@@ -1,9 +1,5 @@
 local env = select(2, ...)
-local Setting_Shared = env.WPM:New("@/Setting/Shared")
-
-
--- Variables
---------------------------------
+local Setting_Shared = env.WPM:New("@\\Setting\\Shared")
 
 Setting_Shared.NAME = env.NAME
 Setting_Shared.FRAME_NAME = "WUISettingFrame"

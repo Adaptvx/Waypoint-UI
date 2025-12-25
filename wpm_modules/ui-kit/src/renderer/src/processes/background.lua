@@ -1,12 +1,12 @@
 local env                            = select(2, ...)
-local UIKit_Primitives_Utils_Texture = env.WPM:Import("wpm_modules/ui-kit/primitives/utils/texture")
-local UIKit_Define                   = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_Utils                    = env.WPM:Import("wpm_modules/ui-kit/utils")
-local UIKit_Renderer_Background      = env.WPM:New("wpm_modules/ui-kit/renderer/background")
+local UIKit_Primitives_Utils_Texture = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\utils\\texture")
+local UIKit_Define                   = env.WPM:Import("wpm_modules\\ui-kit\\define")
+local UIKit_Utils                    = env.WPM:Import("wpm_modules\\ui-kit\\utils")
+local UIKit_Renderer_Background      = env.WPM:New("wpm_modules\\ui-kit\\renderer\\background")
 
 
 -- Mask
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_Renderer_Background.SetMaskTexture(frame, mask)
     if not frame.Background then return end
@@ -21,7 +21,7 @@ end
 
 
 -- Background
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_Renderer_Background.SetBackground(frame, isMaskTexture)
     local backgroundInfo = frame.uk_prop_background

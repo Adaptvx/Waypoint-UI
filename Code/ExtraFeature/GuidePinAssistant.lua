@@ -6,53 +6,53 @@ local IsSuperTrackingAnything = C_SuperTrack.IsSuperTrackingAnything
 local SetCVar                 = SetCVar
 local GetCVar                 = GetCVar
 
-local CallbackRegistry        = env.WPM:Import("wpm_modules/callback-registry")
-local SavedVariables          = env.WPM:Import("wpm_modules/saved-variables")
-local MapPin                  = env.WPM:Import("@/MapPin")
+local CallbackRegistry        = env.WPM:Import("wpm_modules\\callback-registry")
+local SavedVariables          = env.WPM:Import("wpm_modules\\saved-variables")
+local MapPin                  = env.WPM:Import("@\\MapPin")
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local cachedSFXVolume = nil
 local cachedGuidePin = nil
 
-local function showGuidePin()
+local function ShowGuidePin()
     if not cachedGuidePin then return end
     cachedGuidePin:SetAlpha(1)
 end
 
-local function hideGuidePin()
+local function HideGuidePin()
     if not cachedGuidePin then return end
     cachedGuidePin:SetAlpha(0)
 end
 
-local function placeUserNavigationAtGuidePin()
+local function PlaceUserNavigationAtGuidePin()
     if not cachedGuidePin then return end
     MapPin.NewUserNavigation(cachedGuidePin.name, C_Map.GetBestMapForUnit("player"), cachedGuidePin.normalizedX * 100, cachedGuidePin.normalizedY * 100, "GuidePin")
-    hideGuidePin()
+    HideGuidePin()
 end
 
-local function muteSFXChannel()
+local function MuteSFXChannel()
     SetCVar("Sound_SFXVolume", 0)
 end
 
-local function unmuteSFXChannel()
+local function UnmuteSFXChannel()
     SetCVar("Sound_SFXVolume", cachedSFXVolume or 1)
 end
 
-local function locateGuidePin()
+local function LocateGuidePin()
     -- Refresh pins by opening and immediately closing WorldMapFrame
     local isWorldMapVisible = WorldMapFrame:IsVisible()
     cachedSFXVolume = GetCVar("Sound_SFXVolume")
 
     if not isWorldMapVisible then
-        muteSFXChannel()
+        MuteSFXChannel()
 
         WorldMapFrame:Show()
         WorldMapFrame:Hide()
 
-        C_Timer.After(.5, unmuteSFXChannel)
+        C_Timer.After(0.5, UnmuteSFXChannel)
     end
 
     -- Locate GossipPinTemplate aka Guide pin
@@ -66,14 +66,14 @@ end
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function handleAccept()
-    placeUserNavigationAtGuidePin()
+local function HandleAccept()
+    PlaceUserNavigationAtGuidePin()
 end
 
-local function handleCancel()
-    showGuidePin()
+local function HandleCancel()
+    ShowGuidePin()
 end
 
 local REPLACE_PROMPT_INFO = {
@@ -81,11 +81,11 @@ local REPLACE_PROMPT_INFO = {
     options      = {
         {
             text     = L["Guide Pin Assistant - ReplacePrompt - Yes"],
-            callback = handleAccept
+            callback = HandleAccept
         },
         {
             text     = L["Guide Pin Assistant - ReplacePrompt - No"],
-            callback = handleCancel
+            callback = HandleCancel
         }
     },
     hideOnEscape = true,
@@ -94,16 +94,16 @@ local REPLACE_PROMPT_INFO = {
 
 
 -- Events
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local Events = CreateFrame("Frame")
-Events:RegisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
-Events:SetScript("OnEvent", function(self, event)
-    if not locateGuidePin() then return end
+local f = CreateFrame("Frame")
+f:RegisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
+f:SetScript("OnEvent", function(self, event)
+    if not LocateGuidePin() then return end
     if not cachedGuidePin then return end
 
     if not IsSuperTrackingAnything() then
-        placeUserNavigationAtGuidePin()
+        PlaceUserNavigationAtGuidePin()
     else
         WUISharedPrompt:Open(REPLACE_PROMPT_INFO, cachedGuidePin.name)
     end
@@ -111,16 +111,16 @@ end)
 
 
 -- Settings
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function updateToMatchSetting()
+local function UpdateToMatchSetting()
     local Setting_GuidePinAssistantEnabled = Config.DBGlobal:GetVariable("GuidePinAssistantEnabled")
     if Setting_GuidePinAssistantEnabled then
-        Events:RegisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
+        f:RegisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
     else
-        Events:UnregisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
+        f:UnregisterEvent("DYNAMIC_GOSSIP_POI_UPDATED")
     end
 end
 
-SavedVariables.OnChange("WaypointDB_Global", "GuidePinAssistantEnabled", updateToMatchSetting)
-CallbackRegistry:Add("Preload.DatabaseReady", updateToMatchSetting)
+SavedVariables.OnChange("WaypointDB_Global", "GuidePinAssistantEnabled", UpdateToMatchSetting)
+CallbackRegistry.Add("Preload.DatabaseReady", UpdateToMatchSetting)

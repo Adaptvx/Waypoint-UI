@@ -1,25 +1,24 @@
 local env                                                                                                                                          = select(2, ...)
-local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules\\generic-enum")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules\\sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-font")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules\\utils\\texture")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICCommonRange                                                                                                                                 = env.WPM:New("wpm_modules/uic-common/range")
+local UICCommonRange                                                                                                                                 = env.WPM:New("wpm_modules\\uic-common\\range")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
+local PATH        = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
 local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "range.png" }
 local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 local FILL        = UIKit.Define.Fill{}
@@ -29,7 +28,7 @@ Utils_Texture.PreloadAsset(PATH .. "range.png")
 
 
 -- Stepper Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local BACKGROUND_ARROW_LEFT              = ATLAS{ inset = 0, scale = 1, left = 0 / 256, top = 64 / 256, right = 64 / 256, bottom = 128 / 256 }
 local BACKGROUND_ARROW_LEFT_HIGHLIGHTED  = ATLAS{ inset = 0, scale = 1, left = 64 / 256, top = 64 / 256, right = 128 / 256, bottom = 128 / 256 }
@@ -117,15 +116,15 @@ end)
 
 
 -- Range
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local BACKGROUND                   = ATLAS{ inset = 32, scale = .125, left = 0 / 256, top = 192 / 256, right = 128 / 256, bottom = 256 / 256 }
+local BACKGROUND                   = ATLAS{ inset = 32, scale = 0.125, left = 0 / 256, top = 192 / 256, right = 128 / 256, bottom = 256 / 256 }
 local BACKGROUND_THUMB             = ATLAS{ inset = 0, scale = 1, left = 0 / 256, top = 0 / 256, right = 64 / 256, bottom = 64 / 256 }
 local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 0, scale = 1, left = 64 / 256, top = 0 / 256, right = 128 / 256, bottom = 64 / 256 }
 local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 0, scale = 1, left = 128 / 256, top = 0 / 256, right = 192 / 256, bottom = 64 / 256 }
 local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 0, scale = 1, left = 192 / 256, top = 0 / 256, right = 256 / 256, bottom = 64 / 256 }
 local THUMB_SIZE                   = 16
-local STEPPER_BTN_SIZE             = UIKit.Define.Num{ value = 16 }
+local STEPPER_BTN_SIZE             = 16
 local RANGE_WIDTH                  = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 28 }
 local RANGE_HEIGHT                 = UIKit.Define.Percentage{ value = 100 }
 local TRACK_SIZE                   = UIKit.Define.Fill{ delta = 6 }
@@ -133,7 +132,7 @@ local TRACK_SIZE                   = UIKit.Define.Fill{ delta = 6 }
 
 local RangeSliderMixin = CreateFromMixins(UICSharedMixin.RangeMixin)
 
-local function handleOnEnableChange(self, enabled)
+local function OnEnableChange(self, enabled)
     self.parent.ForwardButton:SetEnabled(enabled)
     self.parent.BackwardButton:SetEnabled(enabled)
 
@@ -146,7 +145,7 @@ function RangeSliderMixin:OnLoad(parent)
 
     self:RegisterMouseEvents()
     self:HookButtonStateChange(self.UpdateAnimation)
-    self:HookEnableChange(handleOnEnableChange)
+    self:HookEnableChange(OnEnableChange)
     self:HookMouseDown(self.PlayInteractSound)
     self:HookMouseUp(self.PlayInteractSound)
     self:UpdateAnimation()
@@ -237,9 +236,9 @@ end)
 
 
 -- Range With Text
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local TEXT_COLOR      = UIKit.Define.Color_RGBA{ r = GenericEnum.ColorRGB.Yellow.r * 255, g = GenericEnum.ColorRGB.Yellow.g * 255, b = GenericEnum.ColorRGB.Yellow.b * 255, a = 1 }
+local TEXT_COLOR      = GenericEnum.UIColorRGB.NormalText
 local RWT_RANGE_WIDTH = UIKit.Define.Percentage{ value = 66 }
 local RWT_TEXT_WIDTH  = UIKit.Define.Percentage{ value = 34, operator = "-", delta = 5 }
 
@@ -266,7 +265,7 @@ UICCommonRange.NewWithText = UIKit.Prefab(function(id, name, children, ...)
                 :id("Text", id)
                 :point(UIKit.Enum.Point.Left)
                 :size(RWT_TEXT_WIDTH, P_FILL)
-                :fontObject(UIFont.UIFontObjectNormal12)
+                :fontObject(UIFont.UIFontObjectNormal11)
                 :textAlignment("RIGHT", "MIDDLE")
                 :textColor(TEXT_COLOR)
                 :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),

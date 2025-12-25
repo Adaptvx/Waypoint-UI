@@ -1,22 +1,21 @@
 local env                               = select(2, ...)
-local MixinUtil                         = env.WPM:Import("wpm_modules/mixin-util")
-local UIKit_Utils                       = env.WPM:Import("wpm_modules/ui-kit/utils")
-local UIKit_Define                      = env.WPM:Import("wpm_modules/ui-kit/define")
+local UIKit_Utils                       = env.WPM:Import("wpm_modules\\ui-kit\\utils")
+local UIKit_Define                      = env.WPM:Import("wpm_modules\\ui-kit\\define")
 
-local Mixin                             = MixinUtil.Mixin
+local Mixin                             = Mixin
 local wipe                              = wipe
 
-local UIKit_Primitives_Frame            = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_LayoutHorizontal = env.WPM:New("wpm_modules/ui-kit/primitives/layout-horizontal")
+local UIKit_Primitives_Frame            = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_LayoutHorizontal = env.WPM:New("wpm_modules\\ui-kit\\primitives\\layout-horizontal")
 
 
 -- Layout (Horizontal)
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local LayoutHorizontalMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LayoutHorizontalMixin:Init()
         self.__visibleChildren = {}
@@ -26,16 +25,14 @@ do
 
 
     -- Layout
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function resolveSpacing(spacingSetting, referenceSize)
+    local function ResolveSpacing(spacingSetting, referenceSize)
         if not spacingSetting then return 0 end
-        local spacingType = spacingSetting == UIKit_Define.Num and "num"
+        local spacingType = type(spacingSetting) == "number" and "num"
             or spacingSetting == UIKit_Define.Percentage and "percent"
-            or type(spacingSetting) == "number" and "raw"
             or nil
-        if spacingType == "raw" then return spacingSetting end
-        if spacingType == "num" then return spacingSetting.value or 0 end
+        if spacingType == "num" then return spacingSetting end
         if spacingType == "percent" then
             return UIKit_Utils:CalculateRelativePercentage(referenceSize, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
         end
@@ -80,7 +77,7 @@ do
         containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
         containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-        local spacing = resolveSpacing(self:GetSpacing(), containerWidth)
+        local spacing = ResolveSpacing(self:GetSpacing(), containerWidth)
         local contentWidth = totalChildrenWidth + (visibleChildCount - 1) * spacing
 
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -118,7 +115,7 @@ do
 
 
     -- Property
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LayoutHorizontalMixin:GetAlignmentH()
         return self.uk_prop_layoutAlignmentH or "LEADING"

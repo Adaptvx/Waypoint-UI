@@ -1,17 +1,16 @@
 local env                    = select(2, ...)
-local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                  = MixinUtil.Mixin
+local Mixin                  = Mixin
 local tinsert                = table.insert
 local ipairs                 = ipairs
 local type                   = type
 
-local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_List  = env.WPM:New("wpm_modules/ui-kit/primitives/list")
+local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_List  = env.WPM:New("wpm_modules\\ui-kit\\primitives\\list")
 
 
 -- List
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ListMixin = {}
 do
@@ -19,7 +18,7 @@ do
 
 
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ListMixin:Init()
         self.__elementPool = {}
@@ -31,7 +30,7 @@ do
 
 
     -- API
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ListMixin:UpdateAllVisibleElements()
         if not self.__data then return end
@@ -68,7 +67,7 @@ do
 
 
     -- Internal
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function ListMixin:HideElements()
         for _, variantFramePool in pairs(self.__elementPool) do
@@ -162,14 +161,14 @@ end
             Frame(name, {
 
             })
-            :size(UIKit.Define.Percentage{ value = 100 }, UIKit.Define.Num{ value = 25 })
+            :size(UIKit.Define.Percentage{ value = 100 }, 25)
             :background(BACKGROUND)
-            :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+            :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
             :_Render()
     end)
 
-    local function handleOnElementUpdate(element, index, value)
-        element:alpha(index * .1)
+    local function OnElementUpdate(element, index, value)
+        element:alpha(index * 0.1)
     end
 
     Frame{
@@ -177,20 +176,20 @@ end
             List()
                 :id("List")
                 :poolPrefab(Element)
-                :poolOnElementUpdate(handleOnElementUpdate)
+                :poolOnElementUpdate(OnElementUpdate)
         }
             :point(UIKit.Enum.Point.Center)
             :size(UIKit.Define.Percentage{value = 100}, UIKit.Define.Fit{})
             :background(BACKGROUND)
-            :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+            :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
             :layoutDirection(UIKit.Enum.Direction.Vertical)
-            :layoutSpacing(UIKit.Define.Num{value = 7.5})
+            :layoutSpacing(7.5)
     }
         :id("Frame")
         :point(UIKit.Enum.Point.Center)
-        :size(UIKit.Define.Num{ value = 325 }, UIKit.Define.Num{ value = 575 })
+        :size(325, 575)
         :background(BACKGROUND)
-        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
         :_Render()
 
     local data = {

@@ -7,19 +7,19 @@ local table_sort   = table.sort
 local string_lower = string.lower
 local string_find  = string.find
 
-local Utils_Sort   = env.WPM:New("wpm_modules/utils/sort")
+local Utils_Sort   = env.WPM:New("wpm_modules\\utils\\sort")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local decoratedPool = {}
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function resolveNestedPath(source, pathKeys, pathLength)
+local function ResolveNestedPath(source, pathKeys, pathLength)
     if pathLength == 0 then return source end
 
     local current = source
@@ -30,14 +30,14 @@ local function resolveNestedPath(source, pathKeys, pathLength)
     return current
 end
 
-local function containsString(haystack, needle)
+local function ContainsString(haystack, needle)
     if Utils_Sort.FindString then
         return Utils_Sort.FindString(haystack, needle)
     end
     return string_find(haystack, needle, 1, true) ~= nil
 end
 
-local function compareNumberDescending(valueA, valueB)
+local function CompareNumberDescending(valueA, valueB)
     if valueA == nil and valueB == nil then return false end
     if valueA == nil then return false end
     if valueB == nil then return true end
@@ -45,7 +45,7 @@ local function compareNumberDescending(valueA, valueB)
     return numA < numB
 end
 
-local function compareNumberAscending(valueA, valueB)
+local function CompareNumberAscending(valueA, valueB)
     if valueA == nil and valueB == nil then return false end
     if valueA == nil then return false end
     if valueB == nil then return true end
@@ -53,19 +53,19 @@ local function compareNumberAscending(valueA, valueB)
     return numA > numB
 end
 
-local function compareAlphaDescending(valueA, valueB)
+local function CompareAlphaDescending(valueA, valueB)
     valueA = (valueA == nil) and "" or tostring(valueA)
     valueB = (valueB == nil) and "" or tostring(valueB)
     return string_lower(valueA) > string_lower(valueB)
 end
 
-local function compareAlphaAscending(valueA, valueB)
+local function CompareAlphaAscending(valueA, valueB)
     valueA = (valueA == nil) and "" or tostring(valueA)
     valueB = (valueB == nil) and "" or tostring(valueB)
     return string_lower(valueA) < string_lower(valueB)
 end
 
-local function decorateSortAndUnwrap(list, pathKeys, comparator)
+local function DecorateSortAndUnwrap(list, pathKeys, comparator)
     if list == nil then return list end
 
     local listLength = #list
@@ -77,7 +77,7 @@ local function decorateSortAndUnwrap(list, pathKeys, comparator)
     for i = 1, listLength do
         local entry = decorated[i]
         local value = list[i]
-        local sortKey = resolveNestedPath(value, pathKeys, pathLength)
+        local sortKey = ResolveNestedPath(value, pathKeys, pathLength)
         if entry then
             entry.key = sortKey
             entry.val = value
@@ -103,7 +103,7 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Sort.FindKeyPositionInTable(tbl, targetKey)
     if tbl == nil then return nil end
@@ -129,7 +129,7 @@ end
 
 function Utils_Sort.GetSubVariableFromList(list, pathKeys)
     local pathLength = (pathKeys and #pathKeys) or 0
-    return resolveNestedPath(list, pathKeys, pathLength)
+    return ResolveNestedPath(list, pathKeys, pathLength)
 end
 
 function Utils_Sort.FindVariableValuePositionInTable(tbl, pathKeys, targetValue)
@@ -137,20 +137,20 @@ function Utils_Sort.FindVariableValuePositionInTable(tbl, pathKeys, targetValue)
 
     local pathLength = (pathKeys and #pathKeys) or 0
     for i = 1, #tbl do
-        local resolved = resolveNestedPath(tbl[i], pathKeys, pathLength)
+        local resolved = ResolveNestedPath(tbl[i], pathKeys, pathLength)
         if resolved == targetValue then return i end
     end
     return nil
 end
 
 function Utils_Sort.SortListByNumber(list, pathKeys, ascending)
-    local comparator = ascending and compareNumberAscending or compareNumberDescending
-    return decorateSortAndUnwrap(list, pathKeys, comparator)
+    local comparator = ascending and CompareNumberAscending or CompareNumberDescending
+    return DecorateSortAndUnwrap(list, pathKeys, comparator)
 end
 
 function Utils_Sort.SortListByAlphabeticalOrder(list, pathKeys, descending)
-    local comparator = descending and compareAlphaDescending or compareAlphaAscending
-    return decorateSortAndUnwrap(list, pathKeys, comparator)
+    local comparator = descending and CompareAlphaDescending or CompareAlphaAscending
+    return DecorateSortAndUnwrap(list, pathKeys, comparator)
 end
 
 function Utils_Sort.FilterListByVariable(list, pathKeys, filterValue, roughMatch, caseSensitive, customCheck)
@@ -177,12 +177,12 @@ function Utils_Sort.FilterListByVariable(list, pathKeys, filterValue, roughMatch
                 results[resultCount] = entry
             end
         else
-            local resolved = resolveNestedPath(entry, pathKeys, pathLength)
+            local resolved = ResolveNestedPath(entry, pathKeys, pathLength)
             if resolved ~= nil then
                 if isRoughMatch then
                     local haystack = tostring(resolved)
                     if not isCaseSensitive then haystack = string_lower(haystack) end
-                    if containsString(haystack, needleString) then
+                    if ContainsString(haystack, needleString) then
                         resultCount = resultCount + 1
                         results[resultCount] = entry
                     end

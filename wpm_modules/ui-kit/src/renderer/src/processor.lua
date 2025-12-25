@@ -1,33 +1,33 @@
 local env                        = select(2, ...)
-local UIKit_Define               = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_Utils                = env.WPM:Import("wpm_modules/ui-kit/utils")
-local UIKit_Renderer_Positioning = env.WPM:Import("wpm_modules/ui-kit/renderer/positioning")
-local UIKit_Renderer_Processor   = env.WPM:New("wpm_modules/ui-kit/renderer/processor")
+local UIKit_Define               = env.WPM:Import("wpm_modules\\ui-kit\\define")
+local UIKit_Utils                = env.WPM:Import("wpm_modules\\ui-kit\\utils")
+local UIKit_Renderer_Positioning = env.WPM:Import("wpm_modules\\ui-kit\\renderer\\positioning")
+local UIKit_Renderer_Processor   = env.WPM:New("wpm_modules\\ui-kit\\renderer\\processor")
 
 
 -- Size — Fit
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processSizeFit(frame)
+local function ProcessSizeFit(frame)
     if frame.CustomFitContent then
         frame:CustomFitContent()
     elseif frame.FitContent then
         frame:FitContent()
     end
 end
-UIKit_Renderer_Processor.SizeFit = processSizeFit
+UIKit_Renderer_Processor.SizeFit = ProcessSizeFit
 
 
 -- Size — Num / Percentage
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processSizeStatic(frame)
+local function ProcessSizeStatic(frame)
     local parent = frame:GetParent() or UIParent
 
     local width = frame.uk_prop_width
     if width then
-        if width == UIKit_Define.Num then
-            frame:SetWidth(width.value)
+        if type(width) == "number" then
+            frame:SetWidth(width)
         elseif width == UIKit_Define.Percentage then
             frame:SetWidth(UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), width.value, width.operator, width.delta, frame))
         end
@@ -35,81 +35,91 @@ local function processSizeStatic(frame)
 
     local height = frame.uk_prop_height
     if height then
-        if height == UIKit_Define.Num then
-            frame:SetHeight(height.value)
+        if type(height) == "number" then
+            frame:SetHeight(height)
         elseif height == UIKit_Define.Percentage then
             frame:SetHeight(UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), height.value, height.operator, height.delta, frame))
         end
     end
 end
-UIKit_Renderer_Processor.SizeStatic = processSizeStatic
+UIKit_Renderer_Processor.SizeStatic = ProcessSizeStatic
 
 
 -- Size — Fill
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processSizeFill(frame)
+local function ProcessSizeFill(frame)
     UIKit_Renderer_Positioning.Fill(frame, frame.uk_prop_fill)
 end
-UIKit_Renderer_Processor.SizeFill = processSizeFill
+UIKit_Renderer_Processor.SizeFill = ProcessSizeFill
 
 
 -- Point
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processPositionPoint(frame)
+local function ProcessPositionPoint(frame)
     UIKit_Renderer_Positioning.SetPoint(frame, frame.uk_prop_point, frame.uk_prop_point_relative)
 end
-UIKit_Renderer_Processor.Point = processPositionPoint
+UIKit_Renderer_Processor.Point = ProcessPositionPoint
 
 
-local function processPositionAnchor(frame)
+local function ProcessPositionAnchor(frame)
     UIKit_Renderer_Positioning.SetAnchor(frame, frame.uk_prop_anchor)
 end
-UIKit_Renderer_Processor.Anchor = processPositionAnchor
+UIKit_Renderer_Processor.Anchor = ProcessPositionAnchor
 
 
-local function processPositionOffset(frame)
+local function ProcessPositionOffset(frame)
     local parent = frame:GetParent() or UIParent
 
-    local x = frame.uk_prop_x
-    if x then
-        if x == UIKit_Define.Num then
-            UIKit_Renderer_Positioning.SetOffsetX(frame, x.value)
-        elseif x == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning.SetOffsetX(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), x.value, x.operator, x.delta, frame))
+    local xProp = frame.uk_prop_x
+    local yProp = frame.uk_prop_y
+
+    local x, y
+
+    if xProp then
+        if type(xProp) == "number" then
+            x = xProp
+        elseif xProp == UIKit_Define.Percentage then
+            x = UIKit_Utils:CalculateRelativePercentage(parent:GetWidth(), xProp.value, xProp.operator, xProp.delta, frame)
         end
     end
 
-    local y = frame.uk_prop_y
-    if y then
-        if y == UIKit_Define.Num then
-            UIKit_Renderer_Positioning.SetOffsetY(frame, y.value)
-        elseif y == UIKit_Define.Percentage then
-            UIKit_Renderer_Positioning.SetOffsetY(frame, UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), y.value, y.operator, y.delta, frame))
+    if yProp then
+        if type(yProp) == "number" then
+            y = yProp
+        elseif yProp == UIKit_Define.Percentage then
+            y = UIKit_Utils:CalculateRelativePercentage(parent:GetHeight(), yProp.value, yProp.operator, yProp.delta, frame)
         end
     end
+
+    if x ~= nil and y ~= nil then
+        UIKit_Renderer_Positioning.SetOffset(frame, x, y)
+    else
+        if x ~= nil then UIKit_Renderer_Positioning.SetOffsetX(frame, x) end
+        if y ~= nil then UIKit_Renderer_Positioning.SetOffsetY(frame, y) end
+    end
 end
-UIKit_Renderer_Processor.PositionOffset = processPositionOffset
+UIKit_Renderer_Processor.PositionOffset = ProcessPositionOffset
 
 
 -- Layout Group
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processUpdateLayout(frame)
+local function ProcessUpdateLayout(frame)
     local frameType = frame.uk_type
     if frameType == "LayoutGrid" or frameType == "LayoutVertical" or frameType == "LayoutHorizontal" then
         frame:RenderElements()
     end
 end
-UIKit_Renderer_Processor.Layout = processUpdateLayout
+UIKit_Renderer_Processor.Layout = ProcessUpdateLayout
 
 
 -- Scroll Bar
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function processUpdateScrollBar(frame)
+local function ProcessUpdateScrollBar(frame)
     frame:SetThumbSize()
     frame:SyncValue()
 end
-UIKit_Renderer_Processor.ScrollBar = processUpdateScrollBar
+UIKit_Renderer_Processor.ScrollBar = ProcessUpdateScrollBar

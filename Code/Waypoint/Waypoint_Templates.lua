@@ -1,20 +1,19 @@
 local env                                                                                                                          = select(2, ...)
-local MixinUtil                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local GenericEnum                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
-local UIKit                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Path                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local GenericEnum                                                                                                                  = env.WPM:Import("wpm_modules\\generic-enum")
+local UIKit                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, Grid, LayoutVertical, HStack, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.Grid, UIKit.UI.LayoutVertical, UIKit.UI.HStack, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
+local UIAnim                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
 
-local Mixin                                                                                                                        = MixinUtil.Mixin
+local Mixin                                                                                                                        = Mixin
 
-local Waypoint_Templates                                                                                                           = env.WPM:New("@/Waypoint/Templates")
+local Waypoint_Templates                                                                                                           = env.WPM:New("@\\Waypoint\\Templates")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH        = Path.Root .. "/Art/Waypoint/"
+local PATH        = Path.Root .. "\\Art\\Waypoint\\"
 local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "WaypointUITextureAtlas.png" }
 local FIT         = UIKit.Define.Fit{}
 
@@ -22,16 +21,16 @@ local TEXTURE_NIL = UIKit.Define.Texture{ path = nil }
 
 
 -- Pinpoint Arrow
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local PA_ARROW_BACKGROUND = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
-local PA_ARROW_SIZE       = UIKit.Define.Num{ value = 15 }
+local PA_ARROW_SIZE       = 15
 
 
 local PAAnimation = UIAnim.New()
 local PAAnimation_Arrow1Intro = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayEnd(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
@@ -46,24 +45,24 @@ local PAAnimation_Arrow1Translate = UIAnim.Animate()
     :to(-7.5)
 local PAAnimation_Arrow1Outro = UIAnim.Animate()
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayStart(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
     :from(1)
     :to(0)
 local PAAnimation_Arrow2Intro = UIAnim.Animate()
-    :wait(.25)
+    :wait(0.25)
 
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayEnd(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
     :from(0)
     :to(1)
 local PAAnimation_Arrow2Translate = UIAnim.Animate()
-    :wait(.25)
+    :wait(0.25)
 
     :property(UIAnim.Enum.Property.PosY)
     :duration(1.75)
@@ -72,27 +71,27 @@ local PAAnimation_Arrow2Translate = UIAnim.Animate()
     :from(7.5)
     :to(-7.5)
 local PAAnimation_Arrow2Outro = UIAnim.Animate()
-    :wait(.25)
+    :wait(0.25)
 
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayStart(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
     :from(1)
     :to(0)
 local PAAnimation_Arrow3Intro = UIAnim.Animate()
-    :wait(.5)
+    :wait(0.5)
 
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayEnd(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
     :from(0)
     :to(1)
 local PAAnimation_Arrow3Translate = UIAnim.Animate()
-    :wait(.5)
+    :wait(0.5)
 
     :property(UIAnim.Enum.Property.PosY)
     :duration(1.75)
@@ -101,10 +100,10 @@ local PAAnimation_Arrow3Translate = UIAnim.Animate()
     :from(7.5)
     :to(-7.5)
 local PAAnimation_Arrow3Outro = UIAnim.Animate()
-    :wait(.5)
+    :wait(0.5)
 
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.5)
+    :duration(0.5)
     :loopDelayStart(1.25)
     :loop(UIAnim.Enum.Looping.Reset)
     :easing(UIAnim.Enum.Easing.Linear)
@@ -201,7 +200,7 @@ Waypoint_Templates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...
             })
                 :point(UIKit.Enum.Point.Center)
                 :size(FIT, FIT)
-                :layoutSpacing(UIKit.Define.Num{ value = -5 })
+                :layoutSpacing(-5)
         })
 
     frame.Arrow1 = UIKit.GetElementById("Arrow1", id)
@@ -221,7 +220,7 @@ end)
 
 
 -- Context Icon
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local CI_FOREGROUND_TEXTURE = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
 local CI_BACKGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
@@ -255,7 +254,7 @@ end
 
 function ContextIconMixin:Decolor()
     self.ImageTexture:SetDesaturated(false)
-    self.ImageTexture:SetColor(GenericEnum.ColorRGB.White)
+    self.ImageTexture:SetColor(GenericEnum.ColorRGB01.White)
 end
 
 function ContextIconMixin:SetInfo(ContextIconTexture)

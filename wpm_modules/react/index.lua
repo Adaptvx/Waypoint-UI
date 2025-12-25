@@ -1,5 +1,5 @@
 --[[
-    local React = env.WPM:Import("wpm_modules/react")
+    local React = env.WPM:Import("wpm_modules\\react")
 
 
     -- React variables used a shared instance...
@@ -25,21 +25,21 @@ local assert  = assert
 local type    = type
 local tinsert = table.insert
 
-local React   = env.WPM:New("wpm_modules/react")
+local React   = env.WPM:New("wpm_modules\\react")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local db = {}
 
-local function handleOnChange(self, func)
+local function HandleOnChange(self, func)
     assert(type(func) == "function", "Invalid variable `func`: Must be of type `function`")
     tinsert(self, func)
     return #self
 end
 
-local function handleSet(self, value)
+local function HandleSet(self, value)
     local indexed = db[self.__id]
     indexed.__value = value
 
@@ -50,13 +50,13 @@ local function handleSet(self, value)
     end
 end
 
-local function handleGet(self)
+local function HandleGet(self)
     return db[self.__id].__value
 end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local idCounter = 0
 
@@ -69,9 +69,9 @@ function React.New(defaultValue)
     var.__isReact = true
     var.__value = defaultValue
 
-    var.OnChange = handleOnChange
-    var.Set = handleSet
-    var.Get = handleGet
+    var.OnChange = HandleOnChange
+    var.Set = HandleSet
+    var.Get = HandleGet
 
     db[id] = var
 

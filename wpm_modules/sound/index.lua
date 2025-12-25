@@ -1,32 +1,32 @@
 local env    = select(2, ...)
-local Sound  = env.WPM:New("wpm_modules/sound")
+local Sound  = env.WPM:New("wpm_modules\\sound")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local layers = {}
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function initalizeLayer(layer)
+local function InitLayer(layer)
     layers[layer] = true
 end
 
-local function isLayerEnabled(layer)
-    if layers[layer] == nil then initalizeLayer(layer) end
+local function IsLayerEnabled(layer)
+    if layers[layer] == nil then InitLayer(layer) end
     return layers[layer]
 end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Sound.PlaySoundFile(layer, filePath, force)
     assert(filePath, "Invalid variable `filePath`")
-    if not force and isLayerEnabled(layer) == false then return end
+    if not force and IsLayerEnabled(layer) == false then return end
 
     PlaySoundFile(filePath, "SFX")
 end
@@ -34,7 +34,7 @@ end
 function Sound.PlaySound(layer, soundID, force)
     assert(soundID, "Invalid variable `soundID`")
     if not tonumber(soundID) then return end
-    if not force and isLayerEnabled(layer) == false then return end
+    if not force and IsLayerEnabled(layer) == false then return end
 
     PlaySound(soundID, "SFX")
 end

@@ -3,14 +3,14 @@ local env            = select(2, ...)
 local type           = type
 local CreateFrame    = CreateFrame
 
-local UIAnim_Easing  = env.WPM:Import("wpm_modules/ui-anim/easing")
-local UIAnim_Methods = env.WPM:New("wpm_modules/ui-anim/methods")
+local UIAnim_Easing  = env.WPM:Import("wpm_modules\\ui-anim\\easing")
+local UIAnim_Methods = env.WPM:New("wpm_modules\\ui-anim\\methods")
 
 local LINEAR_EASING  = UIAnim_Easing.Linear
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local activeInstances     = {}
 local activeInstanceCount = 0
@@ -24,15 +24,15 @@ function noopHandle:Stop() end
 
 
 -- Internal
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function stopAnimation(instance)
+local function StopAnimation(instance)
     if instance then
         instance.stopped = true
     end
 end
 
-local function removeAnimation(instanceIndex)
+local function RemoveAnimation(instanceIndex)
     local lastIndex = activeInstanceCount
     local instance = activeInstances[instanceIndex]
 
@@ -61,13 +61,13 @@ local function removeAnimation(instanceIndex)
     end
 end
 
-local function processAnimations(_, deltaTime)
+local function ProcessAnimations(_, deltaTime)
     local instanceIndex = 1
     while instanceIndex <= activeInstanceCount do
         local instance = activeInstances[instanceIndex]
 
         if not instance or instance.stopped then
-            removeAnimation(instanceIndex)
+            RemoveAnimation(instanceIndex)
         else
             local elapsedTime = instance.elapsedTime + deltaTime
             instance.elapsedTime = elapsedTime
@@ -99,7 +99,7 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIAnim_Methods.AnimateNumber(startValue, endValue, duration, easing, onUpdate, onFinish)
     local easingFunction = type(easing) == "function" and easing or UIAnim_Easing[easing] or LINEAR_EASING
@@ -116,7 +116,7 @@ function UIAnim_Methods.AnimateNumber(startValue, endValue, duration, easing, on
         instancePool[instancePoolCount] = nil
         instancePoolCount = instancePoolCount - 1
     else
-        instance = { Stop = stopAnimation }
+        instance = { Stop = StopAnimation }
     end
 
     instance.startValue                  = startValue
@@ -133,7 +133,7 @@ function UIAnim_Methods.AnimateNumber(startValue, endValue, duration, easing, on
     activeInstances[activeInstanceCount] = instance
 
     if not isRunning then
-        updateFrame:SetScript("OnUpdate", processAnimations)
+        updateFrame:SetScript("OnUpdate", ProcessAnimations)
         isRunning = true
     end
 
@@ -143,7 +143,7 @@ end
 
 --[[
 local value = 0
-local UIAnim_Enum = env.WPM:Import("wpm_modules/ui-anim/enum")
+local UIAnim_Enum = env.WPM:Import("wpm_modules\\ui-anim\\enum")
 UIAnim_Methods.AnimateNumber(0, 100, 5, UIAnim_Enum.Easing.ExpoIn, function(val)
     value = val
     print("Animated value:", value)

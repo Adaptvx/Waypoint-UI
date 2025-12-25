@@ -2,23 +2,23 @@ local env              = select(2, ...)
 
 local IsAddOnLoaded    = C_AddOns.IsAddOnLoaded
 
-local Sound            = env.WPM:Import("wpm_modules/sound")
-local CallbackRegistry = env.WPM:Import("wpm_modules/callback-registry")
-local UIFont           = env.WPM:Import("wpm_modules/ui-font")
-local CVarUtil         = env.WPM:Import("wpm_modules/cvar-util")
-local SavedVariables   = env.WPM:Import("wpm_modules/saved-variables")
-local SlashCommand     = env.WPM:Import("wpm_modules/slash-command")
-local Path             = env.WPM:Import("wpm_modules/path")
-local Utils_InlineIcon = env.WPM:Import("wpm_modules/utils/inlineIcon")
-local GenericEnum      = env.WPM:Import("wpm_modules/generic-enum")
-local Support_TomTom   = env.WPM:Await("@/Support/TomTom")
+local Sound            = env.WPM:Import("wpm_modules\\sound")
+local CallbackRegistry = env.WPM:Import("wpm_modules\\callback-registry")
+local UIFont           = env.WPM:Import("wpm_modules\\ui-font")
+local CVarUtil         = env.WPM:Import("wpm_modules\\cvar-util")
+local SavedVariables   = env.WPM:Import("wpm_modules\\saved-variables")
+local SlashCommand     = env.WPM:Import("wpm_modules\\slash-command")
+local Path             = env.WPM:Import("wpm_modules\\path")
+local Utils_InlineIcon = env.WPM:Import("wpm_modules\\utils\\inline-icon")
+local GenericEnum      = env.WPM:Import("wpm_modules\\generic-enum")
+local Support_TomTom   = env.WPM:Await("@\\Support\\TomTom")
 
 
 env.NAME           = "Waypoint UI"
-env.ICON           = Path.Root .. "/Art/Icon/Icon.png"
-env.ICON_ALT       = Path.Root .. "/Art/Icon/IconAltLight.png"
-env.VERSION_STRING = "1.2.3"
-env.VERSION_NUMBER = 010203
+env.ICON           = Path.Root .. "\\Art\\Icon\\Icon.png"
+env.ICON_ALT       = Path.Root .. "\\Art\\Icon\\IconAltLight.png"
+env.VERSION_STRING = "1.2.4"
+env.VERSION_NUMBER = 010204
 env.DEBUG_MODE     = false
 
 
@@ -27,7 +27,7 @@ local L = {}; env.L = L -- Locales
 
 local Enum = {}; env.Enum = Enum -- Add-on specific enum
 do
-    Enum.ColorRGB = {
+    Enum.ColorRGB01 = {
         Other           = { r = 255 / 255, g = 241 / 255, b = 180 / 255 },
         QuestNormal     = { r = 255 / 255, g = 255 / 255, b = 156 / 255 },
         QuestRepeatable = { r = 158 / 255, g = 207 / 255, b = 245 / 255 },
@@ -76,14 +76,14 @@ do
         PrefFont                               = 1,
         PrefMetric                             = false,
         WaypointScale                          = 1,
-        WaypointScaleMin                       = .25,
+        WaypointScaleMin                       = 0.25,
         WaypointScaleMax                       = 1.5,
         WaypointBeam                           = true,
         WaypointBeamAlpha                      = 1,
         WaypointDistanceText                   = true,
         WaypointDistanceTextType               = 1,
         WaypointDistanceTextScale              = 1,
-        WaypointDistanceTextAlpha              = .7,
+        WaypointDistanceTextAlpha              = 0.7,
         PinpointAllowInQuestArea               = false,
         PinpointScale                          = 1,
         PinpointInfo                           = true,
@@ -94,15 +94,15 @@ do
         NavigatorDistance                      = 1,
         NavigatorDynamicDistance               = true,
         CustomColor                            = false,
-        CustomColorQuestIncomplete             = { r = Enum.ColorRGB.QuestIncomplete.r, g = Enum.ColorRGB.QuestIncomplete.g, b = Enum.ColorRGB.QuestIncomplete.b, a = 1 },
+        CustomColorQuestIncomplete             = { r = Enum.ColorRGB01.QuestIncomplete.r, g = Enum.ColorRGB01.QuestIncomplete.g, b = Enum.ColorRGB01.QuestIncomplete.b, a = 1 },
         CustomColorQuestIncompleteTint         = false,
-        CustomColorQuestComplete               = { r = Enum.ColorRGB.QuestNormal.r, g = Enum.ColorRGB.QuestNormal.g, b = Enum.ColorRGB.QuestNormal.b, a = 1 },
+        CustomColorQuestComplete               = { r = Enum.ColorRGB01.QuestNormal.r, g = Enum.ColorRGB01.QuestNormal.g, b = Enum.ColorRGB01.QuestNormal.b, a = 1 },
         CustomColorQuestCompleteTint           = false,
-        CustomColorQuestCompleteRepeatable     = { r = Enum.ColorRGB.QuestRepeatable.r, g = Enum.ColorRGB.QuestRepeatable.g, b = Enum.ColorRGB.QuestRepeatable.b, a = 1 },
+        CustomColorQuestCompleteRepeatable     = { r = Enum.ColorRGB01.QuestRepeatable.r, g = Enum.ColorRGB01.QuestRepeatable.g, b = Enum.ColorRGB01.QuestRepeatable.b, a = 1 },
         CustomColorQuestCompleteRepeatableTint = false,
-        CustomColorQuestCompleteImportant      = { r = Enum.ColorRGB.QuestImportant.r, g = Enum.ColorRGB.QuestImportant.g, b = Enum.ColorRGB.QuestImportant.b, a = 1 },
+        CustomColorQuestCompleteImportant      = { r = Enum.ColorRGB01.QuestImportant.r, g = Enum.ColorRGB01.QuestImportant.g, b = Enum.ColorRGB01.QuestImportant.b, a = 1 },
         CustomColorQuestCompleteImportantTint  = false,
-        CustomColorOther                       = { r = Enum.ColorRGB.Other.r, g = Enum.ColorRGB.Other.g, b = Enum.ColorRGB.Other.b, a = 1 },
+        CustomColorOther                       = { r = Enum.ColorRGB01.Other.r, g = Enum.ColorRGB01.Other.g, b = Enum.ColorRGB01.Other.b, a = 1 },
         CustomColorOtherTint                   = false,
         AudioGlobal                            = true,
         AudioCustom                            = false,
@@ -350,7 +350,7 @@ do
         Config.DBLocal = SavedVariables.GetDatabase(NAME_LOCAL)
         Config.DBLocalPersistent = SavedVariables.GetDatabase(NAME_LOCAL_PERSISTENT)
 
-        CallbackRegistry:Trigger("Preload.DatabaseReady")
+        CallbackRegistry.Trigger("Preload.DatabaseReady")
     end
 end
 
@@ -358,13 +358,13 @@ end
 local SlashCmdRegister = {}
 do -- Slash Command
     -- /way
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local GetBestMapForUnit    = C_Map.GetBestMapForUnit
     local GetPlayerMapPosition = C_Map.GetPlayerMapPosition
 
-    local INLINE_ADDON_ICON    = Utils_InlineIcon.InlineIcon(env.ICON_ALT, 16, 16)
-    local PATH_CHAT_DIVIDER    = Utils_InlineIcon.InlineIcon(Path.Root .. "/Art/Chat/Subdivider.png", 16, 16)
+    local INLINE_ADDON_ICON    = Utils_InlineIcon.New(env.ICON_ALT, 16, 16)
+    local PATH_CHAT_DIVIDER    = Utils_InlineIcon.New(Path.Root .. "\\Art\\Chat\\Subdivider.png", 16, 16)
 
     local INVALID_WAY_MSG_1    = INLINE_ADDON_ICON ..
         " /way " .. GenericEnum.ColorHEX.Yellow .. "#<mapID> <x> <y> <name>" .. "|r"
@@ -372,7 +372,7 @@ do -- Slash Command
     local INVALID_WAY_MSG_3    = PATH_CHAT_DIVIDER .. " /way " .. GenericEnum.ColorHEX.Yellow .. "reset" .. "|r"
 
 
-    local function printPosition()
+    local function PrintPosition()
         local playerMapID = GetBestMapForUnit("player")
         local playerPosition = playerMapID and GetPlayerMapPosition(playerMapID, "player") or nil
 
@@ -392,12 +392,12 @@ do -- Slash Command
         DEFAULT_CHAT_FRAME:AddMessage(message2)
     end
 
-    local function throwSlashWayError()
+    local function ThrowSlashWayError()
         DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_MSG_1)
         DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_MSG_2)
         DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_MSG_3)
 
-        printPosition()
+        PrintPosition()
     end
 
     -- locale-aware decimal separator normalization (e.g. "50,5" -> "50.5" or vice versa)
@@ -406,12 +406,12 @@ do -- Slash Command
     local validDecimalReplacement = "%1" .. (localeUsesDecimalPoint and "." or ",") .. "%2"
     local tokens = {}
 
-    local function handleSlashCmd_Way(inputMessage)
+    local function HandleSlashCmd_Way(inputMessage)
         if IsAddOnLoaded("TomTom") then
             Support_TomTom.PlaceWaypointAtSession()
             return
         end
-        if not inputMessage or inputMessage == "" then return throwSlashWayError() end
+        if not inputMessage or inputMessage == "" then return ThrowSlashWayError() end
 
         -- normalize input: separate comma-joined coords and fix decimal separators
         local normalizedInput = inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern,
@@ -419,7 +419,7 @@ do -- Slash Command
 
         wipe(tokens)
         for word in normalizedInput:gmatch("%S+") do tokens[#tokens + 1] = word end
-        if #tokens == 0 then return throwSlashWayError() end
+        if #tokens == 0 then return ThrowSlashWayError() end
 
         -- handle reset/clear commands
         local commandLower = tokens[1]:lower()
@@ -428,7 +428,7 @@ do -- Slash Command
         end
 
         -- helper: safely convert token at index to number
-        local function parseTokenAsNumber(index)
+        local function ParseTokenAsNumber(index)
             return tokens[index] and tonumber(tokens[index])
         end
 
@@ -439,14 +439,14 @@ do -- Slash Command
         -- format: #<mapID> <x> <y> [name]
         if firstToken:sub(1, 1) == "#" then
             zoneMapId = tonumber(firstToken:sub(2))
-            coordX, coordY = parseTokenAsNumber(2), parseTokenAsNumber(3)
-            if not (zoneMapId and coordX and coordY) then return throwSlashWayError() end
+            coordX, coordY = ParseTokenAsNumber(2), ParseTokenAsNumber(3)
+            if not (zoneMapId and coordX and coordY) then return ThrowSlashWayError() end
             if tokenCount > 3 then labelName = table.concat(tokens, " ", 4) end
 
             -- format: <x> <y> [name] OR <mapID> <x> <y> [name]
         elseif tonumber(firstToken) then
-            local num1, num2, num3 = tonumber(firstToken), parseTokenAsNumber(2), parseTokenAsNumber(3)
-            if not (num1 and num2) then return throwSlashWayError() end
+            local num1, num2, num3 = tonumber(firstToken), ParseTokenAsNumber(2), ParseTokenAsNumber(3)
+            if not (num1 and num2) then return ThrowSlashWayError() end
 
             if num3 then
                 zoneMapId, coordX, coordY = num1, num2, num3
@@ -464,24 +464,24 @@ do -- Slash Command
                     coordStartIndex = i; break
                 end
             end
-            if not coordStartIndex then return throwSlashWayError() end
+            if not coordStartIndex then return ThrowSlashWayError() end
 
-            coordX, coordY = parseTokenAsNumber(coordStartIndex), parseTokenAsNumber(coordStartIndex + 1)
-            if not (coordX and coordY) then return throwSlashWayError() end
+            coordX, coordY = ParseTokenAsNumber(coordStartIndex), ParseTokenAsNumber(coordStartIndex + 1)
+            if not (coordX and coordY) then return ThrowSlashWayError() end
 
             zoneMapId = GetBestMapForUnit("player")
             labelName = coordStartIndex > 1 and table.concat(tokens, " ", 1, coordStartIndex - 1) or nil
         end
 
-        if not (zoneMapId and coordX and coordY) then return throwSlashWayError() end
+        if not (zoneMapId and coordX and coordY) then return ThrowSlashWayError() end
         WaypointUIAPI.Navigation.NewUserNavigation(labelName, zoneMapId, coordX, coordY)
     end
 
 
     -- /waypoint /wp
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function handleSlashCmd_Waypoint(msg, tokens)
+    local function HandleSlashCmd_Waypoint(msg, tokens)
         if #tokens >= 1 then
             local firstToken = tokens[1]:lower()
 
@@ -493,7 +493,7 @@ do -- Slash Command
 
 
     -- Load
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local Schema = {
         -- /way
@@ -501,14 +501,14 @@ do -- Slash Command
             name     = "WAYPOINT_UI_WAY",
             hook     = "TOMTOM_WAY",
             command  = "way",
-            callback = handleSlashCmd_Way
+            callback = HandleSlashCmd_Way
         },
         -- /waypoint /wp
         {
             name     = "WAYPOINT_UI",
             hook     = nil,
             command  = { "waypoint", "wp" },
-            callback = handleSlashCmd_Waypoint
+            callback = HandleSlashCmd_Waypoint
         }
     }
 
@@ -520,7 +520,7 @@ end
 
 local SoundHandler = {}
 do -- Sound Handler
-    local function updateMainSoundLayer()
+    local function UpdateMainSoundLayer()
         local Setting_AudioGlobal = Config.DBGlobal:GetVariable("AudioGlobal")
 
         if Setting_AudioGlobal == true then
@@ -530,17 +530,17 @@ do -- Sound Handler
         end
     end
 
-    SavedVariables.OnChange("WaypointDB_Global", "AudioGlobal", updateMainSoundLayer)
+    SavedVariables.OnChange("WaypointDB_Global", "AudioGlobal", UpdateMainSoundLayer)
 
     function SoundHandler.Load()
-        updateMainSoundLayer()
+        UpdateMainSoundLayer()
     end
 end
 
 
 local FontHandler = {}
 do -- Font Handler
-    local function updateFonts()
+    local function UpdateFonts()
         UIFont.CustomFont:RefreshFontList()
 
         local selectedFontIndex = Config.DBGlobal:GetVariable("PrefFont")
@@ -548,16 +548,17 @@ do -- Font Handler
 
         UIFont.UIFontObjectNormal8:SetFontFile(fontPath)
         UIFont.UIFontObjectNormal10:SetFontFile(fontPath)
+        UIFont.UIFontObjectNormal11:SetFontFile(fontPath)
         UIFont.UIFontObjectNormal12:SetFontFile(fontPath)
         UIFont.UIFontObjectNormal14:SetFontFile(fontPath)
         UIFont.UIFontObjectNormal16:SetFontFile(fontPath)
         UIFont.UIFontObjectNormal18:SetFontFile(fontPath)
     end
 
-    SavedVariables.OnChange("WaypointDB_Global", "PrefFont", updateFonts)
+    SavedVariables.OnChange("WaypointDB_Global", "PrefFont", UpdateFonts)
 
     function FontHandler.Load()
-        updateFonts()
+        UpdateFonts()
     end
 end
 
@@ -570,7 +571,7 @@ local function OnAddonLoaded()
 
     CVarUtil.SetCVar("showInGameNavigation", true, CVarUtil.Enum.TemporaryType.UntilLogout)
     Config.DBGlobal:SetVariable("lastLoadedVersion", env.VERSION_NUMBER)
-    CallbackRegistry:Trigger("Preload.AddonReady")
+    CallbackRegistry.Trigger("Preload.AddonReady")
 end
 
-CallbackRegistry:Add("WoWClient.OnAddonLoaded", OnAddonLoaded)
+CallbackRegistry.Add("WoWClient.OnAddonLoaded", OnAddonLoaded)

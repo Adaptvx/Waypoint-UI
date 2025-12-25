@@ -1,7 +1,6 @@
 local env                             = select(2, ...)
-local MixinUtil                       = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                           = MixinUtil.Mixin
+local Mixin                           = Mixin
 local CreateFrame                     = CreateFrame
 local abs                             = math.abs
 local max                             = math.max
@@ -12,14 +11,14 @@ local IsShiftKeyDown                  = IsShiftKeyDown
 local tinsert                         = table.insert
 local assert                          = assert
 
-local UIKit_Primitives_Frame          = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_LazyScrollView = env.WPM:New("wpm_modules/ui-kit/primitives/lazy-scroll-view")
+local UIKit_Primitives_Frame          = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_LazyScrollView = env.WPM:New("wpm_modules\\ui-kit\\primitives\\lazy-scroll-view")
 
 
 -- Helper
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function updateContentExtentEvents(frame)
+local function UpdateContentExtentEvents(frame)
     local hasContentAbove = frame:HasContentAbove()
     local hasContentBelow = frame:HasContentBelow()
     local hasContentLeft = frame:HasContentLeft()
@@ -46,12 +45,12 @@ end
 
 
 -- LazyScrollView
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local LazyScrollViewPoolingMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewPoolingMixin:InitLazyScrollViewPooling()
         self.__elementPool = {}
@@ -67,7 +66,7 @@ do
 
 
     -- API
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewPoolingMixin:UpdateAllVisibleElements()
         if not self.__data or not self.__visibleStartingIndex then return end
@@ -196,7 +195,7 @@ do
 
 
     -- Internal
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewPoolingMixin:GetNumElementsToDisplay()
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -306,7 +305,7 @@ do
 
 
     -- Positioning
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewPoolingMixin:ResetScrolling()
         self.__visibleStartingIndex = nil
@@ -353,14 +352,14 @@ do
         end
 
         -- Update content extent events
-        updateContentExtentEvents(self)
+        UpdateContentExtentEvents(self)
     end
 end
 
 local LazyScrollViewMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:Init()
         self.__isVertical = true
@@ -379,7 +378,7 @@ do
 
 
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:GetContentFrame()
         return self.__ContentFrame
@@ -391,7 +390,7 @@ do
 
 
     -- Get
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:HasContentAbove()
         local verticalScroll = self:GetScrollFrame():GetVerticalScroll()
@@ -430,7 +429,7 @@ do
 
 
     -- Set
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:SetDirection(vertical, horizontal)
         self.__isVertical = vertical ~= false
@@ -443,7 +442,7 @@ do
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:CustomFitContent()
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -452,9 +451,9 @@ do
 
 
     -- Smooth Scrolling
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function smoothOnUpdate(frame, elapsed)
+    local function SmoothOnUpdate(frame, elapsed)
         local container = frame:GetParent()
         local scrollFrame = container:GetScrollFrame()
         local speed = container.__interpolateRatio
@@ -484,11 +483,11 @@ do
             frame:SetScript("OnUpdate", nil)
         end
 
-        updateContentExtentEvents(container)
+        UpdateContentExtentEvents(container)
     end
 
 
-    local function setScroll(self, isVertical, value, instant)
+    local function SetScroll(self, isVertical, value, instant)
         local contentFrame = self:GetContentFrame()
         local scrollFrame = self:GetScrollFrame()
         local contentSize = isVertical and contentFrame:GetHeight() or contentFrame:GetWidth()
@@ -511,7 +510,7 @@ do
                     self.uk_smoothFrame = smooth
                 end
                 if not smooth:GetScript("OnUpdate") then
-                    smooth:SetScript("OnUpdate", smoothOnUpdate)
+                    smooth:SetScript("OnUpdate", SmoothOnUpdate)
                 end
             else
                 if isVertical then
@@ -537,7 +536,7 @@ do
                 scrollFrame:SetHorizontalScroll(clampedValue)
             end
 
-            updateContentExtentEvents(self)
+            UpdateContentExtentEvents(self)
         end
     end
 
@@ -564,21 +563,21 @@ do
                 self.uk_smoothFrame = smooth
             end
             if not smooth:GetScript("OnUpdate") then
-                smooth:SetScript("OnUpdate", smoothOnUpdate)
+                smooth:SetScript("OnUpdate", SmoothOnUpdate)
             end
         end
     end
 
 
     -- Scroll
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewMixin:SetVerticalScroll(value, instant)
-        setScroll(self, true, value, instant)
+        SetScroll(self, true, value, instant)
     end
 
     function LazyScrollViewMixin:SetHorizontalScroll(value, instant)
-        setScroll(self, false, value, instant)
+        SetScroll(self, false, value, instant)
     end
 
     function LazyScrollViewMixin:GetVerticalScroll()
@@ -609,7 +608,7 @@ end
 local LazyScrollViewContentMixin = {}
 do
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewContentMixin:GetParent()
         return self.__parentRef
@@ -617,7 +616,7 @@ do
 
 
     -- Fit Content
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LazyScrollViewContentMixin:CustomFitContent()
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
@@ -633,7 +632,7 @@ do
     end
 end
 
-local function mouseWheelHandler(self, delta)
+local function MouseWheelHandler(self, delta)
     local container = self:GetParent()
     if not container then return end
 
@@ -661,7 +660,7 @@ function UIKit_Primitives_LazyScrollView.New(name, parent)
 
 
     -- Scroll Frame
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local scrollFrame = UIKit_Primitives_Frame.New("ScrollFrame", "$parent.ScrollFrame", lazyScrollView)
     scrollFrame:SetAllPoints(lazyScrollView)
@@ -670,7 +669,7 @@ function UIKit_Primitives_LazyScrollView.New(name, parent)
 
 
     -- Content Frame
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local contentFrame = UIKit_Primitives_Frame.New("Frame", "$parent.ContentFrame", scrollFrame)
     contentFrame.uk_type = "LazyScrollViewContent"
@@ -680,16 +679,16 @@ function UIKit_Primitives_LazyScrollView.New(name, parent)
 
 
     -- References
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     lazyScrollView.__ScrollFrame = scrollFrame
     lazyScrollView.__ContentFrame = contentFrame
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    scrollFrame:SetScript("OnMouseWheel", mouseWheelHandler)
+    scrollFrame:SetScript("OnMouseWheel", MouseWheelHandler)
 
     scrollFrame:HookScript("OnVerticalScroll", function()
         lazyScrollView:TriggerEvent("OnVerticalScroll"); lazyScrollView:UpdateScrolling()
@@ -714,13 +713,13 @@ local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
             Text(name .. ".Text")
                 :id("Text", id)
                 :point(UIKit.Enum.Point.Center)
-                :size(UIKit.Define.Num{value = 25}, UIKit.Define.Fit{})
+                :size(25, UIKit.Define.Fit{})
                 :fontSize(11)
                 :textAlignment("LEFT", "MIDDLE")
         })
-        :size(UIKit.Define.Num{ value = 25}, UIKit.Define.Percentage{ value = 100 })
+        :size(25, UIKit.Define.Percentage{ value = 100 })
         :background(BACKGROUND)
-        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
 
     frame.Text = UIKit.GetElementById("Text", id)
     frame.Background = frame:GetBackground()
@@ -728,7 +727,7 @@ local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
     return frame
 end)
 
-local function handleOnElementUpdate(element, index, value)
+local function OnElementUpdate(element, index, value)
     element.Text:SetText(value)
     element.Background:SetShown(index % 2 == 0)
 end
@@ -740,9 +739,9 @@ Frame{
         :id("myLazyScrollView")
         :point(UIKit.Enum.Point.Center)
         :size(UIKit.Define.Fit{}, UIKit.Define.Percentage{value = 100})
-        :maxWidth(UIKit.Define.Num{ value = 325 })
+        :maxWidth(325)
         :poolPrefab(MyRowPrefab)
-        :poolOnElementUpdate(handleOnElementUpdate)
+        :poolOnElementUpdate(OnElementUpdate)
         :lazyScrollViewElementHeight(25)
         :scrollDirection(UIKit.Enum.Direction.Horizontal)
         :scrollInterpolation(5)
@@ -750,15 +749,15 @@ Frame{
         :scrollViewContentWidth(UIKit.Define.Fit{})
         :scrollViewContentHeight(UIKit.Define.Percentage{value = 100})
         :background(BACKGROUND)
-        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+        :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
         :layoutDirection(UIKit.Enum.Direction.Vertical)
-        :layoutSpacing(UIKit.Define.Num{value = 7.5})
+        :layoutSpacing(7.5)
 }
     :id("myFrame")
     :point(UIKit.Enum.Point.Center)
-    :size(UIKit.Define.Fit{}, UIKit.Define.Num{ value = 325 })
+    :size(UIKit.Define.Fit{}, 325)
     :background(BACKGROUND)
-    :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = .5 })
+    :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
     :_Render()
 
 data = { }

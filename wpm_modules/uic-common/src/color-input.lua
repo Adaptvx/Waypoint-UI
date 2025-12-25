@@ -1,31 +1,30 @@
 local env                                                                                                                                          = select(2, ...)
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules\\sound")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules/utils/texture")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local Utils_Texture                                                                                                                                = env.WPM:Import("wpm_modules\\utils\\texture")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICCommonColorInput                                                                                                                            = env.WPM:New("wpm_modules/uic-common/color-input")
+local UICCommonColorInput                                                                                                                            = env.WPM:New("wpm_modules\\uic-common\\color-input")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH        = Path.Root .. "/wpm_modules/uic-common/resources/"
-local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "color-input.png", inset = 37, scale = .5 }
+local PATH        = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
+local ATLAS       = UIKit.Define.Texture_Atlas{ path = PATH .. "color-input.png", inset = 37, scale = 0.5 }
 local TEXTURE_NIL = UIKit.Define.Texture_NineSlice{ path = nil, inset = 1, scale = 1 }
 
 Utils_Texture.PreloadAsset(PATH .. "color-input.png")
 
 
 -- Base
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local CONTENT_SIZE                = UIKit.Define.Percentage{ value = 100 }
 

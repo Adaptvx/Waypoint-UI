@@ -4,17 +4,17 @@ local Config              = env.Config
 local tinsert             = table.insert
 local ipairs              = ipairs
 
-local CallbackRegistry    = env.WPM:Import("wpm_modules/callback-registry")
-local UIKit               = env.WPM:Import("wpm_modules/ui-kit")
-local Setting_Enum        = env.WPM:Import("@/Setting/Enum")
-local Setting_Widgets     = env.WPM:Import("@/Setting/Setting_Widgets")
-local Setting_Shared      = env.WPM:Import("@/Setting/Shared")
-local Setting_Logic       = env.WPM:Await("@/Setting/Logic")
-local Setting_Constructor = env.WPM:New("@/Setting/Constructor")
+local CallbackRegistry    = env.WPM:Import("wpm_modules\\callback-registry")
+local UIKit               = env.WPM:Import("wpm_modules\\ui-kit")
+local Setting_Enum        = env.WPM:Import("@\\Setting\\Enum")
+local Setting_Widgets     = env.WPM:Import("@\\Setting\\Setting_Widgets")
+local Setting_Shared      = env.WPM:Import("@\\Setting\\Shared")
+local Setting_Logic       = env.WPM:Await("@\\Setting\\Logic")
+local Setting_Constructor = env.WPM:New("@\\Setting\\Constructor")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 Setting_Constructor.Tabs = {}
 Setting_Constructor.TabButtons = {}
@@ -24,9 +24,9 @@ local buildTarget = nil
 
 
 -- Helper
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function hasDBKeyValueChanged(frame)
+local function HasDBKeyValueChanged(frame)
     local lastLocalValue = frame:GetLocalValue()
     frame:PullDBKeyToLocalValue()
     local newValueFromDB = frame:GetLocalValue()
@@ -34,7 +34,7 @@ local function hasDBKeyValueChanged(frame)
     return (newValueFromDB ~= lastLocalValue)
 end
 
-local function resolveValueThatIsFunctionOrValue(value)
+local function ResolveValueThatIsFunctionOrValue(value)
     if type(value) == "function" then
         return value()
     end
@@ -64,7 +64,7 @@ function WidgetMixin:OnLoad(widgetInfo, root, tab)
 
     tinsert(root.__children, self)
 
-    CallbackRegistry:Add("Setting.Refresh", function(event, force)
+    CallbackRegistry.Add("Setting.Refresh", function(event, force)
         self:Refresh(force)
     end)
 
@@ -155,7 +155,7 @@ function WidgetMixin:PushLocalValueToDBKey()
     if self.__currentValue == nil then return end
 
     Config.DBGlobal:SetVariable(self.__key, self.__currentValue)
-    CallbackRegistry:Trigger("Setting.Refresh")
+    CallbackRegistry.Trigger("Setting.Refresh")
 end
 
 function WidgetMixin:PullDBKeyToLocalValue()
@@ -173,7 +173,7 @@ end
 
 
 -- Build
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local Build = {}
 
@@ -275,7 +275,7 @@ end
 
 do -- Range
     local function Range_Refresh(self, force)
-        if not force and hasDBKeyValueChanged(self) == false then return end
+        if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
         self:GetRange():SetValue(value)
@@ -349,8 +349,8 @@ do -- Range
         widget:SetUserInteractableObject(widget:GetRange())
 
         local range = widget:GetRange()
-        range:SetMinMaxValues(resolveValueThatIsFunctionOrValue(min), resolveValueThatIsFunctionOrValue(max))
-        range:SetValueStep(resolveValueThatIsFunctionOrValue(step))
+        range:SetMinMaxValues(ResolveValueThatIsFunctionOrValue(min), ResolveValueThatIsFunctionOrValue(max))
+        range:SetValueStep(ResolveValueThatIsFunctionOrValue(step))
 
 
         -- Key
@@ -425,7 +425,7 @@ end
 
 do -- CheckButton
     local function CheckButton_Refresh(self, force)
-        if not force and hasDBKeyValueChanged(self) == false then return end
+        if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
         self:GetCheckButton():SetChecked(value)
@@ -484,7 +484,7 @@ end
 
 do -- Selection Menu
     local function SelectionMenu_Refresh(self, force)
-        if not force and hasDBKeyValueChanged(self) == false then return end
+        if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
         self:GetButtonSelectionMenu():SetValue(value)
@@ -533,7 +533,7 @@ do -- Selection Menu
         widget.__setFunc = set
 
         buttonSelectionMenu:SetSelectionMenu(SettingFrame.SelectionMenu)
-        buttonSelectionMenu:SetData(resolveValueThatIsFunctionOrValue(selectionMenuData))
+        buttonSelectionMenu:SetData(ResolveValueThatIsFunctionOrValue(selectionMenuData))
         buttonSelectionMenu:SetValue(widget:GetLocalValue())
         buttonSelectionMenu:HookValueChanged(SelectionMenu_OnValueChanged)
 
@@ -548,7 +548,7 @@ end
 
 do -- Color Input
     local function ColorInput_Refresh(self, force)
-        if not force and hasDBKeyValueChanged(self) == false then return end
+        if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
         self:GetColorInput():SetColor(value)
@@ -615,7 +615,7 @@ end
 
 do -- Input
     local function Input_Refresh(self, force)
-        if not force and hasDBKeyValueChanged(self) == false then return end
+        if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
         if not self:GetInput():HasFocus() then
@@ -681,7 +681,7 @@ end
 
 
 -- Scanning
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local BUILD_MAP = {
     [Setting_Enum.WidgetType.Tab]           = Build.Tab,
@@ -696,7 +696,7 @@ local BUILD_MAP = {
     [Setting_Enum.WidgetType.Input]         = Build.Input
 }
 
-local function buildWidget(info, parent, root, tab)
+local function BuildWidget(info, parent, root, tab)
     local widgetType = info.widgetType
     local buildFunc = BUILD_MAP[widgetType]
 
@@ -706,12 +706,12 @@ local function buildWidget(info, parent, root, tab)
     return widget, contentFrame
 end
 
-local function traverseAndBuildWidgetsFromTable(widgetTable, parent, root, currentTab)
+local function TraverseAndBuildWidgetsFromTable(widgetTable, parent, root, currentTab)
     for _, info in ipairs(widgetTable) do
         local isTab = info.widgetType == Setting_Enum.WidgetType.Tab
 
         -- Build the widget using the appropriate method
-        local widget, contentFrame = buildWidget(info, parent, root, currentTab)
+        local widget, contentFrame = BuildWidget(info, parent, root, currentTab)
         assert(widget, "Failed to build widget!")
 
         -- If the widget is a Tab, update currentTab for its children
@@ -719,14 +719,14 @@ local function traverseAndBuildWidgetsFromTable(widgetTable, parent, root, curre
 
         -- Recursively build any child widgets
         if info.children then
-            traverseAndBuildWidgetsFromTable(info.children, contentFrame or widget, widget, nextTab)
+            TraverseAndBuildWidgetsFromTable(info.children, contentFrame or widget, widget, nextTab)
         end
     end
 end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Setting_Constructor:SetBuildTargetFrame(frame)
     buildTarget = frame
@@ -734,10 +734,10 @@ end
 
 function Setting_Constructor:Build(origin)
     UIKit.BeginBatch()
-    traverseAndBuildWidgetsFromTable(origin, buildTarget)
+    TraverseAndBuildWidgetsFromTable(origin, buildTarget)
     UIKit.EndBatch()
 end
 
 function Setting_Constructor:Refresh(force)
-    CallbackRegistry:Trigger("Setting.Refresh", force)
+    CallbackRegistry.Trigger("Setting.Refresh", force)
 end

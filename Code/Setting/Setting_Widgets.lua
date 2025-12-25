@@ -1,56 +1,52 @@
 local env                                                                                                                                          = select(2, ...)
-local MixinUtil                                                                                                                                    = env.WPM:Import("wpm_modules/mixin-util")
-local Path                                                                                                                                         = env.WPM:Import("wpm_modules/path")
-local Sound                                                                                                                                        = env.WPM:Import("wpm_modules/sound")
-local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules/ui-font")
-local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules/generic-enum")
-local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules/ui-kit")
+local Path                                                                                                                                         = env.WPM:Import("wpm_modules\\path")
+local Sound                                                                                                                                        = env.WPM:Import("wpm_modules\\sound")
+local UIFont                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-font")
+local GenericEnum                                                                                                                                  = env.WPM:Import("wpm_modules\\generic-enum")
+local UIKit                                                                                                                                        = env.WPM:Import("wpm_modules\\ui-kit")
 local Frame, LayoutGrid, LayoutVertical, LayoutHorizontal, ScrollView, ScrollBar, Text, Input, LinearSlider, InteractiveRect, LazyScrollView, List = UIKit.UI.Frame, UIKit.UI.LayoutGrid, UIKit.UI.LayoutVertical, UIKit.UI.LayoutHorizontal, UIKit.UI.ScrollView, UIKit.UI.ScrollBar, UIKit.UI.Text, UIKit.UI.Input, UIKit.UI.LinearSlider, UIKit.UI.InteractiveRect, UIKit.UI.LazyScrollView, UIKit.UI.List
-local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules/ui-anim")
+local UIAnim                                                                                                                                       = env.WPM:Import("wpm_modules\\ui-anim")
 
-local Mixin                                                                                                                                        = MixinUtil.Mixin
-local CreateFromMixins                                                                                                                             = MixinUtil.CreateFromMixins
+local Mixin                                                                                                                                        = Mixin
+local CreateFromMixins                                                                                                                             = CreateFromMixins
 
-local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules/uic-sharedmixin")
-local UICCommon                                                                                                                                      = env.WPM:Import("wpm_modules/uic-common")
-local Setting_Enum                                                                                                                                 = env.WPM:Import("@/Setting/Enum")
-local Setting_Widgets                                                                                                                              = env.WPM:New("@/Setting/Setting_Widgets")
+local UICSharedMixin                                                                                                                               = env.WPM:Import("wpm_modules\\uic-sharedmixin")
+local UICCommon                                                                                                                                    = env.WPM:Import("wpm_modules\\uic-common")
+local Setting_Enum                                                                                                                                 = env.WPM:Import("@\\Setting\\Enum")
+local Setting_Widgets                                                                                                                              = env.WPM:New("@\\Setting\\Setting_Widgets")
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local PATH              = Path.Root .. "/Art/Setting/"
+local PATH                                                                                                                                         = Path.Root .. "\\Art\\Setting\\"
 
-local TEXTURE_NIL       = UIKit.Define.Texture{ path = nil }
-local FILL              = UIKit.Define.Fill{}
-local P_FILL            = UIKit.Define.Percentage{ value = 100 }
-local TEXT_COLOR_YELLOW = UIKit.Define.Color_RGBA{ r = GenericEnum.ColorRGB.Yellow.r * 255, g = GenericEnum.ColorRGB.Yellow.g * 255, b = GenericEnum.ColorRGB.Yellow.b * 255, a = 1 }
-
-
-
+local TEXTURE_NIL                                                                                                                                  = UIKit.Define.Texture{ path = nil }
+local FILL                                                                                                                                         = UIKit.Define.Fill{}
+local P_FILL                                                                                                                                       = UIKit.Define.Percentage{ value = 100 }
+local TEXT_COLOR_NORMAL                                                                                                                            = GenericEnum.UIColorRGB.NormalText
 
 
 -- Tab
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local TAB_CONTENT_Y             = UIKit.Define.Num{ value = -22 }
+local TAB_CONTENT_Y             = -22
 local TAB_CONTENT_WIDTH         = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 17 + 5 }
 local TAB_CONTENT_HEIGHT        = P_FILL
 local TAB_CONTENT_SCROLL_WIDTH  = P_FILL
 local TAB_CONTENT_SCROLL_HEIGHT = UIKit.Define.Fit{ delta = 240 }
-local TAB_LAYOUT_SPACING        = UIKit.Define.Num{ value = 10 }
+local TAB_LAYOUT_SPACING        = 10
 local TAB_LAYOUT_WIDTH          = P_FILL
 local TAB_LAYOUT_HEIGHT         = UIKit.Define.Fit{ delta = 32 }
-local TAB_SCROLLBAR_WIDTH       = UIKit.Define.Num{ value = 10 }
+local TAB_SCROLLBAR_WIDTH       = 10
 local TAB_SCROLLBAR_HEIGHT      = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 35 }
 
 
 local TabAnimation = UIAnim.New()
 local TabAnimation_Intro = UIAnim.Animate()
-    :wait(.1)
+    :wait(0.1)
 
     :property(UIAnim.Enum.Property.Alpha)
-    :duration(.25)
+    :duration(0.25)
     :from(0)
     :to(1)
 
@@ -65,7 +61,6 @@ local TabMixin = {}
 function TabMixin:PlayIntro()
     TabAnimation:Play(self, "Intro")
 end
-
 
 
 Setting_Widgets.Tab = UIKit.Prefab(function(id, name, children, ...)
@@ -102,6 +97,7 @@ Setting_Widgets.Tab = UIKit.Prefab(function(id, name, children, ...)
         })
         :point(UIKit.Enum.Point.Center)
         :size(P_FILL, P_FILL)
+
         :_renderBreakpoint()
 
     frame.Content = UIKit.GetElementById("Content", id)
@@ -114,31 +110,28 @@ Setting_Widgets.Tab = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
 -- Tab Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local TB_ATLAS                           = UIKit.Define.Texture_Atlas{ path = PATH .. "TabButton.png", inset = 128 }
-local TB_BACKGROUND                      = TB_ATLAS{ left = 0 / 768, top = 0 / 512, right = 256 / 768, bottom = 256 / 512, scale = .575 }
-local TB_BACKGROUND_HIGHLIGHTED          = TB_ATLAS{ left = 256 / 768, top = 0 / 512, right = 512 / 768, bottom = 256 / 512, scale = .575 }
-local TB_BACKGROUND_PUSHED               = TB_ATLAS{ left = 512 / 768, top = 0 / 512, right = 768 / 768, bottom = 256 / 512, scale = .575 }
-local TB_BACKGROUND_SELECTED             = TB_ATLAS{ left = 0 / 768, top = 256 / 512, right = 256 / 768, bottom = 512 / 512, scale = .575 }
-local TB_BACKGROUND_SELECTED_HIGHLIGHTED = TB_ATLAS{ left = 256 / 768, top = 256 / 512, right = 512 / 768, bottom = 512 / 512, scale = .575 }
-local TB_BACKGROUND_SELECTED_PUSHED      = TB_ATLAS{ left = 512 / 768, top = 256 / 512, right = 768 / 768, bottom = 512 / 512, scale = .575 }
+local TB_BACKGROUND                      = TB_ATLAS{ left = 0 / 768, top = 0 / 512, right = 256 / 768, bottom = 256 / 512, scale = 0.575 }
+local TB_BACKGROUND_HIGHLIGHTED          = TB_ATLAS{ left = 256 / 768, top = 0 / 512, right = 512 / 768, bottom = 256 / 512, scale = 0.575 }
+local TB_BACKGROUND_PUSHED               = TB_ATLAS{ left = 512 / 768, top = 0 / 512, right = 768 / 768, bottom = 256 / 512, scale = 0.575 }
+local TB_BACKGROUND_SELECTED             = TB_ATLAS{ left = 0 / 768, top = 256 / 512, right = 256 / 768, bottom = 512 / 512, scale = 0.575 }
+local TB_BACKGROUND_SELECTED_HIGHLIGHTED = TB_ATLAS{ left = 256 / 768, top = 256 / 512, right = 512 / 768, bottom = 512 / 512, scale = 0.575 }
+local TB_BACKGROUND_SELECTED_PUSHED      = TB_ATLAS{ left = 512 / 768, top = 256 / 512, right = 768 / 768, bottom = 512 / 512, scale = 0.575 }
 local TB_BACKGROUND_SIZE                 = UIKit.Define.Fill{ delta = -7 }
 local TB_TEXT_SIZE                       = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 23 }
 local TB_TEXT_COLOR                      = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
 local TB_TEXT_COLOR_SELECTED             = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 1 }
-local TB_TEXT_ALPHA                      = .5
+local TB_TEXT_ALPHA                      = 0.5
 local TB_TEXT_ALPHA_HIGHLIGHTED          = 1
-local TB_TEXT_ALPHA_PUSHED               = .75
+local TB_TEXT_ALPHA_PUSHED               = 0.75
 local TB_TEXT_ALPHA_SELECTED             = 1
 local TB_TEXT_Y                          = 0
 local TB_TEXT_Y_PUSHED                   = -1
 local TB_WIDTH                           = UIKit.Define.Percentage{ value = 100 }
-local TB_HEIGHT                          = UIKit.Define.Num{ value = 35 }
+local TB_HEIGHT                          = 35
 
 
 local TabButtonMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
@@ -240,19 +233,16 @@ Setting_Widgets.TabButton = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
 -- Widget — Title
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local FIT                    = UIKit.Define.Fit{}
-local TITLE_MAX_WIDTH        = UIKit.Define.Num{ value = 255 }
-local TITLE_VERTICAL_SPACING = UIKit.Define.Num{ value = 11 }
-local TITLE_IMAGE_MASK       = UIKit.Define.Texture{ path = Path.Root .. "/Art/Shape/GradientUp.png" }
-local TITLE_IMAGE_SIZE       = UIKit.Define.Num{ value = 138 }
+local TITLE_MAX_WIDTH        = 255
+local TITLE_VERTICAL_SPACING = 11
+local TITLE_IMAGE_MASK       = UIKit.Define.Texture{ path = Path.Root .. "\\Art\\Shape\\GradientUp.png" }
+local TITLE_IMAGE_SIZE       = 138
 local TITLE_WIDTH            = UIKit.Define.Percentage{ value = 100 }
-local TITLE_HEIGHT           = UIKit.Define.Num{ value = 225 }
+local TITLE_HEIGHT           = 225
 
 
 local TitleMixin = {}
@@ -263,6 +253,7 @@ function TitleMixin:SetInfo(image, title, description)
     self.Description:SetText(description)
 end
 
+
 Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
     local frame =
         Frame(name, {
@@ -271,7 +262,7 @@ Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
                     :id("Splash", id)
                     :point(UIKit.Enum.Point.Center)
                     :size(TITLE_IMAGE_SIZE, TITLE_IMAGE_SIZE)
-                    :alpha(.0975)
+                    :alpha(0.0975)
                     :background(TEXTURE_NIL)
                     :mask(TITLE_IMAGE_MASK)
                     :backgroundBlendMode(UIKit.Enum.BlendMode.Add),
@@ -291,7 +282,7 @@ Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
                         :textAlignment("CENTER", "MIDDLE")
                         :size(FIT, FIT)
                         :maxWidth(TITLE_MAX_WIDTH)
-                        :alpha(.75)
+                        :alpha(0.75)
                         :_updateMode(UIKit.Enum.UpdateMode.All)
                 })
                     :point(UIKit.Enum.Point.Center)
@@ -318,21 +309,18 @@ Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
 -- Widget — Container
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local C_ATLAS           = UIKit.Define.Texture_Atlas{ path = PATH .. "WidgetContainer.png", inset = 70, sliceMode = Enum.UITextureSliceMode.Stretched }
-local C_BACKGROUND      = C_ATLAS{ left = 0 / 512, right = 256 / 512, top = 0 / 512, bottom = 256 / 512, scale = .25 }
-local C_BACKGROUND_SUB  = C_ATLAS{ left = 256 / 512, right = 512 / 512, top = 0 / 512, bottom = 256 / 512, scale = .25 }
+local C_BACKGROUND      = C_ATLAS{ left = 0 / 512, right = 256 / 512, top = 0 / 512, bottom = 256 / 512, scale = 0.25 }
+local C_BACKGROUND_SUB  = C_ATLAS{ left = 256 / 512, right = 512 / 512, top = 0 / 512, bottom = 256 / 512, scale = 0.25 }
 local C_BACKGROUND_SIZE = UIKit.Define.Fill{ delta = -7 }
 local C_WIDTH           = UIKit.Define.Percentage{ value = 100 }
 local C_HEIGHT          = UIKit.Define.Fit{ delta = 25 }
 local C_CONTENT_WIDTH   = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 25 }
 local C_CONTENT_HEIGHT  = UIKit.Define.Fit{}
-local C_CONTENT_SPACING = UIKit.Define.Num{ value = 10 }
+local C_CONTENT_SPACING = 10
 
 
 local ContainerMixin = {}
@@ -388,14 +376,14 @@ end)
 local C_TITLE_WIDTH                 = UIKit.Define.Percentage{ value = 100 }
 local C_TITLE_HEIGHT                = UIKit.Define.Fit{ delta = 39 }
 local C_TITLE_TEXT_CONTAINER_WIDTH  = UIKit.Define.Percentage{ value = 100 }
-local C_TITLE_TEXT_CONTAINER_HEIGHT = UIKit.Define.Num{ value = 32 }
+local C_TITLE_TEXT_CONTAINER_HEIGHT = 32
 local C_TITLE_TEXT_WIDTH            = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 30 }
 local C_TITLE_TEXT_HEIGHT           = UIKit.Define.Percentage{ value = 100 }
-local C_TITLE_TEXT_X                = UIKit.Define.Num{ value = 15 }
-local C_TITLE_TEXT_Y                = UIKit.Define.Num{ value = 0 }
+local C_TITLE_TEXT_X                = 15
+local C_TITLE_TEXT_Y                = 0
 local C_MAIN_WIDTH                  = C_WIDTH
 local C_MAIN_HEIGHT                 = C_HEIGHT
-local C_MAIN_OFFSET_Y               = UIKit.Define.Num{ value = -32 }
+local C_MAIN_OFFSET_Y               = -32
 
 
 Setting_Widgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, ...)
@@ -407,7 +395,7 @@ Setting_Widgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, .
                     :point(UIKit.Enum.Point.Left)
                     :fontObject(UIFont.UIFontObjectNormal14)
                     :textAlignment("LEFT", "MIDDLE")
-                    :textColor(TEXT_COLOR_YELLOW)
+                    :textColor(TEXT_COLOR_NORMAL)
                     :size(C_TITLE_TEXT_WIDTH, C_TITLE_TEXT_HEIGHT)
                     :x(C_TITLE_TEXT_X)
                     :y(C_TITLE_TEXT_Y)
@@ -454,46 +442,40 @@ Setting_Widgets.ContainerWithTitle = UIKit.Prefab(function(id, name, children, .
 end)
 
 
-
-
-
 -- Widget — Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local E_ACTION_SIZE_NUM  = 25
-local E_ACTION_SIZE_75   = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * .75) }
-local E_ACTION_SIZE_100  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM) }
-local E_ACTION_SIZE_125  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 1.25) }
-local E_ACTION_SIZE_500  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 5) }
-local E_ACTION_SIZE_750  = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 7.5) }
-local E_ACTION_SIZE_1000 = UIKit.Define.Num{ value = math.ceil(E_ACTION_SIZE_NUM * 10) }
-
-
-
+local E_ACTION_SIZE_75   = math.ceil(E_ACTION_SIZE_NUM * 0.75)
+local E_ACTION_SIZE_100  = math.ceil(E_ACTION_SIZE_NUM)
+local E_ACTION_SIZE_125  = math.ceil(E_ACTION_SIZE_NUM * 1.25)
+local E_ACTION_SIZE_500  = math.ceil(E_ACTION_SIZE_NUM * 5)
+local E_ACTION_SIZE_750  = math.ceil(E_ACTION_SIZE_NUM * 7.5)
+local E_ACTION_SIZE_1000 = math.ceil(E_ACTION_SIZE_NUM * 10)
 
 
 -- Widget — Element Base
---------------------------------
-
-local E_BACKGROUND           = UIKit.Define.Texture_NineSlice{ path = PATH .. "WidgetBackground.png", inset = 70, scale = .125, sliceMode = Enum.UITextureSliceMode.Stretched }
+----------------------------------------------------------------------------------------------------
 
 local E_MARGIN               = 20
-local E_MIN_HEIGHT           = UIKit.Define.Num{ value = 17 }
+local E_MIN_HEIGHT           = 17
 local E_INDENT               = 15
 local E_INFO_TEXT_MAX_WIDTH  = UIKit.Define.Percentage{ value = 100 }
-local E_SPACING              = UIKit.Define.Num{ value = 5 }
-local E_IMAGE_SIZE_2x_WIDTH  = 200
-local E_IMAGE_SIZE_2x_HEIGHT = 100
-local E_IMAGE_SIZE_1x_WIDTH  = 100
-local E_IMAGE_SIZE_1x_HEIGHT = 100
+local E_SPACING              = 5
+local E_IMAGE_SIZE_2x_WIDTH  = 300
+local E_IMAGE_SIZE_2x_HEIGHT = 150
+local E_IMAGE_SIZE_1x_WIDTH  = 150
+local E_IMAGE_SIZE_1x_HEIGHT = 150
 
+local E_BACKGROUND           = UIKit.Define.Texture_NineSlice{ path = PATH .. "WidgetBackground.png", inset = 70, scale = 0.125, sliceMode = Enum.UITextureSliceMode.Stretched }
 local E_WIDTH                = UIKit.Define.Percentage{ value = 100 }
 local E_HEIGHT               = UIKit.Define.Fit{}
 local E_CONTENT_HEIGHT       = UIKit.Define.Fit{ delta = E_MARGIN }
-local E_INFO_OFFSET_X        = UIKit.Define.Num{ value = math.ceil(E_MARGIN / 2) }
+local E_INFO_OFFSET_X        = math.ceil(E_MARGIN / 2)
 local E_INFO_WIDTH           = UIKit.Define.Percentage{ value = 55, operator = "-", delta = E_MARGIN }
 local E_INFO_HEIGHT          = UIKit.Define.Fit{}
-local E_ACTION_OFFSET_X      = UIKit.Define.Num{ value = -math.ceil(E_MARGIN / 2 - 3) }
+local E_INFO_IMAGE_HEIGHT    = UIKit.Define.Fit{ delta = math.ceil(E_MARGIN / 2) }
+local E_ACTION_OFFSET_X      = -math.ceil(E_MARGIN / 2 - 3)
 local E_ACTION_WIDTH         = UIKit.Define.Percentage{ value = 45, operator = "-", delta = E_MARGIN }
 local E_ACTION_HEIGHT        = UIKit.Define.Percentage{ value = 100 }
 local E_BACKGROUND_SIZE      = UIKit.Define.Fill{ delta = -10 }
@@ -501,7 +483,7 @@ local E_BACKGROUND_SIZE      = UIKit.Define.Fill{ delta = -10 }
 local INDENT_MAP             = {}
 for i = 0, 5 do
     INDENT_MAP[i] = {
-        ["x"]     = UIKit.Define.Num{ value = E_INDENT * i },
+        ["x"]     = E_INDENT * i,
         ["width"] = UIKit.Define.Percentage{ value = 100, operator = "-", delta = E_INDENT * i }
     }
 end
@@ -525,7 +507,7 @@ function ElementBaseMixin:UpdateAnimation()
     self.Background:SetShown(not self.isTransparent and buttonState ~= "NORMAL")
 end
 
-function ElementBaseMixin:SetInfo(title, description, imageSize, imagePath)
+function ElementBaseMixin:SetInfo(title, description, imagePath, imageSize)
     -- Title
     self.Title:SetShown(title ~= nil)
     if title then self.Title:SetText(title) end
@@ -541,12 +523,14 @@ end
 
 function ElementBaseMixin:SetImage(imageSize, imagePath)
     if imageSize == Setting_Enum.ImageType.Large then
-        self.Image:SetSize(E_IMAGE_SIZE_2x_WIDTH, E_IMAGE_SIZE_2x_HEIGHT)
+        self.Image.Background:SetSize(E_IMAGE_SIZE_2x_WIDTH, E_IMAGE_SIZE_2x_HEIGHT)
+        self.Image:SetWidth(E_IMAGE_SIZE_2x_WIDTH)
     else
-        self.Image:SetSize(E_IMAGE_SIZE_1x_WIDTH, E_IMAGE_SIZE_1x_HEIGHT)
+        self.Image.Background:SetSize(E_IMAGE_SIZE_1x_WIDTH, E_IMAGE_SIZE_1x_HEIGHT)
+        self.Image:SetHeight(E_IMAGE_SIZE_2x_HEIGHT)
     end
 
-    self.ImageTexture:SetTexture(imagePath)
+    self.Image.BackgroundTexture:SetTexture(imagePath)
 end
 
 function ElementBaseMixin:SetTransparent(isTransparent)
@@ -585,18 +569,23 @@ Setting_Widgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
                         :maxWidth(E_INFO_TEXT_MAX_WIDTH)
                         :_updateMode(UIKit.Enum.UpdateMode.All),
 
-                    Frame(name .. ".Image")
-                        :id("Image", id)
-                        :background(TEXTURE_NIL),
-
                     Text(name .. ".Description")
                         :id("Description", id)
-                        :fontObject(UIFont.UIFontObjectNormal10)
+                        :fontObject(UIFont.UIFontObjectNormal11)
                         :textAlignment("LEFT", "MIDDLE")
                         :size(FIT, FIT)
                         :maxWidth(E_INFO_TEXT_MAX_WIDTH)
-                        :alpha(.5)
-                        :_updateMode(UIKit.Enum.UpdateMode.All)
+                        :alpha(0.5)
+                        :_updateMode(UIKit.Enum.UpdateMode.All),
+
+                    Frame(name .. ".Image", {
+                        Frame(name .. ".Image.Background")
+                            :id("Image.Background", id)
+                            :point(UIKit.Enum.Point.Bottom)
+                            :background(TEXTURE_NIL)
+                    })
+                        :id("Image", id)
+                        :height(E_INFO_IMAGE_HEIGHT)
                 })
                     :id("Info", id)
                     :point(UIKit.Enum.Point.Left)
@@ -629,9 +618,10 @@ Setting_Widgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
     frame.Content = UIKit.GetElementById("Content", id)
     frame.Background = UIKit.GetElementById("Background", id)
     frame.Title = UIKit.GetElementById("Title", id)
-    frame.Image = UIKit.GetElementById("Image", id)
-    frame.ImageTexture = frame.Image:GetBackground()
     frame.Description = UIKit.GetElementById("Description", id)
+    frame.Image = UIKit.GetElementById("Image", id)
+    frame.Image.Background = UIKit.GetElementById("Image.Background", id)
+    frame.Image.BackgroundTexture = frame.Image.Background:GetBackground()
     frame.Info = UIKit.GetElementById("Info", id)
     frame.Action = UIKit.GetElementById("Action", id)
 
@@ -643,11 +633,8 @@ Setting_Widgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
 -- Widget — Element / Text
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 Setting_Widgets.ElementText = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -657,17 +644,15 @@ Setting_Widgets.ElementText = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
 -- Widget — Element / CheckButton
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementCheckButtonMixin = {}
 
 function ElementCheckButtonMixin:GetCheckButton()
     return self.CheckButton
 end
+
 
 Setting_Widgets.ElementCheckButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -688,17 +673,15 @@ Setting_Widgets.ElementCheckButton = UIKit.Prefab(function(id, name, children, .
 end)
 
 
-
-
-
 -- Widget — Element / Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementButtonMixin = {}
 
 function ElementButtonMixin:GetButton()
     return self.Button
 end
+
 
 Setting_Widgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -719,18 +702,15 @@ Setting_Widgets.ElementButton = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
-
 -- Widget — Element / Range
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementRangeMixin = {}
 
 function ElementRangeMixin:GetRange()
     return self.Range:GetRange()
 end
+
 
 Setting_Widgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -751,18 +731,15 @@ Setting_Widgets.ElementRange = UIKit.Prefab(function(id, name, children, ...)
 end)
 
 
-
-
-
-
 -- Widget — Element / Option Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementSelectionMenuMixin = {}
 
 function ElementSelectionMenuMixin:GetButtonSelectionMenu()
     return self.ButtonSelectionMenu
 end
+
 
 Setting_Widgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -783,17 +760,15 @@ Setting_Widgets.ElementSelectionMenu = UIKit.Prefab(function(id, name, children,
 end)
 
 
-
-
-
 -- Widget — Element / Color Input
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementColorInputMixin = {}
 
 function ElementColorInputMixin:GetColorInput()
     return self.ColorInput
 end
+
 
 Setting_Widgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -814,17 +789,15 @@ Setting_Widgets.ElementColorInput = UIKit.Prefab(function(id, name, children, ..
 end)
 
 
-
-
-
 -- Widget — Element / Input
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ElementInputMixin = {}
 
 function ElementInputMixin:GetInput()
     return self.Input:GetInput()
 end
+
 
 Setting_Widgets.ElementInput = UIKit.Prefab(function(id, name, children, ...)
     local frame =

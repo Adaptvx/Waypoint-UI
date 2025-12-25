@@ -5,12 +5,12 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 local ipairs        = ipairs
 local tinsert       = table.insert
 
-local Support       = env.WPM:New("@/Support")
+local Support       = env.WPM:New("@\\Support")
 local list          = {}
 
 
 -- Public API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Support.Add(addonName, loadFunc)
     tinsert(list, {
@@ -21,13 +21,13 @@ end
 
 
 -- Events
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local EL = CreateFrame("Frame")
-EL:RegisterEvent("PLAYER_ENTERING_WORLD")
-EL:SetScript("OnEvent", function()
-    EL:UnregisterAllEvents()
-    EL:SetScript("OnEvent", nil)
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_ENTERING_WORLD")
+f:SetScript("OnEvent", function()
+    f:UnregisterAllEvents()
+    f:SetScript("OnEvent", nil)
 
     for _, addon in ipairs(list) do
         if IsAddOnLoaded(addon.name) then

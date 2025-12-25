@@ -1,25 +1,24 @@
 local env                         = select(2, ...)
-local MixinUtil                   = env.WPM:Import("wpm_modules/mixin-util")
-local UIKit_Define                = env.WPM:Import("wpm_modules/ui-kit/define")
-local UIKit_Utils                 = env.WPM:Import("wpm_modules/ui-kit/utils")
+local UIKit_Define                = env.WPM:Import("wpm_modules\\ui-kit\\define")
+local UIKit_Utils                 = env.WPM:Import("wpm_modules\\ui-kit\\utils")
 
-local Mixin                       = MixinUtil.Mixin
+local Mixin                       = Mixin
 local wipe                        = wipe
 local math                        = math
 local tonumber                    = tonumber
 local type                        = type
 
-local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_LayoutGrid = env.WPM:New("wpm_modules/ui-kit/primitives/layout-grid")
+local UIKit_Primitives_Frame      = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_LayoutGrid = env.WPM:New("wpm_modules\\ui-kit\\primitives\\layout-grid")
 
 
 -- Layout (Grid)
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local LayoutGridMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LayoutGridMixin:Init()
         self.__visibleChildren = {}
@@ -33,19 +32,15 @@ do
 
 
     -- Layout
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function resolveSpacing(spacingSetting, refWidth, refHeight)
+    local function ResolveSpacing(spacingSetting, refWidth, refHeight)
         if not spacingSetting then return 0, 0 end
-        local spacingType = spacingSetting == UIKit_Define.Num and "num"
+        local spacingType = type(spacingSetting) == "number" and "num"
             or spacingSetting == UIKit_Define.Percentage and "percent"
-            or type(spacingSetting) == "number" and "raw"
             or nil
-        if spacingType == "raw" then
+        if spacingType == "num" then
             return spacingSetting, spacingSetting
-        elseif spacingType == "num" then
-            local val = spacingSetting.value or 0
-            return val, val
         elseif spacingType == "percent" then
             local pctVal, op, delta = spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta
             return UIKit_Utils:CalculateRelativePercentage(refWidth, pctVal, op, delta),
@@ -54,7 +49,7 @@ do
         return 0, 0
     end
 
-    local function computeGridDimensions(visibleChildCount, requestedColumns, requestedRows)
+    local function ComputeGridDimensions(visibleChildCount, requestedColumns, requestedRows)
         local columnCount, rowCount
 
         if requestedColumns and requestedColumns > 0 then
@@ -95,7 +90,7 @@ do
         containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
         containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-        local columnCount, rowCount = computeGridDimensions(
+        local columnCount, rowCount = ComputeGridDimensions(
             visibleChildCount,
             tonumber(self.uk_LayoutGridColumns),
             tonumber(self.uk_LayoutGridRows)
@@ -124,7 +119,7 @@ do
             if childHeight > rowHeights[rowIndex] then rowHeights[rowIndex] = childHeight end
         end
 
-        local horizontalSpacing, verticalSpacing = resolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
+        local horizontalSpacing, verticalSpacing = ResolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
 
         local contentWidth, contentHeight = 0, 0
         for columnIndex = 1, columnCount do contentWidth = contentWidth + columnWidths[columnIndex] end
@@ -191,7 +186,7 @@ do
 
 
     -- Property
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function LayoutGridMixin:GetAlignmentH()
         return self.uk_prop_layoutAlignmentH or "LEADING"

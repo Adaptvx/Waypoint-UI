@@ -1,16 +1,8 @@
 local env            = select(2, ...)
-local Waypoint_Cache = env.WPM:New("@/Waypoint/Cache")
+local Waypoint_Cache = env.WPM:New("@\\Waypoint\\Cache")
 
-
--- Variables
---------------------------------
 
 Waypoint_Cache.navFrame = nil
-
-
--- Cache
---------------------------------
-
 local Cache = {}
 
 function Waypoint_Cache.Set(k, v)

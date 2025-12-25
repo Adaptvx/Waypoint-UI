@@ -1,11 +1,8 @@
 local env                  = select(2, ...)
-local CallbackRegistry     = env.WPM:Import("wpm_modules/callback-registry")
-local Waypoint_Cache       = env.WPM:Import("@/Waypoint/Cache")
-local Waypoint_ArrivalTime = env.WPM:New("@/Waypoint/ArrivalTime")
+local CallbackRegistry     = env.WPM:Import("wpm_modules\\callback-registry")
+local Waypoint_Cache       = env.WPM:Import("@\\Waypoint\\Cache")
+local Waypoint_ArrivalTime = env.WPM:New("@\\Waypoint\\ArrivalTime")
 
-
--- Shared
---------------------------------
 
 local ALPHA              = 0.2
 local MIN_DELTA_TIME     = 0.05
@@ -18,15 +15,13 @@ local lastTime           = nil
 local averageSpeed       = nil
 
 
--- Calculation
---------------------------------
 
 function Waypoint_ArrivalTime:ResetArrivalTime()
     lastDistance, lastTime, averageSpeed = nil, nil, nil
     seconds = -1
 end
-CallbackRegistry:Add("Waypoint.ActiveChanged", Waypoint_ArrivalTime.ResetArrivalTime)
-CallbackRegistry:Add("Waypoint.SuperTrackingChanged", Waypoint_ArrivalTime.ResetArrivalTime)
+CallbackRegistry.Add("Waypoint.ActiveChanged", Waypoint_ArrivalTime.ResetArrivalTime)
+CallbackRegistry.Add("Waypoint.SuperTrackingChanged", Waypoint_ArrivalTime.ResetArrivalTime)
 
 function Waypoint_ArrivalTime:CalculateArrivalTime()
     local distance = Waypoint_Cache.Get("distance")
@@ -67,19 +62,11 @@ function Waypoint_ArrivalTime:CalculateArrivalTime()
         seconds = -1
     end
 end
+CallbackRegistry.Add("Waypoint.SecondUpdate", Waypoint_ArrivalTime.CalculateArrivalTime)
 
-CallbackRegistry:Add("Waypoint.SecondUpdate", Waypoint_ArrivalTime.CalculateArrivalTime)
-
-
--- Get
---------------------------------
 
 function Waypoint_ArrivalTime:GetSeconds()
     return seconds
 end
-
-
--- Setup
---------------------------------
 
 Waypoint_ArrivalTime:ResetArrivalTime()

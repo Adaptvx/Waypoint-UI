@@ -6,7 +6,7 @@ local sqrt = math.sqrt
 local pi = math.pi
 local HALF_PI = pi * 0.5
 
-local UIAnim_Easing = env.WPM:New("wpm_modules/ui-anim/easing")
+local UIAnim_Easing = env.WPM:New("wpm_modules\\ui-anim\\easing")
 
 
 do -- Linear
@@ -203,7 +203,7 @@ do -- Elastic
 end
 
 do -- Bounce
-    local function bounceOut(t)
+    local function BounceOut(t)
         --Robert Penner's Bounce ease out
         if t < 1 / 2.75 then
             return 7.5625 * t * t
@@ -220,18 +220,18 @@ do -- Bounce
     end
 
     function UIAnim_Easing.BounceOut(t)
-        return bounceOut(t)
+        return BounceOut(t)
     end
 
     function UIAnim_Easing.BounceIn(t)
-        return 1 - bounceOut(1 - t)
+        return 1 - BounceOut(1 - t)
     end
 
     function UIAnim_Easing.BounceInOut(t)
         if t < 0.5 then
-            return 0.5 * (1 - bounceOut(1 - 2 * t))
+            return 0.5 * (1 - BounceOut(1 - 2 * t))
         end
-        return 0.5 * bounceOut(2 * t - 1) + 0.5
+        return 0.5 * BounceOut(2 * t - 1) + 0.5
     end
 end
 

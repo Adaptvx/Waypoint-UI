@@ -3,21 +3,21 @@ local env                    = select(2, ...)
 local type                   = type
 local pairs                  = pairs
 
-local CallbackRegistry       = env.WPM:Import("wpm_modules/callback-registry")
-local SavedVariables_Enum    = env.WPM:Import("wpm_modules/saved-variables/enum")
-local SavedVariables_Handler = env.WPM:New("wpm_modules/saved-variables/handler")
+local CallbackRegistry       = env.WPM:Import("wpm_modules\\callback-registry")
+local SavedVariables_Enum    = env.WPM:Import("wpm_modules\\saved-variables\\enum")
+local SavedVariables_Handler = env.WPM:New("wpm_modules\\saved-variables\\handler")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local registeredDatabases = {}
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function resolveNestedPath(rootTable, pathKeys)
+local function ResolveNestedPath(rootTable, pathKeys)
     local current = rootTable
     for i = 1, #pathKeys do
         if current == nil then return nil end
@@ -26,36 +26,36 @@ local function resolveNestedPath(rootTable, pathKeys)
     return current
 end
 
-local function setVariable(self, key, value)
+local function SetVariable(self, key, value)
     local storedData = _G[self.databaseName]
     if type(value) ~= "table" and storedData[key] == value then return end
 
     storedData[key] = value
-    CallbackRegistry:Trigger(self.callbackPrefix .. key, value)
+    CallbackRegistry.Trigger(self.callbackPrefix .. key, value)
 end
 
-local function getVariable(self, key)
+local function GetVariable(self, key)
     local storedValue = _G[self.databaseName][key]
     if storedValue ~= nil then return storedValue end
     return self.defaultValues[key]
 end
 
-local function resetVariable(self, key)
+local function ResetVariable(self, key)
     local defaultValue = self.defaultValues[key]
     _G[self.databaseName][key] = defaultValue
-    CallbackRegistry:Trigger(self.callbackPrefix .. key, defaultValue)
+    CallbackRegistry.Trigger(self.callbackPrefix .. key, defaultValue)
 end
 
-local function wipeDatabase(self)
+local function WipeDatabase(self)
     _G[self.databaseName] = {}
 end
 
-local function setDefaults(self, defaultsTable)
+local function SetDefaults(self, defaultsTable)
     self.defaultValues = defaultsTable
     return self
 end
 
-local function applyMigrations(self, migrationSchema)
+local function Migrate(self, migrationSchema)
     local storedData = _G[self.databaseName]
     if not storedData or type(migrationSchema) ~= "table" then return self end
 
@@ -66,8 +66,8 @@ local function applyMigrations(self, migrationSchema)
         local sourceIsPath = type(migration.from) == "table"
         local destinationIsPath = type(migration.to) == "table"
 
-        local sourceValue = sourceIsPath and resolveNestedPath(storedData, migration.from) or storedData[migration.from]
-        local destinationKey = destinationIsPath and resolveNestedPath(storedData, migration.to) or migration.to
+        local sourceValue = sourceIsPath and ResolveNestedPath(storedData, migration.from) or storedData[migration.from]
+        local destinationKey = destinationIsPath and ResolveNestedPath(storedData, migration.to) or migration.to
 
         if migrationType == "directory" and sourceValue and destinationKey then
             local targetTable
@@ -99,17 +99,17 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local databaseMetatable = {
     __index = function(self, key)
         if key == "defaults" then
             return function(defaultsTable)
-                return setDefaults(self, defaultsTable)
+                return SetDefaults(self, defaultsTable)
             end
         elseif key == "migrationPlan" then
             return function(migrationSchema)
-                return applyMigrations(self, migrationSchema)
+                return Migrate(self, migrationSchema)
             end
         end
     end
@@ -120,10 +120,10 @@ function SavedVariables_Handler.RegisterDatabase(databaseName)
 
     local callbackPrefix = "SavedVariables." .. databaseName .. "."
     local databaseEntry = {
-        SetVariable    = setVariable,
-        GetVariable    = getVariable,
-        ResetVariable  = resetVariable,
-        Wipe           = wipeDatabase,
+        SetVariable    = SetVariable,
+        GetVariable    = GetVariable,
+        ResetVariable  = ResetVariable,
+        Wipe           = WipeDatabase,
         databaseName   = databaseName,
         defaultValues  = {},
         callbackPrefix = callbackPrefix
@@ -143,5 +143,5 @@ function SavedVariables_Handler.GetDatabase(databaseName)
 end
 
 function SavedVariables_Handler.OnChange(databaseName, variableName, callbackFunction)
-    CallbackRegistry:Add("SavedVariables." .. databaseName .. "." .. variableName, callbackFunction)
+    CallbackRegistry.Add("SavedVariables." .. databaseName .. "." .. variableName, callbackFunction)
 end

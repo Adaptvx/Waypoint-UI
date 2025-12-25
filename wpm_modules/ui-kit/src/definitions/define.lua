@@ -1,14 +1,10 @@
 local env          = select(2, ...)
-local Struct       = env.WPM:Import("wpm_modules/struct").New
-local UIKit_Define = env.WPM:New("wpm_modules/ui-kit/define")
+local Struct       = env.WPM:Import("wpm_modules\\struct").New
+local UIKit_Define = env.WPM:New("wpm_modules\\ui-kit\\define")
 
 
 -- Values
---------------------------------
-
-UIKit_Define.Num = Struct{
-    value = nil
-}
+----------------------------------------------------------------------------------------------------
 
 UIKit_Define.Percentage = Struct{
     value    = nil,
@@ -33,7 +29,7 @@ UIKit_Define.Fill = Struct{
 
 
 -- Color
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 UIKit_Define.Color_RGBA = Struct{
     r = 0,
@@ -48,7 +44,7 @@ UIKit_Define.Color_HEX = Struct{
 
 
 -- Texture
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 UIKit_Define.Texture = Struct{
     path = nil

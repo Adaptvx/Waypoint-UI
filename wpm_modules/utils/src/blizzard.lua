@@ -13,11 +13,11 @@ local ColorPickerFrame     = ColorPickerFrame
 local StaticPopup_Show     = StaticPopup_Show
 local StaticPopup_Hide     = StaticPopup_Hide
 
-local Utils_Blizzard       = env.WPM:New("wpm_modules/utils/blizzard")
+local Utils_Blizzard       = env.WPM:New("wpm_modules\\utils\\blizzard")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local SHAPESHIFT_AURAS = {
     "Cat Form",
@@ -31,7 +31,7 @@ local SHAPESHIFT_AURAS = {
 
 
 -- Bags
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Blizzard.FindItemInInventory(itemName)
     if not itemName then return nil, nil end
@@ -57,7 +57,7 @@ end
 
 
 -- Auras
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Blizzard.IsPlayerInShapeshiftForm()
     for _, auraName in ipairs(SHAPESHIFT_AURAS) do
@@ -70,7 +70,7 @@ end
 
 
 -- Color Picker
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Blizzard.ShowColorPicker(initialColor, callback, opacityCallback, confirmCallback, cancelCallback)
     ColorPickerFrame:SetupColorPickerAndShow(initialColor)
@@ -89,7 +89,7 @@ end
 
 
 -- Popups
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Blizzard.NewConfirmPopup(popupInfo)
     assert(popupInfo, "Invalid variable `popupInfo`")
@@ -117,4 +117,13 @@ end
 
 function Utils_Blizzard.HidePopup(popupId)
     StaticPopup_Hide(popupId)
+end
+
+
+-- Decode
+----------------------------------------------------------------------------------------------------
+
+function Utils_Blizzard.DecodeGUID(guid)
+    local typeStr, typeID, serverID, instanceID, zoneUID, npcID, spawnUID = strsplit("-", guid)
+    return typeStr, typeID, serverID, instanceID, zoneUID, npcID, spawnUID
 end

@@ -1,26 +1,25 @@
 local env                    = select(2, ...)
-local MixinUtil              = env.WPM:Import("wpm_modules/mixin-util")
 
-local Mixin                  = MixinUtil.Mixin
+local Mixin                  = Mixin
 
-local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules/ui-kit/primitives/frame")
-local UIKit_Primitives_Input = env.WPM:New("wpm_modules/ui-kit/primitives/input")
+local UIKit_Primitives_Frame = env.WPM:Import("wpm_modules\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_Input = env.WPM:New("wpm_modules\\ui-kit\\primitives\\input")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local dummy = CreateFrame("EditBox"); dummy:Hide()
 local Method_SetFont = getmetatable(dummy).__index.SetFont
 
 
 -- Input
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local InputMixin = {}
 do
     -- Init
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function InputMixin:Init()
         self.__isMultiLine = false
@@ -31,7 +30,7 @@ do
 
 
     -- Accessor
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function InputMixin:GetTextObject()
         return self.__Text
@@ -51,7 +50,7 @@ do
 
 
     -- Layout
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function InputMixin:FitContent()
         local _, fitY = self:GetFitContent()
@@ -65,7 +64,7 @@ do
 
 
     -- Caret
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function InputMixin:SetCaretWidth(width)
         if not width then return end
@@ -79,7 +78,7 @@ do
 
 
     -- Font
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     function InputMixin:SetFont(path)
         if not path then return end
@@ -104,9 +103,9 @@ do
 
 
     -- Placeholder
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    local function updatePlaceholder(self)
+    local function UpdatePlaceholder(self)
         self.__Placeholder:SetFont(self:GetFont())
         self.__Placeholder:SetJustifyH(self:GetJustifyH())
         self.__Placeholder:SetJustifyV(self:GetJustifyV())
@@ -115,7 +114,7 @@ do
     end
 
     function InputMixin:ShowPlaceholder()
-        updatePlaceholder(self)
+        UpdatePlaceholder(self)
         self.__Placeholder:Show()
     end
 
@@ -151,7 +150,7 @@ do
     end
 end
 
-local function setupCustomCaret(self)
+local function InitCustomCaret(self)
     self.__caretWidth = 2.5
 
     -- Hide default caret
@@ -166,7 +165,7 @@ local function setupCustomCaret(self)
     return caretAnchor
 end
 
-local function updateCaretPosition(self, x, y, w, h)
+local function UpdateCaretPosition(self, x, y, w, h)
     local caretAnchor = self.__CaretAnchor
     if not caretAnchor then return end
 
@@ -183,7 +182,7 @@ local function updateCaretPosition(self, x, y, w, h)
     end
 end
 
-local function handleTextChanged(self, userInput)
+local function OnTextChanged(self, userInput)
     if self.__textPlaceholder then
         if not self:HasText() then
             self:ShowPlaceholder()
@@ -198,33 +197,33 @@ local function handleTextChanged(self, userInput)
     self:TriggerEvent("OnTextChanged", self:GetText(), userInput)
 end
 
-local function handleFocusGained(self)
+local function OnFocusGained(self)
     self.__CaretAnchor:Show()
     self:TriggerEvent("OnFocusGained")
 end
 
-local function handleFocusLost(self)
+local function OnFocusLost(self)
     self.__CaretAnchor:Hide()
     self:TriggerEvent("OnFocusLost")
 end
 
-local function handleEscapePressed(self)
+local function OnEscapePressed(self)
     self:TriggerEvent("OnEscapePressed")
     self:ClearFocus()
 end
 
-local function handleSetMultiLine(self, multiLine)
+local function OnSetMultiLine(self, multiLine)
     self.__isMultiLine = multiLine
 end
 
-local function handleShow(self)
+local function OnShow(self)
     if self.isVisible == false then
         self.isVisible = true
         self:GetParent():SetCursorPosition(0)
     end
 end
 
-local function handleHide(self)
+local function OnHide(self)
     self.isVisible = false
 end
 
@@ -241,7 +240,7 @@ function UIKit_Primitives_Input.New(name, parent)
 
 
     -- Placeholder
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     local placeholder = frame:CreateFontString(name .. ".Placeholder", "OVERLAY", "GameFontNormal")
     placeholder:SetAllPoints(frame)
@@ -249,12 +248,12 @@ function UIKit_Primitives_Input.New(name, parent)
 
 
     -- References
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
     frame.__Text        = select(1, frame:GetRegions())
     frame.__Placeholder = placeholder
     frame.__Caret       = select(2, frame:GetRegions())
-    frame.__CaretAnchor = setupCustomCaret(frame)
+    frame.__CaretAnchor = InitCustomCaret(frame)
 
     frame:AddAlias("INPUT_TEXT", frame.__Text)
     frame:AddAlias("INPUT_PLACEHOLDER", frame.__Placeholder)
@@ -262,16 +261,16 @@ function UIKit_Primitives_Input.New(name, parent)
 
 
     -- Events
-    --------------------------------
+    ----------------------------------------------------------------------------------------------------
 
-    frame:HookScript("OnTextChanged", handleTextChanged)
-    frame:HookScript("OnCursorChanged", updateCaretPosition)
-    frame:HookScript("OnEditFocusGained", handleFocusGained)
-    frame:HookScript("OnEditFocusLost", handleFocusLost)
-    frame:HookScript("OnEscapePressed", handleEscapePressed)
-    frame.__Text:HookScript("OnShow", handleShow)
-    frame.__Text:HookScript("OnHide", handleHide)
-    hooksecurefunc(frame, "SetMultiLine", handleSetMultiLine)
+    frame:HookScript("OnTextChanged", OnTextChanged)
+    frame:HookScript("OnCursorChanged", UpdateCaretPosition)
+    frame:HookScript("OnEditFocusGained", OnFocusGained)
+    frame:HookScript("OnEditFocusLost", OnFocusLost)
+    frame:HookScript("OnEscapePressed", OnEscapePressed)
+    frame.__Text:HookScript("OnShow", OnShow)
+    frame.__Text:HookScript("OnHide", OnHide)
+    hooksecurefunc(frame, "SetMultiLine", OnSetMultiLine)
 
 
 

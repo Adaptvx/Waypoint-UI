@@ -1,17 +1,16 @@
 local env              = select(2, ...)
-local MixinUtil        = env.WPM:Import("wpm_modules/mixin-util")
-local Utils_Blizzard   = env.WPM:Import("wpm_modules/utils/blizzard")
+local Utils_Blizzard   = env.WPM:Import("wpm_modules\\utils\\blizzard")
 
-local CreateFromMixins = MixinUtil.CreateFromMixins
+local CreateFromMixins = CreateFromMixins
 local tinsert          = table.insert
 
-local UICSharedMixin   = env.WPM:New("wpm_modules/uic-sharedmixin")
+local UICSharedMixin   = env.WPM:New("wpm_modules\\uic-sharedmixin")
 
 
 -- Shared Util
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function triggerHooks(hooks, ...)
+local function TriggerHooks(hooks, ...)
     for i = 1, #hooks do
         hooks[i](...)
     end
@@ -19,7 +18,7 @@ end
 
 
 -- Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ButtonMixin = {}
 UICSharedMixin.ButtonMixin = ButtonMixin
@@ -58,7 +57,7 @@ function ButtonMixin:OnEnter()
     self:SetHighlighted(self:IsEnabled() and true or false)
     self:UpdateButtonState()
 
-    triggerHooks(self.onMouseEnterHooks, self)
+    TriggerHooks(self.onMouseEnterHooks, self)
 end
 
 function ButtonMixin:OnLeave()
@@ -67,7 +66,7 @@ function ButtonMixin:OnLeave()
     self:SetHighlighted(false)
     self:UpdateButtonState()
 
-    triggerHooks(self.onMouseLeaveHooks, self)
+    TriggerHooks(self.onMouseLeaveHooks, self)
 end
 
 function ButtonMixin:OnMouseDown()
@@ -76,7 +75,7 @@ function ButtonMixin:OnMouseDown()
     self:SetPushed(self:IsEnabled() and true or false)
     self:UpdateButtonState()
 
-    triggerHooks(self.onMouseDownHooks, self)
+    TriggerHooks(self.onMouseDownHooks, self)
 end
 
 function ButtonMixin:OnMouseUp()
@@ -85,7 +84,7 @@ function ButtonMixin:OnMouseUp()
     self:SetPushed(false)
     self:UpdateButtonState()
 
-    triggerHooks(self.onMouseUpHooks, self)
+    TriggerHooks(self.onMouseUpHooks, self)
 
     if self:IsMouseOver() then
         self:Click()
@@ -98,7 +97,7 @@ end
 
 function ButtonMixin:Click()
     if not self:IsEnabled() then return end
-    triggerHooks(self.onClickHooks, self)
+    TriggerHooks(self.onClickHooks, self)
     if self.clickFunc then self.clickFunc(self) end
 end
 
@@ -139,13 +138,13 @@ end
 
 function ButtonMixin:Enable()
     self.enabled = true
-    triggerHooks(self.onEnableChangeHooks, self, true)
+    TriggerHooks(self.onEnableChangeHooks, self, true)
 end
 
 function ButtonMixin:Disable()
     self.enabled = false
     self.state = "NORMAL"
-    triggerHooks(self.onEnableChangeHooks, self, false)
+    TriggerHooks(self.onEnableChangeHooks, self, false)
 end
 
 function ButtonMixin:SetEnabled(enabled)
@@ -177,7 +176,7 @@ function ButtonMixin:SetButtonState(buttonState)
 
     if self.state ~= buttonState then
         self.state = buttonState
-        triggerHooks(self.onStateChangeHooks, self, buttonState)
+        TriggerHooks(self.onStateChangeHooks, self, buttonState)
     end
 end
 
@@ -197,7 +196,7 @@ end
 
 
 -- Selection Menu Remote
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local SelectionMenuRemote = {}
 UICSharedMixin.SelectionMenuRemote = SelectionMenuRemote
@@ -250,7 +249,7 @@ function SelectionMenuRemote:SetValue(index)
     self.value = index
     self:SetText(self.data[index])
 
-    triggerHooks(self.onValueChangedHooks, self, self.value)
+    TriggerHooks(self.onValueChangedHooks, self, self.value)
 end
 
 function SelectionMenuRemote:SetData(data)
@@ -264,7 +263,7 @@ end
 
 
 -- Check Button
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local CheckButtonMixin = CreateFromMixins(ButtonMixin)
 UICSharedMixin.CheckButtonMixin = CheckButtonMixin
@@ -285,7 +284,7 @@ end
 function CheckButtonMixin:SetChecked(checked)
     if self.checked ~= checked then
         self.checked = checked
-        triggerHooks(self.onCheckHooks, self, self.checked)
+        TriggerHooks(self.onCheckHooks, self, self.checked)
     end
 end
 
@@ -299,7 +298,7 @@ end
 
 
 -- Range
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local RangeMixin = CreateFromMixins(ButtonMixin)
 UICSharedMixin.RangeMixin = RangeMixin
@@ -315,7 +314,7 @@ end
 
 
 -- Scroll Bar
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ScrollBarMixin = CreateFromMixins(ButtonMixin)
 UICSharedMixin.ScrollBarMixin = ScrollBarMixin
@@ -331,7 +330,7 @@ end
 
 
 -- Input
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local InputMixin = CreateFromMixins(ButtonMixin)
 UICSharedMixin.InputMixin = InputMixin
@@ -367,7 +366,7 @@ end
 function InputMixin:SetFocused(focused)
     if self.focused ~= focused then
         self.focused = focused
-        triggerHooks(self.onFocusChangeHooks, self, self.focused)
+        TriggerHooks(self.onFocusChangeHooks, self, self.focused)
     end
 end
 
@@ -390,7 +389,7 @@ end
 
 
 -- Color Input
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local ColorInputMixin = CreateFromMixins(ButtonMixin)
 UICSharedMixin.ColorInputMixin = ColorInputMixin
@@ -449,7 +448,7 @@ function ColorInputMixin:SetColor(r, g, b)
     self.color.b = cB
 
     -- Trigger hooks
-    triggerHooks(self.onColorChangeHooks, self, self.color)
+    TriggerHooks(self.onColorChangeHooks, self, self.color)
 end
 
 function ColorInputMixin:GetColor()

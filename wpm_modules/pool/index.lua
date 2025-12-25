@@ -1,11 +1,11 @@
 local env = select(2, ...)
-local Pool = env.WPM:New("wpm_modules/pool")
+local Pool = env.WPM:New("wpm_modules\\pool")
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function reserve(pool, capacity)
+local function Reserve(pool, capacity)
     pool.capacity = capacity or math.huge
 
     if pool.capacity ~= math.huge then
@@ -16,13 +16,13 @@ local function reserve(pool, capacity)
     end
 end
 
-local function getObjectIsInvalidMsg(object, poolCollection)
+local function GetObjectIsInvalidMsg(object, poolCollection)
     return string.format("Attempted to release inactive object '%s'", tostring(object))
 end
 
 
 -- Pool
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local PoolBaseMixin = {}
 do
@@ -61,7 +61,7 @@ do
         local active = self:IsActive(object)
 
         if not canFailToFindObject then
-            assertsafe(active, getObjectIsInvalidMsg, object, self)
+            assertsafe(active, GetObjectIsInvalidMsg, object, self)
         end
 
         if active then
@@ -89,7 +89,7 @@ do
         self.inactiveObjects = {}
         self.activeObjectCount = 0
 
-        reserve(self, capacity)
+        Reserve(self, capacity)
     end
 
     function PoolMixin:CallReset(object, new)

@@ -1,7 +1,7 @@
 local env                      = select(2, ...)
 
-local LazyTimer                = env.WPM:Import("wpm_modules/lazy-timer")
-local UIKit_Renderer_Processor = env.WPM:Import("wpm_modules/ui-kit/renderer/processor")
+local LazyTimer                = env.WPM:Import("wpm_modules\\lazy-timer")
+local UIKit_Renderer_Processor = env.WPM:Import("wpm_modules\\ui-kit\\renderer\\processor")
 
 local band                     = bit.band
 local bor                      = bit.bor
@@ -15,11 +15,11 @@ local Processor_Point          = UIKit_Renderer_Processor.Point
 local Processor_Layout         = UIKit_Renderer_Processor.Layout
 local Processor_ScrollBar      = UIKit_Renderer_Processor.ScrollBar
 
-local UIKit_Renderer_Cleaner   = env.WPM:New("wpm_modules/ui-kit/renderer/cleaner")
+local UIKit_Renderer_Cleaner   = env.WPM:New("wpm_modules\\ui-kit\\renderer\\cleaner")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 UIKit_Renderer_Cleaner.onCooldown = false
 UIKit_Renderer_Cleaner.requiresDependencyPass = false
@@ -57,7 +57,7 @@ UIKit_Renderer_Cleaner.ACTION_SCROLLBAR       = ACTION_SCROLLBAR
 
 
 -- Timers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local washTimer = LazyTimer.New()
 local cooldownTimer = LazyTimer.New()
@@ -66,7 +66,7 @@ cooldownTimer:SetAction(function() UIKit_Renderer_Cleaner.onCooldown = false end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_Renderer_Cleaner.AddDirty(actionId, frame)
     local actions = frame[FIELD_ACTIONS] or 0
@@ -108,7 +108,7 @@ function UIKit_Renderer_Cleaner.IsBatching()
     return batchDepth > 0
 end
 
-local function processForwardPass(frame, actions)
+local function ProcessForwardPass(frame, actions)
     if band(actions, ACTION_SIZE_STATIC) ~= 0 then Processor_SizeStatic(frame) end
     if band(actions, ACTION_SIZE_FILL) ~= 0 then Processor_SizeFill(frame) end
     if band(actions, ACTION_POSITION_OFFSET) ~= 0 then Processor_PositionOffset(frame) end
@@ -116,7 +116,7 @@ local function processForwardPass(frame, actions)
     if band(actions, ACTION_POINT) ~= 0 then Processor_Point(frame) end
 end
 
-local function processBackwardPass(frame, actions)
+local function ProcessBackwardPass(frame, actions)
     if band(actions, ACTION_SIZE_FIT) ~= 0 then Processor_SizeFit(frame) end
     if band(actions, ACTION_LAYOUT) ~= 0 then Processor_Layout(frame) end
 end
@@ -135,14 +135,14 @@ function UIKit_Renderer_Cleaner.Wash()
     -- PASS 1: Forward (top-down)
     for i = 1, dirtyCount do
         local frame = dirty[i]
-        processForwardPass(frame, frame[FIELD_ACTIONS])
+        ProcessForwardPass(frame, frame[FIELD_ACTIONS])
     end
 
     -- PASS 1: Backward (bottom-up) - only if needed
     if needsBackward then
         for i = dirtyCount, 1, -1 do
             local frame = dirty[i]
-            processBackwardPass(frame, frame[FIELD_ACTIONS])
+            ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
         end
     end
 
@@ -150,12 +150,12 @@ function UIKit_Renderer_Cleaner.Wash()
     if requiresDependencyPass then
         for i = 1, dirtyCount do
             local frame = dirty[i]
-            processForwardPass(frame, frame[FIELD_ACTIONS])
+            ProcessForwardPass(frame, frame[FIELD_ACTIONS])
         end
 
         for i = dirtyCount, 1, -1 do
             local frame = dirty[i]
-            processBackwardPass(frame, frame[FIELD_ACTIONS])
+            ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
         end
     end
 

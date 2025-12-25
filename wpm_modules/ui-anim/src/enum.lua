@@ -1,5 +1,5 @@
 local env         = select(2, ...)
-local UIAnim_Enum = env.WPM:New("wpm_modules/ui-anim/enum")
+local UIAnim_Enum = env.WPM:New("wpm_modules\\ui-anim\\enum")
 
 
 UIAnim_Enum.Easing = {
@@ -41,10 +41,11 @@ UIAnim_Enum.Looping = {
 }
 
 UIAnim_Enum.Property = {
-    Alpha  = "alpha",
-    Width  = "width",
-    Height = "height",
-    PosX   = "x",
-    PosY   = "y",
-    Scale  = "scale"
+    Alpha    = "alpha",
+    Width    = "width",
+    Height   = "height",
+    PosX     = "x",
+    PosY     = "y",
+    Scale    = "scale",
+    Rotation = "rotation"
 }

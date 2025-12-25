@@ -11,13 +11,10 @@
 ]]
 
 local env = select(2, ...)
-
-
 WaypointUIAPI = WaypointUIAPI or {}
 
-do -- @/MapPin
-    local MapPin = env.WPM:Await("@/MapPin")
-
+do -- @\\MapPin
+    local MapPin = env.WPM:Await("@\\MapPin")
     WaypointUIAPI.Navigation = {
         ClearDestination    = MapPin.ClearDestination,
         ClearUserNavigation = MapPin.ClearUserNavigation,
@@ -28,8 +25,8 @@ do -- @/MapPin
     }
 end
 
-do -- @/Setting
-    local Setting_Logic = env.WPM:Await("@/Setting/Logic")
-
+do -- @\\Setting
+    local Setting_Logic = env.WPM:Await("@\\Setting\\Logic")
     WaypointUIAPI_OpenSettingUI = Setting_Logic.OpenSettingUI
+    WaypointUIAPI.OpenSettingUI = Setting_Logic.OpenSettingUI
 end

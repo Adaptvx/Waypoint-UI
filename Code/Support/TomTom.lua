@@ -2,21 +2,21 @@ local env            = select(2, ...)
 local L              = env.L
 local Config         = env.Config
 
-local LazyTimer      = env.WPM:Import("wpm_modules/lazy-timer")
-local MapPin         = env.WPM:Import("@/MapPin")
-local Support        = env.WPM:Import("@/Support")
-local Support_TomTom = env.WPM:New("@/Support/TomTom")
+local LazyTimer      = env.WPM:Import("wpm_modules\\lazy-timer")
+local MapPin         = env.WPM:Import("@\\MapPin")
+local Support        = env.WPM:Import("@\\Support")
+local Support_TomTom = env.WPM:New("@\\Support\\TomTom")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local lastClickTime         = nil
 local lastSetCrazyArrowTime = nil
 local lastQuestInfo         = { time = nil, questID = nil }
 local TomTomWaypointInfo    = { name = nil, mapID = nil, x = nil, y = nil }
 
-local function handleAccept()
+local function HandleAccept()
     Support_TomTom.PlaceWaypointAtSession()
 end
 
@@ -25,7 +25,7 @@ local REPLACE_PROMPT_INFO = {
     options      = {
         {
             text     = L["TomTom - ReplacePrompt - Yes"],
-            callback = handleAccept
+            callback = HandleAccept
         },
         {
             text     = L["TomTom - ReplacePrompt - No"],
@@ -38,9 +38,9 @@ local REPLACE_PROMPT_INFO = {
 
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function isGlobalEnabled()
+local function IsGlobalEnabled()
     return Config.DBGlobal:GetVariable("TomTomSupportEnabled") == true
 end
 
@@ -87,7 +87,7 @@ HandleCrazyArrowTimer:SetAction(function()
 end)
 
 local function OnSetCrazyArrow(_, uid, _, title)
-    if not isGlobalEnabled() then return end
+    if not IsGlobalEnabled() then return end
 
     lastSetCrazyArrowTime = GetTime()
 
@@ -100,7 +100,7 @@ local function OnSetCrazyArrow(_, uid, _, title)
 end
 
 local function OnClearCrazyArrow()
-    if not isGlobalEnabled() then return end
+    if not IsGlobalEnabled() then return end
 
     if MapPin.IsUserNavigationFlagged("TomTom_Waypoint") then
         MapPin.ClearUserNavigation()
@@ -109,14 +109,14 @@ end
 
 
 -- Setup
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local function OnAddonLoad()
-    local Events = CreateFrame("Frame")
-    Events:RegisterEvent("USER_WAYPOINT_UPDATED")
-    Events:RegisterEvent("SUPER_TRACKING_CHANGED")
-    Events:RegisterEvent("GLOBAL_MOUSE_UP")
-    Events:SetScript("OnEvent", function(self, event, ...)
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("USER_WAYPOINT_UPDATED")
+    f:RegisterEvent("SUPER_TRACKING_CHANGED")
+    f:RegisterEvent("GLOBAL_MOUSE_UP")
+    f:SetScript("OnEvent", function(self, event, ...)
         if event == "USER_WAYPOINT_UPDATED" then
             Support_TomTom.UpdateSuperTrackPinVisibility()
         end

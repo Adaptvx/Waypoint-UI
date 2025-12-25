@@ -1,12 +1,12 @@
 local env                    = select(2, ...)
-local UIKit_Enum             = env.WPM:Import("wpm_modules/ui-kit/enum")
-local UIKit_Renderer         = env.WPM:Import("wpm_modules/ui-kit/renderer")
-local UIKit_Renderer_Cleaner = env.WPM:Import("wpm_modules/ui-kit/renderer/cleaner")
-local UIKit_UI_Scanner       = env.WPM:New("wpm_modules/ui-kit/ui/scanner")
+local UIKit_Enum             = env.WPM:Import("wpm_modules\\ui-kit\\enum")
+local UIKit_Renderer         = env.WPM:Import("wpm_modules\\ui-kit\\renderer")
+local UIKit_Renderer_Cleaner = env.WPM:Import("wpm_modules\\ui-kit\\renderer\\cleaner")
+local UIKit_UI_Scanner       = env.WPM:New("wpm_modules\\ui-kit\\ui\\scanner")
 
 
 -- Shared
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 local UpdateMode_None                     = UIKit_Enum.UpdateMode.None
 local UpdateMode_All                      = UIKit_Enum.UpdateMode.All
@@ -20,9 +20,9 @@ local BLOCK_VISIBILITY_MODES = {
  
 
 -- Helpers
---------------------------------
+----------------------------------------------------------------------------------------------------
 
-local function handleVisibilityChanged(frame)
+local function OnVisibilityChanged(frame)
     local parentFrame = frame.uk_parent
 
     while parentFrame do
@@ -45,7 +45,7 @@ local function handleVisibilityChanged(frame)
     end
 end
 
-local function setupFrame(frame)
+local function SetupFrame(frame)
     local frameType = frame.uk_type
     local frameUpdateMode = frame.uk_flag_updateMode
     local isUpdateAll = frameUpdateMode == UpdateMode_All
@@ -63,8 +63,8 @@ local function setupFrame(frame)
     end
 
     if isUpdateAll or frameUpdateMode == UpdateMode_ChildrenVisibilityChanged then
-        frame:HookScript("OnShow", handleVisibilityChanged)
-        frame:HookScript("OnHide", handleVisibilityChanged)
+        frame:HookScript("OnShow", OnVisibilityChanged)
+        frame:HookScript("OnHide", OnVisibilityChanged)
     end
 
     frame.uk_ready = true
@@ -72,10 +72,10 @@ end
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function UIKit_UI_Scanner.SetupFrame(frame)
-    setupFrame(frame)
+    SetupFrame(frame)
 end
 
 function UIKit_UI_Scanner.SetupFrameRecursive(rootFrame)
@@ -85,7 +85,7 @@ function UIKit_UI_Scanner.SetupFrameRecursive(rootFrame)
     for i = 1, #childFrames do
         local childFrame = childFrames[i]
         if not childFrame.uk_flag_renderBreakpoint then
-            setupFrame(childFrame)
+            SetupFrame(childFrame)
             UIKit_UI_Scanner.SetupFrameRecursive(childFrame)
         end
     end
@@ -94,7 +94,7 @@ function UIKit_UI_Scanner.SetupFrameRecursive(rootFrame)
     if aliasRegistry then
         for _, aliasFrame in pairs(aliasRegistry) do
             if aliasFrame.GetObjectType and aliasFrame:GetObjectType() == "Frame" then
-                setupFrame(aliasFrame)
+                SetupFrame(aliasFrame)
                 UIKit_UI_Scanner.SetupFrameRecursive(aliasFrame)
             end
         end

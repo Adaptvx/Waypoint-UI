@@ -1,10 +1,10 @@
 local env              = select(2, ...)
 
-local Utils_Conversion = env.WPM:New("wpm_modules/utils/conversion")
+local Utils_Conversion = env.WPM:New("wpm_modules\\utils\\conversion")
 
 
 -- API
---------------------------------
+----------------------------------------------------------------------------------------------------
 
 function Utils_Conversion.ConvertYardsToMetric(yards)
     local meters = yards * 0.9144
