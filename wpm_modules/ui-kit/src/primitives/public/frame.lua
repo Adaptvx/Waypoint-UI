@@ -107,7 +107,7 @@ do
     -- Accessor
     ----------------------------------------------------------------------------------------------------
 
-    function FrameMixin:GetBackground()
+    function FrameMixin:GetTextureFrame()
         return self.Background
     end
 

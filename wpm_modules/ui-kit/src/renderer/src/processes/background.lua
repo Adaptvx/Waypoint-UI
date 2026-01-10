@@ -12,7 +12,7 @@ function UIKit_Renderer_Background.SetMaskTexture(frame, mask)
     if not frame.Background then return end
     if not mask then return end
 
-    if mask.GetBackground and mask:GetBackground().__isMaskTexture == true then
+    if mask.GetTextureFrame and mask:GetTextureFrame().__isMaskTexture == true then
         frame.Background:SetMaskFromObject(mask)
     elseif mask == UIKit_Define.Texture then
         frame.Background:SetMaskFromTexture(mask.path)

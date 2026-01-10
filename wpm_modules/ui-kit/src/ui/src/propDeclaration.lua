@@ -430,17 +430,17 @@ do
 
     FrameProps["background"] = function(frame, backgroundTexture)
         backgroundTexture = HandleReact(frame, backgroundTexture, "background")
-        assert(IsValidTexture(backgroundTexture), "Invalid variable `background`: Must be a `Texture`, `Texture_NineSlice` or `Texture_Atlas`")
-        local existingBackground = frame:GetBackground()
-        assert(not existingBackground or existingBackground.__isMaskTexture == false, "Error! Failed to set `background`: a mask texture background object already exists")
+        assert(IsValidTexture(backgroundTexture), "Invalid variable `backgroundTexture`: Must be a `Texture`, `Texture_NineSlice` or `Texture_Atlas`")
+        local existingBackground = frame:GetTextureFrame()
+        assert(not existingBackground or existingBackground.__isMaskTexture == false, "Error! Failed to set `backgroundTexture`: a mask texture background object already exists")
         frame.uk_prop_background = backgroundTexture
         UIKit_Renderer_Background.SetBackground(frame, false)
     end
 
     FrameProps["maskBackground"] = function(frame, backgroundTexture)
         backgroundTexture = HandleReact(frame, backgroundTexture, "maskBackground")
-        assert(IsValidTexture(backgroundTexture), "Invalid variable `background`: Must be a `Texture`, `Texture_NineSlice` or `Texture_Atlas`")
-        local existingBackground = frame:GetBackground()
+        assert(backgroundTexture == UIKit_Define.Texture, "Invalid variable `backgroundTexture`: Must be a `Texture`")
+        local existingBackground = frame:GetTextureFrame()
         assert(not existingBackground or existingBackground.__isMaskTexture, "Error! Failed to set `maskBackground`: a non-mask texture background object already exists")
         frame.uk_prop_background = backgroundTexture
         UIKit_Renderer_Background.SetBackground(frame, true)
@@ -485,7 +485,7 @@ do
     FrameProps["mask"] = function(frame, maskFrame)
         maskFrame = HandleReact(frame, maskFrame, "mask")
         maskFrame = ResolveFrameReference(maskFrame)
-        local maskBg = maskFrame.GetBackground and maskFrame:GetBackground()
+        local maskBg = maskFrame.GetTextureFrame and maskFrame:GetTextureFrame()
         assert(maskFrame == UIKit_Define.Texture or (maskBg and maskBg.__isMaskTexture == true), "Invalid variable `mask`: Must be a `Texture` or a frame with a `maskBackground` object")
         UIKit_Renderer_Background.SetMaskTexture(frame, maskFrame)
     end

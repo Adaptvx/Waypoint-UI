@@ -90,9 +90,9 @@ UICCommonColorInput.New = UIKit.Prefab(function(id, name, children, ...)
         :background(BACKGROUND_FRAME)
         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Texture = frame:GetBackground()
+    frame.Texture = frame:GetTextureFrame()
     frame.Fill = UIKit.GetElementById("Fill", id)
-    frame.FillTexture = frame.Fill:GetBackground()
+    frame.FillTexture = frame.Fill:GetTextureFrame()
 
     Mixin(frame, ColorInputMixin)
     frame:OnLoad(true)

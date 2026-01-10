@@ -40,10 +40,10 @@ do
     local BEAM_FX_BACKGROUND      = ATLAS{ left = 1280 / 1792, right = 1792 / 1792, top = 0 / 2560, bottom = 2560 / 2560 }
     local BEAM_FX_BACKGROUND_MASK = UIKit.Define.Texture{ path = PATH .. "WaypointBeamFXMask.png" }
     local WAVE_BACKGROUND         = ATLAS{ left = 512 / 1792, right = 768 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-    local WAYPOINT_SIZE           = 45
+    local WAYPOINT_SIZE           = 46
     local WAVE_SIZE               = 75
     local FOOTER_WIDTH            = 100
-    local FOOTER_HEIGHT           = 37.5
+    local FOOTER_HEIGHT           = 38
     local FOOTER_TEXT_WIDTH       = 100
     local FOOTER_TEXT_HEIGHT      = 11
 
@@ -152,14 +152,14 @@ do
     WUIWaypointFrame.Container              = UIKit.GetElementById("WUIWaypointFrame.Container")
     WUIWaypointFrame.ContextIcon            = UIKit.GetElementById("WUIWaypointFrame.ContextIcon")
     WUIWaypointFrame.Wave                   = UIKit.GetElementById("WUIWaypointFrame.Wave")
-    WUIWaypointFrame.WaveTexture            = WUIWaypointFrame.Wave:GetBackground()
+    WUIWaypointFrame.WaveTexture            = WUIWaypointFrame.Wave:GetTextureFrame()
     WUIWaypointFrame.Beam                   = UIKit.GetElementById("WUIWaypointFrame.Beam")
     WUIWaypointFrame.Beam.Background        = UIKit.GetElementById("WUIWaypointFrame.Beam.Background")
-    WUIWaypointFrame.Beam.BackgroundTexture = WUIWaypointFrame.Beam.Background:GetBackground()
+    WUIWaypointFrame.Beam.BackgroundTexture = WUIWaypointFrame.Beam.Background:GetTextureFrame()
     WUIWaypointFrame.Beam.Mask              = UIKit.GetElementById("WUIWaypointFrame.Beam.Mask")
     WUIWaypointFrame.Beam.FX                = UIKit.GetElementById("WUIWaypointFrame.Beam.FX")
     WUIWaypointFrame.Beam.FXMask            = UIKit.GetElementById("WUIWaypointFrame.Beam.FX.Mask")
-    WUIWaypointFrame.Beam.FXTexture         = WUIWaypointFrame.Beam.FX:GetBackground()
+    WUIWaypointFrame.Beam.FXTexture         = WUIWaypointFrame.Beam.FX:GetTextureFrame()
     WUIWaypointFrame.Footer                 = UIKit.GetElementById("WUIWaypointFrame.Footer")
     WUIWaypointFrame.Footer.InfoText        = UIKit.GetElementById("WUIWaypointFrame.Footer.InfoText")
     WUIWaypointFrame.Footer.DistanceText    = UIKit.GetElementById("WUIWaypointFrame.Footer.DistanceText")
@@ -414,7 +414,7 @@ end
 ----------------------------------------------------------------------------------------------------
 
 do
-    local CONTEXT_SIZE                = 57
+    local CONTEXT_SIZE                = 58
     local FOREGROUND_BACKGROUND       = ATLAS{ inset = 75, scale = 0.125, left = 0 / 1792, right = 512 / 1792, top = 0 / 2560, bottom = 256 / 2560 }
     local FOREGROUND_SIZE             = UIKit.Define.Fit{ delta = 23 }
     local FOREGROUND_CONTENT          = UIKit.Define.Fit{}
@@ -486,7 +486,7 @@ do
     WUIPinpointFrame.Background.Arrow = UIKit.GetElementById("WUIPinpointFrame.Background.Arrow")
     WUIPinpointFrame.Foreground = UIKit.GetElementById("WUIPinpointFrame.Foreground")
     WUIPinpointFrame.Foreground.Background = UIKit.GetElementById("WUIPinpointFrame.Foreground.Background")
-    WUIPinpointFrame.Foreground.BackgroundTexture = WUIPinpointFrame.Foreground.Background:GetBackground()
+    WUIPinpointFrame.Foreground.BackgroundTexture = WUIPinpointFrame.Foreground.Background:GetTextureFrame()
     WUIPinpointFrame.Foreground.Content = UIKit.GetElementById("WUIPinpointFrame.Foreground.Content")
 
 
@@ -637,9 +637,9 @@ end
 ----------------------------------------------------------------------------------------------------
 
 do
-    local NAVIGATOR_SIZE   = 45
+    local NAVIGATOR_SIZE   = 46
     local ARROW_BACKGROUND = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 512 / 2560, bottom = 768 / 2560 }
-    local ARROW_SIZE       = 57
+    local ARROW_SIZE       = 58
 
 
     Frame("WUINavigatorFrame", {
@@ -675,7 +675,7 @@ do
     WUINavigatorFrame.Container = UIKit.GetElementById("WUINavigatorFrame.Container")
     WUINavigatorFrame.ContextIcon = UIKit.GetElementById("WUINavigatorFrame.ContextIcon")
     WUINavigatorFrame.Arrow = UIKit.GetElementById("WUINavigatorFrame.Arrow")
-    WUINavigatorFrame.ArrowTexture = UIKit.GetElementById("WUINavigatorFrame.Arrow"):GetBackground()
+    WUINavigatorFrame.ArrowTexture = UIKit.GetElementById("WUINavigatorFrame.Arrow"):GetTextureFrame()
 
 
     local NavigatorAnimation = UIAnim.New()

@@ -10,6 +10,7 @@ do -- Color
         Yellow     = { r = 1, g = 1, b = 0 },
         Green      = { r = 0.1, g = 1, b = 0.1 },
         Red        = { r = 1, g = 0.125, b = 0.125 },
+        Blue       = { r = 0, g = 0.749, b = 0.952 },
         Gray       = { r = 0.5, g = 0.5, b = 0.5 },
         LightGray  = { r = 0.75, g = 0.75, b = 0.75 },
         NormalText = { r = 1, g = 0.823, b = 0 }
@@ -22,6 +23,7 @@ do -- Color
         Yellow     = { r = 255, g = 255, b = 0 },
         Green      = { r = 26, g = 255, b = 26 },
         Red        = { r = 255, g = 32, b = 32 },
+        Blue       = { r = 0, g = 189, b = 250 },
         Gray       = { r = 128, g = 128, b = 128 },
         LightGray  = { r = 191, g = 191, b = 191 },
         NormalText = { r = 255, g = 210, b = 0 }
@@ -34,6 +36,7 @@ do -- Color
         Yellow     = UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 0, a = 1 },
         Green      = UIKit.Define.Color_RGBA{ r = 26, g = 255, b = 26, a = 1 },
         Red        = UIKit.Define.Color_RGBA{ r = 255, g = 32, b = 32, a = 1 },
+        Blue       = UIKit.Define.Color_RGBA{ r = 0, g = 189, b = 250, a = 1 },
         Gray       = UIKit.Define.Color_RGBA{ r = 128, g = 128, b = 128, a = 1 },
         LightGray  = UIKit.Define.Color_RGBA{ r = 191, g = 191, b = 191, a = 1 },
         NormalText = UIKit.Define.Color_RGBA{ r = 255, g = 210, b = 0, a = 1 }
@@ -46,6 +49,7 @@ do -- Color
         Yellow     = "|cffFFCC1A",
         Green      = "|cff54CB34",
         Red        = "|cffD05555",
+        Blue       = "|cff00B3FF",
         Gray       = "|cff9D9D9D",
         LightGray  = "|cffCDCDCD",
         NormalText = "|cffFFD200"

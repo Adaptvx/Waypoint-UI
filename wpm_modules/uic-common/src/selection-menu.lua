@@ -487,7 +487,7 @@ UICCommonSelectionMenu.New = UIKit.Prefab(function(id, name, children, ...)
 
     frame.Content = UIKit.GetElementById("Content", id)
     frame.Background = UIKit.GetElementById("Background", id)
-    frame.BackgroundTexture = frame.Background:GetBackground()
+    frame.BackgroundTexture = frame.Background:GetTextureFrame()
     frame.List = UIKit.GetElementById("List", id)
     frame.ArrowUp = UIKit.GetElementById("ArrowUp", id)
     frame.ArrowDown = UIKit.GetElementById("ArrowDown", id)

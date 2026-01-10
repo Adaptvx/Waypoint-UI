@@ -26,3 +26,10 @@ function Utils_Formatting.FormatTime(seconds)
 
     return hours, minutes, secs, strHours, strMinutes, strSeconds
 end
+
+function Utils_Formatting.FormatTimeNoSeconds(seconds)
+    if seconds >= 60 then
+        return SecondsToTime(seconds, false, false, 1)
+    end
+    return SecondsToTime(seconds)
+end

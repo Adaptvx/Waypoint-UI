@@ -19,11 +19,11 @@ local UICCommonScrollBar                                                        
 local PATH                         = Path.Root .. "\\wpm_modules\\uic-common\\resources\\"
 local FILL                         = UIKit.Define.Fill{}
 local ATLAS                        = UIKit.Define.Texture_Atlas{ path = PATH .. "scroll-bar.png" }
-local BACKGROUND                   = ATLAS{ inset = 32, scale = 1, left = 0 / 320, right = 64 / 320, top = 0 / 128, bottom = 128 / 128 }
-local BACKGROUND_THUMB             = ATLAS{ inset = 32, scale = 1, left = 64 / 320, right = 128 / 320, top = 0 / 128, bottom = 64 / 128 }
-local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 32, scale = 1, left = 128 / 320, right = 192 / 320, top = 0 / 128, bottom = 64 / 128 }
-local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 32, scale = 1, left = 192 / 320, right = 256 / 320, top = 0 / 128, bottom = 64 / 128 }
-local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 32, scale = 1, left = 256 / 320, right = 320 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND                   = ATLAS{ inset = 32, scale = .25, left = 0 / 320, right = 64 / 320, top = 0 / 128, bottom = 128 / 128 }
+local BACKGROUND_THUMB             = ATLAS{ inset = 32, scale = .25, left = 64 / 320, right = 128 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_HIGHLIGHTED = ATLAS{ inset = 32, scale = .25, left = 128 / 320, right = 192 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_PUSHED      = ATLAS{ inset = 32, scale = .25, left = 192 / 320, right = 256 / 320, top = 0 / 128, bottom = 64 / 128 }
+local BACKGROUND_THUMB_DISABLED    = ATLAS{ inset = 32, scale = .25, left = 256 / 320, right = 320 / 320, top = 0 / 128, bottom = 64 / 128 }
 
 Utils_Texture.PreloadAsset(PATH .. "scroll-bar.png")
 

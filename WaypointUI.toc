@@ -1,5 +1,5 @@
 ## Interface: 110207, 120000, 120001
-## Version: 1.2.4
+## Version: 1.2.5
 ## Title: Waypoint UI
 ## Notes: An in-world waypoint and pinpoint to show relevant information directly in world-space.
 ## Author: AdaptiveX

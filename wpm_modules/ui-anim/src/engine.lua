@@ -1,51 +1,51 @@
-local env                          = select(2, ...)
+local env              = select(2, ...)
 
-local CreateFrame                  = CreateFrame
-local type                         = type
-local setmetatable                 = setmetatable
-local error                        = error
-local math_pi                      = math.pi
+local CreateFrame      = CreateFrame
+local type             = type
+local setmetatable     = setmetatable
+local error            = error
+local math_pi          = math.pi
 
-local UIAnim_Processor             = env.WPM:Import("wpm_modules\\ui-anim\\processor")
-local UIAnim_Enum                  = env.WPM:Import("wpm_modules\\ui-anim\\enum")
-local UIAnim_Engine                = env.WPM:New("wpm_modules\\ui-anim\\engine")
+local UIAnim_Processor = env.WPM:Import("wpm_modules\\ui-anim\\processor")
+local UIAnim_Enum      = env.WPM:Import("wpm_modules\\ui-anim\\enum")
+local UIAnim_Engine    = env.WPM:New("wpm_modules\\ui-anim\\engine")
 
 
 -- Shared
 ----------------------------------------------------------------------------------------------------
 
-local MIN_TICK                     = 1 / 60
-local STATE_WAIT                   = 0
-local STATE_PLAY                   = 1
-local STATE_LOOP_DELAY             = 2
+local MIN_TICK                  = 1 / 60
+local STATE_WAIT                = 0
+local STATE_PLAY                = 1
+local STATE_LOOP_DELAY          = 2
 
-local APPLY_METHOD                 = 1
-local APPLY_POS_X                  = 2
-local APPLY_POS_Y                  = 3
-local APPLY_ROTATION               = 4
+local APPLY_METHOD              = 1
+local APPLY_POS_X               = 2
+local APPLY_POS_Y               = 3
+local APPLY_ROTATION            = 4
 
-local LOOP_YOYO                    = UIAnim_Enum.Looping and UIAnim_Enum.Looping.Yoyo
+local LOOP_YOYO                 = UIAnim_Enum.Looping and UIAnim_Enum.Looping.Yoyo
 
-local Processor_Apply              = UIAnim_Processor.Apply
-local Processor_Read               = UIAnim_Processor.Read
-local Processor_GetEasing          = UIAnim_Processor.GetEasing
-local Processor_PrepareApply       = UIAnim_Processor.PrepareApply
-local Processor_ResolveTarget      = UIAnim_Processor.ResolveTarget
-local LINEAR_EASE                  = Processor_GetEasing(UIAnim_Enum.Easing.Linear)
+local Processor_Apply           = UIAnim_Processor.Apply
+local Processor_Read            = UIAnim_Processor.Read
+local Processor_GetEasing       = UIAnim_Processor.GetEasing
+local Processor_PrepareApply    = UIAnim_Processor.PrepareApply
+local Processor_ResolveTarget   = UIAnim_Processor.ResolveTarget
+local LINEAR_EASE               = Processor_GetEasing(UIAnim_Enum.Easing.Linear)
 
-local activeInstances              = {}
-local activeInstanceCount          = 0
-local instancePool                 = {}
-local instancePoolCount            = 0
-local definitionPool               = {}
-local definitionPoolCount          = 0
-local wrapperRegistry              = setmetatable({}, { __mode = "k" })
-local currentWrapper               = nil
-local currentRunId                 = 0
-local lastPlayedWrapper            = nil
-local updateFrame                  = CreateFrame("Frame")
-local isRunning                    = false
-local nextDefId                    = 0
+local activeInstances           = {}
+local activeInstanceCount       = 0
+local instancePool              = {}
+local instancePoolCount         = 0
+local wrapperRegistry           = setmetatable({}, { __mode = "k" })
+local currentWrapper            = nil
+local currentWrapperIsAnimation = false
+local currentAnimationName      = nil
+local currentRunId              = 0
+local lastPlayedWrapper         = nil
+local updateFrame               = CreateFrame("Frame")
+local isRunning                 = false
+local nextDefId                 = 0
 
 
 -- Internal
@@ -61,87 +61,69 @@ local function PushActive(instance)
 end
 
 local function RemoveActive(index)
-    local lastIndex = activeInstanceCount
-    local instance = activeInstances[index]
-    if not instance then return end
-
-    if index ~= lastIndex then
-        activeInstances[index] = activeInstances[lastIndex]
+    local inst = activeInstances[index]
+    if not inst then return end
+    local lastIdx = activeInstanceCount
+    if index ~= lastIdx then activeInstances[index] = activeInstances[lastIdx] end
+    activeInstances[lastIdx] = nil
+    activeInstanceCount = lastIdx - 1
+    local info = inst.wrapperInfo
+    if info and info.pendingCount > 0 then
+        info.pendingCount = info.pendingCount - 1
+        if info.pendingCount == 0 then NotifyFinish(info) end
     end
-    activeInstances[lastIndex] = nil
-    activeInstanceCount = lastIndex - 1
-
-    local wrapperInfo = instance.wrapperInfo
-    if wrapperInfo then
-        local pendingCount = wrapperInfo.pendingCount or 0
-        if pendingCount > 0 then
-            pendingCount = pendingCount - 1
-            wrapperInfo.pendingCount = pendingCount
-            if pendingCount == 0 then
-                NotifyFinish(wrapperInfo)
-            end
-        end
-    end
-
     if instancePoolCount < 100 then
         instancePoolCount = instancePoolCount + 1
-        instancePool[instancePoolCount] = instance
+        instancePool[instancePoolCount] = inst
     end
-
     if activeInstanceCount == 0 and isRunning then
         updateFrame:SetScript("OnUpdate", nil)
         isRunning = false
     end
 end
 
-function NotifyFinish(wrapperInfo)
-    if not wrapperInfo then return end
-    local pendingCount = (wrapperInfo.pendingCount or 0) - 1
-    wrapperInfo.pendingCount = pendingCount > 0 and pendingCount or 0
-    if pendingCount <= 0 and wrapperInfo.finishCallback then
-        local finishCallback = wrapperInfo.finishCallback
-        wrapperInfo.finishCallback = nil
-        finishCallback()
+function NotifyFinish(info)
+    if not info then return end
+    local pending = (info.pendingCount or 0) - 1
+    info.pendingCount = pending > 0 and pending or 0
+    if pending <= 0 and info.finishCallback then
+        local cb = info.finishCallback
+        info.finishCallback = nil
+        cb()
     end
 end
 
-local function FastApply(instance, value)
-    local applyKind = instance.applyKind
-    if applyKind == APPLY_METHOD then
-        instance.applyMethod(instance.target, value)
-    elseif applyKind == APPLY_POS_X then
-        local target = instance.target
-        local point, relativeTo, relativePoint, _, offsetY = target:GetPoint()
-        instance.applyMethod(target, point, relativeTo or UIParent, relativePoint or point, value, offsetY or 0)
-    elseif applyKind == APPLY_POS_Y then
-        local target = instance.target
-        local point, relativeTo, relativePoint, offsetX = target:GetPoint()
-        instance.applyMethod(target, point, relativeTo or UIParent, relativePoint or point, offsetX or 0, value)
-    elseif applyKind == APPLY_ROTATION then
-        instance.applyMethod(instance.target, value * math_pi / 180)
+local function FastApply(inst, value)
+    local method, kind = inst.applyMethod, inst.applyKind
+    if not method then return end
+    if kind == APPLY_METHOD then
+        method(inst.target, value)
+    elseif kind == APPLY_POS_X then
+        method(inst.target, inst.applyPoint, inst.applyRelativeTo, inst.applyRelativePoint, value, inst.applyOffsetY)
+    elseif kind == APPLY_POS_Y then
+        method(inst.target, inst.applyPoint, inst.applyRelativeTo, inst.applyRelativePoint, inst.applyOffsetX, value)
+    elseif kind == APPLY_ROTATION then
+        method(inst.target, value * math_pi / 180)
     end
 end
 
 
-local function TriggerStart(instance)
-    local wrapperInfo = instance.wrapperInfo
-    if not wrapperInfo or wrapperInfo.startNotified then return end
-    wrapperInfo.startNotified = true
-    local startCallback = wrapperInfo.startCallback
-    if startCallback then
-        wrapperInfo.startCallback = nil
-        startCallback()
+local function TriggerStart(inst)
+    local info = inst.wrapperInfo
+    if not info or info.startNotified then return end
+    info.startNotified = true
+    if info.startCallback then
+        local cb = info.startCallback
+        info.startCallback = nil
+        cb()
     end
 end
 
 
-local function FinalizeInstance(instance)
-    if not instance or instance.loopType then return end
-
-    local endValue = instance.dir == 1 and instance.to or instance.from
-    if endValue ~= nil then
-        FastApply(instance, endValue)
-    end
+local function FinalizeInstance(inst)
+    if not inst or inst.loopType then return end
+    local endVal = inst.dir == 1 and inst.to or inst.from
+    if endVal ~= nil then FastApply(inst, endVal) end
 end
 
 
@@ -151,206 +133,106 @@ end
 local DefProto = {}
 DefProto.__index = DefProto
 
-local function ResetDefinition(definition)
-    definition.__property = nil
-    definition.__duration = nil
-    definition.__from = nil
-    definition.__to = nil
-    definition.__loopType = nil
-    definition.__easing = "Linear"
-    definition.__hasFrom = false
-    definition.__loopDelayStart = 0
-    definition.__loopDelayEnd = 0
-    definition.__waitStart = 0
-    return definition
+local function ResetDefinition(def)
+    def.__property, def.__duration, def.__from, def.__to, def.__loopType = nil, nil, nil, nil, nil
+    def.__easing, def.__hasFrom, def.__loopDelayStart, def.__loopDelayEnd, def.__waitStart = "Linear", false, 0, 0, 0
+    return def
 end
 
 local function AllocateDefinition()
-    local definition = nil
-    if definitionPoolCount > 0 then
-        definition = definitionPool[definitionPoolCount]
-        definitionPool[definitionPoolCount] = nil
-        definitionPoolCount = definitionPoolCount - 1
-        ResetDefinition(definition)
-    else
-        definition = ResetDefinition({})
-        nextDefId = nextDefId + 1
-        definition.__id = nextDefId
-        setmetatable(definition, DefProto)
-    end
-    return definition
+    nextDefId = nextDefId + 1
+    local def = ResetDefinition({})
+    def.__id = nextDefId
+    return setmetatable(def, DefProto)
 end
 
-local function ReleaseDefinition(definition)
-    if definitionPoolCount < 100 then
-        definitionPoolCount = definitionPoolCount + 1
-        definitionPool[definitionPoolCount] = definition
-    end
-end
+function DefProto:wait(s)           self.__waitStart = s or 0;              return self end
+function DefProto:property(p)       self.__property = p;                    return self end
+function DefProto:duration(s)       self.__duration = s;                    return self end
+function DefProto:easing(e)         self.__easing = e;                      return self end
+function DefProto:from(v)           self.__from, self.__hasFrom = v, true;  return self end
+function DefProto:to(v)             self.__to = v;                          return self end
+function DefProto:loop(t)           self.__loopType = t;                    return self end
+function DefProto:loopDelayStart(s) self.__loopDelayStart = s or 0;         return self end
+function DefProto:loopDelayEnd(s)   self.__loopDelayEnd = s or 0;           return self end
 
-function DefProto:wait(seconds)
-    self.__waitStart = seconds or 0
-    return self
-end
-
-function DefProto:property(prop)
-    self.__property = prop
-    return self
-end
-
-function DefProto:duration(seconds)
-    self.__duration = seconds
-    return self
-end
-
-function DefProto:easing(ease)
-    self.__easing = ease
-    return self
-end
-
-function DefProto:from(value)
-    self.__from = value
-    self.__hasFrom = true
-    return self
-end
-
-function DefProto:to(value)
-    self.__to = value
-    return self
-end
-
-function DefProto:loop(loopType)
-    self.__loopType = loopType
-    return self
-end
-
-function DefProto:loopDelayStart(seconds)
-    self.__loopDelayStart = seconds or 0
-    return self
-end
-
-function DefProto:loopDelayEnd(seconds)
-    self.__loopDelayEnd = seconds or 0
-    return self
-end
-
-local function CreateInstance(definition, target)
-    local instance = nil
+local function CreateInstance(def, target, wrapper, wrapperInfo, runId)
+    local inst
     if instancePoolCount > 0 then
-        instance = instancePool[instancePoolCount]
+        inst = instancePool[instancePoolCount]
         instancePool[instancePoolCount] = nil
         instancePoolCount = instancePoolCount - 1
     else
-        instance = {}
+        inst = {}
     end
-
-    local loopType = definition.__loopType
-    local duration = definition.__duration or 0
-    local wrapperInfo = currentWrapper and wrapperRegistry[currentWrapper] or nil
-    local property = definition.__property
-
-    instance.target = target
-    instance.property = property
-    instance.duration = duration
-    instance.easing = Processor_GetEasing(definition.__easing)
-    instance.from = definition.__hasFrom and definition.__from or nil
-    instance.to = definition.__to
-    instance.loopType = loopType
-    instance.loopDelayS = definition.__loopDelayStart or 0
-    instance.loopDelayE = definition.__loopDelayEnd or 0
-    instance.dir = 1
-    instance.t = 0
-    instance.timer = 0
-    instance.wrapper = currentWrapper
-    instance.wrapperInfo = wrapperInfo
-    instance.runId = currentRunId
-    instance.stateName = wrapperInfo and wrapperInfo.activeStateName or nil
-    instance.defId = definition.__id
-    instance.hasBeenVisible = target.IsVisible and target:IsVisible() or false
-    instance.invDuration = duration > 0 and (1 / duration) or 0
-    instance.accum = 0
-
+    local loopType = def.__loopType
+    local duration = def.__duration or 0
+    local info = wrapperInfo or (wrapper and wrapperRegistry[wrapper])
+    local prop = def.__property
+    inst.target, inst.property, inst.duration = target, prop, duration
+    inst.easing = Processor_GetEasing(def.__easing)
+    inst.from = def.__hasFrom and def.__from or nil
+    inst.to, inst.loopType = def.__to, loopType
+    inst.loopDelayS, inst.loopDelayE = def.__loopDelayStart or 0, def.__loopDelayEnd or 0
+    inst.dir, inst.t, inst.timer, inst.accum = 1, 0, 0, 0
+    inst.wrapper, inst.wrapperInfo = wrapper, info
+    inst.runId = runId or currentRunId
+    inst.stateName = info and info.activeStateName or nil
+    inst.defId = def.__id
+    inst.hasBeenVisible = target.IsVisible and target:IsVisible() or false
+    inst.invDuration = duration > 0 and (1 / duration) or 0
     if target then
-        local applyKind, applyMethod = Processor_PrepareApply(target, property)
-        instance.applyKind = applyKind
-        instance.applyMethod = applyMethod
+        inst.applyKind, inst.applyMethod, inst.applyPoint, inst.applyRelativeTo, inst.applyRelativePoint, inst.applyOffsetX, inst.applyOffsetY = Processor_PrepareApply(target, prop)
     end
-
-    local startDelay = (definition.__waitStart or 0) + (loopType and (definition.__loopDelayStart or 0) or 0)
+    local startDelay = (def.__waitStart or 0) + (loopType and (def.__loopDelayStart or 0) or 0)
     if startDelay > 0 then
-        instance.state = STATE_WAIT
-        instance.timer = startDelay
+        inst.state, inst.timer = STATE_WAIT, startDelay
     else
-        instance.state = STATE_PLAY
-        TriggerStart(instance)
+        inst.state = STATE_PLAY
+        TriggerStart(inst)
     end
-
-    if not instance.from then
-        instance.from = Processor_Read(target, property)
-    end
-
-    instance.delta = (instance.to or 0) - (instance.from or 0)
-
-    return instance
+    if not inst.from then inst.from = Processor_Read(target, prop) end
+    inst.delta = (inst.to or 0) - (inst.from or 0)
+    return inst
 end
 
 local function StopExistingDefinitionInstance(wrapper, definitionId, target)
     if not (wrapper and definitionId) then return end
-
-    local instanceIndex = 1
-    while instanceIndex <= activeInstanceCount do
-        local existingInstance = activeInstances[instanceIndex]
-        if existingInstance and existingInstance.wrapper == wrapper and existingInstance.defId == definitionId then
-            if (not target) or existingInstance.target == target then
-                FinalizeInstance(existingInstance)
-                RemoveActive(instanceIndex)
-                return
-            end
+    local i = 1
+    while i <= activeInstanceCount do
+        local inst = activeInstances[i]
+        if inst and inst.wrapper == wrapper and inst.defId == definitionId and ((not target) or inst.target == target) then
+            RemoveActive(i)
+            return
         end
-        instanceIndex = instanceIndex + 1
+        i = i + 1
     end
 end
 
 function DefProto:Play(target)
-    local property = self.__property
-    local duration = self.__duration
-    local toValue = self.__to
-    if not (property and duration and toValue ~= nil) then
-        return self
-    end
-
-    if target == nil then
-        error("UIAnim.Animate:Play requires a target.", 2)
-    end
-
-    local resolvedTarget = Processor_ResolveTarget(target)
-    if not resolvedTarget then
-        return self
-    end
-
-    if currentWrapper and self.__id then
-        StopExistingDefinitionInstance(currentWrapper, self.__id, resolvedTarget)
-    end
-
+    local prop, dur, toVal = self.__property, self.__duration, self.__to
+    if not (prop and dur and toVal ~= nil) then return self end
+    if target == nil then error("UIAnim.Animate:Play requires a target.", 2) end
+    local resolved = Processor_ResolveTarget(target)
+    if not resolved then return self end
+    local wrapper = currentWrapper
+    if wrapper and self.__id then StopExistingDefinitionInstance(wrapper, self.__id, resolved) end
     local isLooping = self.__loopType ~= nil
-    local wrapperInfo = currentWrapper and wrapperRegistry[currentWrapper]
-
-    if not isLooping and wrapperInfo then
-        wrapperInfo.pendingCount = wrapperInfo.pendingCount + 1
-    end
-
-    if duration <= 0 then
-        Processor_Apply(resolvedTarget, property, toValue)
-        if not isLooping and wrapperInfo then NotifyFinish(wrapperInfo) end
+    local info = wrapper and wrapperRegistry[wrapper]
+    local isAnim = currentWrapperIsAnimation
+    if not isLooping and info and not isAnim then info.pendingCount = info.pendingCount + 1 end
+    if dur <= 0 then
+        Processor_Apply(resolved, prop, toVal)
+        if not isLooping and info and not isAnim then NotifyFinish(info) end
         return self
     end
-
-    local instance = CreateInstance(self, resolvedTarget)
-    if not instance.target then
-        if not isLooping and wrapperInfo then NotifyFinish(wrapperInfo) end
+    local inst = CreateInstance(self, resolved, wrapper, info, nil)
+    if not inst.target then
+        if not isLooping and info and not isAnim then NotifyFinish(info) end
         return self
     end
-    PushActive(instance)
+    if isAnim then inst.isAnimationState, inst.animName = true, currentAnimationName end
+    PushActive(inst)
     return self
 end
 
@@ -361,144 +243,136 @@ end
 local WrapperProto = {}
 WrapperProto.__index = WrapperProto
 
+local function CancelAnimationsByName(wrapper, name)
+    if not (wrapper and name) then return end
+    local i = 1
+    while i <= activeInstanceCount do
+        local inst = activeInstances[i]
+        if inst and inst.wrapper == wrapper and inst.isAnimationState and inst.animName == name then
+            FinalizeInstance(inst)
+            RemoveActive(i)
+        else
+            i = i + 1
+        end
+    end
+end
+
 function WrapperProto:State(name, fn)
     if not name or type(fn) ~= "function" then return self end
-    local wrapperInfo = wrapperRegistry[self]
-    if not wrapperInfo then return self end
-    wrapperInfo.states[name] = fn
+    local info = wrapperRegistry[self]
+    if info then info.states[name] = fn end
+    return self
+end
+
+function WrapperProto:Animation(name, fn)
+    local info = wrapperRegistry[self]
+    if info and type(name) == "string" and type(fn) == "function" then
+        info.animationStates = info.animationStates or {}
+        info.animationStates[name] = fn
+    end
     return self
 end
 
 function WrapperProto:Play(target, name)
-    local wrapperInfo = wrapperRegistry[self]
-    if not wrapperInfo then return self end
-
-    local stateTarget = nil
-    local stateName = nil
-    if name == nil and type(target) == "string" then
-        stateName = target
-    else
-        stateTarget = target
-        stateName = name
-    end
-
+    local info = wrapperRegistry[self]
+    if not info then return self end
+    local stateTarget, stateName
+    if type(name) == "string" then stateName, stateTarget = name, target
+    elseif type(target) == "string" then stateName, stateTarget = target, name
+    else stateTarget, stateName = target, name end
     if not stateName then return self end
-
-    self:Stop()
-    wrapperInfo.runId = wrapperInfo.runId + 1
-    wrapperInfo.pendingCount = 0
-    wrapperInfo.finishCallback = nil
-    wrapperInfo.startCallback = nil
-    wrapperInfo.startNotified = false
-
-    local stateFunction = wrapperInfo.states[stateName]
-    if stateFunction then
-        currentWrapper = self
-        currentRunId = wrapperInfo.runId
-        wrapperInfo.activeStateName = stateName
-        local definitionCache = wrapperInfo.defCache[stateName]
-        if not definitionCache then
-            definitionCache = { index = 0 }
-            wrapperInfo.defCache[stateName] = definitionCache
+    local animStates = info.animationStates
+    local animFn = animStates and animStates[stateName]
+    if animFn then
+        CancelAnimationsByName(self, stateName)
+        local prevWrapper, prevRunId, prevIsAnim, prevAnimName = currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName
+        local animRunIds = info.animationRunIds or {}
+        info.animationRunIds = animRunIds
+        local nextRun = (animRunIds[stateName] or 0) + 1
+        animRunIds[stateName] = nextRun
+        currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName = self, nextRun, true, stateName
+        animFn(stateTarget)
+        currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName = prevWrapper, prevRunId, prevIsAnim, prevAnimName
+        return self
+    end
+    self:Stop(false)
+    info.runId = info.runId + 1
+    info.pendingCount, info.finishCallback, info.startCallback, info.startNotified = 0, nil, nil, false
+    local stateFn = info.states[stateName]
+    if stateFn then
+        currentWrapper, currentRunId = self, info.runId
+        info.activeStateName = stateName
+        local defCache = info.defCache[stateName]
+        if not defCache then
+            defCache = { idx = 0 }
+            info.defCache[stateName] = defCache
         else
-            definitionCache.index = 0
+            defCache.idx = 0
         end
-        stateFunction(stateTarget)
-        currentWrapper = nil
-        currentRunId = 0
-        wrapperInfo.activeStateName = nil
+        stateFn(stateTarget)
+        currentWrapper, currentRunId, info.activeStateName = nil, 0, nil
         lastPlayedWrapper = self
     end
     return self
 end
 
 function WrapperProto:IsPlaying(target, name)
-    local wrapperInfo = wrapperRegistry[self]
-    if not wrapperInfo then return false end
-
-    local queryTarget = nil
-    local queryState = nil
-    if name == nil and type(target) == "string" then
-        queryState = target
-    else
-        queryTarget = target
-        queryState = name
-    end
-
-    local resolvedTarget = queryTarget and Processor_ResolveTarget(queryTarget) or nil
-
-    for index = 1, activeInstanceCount do
-        local instance = activeInstances[index]
-        if instance and instance.wrapper == self then
-            if instance.runId == (wrapperInfo.runId or 0) then
-                if (not queryState or instance.stateName == queryState) and (not resolvedTarget or instance.target == resolvedTarget) then
-                    return true
-                end
+    local info = wrapperRegistry[self]
+    if not info then return false end
+    local queryTarget, queryState
+    if name == nil and type(target) == "string" then queryState = target
+    else queryTarget, queryState = target, name end
+    local resolved = queryTarget and Processor_ResolveTarget(queryTarget)
+    for i = 1, activeInstanceCount do
+        local inst = activeInstances[i]
+        if inst and inst.wrapper == self and inst.runId == (info.runId or 0) then
+            if (not queryState or inst.stateName == queryState) and (not resolved or inst.target == resolved) then
+                return true
             end
         end
     end
-
     return false
 end
 
-function WrapperProto.onFinish(callback)
+function WrapperProto.onFinish(cb)
     local wrapper = lastPlayedWrapper
     if not wrapper then return WrapperProto end
-    local wrapperInfo = wrapperRegistry[wrapper]
-    if not wrapperInfo then
-        lastPlayedWrapper = nil
-        return WrapperProto
-    end
-    if callback then
-        if (wrapperInfo.pendingCount or 0) == 0 then
-            callback()
-        else
-            wrapperInfo.finishCallback = callback
-        end
+    local info = wrapperRegistry[wrapper]
+    if not info then lastPlayedWrapper = nil; return WrapperProto end
+    if cb then
+        if (info.pendingCount or 0) == 0 then cb() else info.finishCallback = cb end
     end
     lastPlayedWrapper = nil
     return wrapper
 end
 
-function WrapperProto.onStart(callback)
+function WrapperProto.onStart(cb)
     local wrapper = lastPlayedWrapper
     if not wrapper then return WrapperProto end
-    local wrapperInfo = wrapperRegistry[wrapper]
-    if not wrapperInfo then
-        lastPlayedWrapper = nil
-        return WrapperProto
-    end
-    if callback then
-        if wrapperInfo.startNotified then
-            callback()
-        else
-            wrapperInfo.startCallback = callback
-        end
+    local info = wrapperRegistry[wrapper]
+    if not info then lastPlayedWrapper = nil; return WrapperProto end
+    if cb then
+        if info.startNotified then cb() else info.startCallback = cb end
     end
     return wrapper
 end
 
-function WrapperProto:Stop()
-    local wrapperInfo = wrapperRegistry[self]
-    if not wrapperInfo then return self end
-
-    wrapperInfo.runId = wrapperInfo.runId + 1
-    wrapperInfo.pendingCount = 0
-    wrapperInfo.finishCallback = nil
-    wrapperInfo.startCallback = nil
-    wrapperInfo.startNotified = false
-
-    local instanceIndex = 1
-    while instanceIndex <= activeInstanceCount do
-        local animationInstance = activeInstances[instanceIndex]
-        if animationInstance and animationInstance.wrapper == self then
-            FinalizeInstance(animationInstance)
-            RemoveActive(instanceIndex)
+function WrapperProto:Stop(cancelAnims)
+    local cancelFlag = cancelAnims ~= false
+    local info = wrapperRegistry[self]
+    if not info then return self end
+    info.runId = info.runId + 1
+    info.pendingCount, info.finishCallback, info.startCallback, info.startNotified = 0, nil, nil, false
+    local i = 1
+    while i <= activeInstanceCount do
+        local inst = activeInstances[i]
+        if inst and inst.wrapper == self and (cancelFlag or not inst.isAnimationState) then
+            FinalizeInstance(inst)
+            RemoveActive(i)
         else
-            instanceIndex = instanceIndex + 1
+            i = i + 1
         end
     end
-
     return self
 end
 
@@ -506,146 +380,99 @@ end
 -- Engine Update
 ----------------------------------------------------------------------------------------------------
 
-local function StepInstance(instance, deltaTime)
-    local wrapperInfo = instance.wrapperInfo
-    if wrapperInfo then
-        if instance.runId ~= wrapperInfo.runId then
+local function StepInstance(inst, dt)
+    local info = inst.wrapperInfo
+    if info then
+        if inst.isAnimationState then
+            local ids = info.animationRunIds
+            if inst.runId ~= (ids and ids[inst.animName] or 0) then return true end
+        elseif inst.runId ~= info.runId then
             return true
         end
-    elseif instance.wrapper then
-        wrapperInfo = wrapperRegistry[instance.wrapper]
-        if not wrapperInfo or instance.runId ~= wrapperInfo.runId then
-            return true
-        end
-        instance.wrapperInfo = wrapperInfo
+    elseif inst.wrapper then
+        info = wrapperRegistry[inst.wrapper]
+        if not info or inst.runId ~= info.runId then return true end
+        inst.wrapperInfo = info
     end
-
-    local accumulatedTime = instance.accum + deltaTime
-    if accumulatedTime < MIN_TICK then
-        instance.accum = accumulatedTime
-        return false
-    end
-    instance.accum = 0
-
-    local remainingTime = accumulatedTime
-    while remainingTime > 0 do
-        local instanceState = instance.state
-
-        if instanceState == STATE_WAIT then
-            local timerValue = instance.timer
-            if remainingTime < timerValue then
-                instance.timer = timerValue - remainingTime
-                return false
-            end
-            remainingTime = remainingTime - timerValue
-            instance.state = STATE_PLAY
-            instance.t = 0
-            instance.timer = 0
-            TriggerStart(instance)
-
-        elseif instanceState == STATE_PLAY then
-            local duration = instance.duration
-            local elapsedTime = instance.t
-            local timeRemaining = duration - elapsedTime
-
-            if remainingTime < timeRemaining then
-                elapsedTime = elapsedTime + remainingTime
-                instance.t = elapsedTime
-                remainingTime = 0
+    local accum = inst.accum + dt
+    if accum < MIN_TICK then inst.accum = accum; return false end
+    inst.accum = 0
+    local remain = accum
+    while remain > 0 do
+        local state = inst.state
+        if state == STATE_WAIT then
+            local timer = inst.timer
+            if remain < timer then inst.timer = timer - remain; return false end
+            remain = remain - timer
+            inst.state, inst.t, inst.timer = STATE_PLAY, 0, 0
+            TriggerStart(inst)
+        elseif state == STATE_PLAY then
+            local dur, elapsed = inst.duration, inst.t
+            local timeLeft = dur - elapsed
+            if remain < timeLeft then
+                elapsed = elapsed + remain
+                inst.t, remain = elapsed, 0
             else
-                elapsedTime = duration
-                instance.t = elapsedTime
-                remainingTime = remainingTime - timeRemaining
+                elapsed, inst.t = dur, dur
+                remain = remain - timeLeft
             end
-
-            local easingFunction = instance.easing
-            local normalizedTime = elapsedTime * instance.invDuration
-            local easedProgress = easingFunction == LINEAR_EASE and normalizedTime or easingFunction(normalizedTime)
-            local fromValue = instance.from
-            local toValue = instance.to
-            local direction = instance.dir
-            local interpolatedValue = direction == 1 and (fromValue + instance.delta * easedProgress) or (toValue - instance.delta * easedProgress)
-            FastApply(instance, interpolatedValue)
-
-            local target = instance.target
-            if target.IsVisible and not target:IsVisible() then
-                if instance.hasBeenVisible then
-                    if not instance.loopType and toValue ~= nil then
-                        FastApply(instance, toValue)
-                    end
-                    if wrapperInfo then NotifyFinish(wrapperInfo) end
+            local ease = inst.easing
+            local norm = elapsed * inst.invDuration
+            local prog = ease == LINEAR_EASE and norm or ease(norm)
+            local fromVal, toVal, dir = inst.from, inst.to, inst.dir
+            local val = dir == 1 and (fromVal + inst.delta * prog) or (toVal - inst.delta * prog)
+            FastApply(inst, val)
+            local tgt = inst.target
+            if tgt.IsVisible and not tgt:IsVisible() then
+                if inst.hasBeenVisible then
+                    if not inst.loopType and toVal ~= nil then FastApply(inst, toVal) end
+                    if info and not inst.isAnimationState then NotifyFinish(info) end
                     return true
                 end
             else
-                instance.hasBeenVisible = true
+                inst.hasBeenVisible = true
             end
-
-            if elapsedTime >= duration then
-                local loopType = instance.loopType
-                if not loopType then
-                    local endValue = direction == 1 and toValue or fromValue
-                    FastApply(instance, endValue)
-                    if wrapperInfo then NotifyFinish(wrapperInfo) end
+            if elapsed >= dur then
+                local loop = inst.loopType
+                if not loop then
+                    FastApply(inst, dir == 1 and toVal or fromVal)
+                    if info then NotifyFinish(info) end
                     return true
                 end
-
-                if loopType == LOOP_YOYO then
-                    instance.dir = -direction
-                end
-
-                local loopEndDelay = instance.loopDelayE
-                if loopEndDelay > 0 then
-                    instance.state = STATE_LOOP_DELAY
-                    instance.timer = loopEndDelay
+                if loop == LOOP_YOYO then inst.dir = -dir end
+                local delayE = inst.loopDelayE
+                if delayE > 0 then
+                    inst.state, inst.timer = STATE_LOOP_DELAY, delayE
                 else
-                    instance.state = STATE_PLAY
-                    instance.t = 0
-                    instance.timer = 0
-                    TriggerStart(instance)
-                    local loopStartDelay = instance.loopDelayS
-                    if loopStartDelay > 0 then
-                        instance.state = STATE_WAIT
-                        instance.timer = loopStartDelay
-                    end
+                    inst.state, inst.t, inst.timer = STATE_PLAY, 0, 0
+                    TriggerStart(inst)
+                    local delayS = inst.loopDelayS
+                    if delayS > 0 then inst.state, inst.timer = STATE_WAIT, delayS end
                 end
             else
                 return false
             end
-
-        elseif instanceState == STATE_LOOP_DELAY then
-            local timerValue = instance.timer
-            if remainingTime < timerValue then
-                instance.timer = timerValue - remainingTime
-                return false
-            end
-            remainingTime = remainingTime - timerValue
-            instance.state = STATE_PLAY
-            instance.t = 0
-            instance.timer = 0
-            TriggerStart(instance)
-            local loopStartDelay = instance.loopDelayS
-            if loopStartDelay > 0 then
-                instance.state = STATE_WAIT
-                instance.timer = loopStartDelay
-            end
+        elseif state == STATE_LOOP_DELAY then
+            local timer = inst.timer
+            if remain < timer then inst.timer = timer - remain; return false end
+            remain = remain - timer
+            inst.state, inst.t, inst.timer = STATE_PLAY, 0, 0
+            TriggerStart(inst)
+            local delayS = inst.loopDelayS
+            if delayS > 0 then inst.state, inst.timer = STATE_WAIT, delayS end
         else
             return true
         end
     end
-
     return false
 end
 
-function UIAnim_Engine.OnUpdate(self, deltaTime)
-    if activeInstanceCount == 0 or (not deltaTime) or deltaTime <= 0 then return end
-    local instanceIndex = 1
-    while instanceIndex <= activeInstanceCount do
-        local instance = activeInstances[instanceIndex]
-        if not instance or StepInstance(instance, deltaTime) then
-            RemoveActive(instanceIndex)
-        else
-            instanceIndex = instanceIndex + 1
-        end
+function UIAnim_Engine.OnUpdate(_, dt)
+    if activeInstanceCount == 0 or not dt or dt <= 0 then return end
+    local i = 1
+    while i <= activeInstanceCount do
+        local inst = activeInstances[i]
+        if not inst or StepInstance(inst, dt) then RemoveActive(i) else i = i + 1 end
     end
 end
 
@@ -655,41 +482,25 @@ end
 
 function UIAnim_Engine.New()
     local wrapper = {}
-    wrapperRegistry[wrapper] = {
-        states        = {},
-        runId         = 0,
-        pendingCount  = 0,
-        defCache      = {},
-        startNotified = false
-    }
+    wrapperRegistry[wrapper] = { states = {}, runId = 0, pendingCount = 0, defCache = {}, startNotified = false, animationRunIds = {} }
     return setmetatable(wrapper, WrapperProto)
 end
 
 function UIAnim_Engine.Animate()
     if currentWrapper then
-        local wrapperInfo = wrapperRegistry[currentWrapper]
-        if wrapperInfo then
-            local stateName = wrapperInfo.activeStateName
-            if stateName then
-                local definitionCache = wrapperInfo.defCache
-                local stateDefinitions = definitionCache[stateName]
-                if not stateDefinitions then
-                    stateDefinitions = { idx = 0 }
-                    definitionCache[stateName] = stateDefinitions
-                end
-                local definitionIndex = stateDefinitions.idx + 1
-                stateDefinitions.idx = definitionIndex
-                local cachedDefinition = stateDefinitions[definitionIndex]
-                if cachedDefinition then
-                    ResetDefinition(cachedDefinition)
-                    return cachedDefinition
-                end
-                local newDefinition = AllocateDefinition()
-                stateDefinitions[definitionIndex] = newDefinition
-                return newDefinition
-            end
+        local info = wrapperRegistry[currentWrapper]
+        if info and info.activeStateName then
+            local cache = info.defCache
+            local defs = cache[info.activeStateName]
+            if not defs then defs = { idx = 0 }; cache[info.activeStateName] = defs end
+            local idx = defs.idx + 1
+            defs.idx = idx
+            local cached = defs[idx]
+            if cached then ResetDefinition(cached); return cached end
+            local new = AllocateDefinition()
+            defs[idx] = new
+            return new
         end
     end
-
     return AllocateDefinition()
 end

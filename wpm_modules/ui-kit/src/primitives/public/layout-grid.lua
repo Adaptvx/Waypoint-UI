@@ -90,97 +90,121 @@ do
         containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
         containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-        local columnCount, rowCount = ComputeGridDimensions(
-            visibleChildCount,
-            tonumber(self.uk_LayoutGridColumns),
-            tonumber(self.uk_LayoutGridRows)
-        )
-
-        local columnWidths, rowHeights = self.__columnWidths, self.__rowHeights
-        for columnIndex = 1, columnCount do columnWidths[columnIndex] = 0 end
-        for rowIndex = 1, rowCount do rowHeights[rowIndex] = 0 end
+        local horizontalSpacing, verticalSpacing = ResolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
+        local horizontalAlignment = self.uk_prop_layoutAlignmentH or "LEADING"
+        local verticalAlignment = self.uk_prop_layoutAlignmentV or "LEADING"
 
         local cachedWidths = self.__cachedWidths
         local cachedHeights = self.__cachedHeights
+        local rowHeights = self.__rowHeights
+        local columnWidths = self.__columnWidths
+
+        local currentRowIndex = 1
+        local currentRowWidth = 0
+        local currentRowMaxHeight = 0
 
         for childIndex = 1, visibleChildCount do
             local child = visibleChildren[childIndex]
             local childWidth, childHeight = child:GetSize()
             childWidth, childHeight = childWidth or 0, childHeight or 0
 
-            -- Cache sizes for reuse in positioning loop
             cachedWidths[childIndex] = childWidth
             cachedHeights[childIndex] = childHeight
+            columnWidths[childIndex] = currentRowIndex
 
-            local columnIndex = ((childIndex - 1) % columnCount) + 1
-            local rowIndex = math.floor((childIndex - 1) / columnCount) + 1
+            local requiredWidth = currentRowWidth + childWidth
+            if currentRowWidth > 0 then requiredWidth = requiredWidth + horizontalSpacing end
 
-            if childWidth > columnWidths[columnIndex] then columnWidths[columnIndex] = childWidth end
-            if childHeight > rowHeights[rowIndex] then rowHeights[rowIndex] = childHeight end
+            if currentRowWidth > 0 and requiredWidth > containerWidth then
+                rowHeights[currentRowIndex] = currentRowMaxHeight
+                currentRowIndex = currentRowIndex + 1
+                currentRowWidth = childWidth
+                currentRowMaxHeight = childHeight
+                columnWidths[childIndex] = currentRowIndex
+            else
+                currentRowWidth = requiredWidth
+                if childHeight > currentRowMaxHeight then currentRowMaxHeight = childHeight end
+            end
         end
+        rowHeights[currentRowIndex] = currentRowMaxHeight
 
-        local horizontalSpacing, verticalSpacing = ResolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
-
-        local contentWidth, contentHeight = 0, 0
-        for columnIndex = 1, columnCount do contentWidth = contentWidth + columnWidths[columnIndex] end
-        for rowIndex = 1, rowCount do contentHeight = contentHeight + rowHeights[rowIndex] end
-        contentWidth = contentWidth + (columnCount - 1) * horizontalSpacing
+        local rowCount = currentRowIndex
+        local contentHeight = 0
+        for rowIndex = 1, rowCount do
+            contentHeight = contentHeight + rowHeights[rowIndex]
+        end
         contentHeight = contentHeight + (rowCount - 1) * verticalSpacing
 
         local shouldFitWidth, shouldFitHeight = self:GetFitContent()
-        if shouldFitWidth then
-            containerWidth = self:ResolveFitSize("width", contentWidth, self.uk_prop_width)
-            self:SetWidth(containerWidth)
-        end
         if shouldFitHeight then
             containerHeight = self:ResolveFitSize("height", contentHeight, self.uk_prop_height)
             self:SetHeight(containerHeight)
         end
 
-        local horizontalAlignment = self.uk_prop_layoutAlignmentH or "LEADING"
-        local verticalAlignment = self.uk_prop_layoutAlignmentV or "LEADING"
-
-        local gridStartX = horizontalAlignment == "JUSTIFIED" and (containerWidth - contentWidth) * 0.5
-            or horizontalAlignment == "TRAILING" and (containerWidth - contentWidth)
-            or 0
         local gridStartY = verticalAlignment == "JUSTIFIED" and (containerHeight - contentHeight) * 0.5
             or verticalAlignment == "TRAILING" and (containerHeight - contentHeight)
             or 0
 
-        local columnOffsets, rowOffsets = self.__columnOffsets, self.__rowOffsets
-        local accumulatedX = gridStartX
-        for columnIndex = 1, columnCount do
-            columnOffsets[columnIndex] = accumulatedX
-            accumulatedX = accumulatedX + columnWidths[columnIndex] + horizontalSpacing
-        end
+        local rowOffsets = self.__rowOffsets
         local accumulatedY = gridStartY
         for rowIndex = 1, rowCount do
             rowOffsets[rowIndex] = accumulatedY
             accumulatedY = accumulatedY + rowHeights[rowIndex] + verticalSpacing
         end
 
+        local columnOffsets = self.__columnOffsets
+        for rowIndex = 1, rowCount do columnOffsets[rowIndex] = 0 end
+
+        currentRowIndex = 1
+        local currentRowContentWidth = 0
+
         for childIndex = 1, visibleChildCount do
-            local child = visibleChildren[childIndex]
+            local childWidth = cachedWidths[childIndex]
+            local rowIndex = columnWidths[childIndex]
+
+            if rowIndex ~= currentRowIndex then
+                columnOffsets[currentRowIndex] = currentRowContentWidth
+                currentRowIndex = rowIndex
+                currentRowContentWidth = childWidth
+            else
+                if currentRowContentWidth > 0 then currentRowContentWidth = currentRowContentWidth + horizontalSpacing end
+                currentRowContentWidth = currentRowContentWidth + childWidth
+            end
+        end
+        columnOffsets[currentRowIndex] = currentRowContentWidth
+
+        currentRowIndex = 1
+        local currentRowXOffset = 0
+
+        for childIndex = 1, visibleChildCount do
             local childWidth = cachedWidths[childIndex]
             local childHeight = cachedHeights[childIndex]
+            local rowIndex = columnWidths[childIndex]
 
-            local columnIndex = ((childIndex - 1) % columnCount) + 1
-            local rowIndex = math.floor((childIndex - 1) / columnCount) + 1
+            if rowIndex ~= currentRowIndex then
+                currentRowIndex = rowIndex
+                currentRowXOffset = 0
+            end
 
-            local cellWidth, cellHeight = columnWidths[columnIndex], rowHeights[rowIndex]
+            local rowHeight = rowHeights[rowIndex]
+            local rowOffsetY = rowOffsets[rowIndex]
+            local rowContentWidth = columnOffsets[rowIndex]
 
-            local cellOffsetX = horizontalAlignment == "JUSTIFIED" and (cellWidth - childWidth) * 0.5
-                or horizontalAlignment == "TRAILING" and (cellWidth - childWidth)
+            local gridStartX = horizontalAlignment == "JUSTIFIED" and (containerWidth - rowContentWidth) * 0.5
+                or horizontalAlignment == "TRAILING" and (containerWidth - rowContentWidth)
                 or 0
-            local cellOffsetY = verticalAlignment == "JUSTIFIED" and (cellHeight - childHeight) * 0.5
-                or verticalAlignment == "TRAILING" and (cellHeight - childHeight)
+
+            local cellOffsetY = verticalAlignment == "JUSTIFIED" and (rowHeight - childHeight) * 0.5
+                or verticalAlignment == "TRAILING" and (rowHeight - childHeight)
                 or 0
 
-            if cellOffsetX < 0 then cellOffsetX = 0 end
             if cellOffsetY < 0 then cellOffsetY = 0 end
 
+            local child = visibleChildren[childIndex]
             child:ClearAllPoints()
-            child:SetPoint("TOPLEFT", self, "TOPLEFT", columnOffsets[columnIndex] + cellOffsetX, -(rowOffsets[rowIndex] + cellOffsetY))
+            child:SetPoint("TOPLEFT", self, "TOPLEFT", gridStartX + currentRowXOffset, -(rowOffsetY + cellOffsetY))
+
+            currentRowXOffset = currentRowXOffset + childWidth + horizontalSpacing
         end
     end
 

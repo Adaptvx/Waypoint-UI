@@ -17,15 +17,15 @@ local Support_TomTom   = env.WPM:Await("@\\Support\\TomTom")
 env.NAME           = "Waypoint UI"
 env.ICON           = Path.Root .. "\\Art\\Icon\\Icon.png"
 env.ICON_ALT       = Path.Root .. "\\Art\\Icon\\IconAltLight.png"
-env.VERSION_STRING = "1.2.4"
-env.VERSION_NUMBER = 010204
+env.VERSION_STRING = "1.2.5"
+env.VERSION_NUMBER = 010205
 env.DEBUG_MODE     = false
 
 
-local L = {}; env.L = L -- Locales
+local L = {}; env.L = L
 
 
-local Enum = {}; env.Enum = Enum -- Add-on specific enum
+local Enum = {}; env.Enum = Enum
 do
     Enum.ColorRGB01 = {
         Other           = { r = 255 / 255, g = 241 / 255, b = 180 / 255 },
@@ -51,7 +51,7 @@ do
 end
 
 
-local Config = {}; env.Config = Config -- Configuration / Database
+local Config = {}; env.Config = Config
 do
     Config.DBGlobal                      = nil
     Config.DBGlobalPersistent            = nil
@@ -63,8 +63,8 @@ do
     local NAME_LOCAL                     = "WaypointDB_Local"
     local NAME_LOCAL_PERSISTENT          = "WaypointDB_Local_Persistent"
 
+    ---@format enable
     local DB_GLOBAL_DEFAULTS             = {
-        -- Cache
         lastLoadedVersion                      = nil,
 
         WaypointSystemType                     = 1,
@@ -121,6 +121,7 @@ do
         slashWayCache = nil
     }
     local DB_LOCAL_PERSISTENT_DEFAULTS   = {}
+    ---@format disable
 
     local DB_GLOBAL_MIGRATION            = {
         -- < 1.0.0
@@ -356,7 +357,7 @@ end
 
 
 local SlashCmdRegister = {}
-do -- Slash Command
+do
     -- /way
     ----------------------------------------------------------------------------------------------------
 
@@ -519,7 +520,7 @@ end
 
 
 local SoundHandler = {}
-do -- Sound Handler
+do
     local function UpdateMainSoundLayer()
         local Setting_AudioGlobal = Config.DBGlobal:GetVariable("AudioGlobal")
 
@@ -539,7 +540,7 @@ end
 
 
 local FontHandler = {}
-do -- Font Handler
+do
     local function UpdateFonts()
         UIFont.CustomFont:RefreshFontList()
 

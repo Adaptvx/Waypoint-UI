@@ -142,6 +142,8 @@ do
     -- Smooth Scrolling
     ----------------------------------------------------------------------------------------------------
 
+    local STOP_EPSILON = 0.05
+
     local function SmoothOnUpdate(frame, elapsed)
         local container = frame:GetParent()
         local scrollFrame = container:GetScrollFrame()
@@ -154,14 +156,14 @@ do
 
         local t = 1 - exp(-speed * elapsed)
 
-        if abs(deltaV) >= 1 then
+        if abs(deltaV) > STOP_EPSILON then
             scrollFrame:SetVerticalScroll(currentV + deltaV * t)
             moving = true
         elseif deltaV ~= 0 then
             scrollFrame:SetVerticalScroll(targetV)
         end
 
-        if abs(deltaH) >= 1 then
+        if abs(deltaH) > STOP_EPSILON then
             scrollFrame:SetHorizontalScroll(currentH + deltaH * t)
             moving = true
         elseif deltaH ~= 0 then
@@ -192,7 +194,7 @@ do
             end
 
             local current = isVertical and scrollFrame:GetVerticalScroll() or scrollFrame:GetHorizontalScroll()
-            if abs(current - clampedValue) >= 1 then
+            if abs(current - clampedValue) >= STOP_EPSILON then
                 local smooth = self.uk_smoothFrame
                 if not smooth then
                     smooth = CreateFrame("Frame", nil, self)

@@ -107,18 +107,36 @@ function UIAnim_Processor.PrepareApply(target, property)
     if not target then return end
 
     if property == PROP_ALPHA then
-        return target.SetAlpha and APPLY_METHOD, target.SetAlpha
+        local setter = target.SetAlpha
+        if setter then
+            return APPLY_METHOD, setter
+        end
     elseif property == PROP_SCALE then
-        return target.SetScale and APPLY_METHOD, target.SetScale
+        local setter = target.SetScale
+        if setter then
+            return APPLY_METHOD, setter
+        end
     elseif property == PROP_WIDTH then
-        return target.SetWidth and APPLY_METHOD, target.SetWidth
+        local setter = target.SetWidth
+        if setter then
+            return APPLY_METHOD, setter
+        end
     elseif property == PROP_HEIGHT then
-        return target.SetHeight and APPLY_METHOD, target.SetHeight
+        local setter = target.SetHeight
+        if setter then
+            return APPLY_METHOD, setter
+        end
     elseif property == PROP_POSX or property == PROP_POSY then
         if target.SetPoint and target.GetPoint then
-            return property == PROP_POSX and APPLY_POS_X or APPLY_POS_Y, target.SetPoint
+            local point, relativeTo, relativePoint, offsetX, offsetY = target:GetPoint()
+            point = point or "CENTER"
+            relativePoint = relativePoint or point
+            return property == PROP_POSX and APPLY_POS_X or APPLY_POS_Y, target.SetPoint, point, relativeTo or UIParent, relativePoint, offsetX or 0, offsetY or 0
         end
     elseif property == PROP_ROTATION then
-        return target.SetRotation and APPLY_ROTATION, target.SetRotation
+        local setter = target.SetRotation
+        if setter then
+            return APPLY_ROTATION, setter
+        end
     end
 end

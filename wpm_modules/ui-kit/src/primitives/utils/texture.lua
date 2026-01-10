@@ -51,7 +51,7 @@ do
     end
 
     function TextureMixin:SetMaskFromObject(maskTextureObject)
-        self.__Texture:AddMaskTexture(maskTextureObject:GetBackground():GetTextureObject())
+        self.__Texture:AddMaskTexture(maskTextureObject:GetTextureFrame():GetTextureObject())
     end
 
     function TextureMixin:SetTexture(texture)

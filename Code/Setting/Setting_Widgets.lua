@@ -299,7 +299,7 @@ Setting_Widgets.Title = UIKit.Prefab(function(id, name, children, ...)
 
 
     frame.Splash = UIKit.GetElementById("Splash", id)
-    frame.SplashTexture = frame.Splash:GetBackground()
+    frame.SplashTexture = frame.Splash:GetTextureFrame()
     frame.Title = UIKit.GetElementById("Title", id)
     frame.Description = UIKit.GetElementById("Description", id)
 
@@ -621,7 +621,7 @@ Setting_Widgets.ElementBase = UIKit.Prefab(function(id, name, children, ...)
     frame.Description = UIKit.GetElementById("Description", id)
     frame.Image = UIKit.GetElementById("Image", id)
     frame.Image.Background = UIKit.GetElementById("Image.Background", id)
-    frame.Image.BackgroundTexture = frame.Image.Background:GetBackground()
+    frame.Image.BackgroundTexture = frame.Image.Background:GetTextureFrame()
     frame.Info = UIKit.GetElementById("Info", id)
     frame.Action = UIKit.GetElementById("Action", id)
 

@@ -132,7 +132,7 @@ UICCommonButton.RedBase = UIKit.Prefab(function(id, name, children, ...)
         :background(TEXTURE_NIL)
         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Texture = frame:GetBackground()
+    frame.Texture = frame:GetTextureFrame()
     frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
@@ -155,7 +155,7 @@ UICCommonButton.GrayBase = UIKit.Prefab(function(id, name, children, ...)
         :background(TEXTURE_NIL)
         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Texture = frame:GetBackground()
+    frame.Texture = frame:GetTextureFrame()
     frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
@@ -178,7 +178,7 @@ UICCommonButton.RedBaseSquare = UIKit.Prefab(function(id, name, children, ...)
         :background(TEXTURE_NIL)
         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Texture = frame:GetBackground()
+    frame.Texture = frame:GetTextureFrame()
     frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
@@ -201,7 +201,7 @@ UICCommonButton.GrayBaseSquare = UIKit.Prefab(function(id, name, children, ...)
         :background(TEXTURE_NIL)
         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
-    frame.Texture = frame:GetBackground()
+    frame.Texture = frame:GetTextureFrame()
     frame.Content = UIKit.GetElementById("Content", id)
 
     Mixin(frame, ButtonMixin)
@@ -316,7 +316,7 @@ UICCommonButton.RedClose = UIKit.Prefab(function(id, name, children, ...)
         })
 
     frame.Close = UIKit.GetElementById("Close", id)
-    frame.CloseTexture = frame.Close:GetBackground()
+    frame.CloseTexture = frame.Close:GetTextureFrame()
 
     return frame
 end)

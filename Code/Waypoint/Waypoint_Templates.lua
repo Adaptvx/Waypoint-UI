@@ -210,9 +210,9 @@ Waypoint_Templates.PinpointArrow = UIKit.Prefab(function(id, name, children, ...
     frame.Arrow1Texture = UIKit.GetElementById("Arrow1Texture", id)
     frame.Arrow2Texture = UIKit.GetElementById("Arrow2Texture", id)
     frame.Arrow3Texture = UIKit.GetElementById("Arrow3Texture", id)
-    frame.Arrow1TextureBackground = frame.Arrow1Texture:GetBackground()
-    frame.Arrow2TextureBackground = frame.Arrow2Texture:GetBackground()
-    frame.Arrow3TextureBackground = frame.Arrow3Texture:GetBackground()
+    frame.Arrow1TextureBackground = frame.Arrow1Texture:GetTextureFrame()
+    frame.Arrow2TextureBackground = frame.Arrow2Texture:GetTextureFrame()
+    frame.Arrow3TextureBackground = frame.Arrow3Texture:GetTextureFrame()
 
     Mixin(frame, PinpointArrowMixin)
     return frame
@@ -223,8 +223,8 @@ end)
 ----------------------------------------------------------------------------------------------------
 
 local CI_FOREGROUND_TEXTURE = ATLAS{ left = 0 / 1792, right = 256 / 1792, top = 256 / 2560, bottom = 512 / 2560 }
-local CI_BACKGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 12.5 }
-local CI_CONTENT_SIZE       = UIKit.Define.Percentage{ value = 32.5 }
+local CI_BACKGROUND_SIZE    = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 14 }
+local CI_CONTENT_SIZE       = UIKit.Define.Percentage{ value = 32 }
 
 
 local ContextIconMixin     = {}
@@ -286,8 +286,8 @@ Waypoint_Templates.ContextIcon = UIKit.Prefab(function(id, name, children, ...)
                 :size(CI_CONTENT_SIZE, CI_CONTENT_SIZE)
         })
 
-    frame.BackgroundTexture = UIKit.GetElementById("BackgroundTexture", id):GetBackground()
-    frame.ImageTexture = UIKit.GetElementById("Image", id):GetBackground()
+    frame.BackgroundTexture = UIKit.GetElementById("BackgroundTexture", id):GetTextureFrame()
+    frame.ImageTexture = UIKit.GetElementById("Image", id):GetTextureFrame()
 
     Mixin(frame, ContextIconMixin)
     return frame

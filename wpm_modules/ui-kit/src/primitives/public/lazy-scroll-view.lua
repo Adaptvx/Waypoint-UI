@@ -453,6 +453,8 @@ do
     -- Smooth Scrolling
     ----------------------------------------------------------------------------------------------------
 
+    local STOP_EPSILON = 0.05
+
     local function SmoothOnUpdate(frame, elapsed)
         local container = frame:GetParent()
         local scrollFrame = container:GetScrollFrame()
@@ -465,14 +467,14 @@ do
 
         local t = 1 - exp(-speed * elapsed)
 
-        if abs(deltaV) >= 1 then
+        if abs(deltaV) > STOP_EPSILON then
             scrollFrame:SetVerticalScroll(currentV + deltaV * t)
             moving = true
         elseif deltaV ~= 0 then
             scrollFrame:SetVerticalScroll(targetV)
         end
 
-        if abs(deltaH) >= 1 then
+        if abs(deltaH) > STOP_EPSILON then
             scrollFrame:SetHorizontalScroll(currentH + deltaH * t)
             moving = true
         elseif deltaH ~= 0 then
@@ -503,7 +505,7 @@ do
             end
 
             local current = isVertical and scrollFrame:GetVerticalScroll() or scrollFrame:GetHorizontalScroll()
-            if abs(current - clampedValue) >= 1 then
+            if abs(current - clampedValue) > STOP_EPSILON then
                 local smooth = self.uk_smoothFrame
                 if not smooth then
                     smooth = CreateFrame("Frame", nil, self)
@@ -705,7 +707,7 @@ end
 
 
 --[[
-local BACKGROUND = UIKit.Define.Texture_NineSlice{ path = Path.Root .. "/wpm_modules/uic-common/resources/InputCaret.png", inset = 128, scale = 1 }
+local BACKGROUND = UIKit.Define.Texture_NineSlice{ path = Path.Root .. "\\wpm_modules\\uic-common\\resources\\InputCaret.png", inset = 128, scale = 1 }
 
 local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
     local frame =
@@ -722,7 +724,7 @@ local MyRowPrefab = UIKit.Prefab(function(id, name, children, ...)
         :backgroundColor(UIKit.Define.Color_RGBA{ r = 255, g = 255, b = 255, a = 0.5 })
 
     frame.Text = UIKit.GetElementById("Text", id)
-    frame.Background = frame:GetBackground()
+    frame.Background = frame:GetTextureFrame()
 
     return frame
 end)
