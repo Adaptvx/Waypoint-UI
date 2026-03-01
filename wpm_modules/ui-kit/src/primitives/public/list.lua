@@ -4,11 +4,34 @@ local UIKit_Primitives_List = env.WPM:New("wpm_modules\\ui-kit\\primitives\\list
 
 local Mixin = Mixin
 local tinsert = table.insert
+local tremove = table.remove
 local ipairs = ipairs
 local type = type
 
 local DEFAULT_TYPE_KEY = "Default"
 local ListMixin = {}
+
+local function MoveFrameChildToEnd(parentFrame, childFrame)
+    if not parentFrame or not childFrame then return end
+
+    local children = parentFrame.GetFrameChildren and parentFrame:GetFrameChildren()
+    if not children then return end
+
+    local childIndex = nil
+    for i = 1, #children do
+        if children[i] == childFrame then
+            childIndex = i
+            break
+        end
+    end
+
+    if not childIndex or childIndex == #children then
+        return
+    end
+
+    tremove(children, childIndex)
+    tinsert(children, childFrame)
+end
 
 function ListMixin:Init()
     self.__onElementUpdateFunc = nil
@@ -125,6 +148,8 @@ function ListMixin:RenderElements()
         local element = self:GetElement(self.__elementPoolTypeIndex[typeKey], typeKey)
         element.__shouldShow = true
         element.__uk_poolElementType = typeKey
+        
+        MoveFrameChildToEnd(self.uk_parent, element)
 
         if self.__onElementUpdateFunc then
             self.__onElementUpdateFunc(element, index, value)

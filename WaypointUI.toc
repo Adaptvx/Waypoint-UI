@@ -1,9 +1,10 @@
 ## Interface: 120001
-## Version: 1.3.7
+## Version: 1.3.8
 ## Title: Waypoint UI
 ## Notes: An in-world waypoint and pinpoint to show relevant information directly in world-space.
 ## Notes-zhCN: 魔兽世界中的路径点和标记点，用于在虚拟空间中直接显示相关信息。
 ## Author: AdaptiveX
+## Category-deDE: Karte
 ## IconTexture: Interface\AddOns\WaypointUI\Art\Icon\IconAltLight.png
 ## SavedVariables: WaypointDB_Global, WaypointDB_Global_Persistent
 ## SavedVariablesPerCharacter: WaypointDB_Local, WaypointDB_Local_Persistent

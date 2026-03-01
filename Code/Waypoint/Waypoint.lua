@@ -97,7 +97,9 @@ function WaypointMixin:UpdateText()
         newText = pinName
     end
 
-    self.Footer.InfoText:SetShown(newText ~= nil)
+    local hasText = (newText ~= nil and #newText >= 1)
+
+    self.Footer.InfoText:SetShown(hasText)
     if self.Footer.InfoText:IsShown() and oldText ~= newText then
         self.Footer.InfoText:SetText(newText)
     end
@@ -160,7 +162,7 @@ function WaypointMixin:UpdateBeam()
 end
 
 function WaypointMixin:SetIcon(UIContextIconTexture)
-    self.ContextIcon:SetInfo(UIContextIconTexture)
+    self.ContextIcon:SetData(UIContextIconTexture)
 end
 
 function WaypointMixin:SetIconOpacity(opacity)
@@ -204,87 +206,41 @@ do
         WUIWaypointFrame.AnimGroup_Beam:Play("NORMAL", WUIWaypointFrame.Beam.FXMask)
     end
 
-    do -- Instant
-        WaypointMixin.AnimGroup:State("INSTANT", function(frame)
-            ApplyDefaultState(frame)
-        end)
-    end
+    WaypointMixin.AnimGroup:State("INSTANT", function(frame)
+        ApplyDefaultState(frame)
+    end)
 
-    do -- Fade In
-        local FadeIn = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :to(1)
+    local FadeIn = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):to(1)
+    WaypointMixin.AnimGroup:State("FADE_IN", function(frame)
+        FadeIn:Play(frame)
+        ApplyDefaultState(frame)
+    end)
 
-        WaypointMixin.AnimGroup:State("FADE_IN", function(frame)
-            FadeIn:Play(frame)
-            ApplyDefaultState(frame)
-        end)
-    end
+    local FadeOut = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):to(0)
+    WaypointMixin.AnimGroup:State("FADE_OUT", function(frame)
+        FadeOut:Play(frame)
+    end)
 
-    do -- Fade Out
-        local FadeOut = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :to(0)
+    local IntroFade = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(1):from(0):to(1)
+    local IntroContextIconScale = UIAnim.Animate():property(UIAnim.Enum.Property.Scale):easing(UIAnim.Enum.Easing.ExpoIn):duration(0.5):from(2.25):to(1)
+    local IntroBeamMaskScale = UIAnim.Animate():wait(0.175):property(UIAnim.Enum.Property.Scale):easing(UIAnim.Enum.Easing.ExpoIn):duration(0.5):from(1):to(50)
+    WaypointMixin.AnimGroup:State("INTRO", function(frame)
+        frame:SetAlpha(0)
+        frame.Beam.Mask:SetScale(1)
 
-        WaypointMixin.AnimGroup:State("FADE_OUT", function(frame)
-            FadeOut:Play(frame)
-        end)
-    end
+        IntroFade:Play(frame)
+        IntroContextIconScale:Play(frame.ContextIcon)
+        IntroBeamMaskScale:Play(frame.Beam.Mask)
+        frame.AnimGroup_Beam:Play("NORMAL", frame.Beam.FXMask)
+    end)
 
-    do -- Intro
-        local IntroFade = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(1)
-            :from(0)
-            :to(1)
-        local IntroContextIconScale = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Scale)
-            :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(0.5)
-            :from(2.25)
-            :to(1)
-        local IntroBeamMaskScale = UIAnim.Animate()
-            :wait(0.175)
-            :property(UIAnim.Enum.Property.Scale)
-            :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(0.5)
-            :from(1)
-            :to(50)
-
-        WaypointMixin.AnimGroup:State("INTRO", function(frame)
-            frame:SetAlpha(0)
-            frame.Beam.Mask:SetScale(1)
-
-            IntroFade:Play(frame)
-            IntroContextIconScale:Play(frame.ContextIcon)
-            IntroBeamMaskScale:Play(frame.Beam.Mask)
-            frame.AnimGroup_Beam:Play("NORMAL", frame.Beam.FXMask)
-        end)
-    end
-
-    do -- Outro
-        local OutroFade = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.25)
-            :to(0)
-        local OutroBeamMaskScale = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Scale)
-            :easing(UIAnim.Enum.Easing.ExpoIn)
-            :duration(0.5)
-            :to(1)
-
-        WaypointMixin.AnimGroup:State("OUTRO", function(frame)
-            OutroFade:Play(frame)
-            OutroBeamMaskScale:Play(frame.Beam.Mask)
-            frame.AnimGroup_Beam:Stop()
-        end)
-    end
+    local OutroFade = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.25):to(0)
+    local OutroBeamMaskScale = UIAnim.Animate():property(UIAnim.Enum.Property.Scale):easing(UIAnim.Enum.Easing.ExpoIn):duration(0.5):to(1)
+    WaypointMixin.AnimGroup:State("OUTRO", function(frame)
+        OutroFade:Play(frame)
+        OutroBeamMaskScale:Play(frame.Beam.Mask)
+        frame.AnimGroup_Beam:Stop()
+    end)
 end
 
 WaypointMixin.AnimGroup_Hover = UIAnim.New()
@@ -411,7 +367,7 @@ function PinpointMixin:UpdateSize()
 end
 
 function PinpointMixin:SetIcon(UIContextIconTexture)
-    self.Background.ContextIcon:SetInfo(UIContextIconTexture)
+    self.Background.ContextIcon:SetData(UIContextIconTexture)
 end
 
 function PinpointMixin:SetIconOpacity(opacity)
@@ -440,80 +396,38 @@ do
         frame.Background.Arrow:Play()
     end
 
-    do -- Instant
-        PinpointMixin.AnimGroup:State("INSTANT", function(frame)
-            frame:SetAlpha(1)
-            ApplyDefaultState(frame)
-        end)
-    end
+    PinpointMixin.AnimGroup:State("INSTANT", function(frame)
+        frame:SetAlpha(1)
+        ApplyDefaultState(frame)
+    end)
 
-    do -- Fade In
-        local FadeIn = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :from(0)
-            :to(1)
+    local FadeIn = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):from(0):to(1)
+    PinpointMixin.AnimGroup:State("FADE_IN", function(frame)
+        FadeIn:Play(frame)
+        ApplyDefaultState(frame)
+    end)
 
-        PinpointMixin.AnimGroup:State("FADE_IN", function(frame)
-            FadeIn:Play(frame)
-            ApplyDefaultState(frame)
-        end)
-    end
+    local FadeOut = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):to(0)
+    PinpointMixin.AnimGroup:State("FADE_OUT", function(frame)
+        FadeOut:Play(frame)
+        frame.Background.Arrow:Stop()
+    end)
 
-    do -- Fade Out
-        local FadeOut = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :to(0)
+    local Intro = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.5):to(1)
+    local IntroTranslate = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.ExpoInOut):duration(1):from(-57.5):to(0)
+    PinpointMixin.AnimGroup:State("INTRO", function(frame)
+        Intro:Play(frame)
+        IntroTranslate:Play(frame.Container)
+        frame.Background.Arrow:Play()
+    end)
 
-        PinpointMixin.AnimGroup:State("FADE_OUT", function(frame)
-            FadeOut:Play(frame)
-            frame.Background.Arrow:Stop()
-        end)
-    end
-
-    do -- Intro
-        local Intro = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.5)
-            :to(1)
-
-        local IntroTranslate = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.PosY)
-            :easing(UIAnim.Enum.Easing.ExpoInOut)
-            :duration(1)
-            :from(-57.5)
-            :to(0)
-
-        PinpointMixin.AnimGroup:State("INTRO", function(frame)
-            Intro:Play(frame)
-            IntroTranslate:Play(frame.Container)
-            frame.Background.Arrow:Play()
-        end)
-    end
-
-    do -- Outro
-        local OUTRO_ALPHA = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.25)
-            :to(0)
-
-        local OUTRO_POS_Y = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.PosY)
-            :easing(UIAnim.Enum.Easing.ExpoInOut)
-            :duration(0.25)
-            :to(-12.5)
-
-        PinpointMixin.AnimGroup:State("OUTRO", function(frame)
-            OUTRO_ALPHA:Play(frame)
-            OUTRO_POS_Y:Play(frame.Container)
-            frame.Background.Arrow:Stop()
-        end)
-    end
+    local OutroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.25):to(0)
+    local OutroY = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.ExpoInOut):duration(0.25):to(-12.5)
+    PinpointMixin.AnimGroup:State("OUTRO", function(frame)
+        OutroAlpha:Play(frame)
+        OutroY:Play(frame.Container)
+        frame.Background.Arrow:Stop()
+    end)
 end
 
 PinpointMixin.AnimGroup_Hover = UIAnim.New()
@@ -689,7 +603,7 @@ function NavigatorMixin:UpdateOpacity()
 end
 
 function NavigatorMixin:SetIcon(UIContextIconTexture)
-    self.ContextIcon:SetInfo(UIContextIconTexture)
+    self.ContextIcon:SetData(UIContextIconTexture)
 end
 
 function NavigatorMixin:SetIconRecolor(shouldRecolor)
@@ -713,35 +627,19 @@ end
 
 NavigatorMixin.AnimGroup = UIAnim.New()
 do
-    do -- Instant
-        NavigatorMixin.AnimGroup:State("INSTANT", function(frame)
-            frame:SetAlpha(1)
-        end)
-    end
+    NavigatorMixin.AnimGroup:State("INSTANT", function(frame)
+        frame:SetAlpha(1)
+    end)
 
-    do -- Fade In
-        local FadeIn = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :to(1)
+    local FadeIn = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):to(1)
+    NavigatorMixin.AnimGroup:State("FADE_IN", function(frame)
+        FadeIn:Play(frame)
+    end)
 
-        NavigatorMixin.AnimGroup:State("FADE_IN", function(frame)
-            FadeIn:Play(frame)
-        end)
-    end
-
-    do -- Fade Out
-        local FadeOut = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.175)
-            :to(0)
-
-        NavigatorMixin.AnimGroup:State("FADE_OUT", function(frame)
-            FadeOut:Play(frame)
-        end)
-    end
+    local FadeOut = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.175):to(0)
+    NavigatorMixin.AnimGroup:State("FADE_OUT", function(frame)
+        FadeOut:Play(frame)
+    end)
 end
 
 NavigatorMixin.AnimGroup_Hover = UIAnim.New()

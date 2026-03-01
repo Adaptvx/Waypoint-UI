@@ -77,7 +77,7 @@ function WidgetMixin:OnLoad(widgetInfo, root, tab)
         local description = widgetDescription and widgetDescription.description or nil
         local imagePath = widgetDescription and widgetDescription.imagePath or nil
         local imageType = widgetDescription and widgetDescription.imageType or nil
-        self:SetInfo(name, description, imagePath, imageType)
+        self:SetData(name, description, imagePath, imageType)
     end
     self:SetIndent(widgetIndent or 0)
 end
@@ -196,7 +196,7 @@ do -- Title
         widget:parent(parent)
         Mixin(widget, WidgetMixin)
         widget:OnLoad(widgetInfo, root, tab)
-        widget:SetInfo(titleInfo.imagePath, titleInfo.text, titleInfo.subtext)
+        widget:SetData(titleInfo.imagePath, titleInfo.text, titleInfo.subtext)
 
         return widget
     end

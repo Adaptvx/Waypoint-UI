@@ -207,23 +207,11 @@ do -- Content Arrow
 
     ContentArrowMixin.AnimGroup = UIAnim.New()
     do
-        local IntroAlpha = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.125)
-            :from(0)
-            :to(1)
-
-        local OutroAlpha = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.125)
-            :to(0)
-
+        local IntroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.125):from(0):to(1)
+        local OutroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.125):to(0)
         ContentArrowMixin.AnimGroup:State("INTRO", function(frame)
             IntroAlpha:Play(frame)
         end)
-
         ContentArrowMixin.AnimGroup:State("OUTRO", function(frame)
             OutroAlpha:Play(frame)
         end)
@@ -369,45 +357,19 @@ do -- Selection Menu
 
     SelectionMenuMixin.AnimGroup = UIAnim.New()
     do
-        do -- Intro
-            local IntroAlpha = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.Alpha)
-                :easing(UIAnim.Enum.Easing.ExpoOut)
-                :duration(0.5)
-                :from(0)
-                :to(1)
+        local IntroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.ExpoOut):duration(0.5):from(0):to(1)
+        local IntroTranslate = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.ExpoOut):duration(0.5):from(7.5):to(0)
+        SelectionMenuMixin.AnimGroup:State("INTRO", function(frame)
+            IntroAlpha:Play(frame.Content)
+            IntroTranslate:Play(frame.Content)
+        end)
 
-            local IntroTranslate = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.PosY)
-                :easing(UIAnim.Enum.Easing.ExpoOut)
-                :duration(0.5)
-                :from(7.5)
-                :to(0)
-
-            SelectionMenuMixin.AnimGroup:State("INTRO", function(frame)
-                IntroAlpha:Play(frame.Content)
-                IntroTranslate:Play(frame.Content)
-            end)
-        end
-
-        do -- Outro
-            local OutroAlpha = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.Alpha)
-                :easing(UIAnim.Enum.Easing.ExpoOut)
-                :duration(0.5)
-                :to(0)
-
-            local OutroTranslate = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.PosY)
-                :easing(UIAnim.Enum.Easing.ExpoOut)
-                :duration(0.5)
-                :to(7.5)
-
-            SelectionMenuMixin.AnimGroup:State("OUTRO", function(frame)
-                OutroAlpha:Play(frame.Content)
-                OutroTranslate:Play(frame.Content)
-            end)
-        end
+        local OutroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.ExpoOut):duration(0.5):to(0)
+        local OutroTranslate = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.ExpoOut):duration(0.5):to(7.5)
+        SelectionMenuMixin.AnimGroup:State("OUTRO", function(frame)
+            OutroAlpha:Play(frame.Content)
+            OutroTranslate:Play(frame.Content)
+        end)
     end
 
     UICCommonSelectionMenu.New = UIKit.Template(function(id, name, children, ...)

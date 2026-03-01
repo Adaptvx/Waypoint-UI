@@ -151,7 +151,7 @@ function FrameMixin:RemoveFrameChild(frame)
 
     for i = 1, #children do
         if children[i] == frame then
-            Utils_LazyTable.Remove(children, "uk_children", i)
+            Utils_LazyTable.Remove(self, "uk_children", i)
             return
         end
     end
@@ -167,6 +167,14 @@ end
 
 function FrameMixin:GetSpacing()
     return self.uk_prop_layoutSpacing
+end
+
+function FrameMixin:GetSpacingH()
+    return self.uk_prop_layoutSpacingH
+end
+
+function FrameMixin:GetSpacingV()
+    return self.uk_prop_layoutSpacingV
 end
 
 function FrameMixin:GetMaxWidth()

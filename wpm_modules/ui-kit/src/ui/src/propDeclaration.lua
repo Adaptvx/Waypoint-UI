@@ -531,6 +531,20 @@ do -- Layout Group
     end
 
     -- React
+    FrameProps["layoutSpacingH"] = function(frame, spacingValue)
+        spacingValue = HandleReact(frame, spacingValue, "layoutSpacingH")
+        assert(type(spacingValue) == "number" or spacingValue == UIKit_Define.Percentage, "Invalid variable `layoutSpacingH`: Must be of type `number` or `UIKit.Define.Percentage`")
+        frame.uk_prop_layoutSpacingH = spacingValue
+    end
+
+    -- React
+    FrameProps["layoutSpacingV"] = function(frame, spacingValue)
+        spacingValue = HandleReact(frame, spacingValue, "layoutSpacingV")
+        assert(type(spacingValue) == "number" or spacingValue == UIKit_Define.Percentage, "Invalid variable `layoutSpacingV`: Must be of type `number` or `UIKit.Define.Percentage`")
+        frame.uk_prop_layoutSpacingV = spacingValue
+    end
+
+    -- React
     FrameProps["layoutAlignmentH"] = function(frame, alignment)
         alignment = HandleReact(frame, alignment, "layoutAlignmentH")
         assert(alignment == UIKit_Enum.Direction.Justified or alignment == UIKit_Enum.Direction.Leading or alignment == UIKit_Enum.Direction.Trailing, "Invalid variable `alignment`: Must be of type `UIKit.Enum.Direction.Justified`, `UIKit.Enum.Direction.Leading` or `UIKit.Enum.Direction.Trailing`")

@@ -61,32 +61,32 @@ do -- Button
         TriggerHooks(self.onMouseLeaveHooks, self)
     end
 
-    function ButtonMixin:OnMouseDown()
+    function ButtonMixin:OnMouseDown(button)
         if not self:IsEnabled() then return end
 
         self:SetPushed(self:IsEnabled() and true or false)
         self:UpdateButtonState()
 
-        TriggerHooks(self.onMouseDownHooks, self)
+        TriggerHooks(self.onMouseDownHooks, self, button)
     end
 
-    function ButtonMixin:OnMouseUp()
+    function ButtonMixin:OnMouseUp(button)
         if not self:IsEnabled() then return end
 
         self:SetPushed(false)
         self:UpdateButtonState()
 
-        TriggerHooks(self.onMouseUpHooks, self)
+        TriggerHooks(self.onMouseUpHooks, self, button)
 
         if self:IsMouseOver() then
             self:OnClick()
         end
     end
 
-    function ButtonMixin:OnClick()
-        if not self:IsEnabled() then return end
-        TriggerHooks(self.onClickHooks, self)
-        if self.clickFunc then self.clickFunc(self) end
+    function ButtonMixin:OnClick(button)
+        if not self:IsEnabled() or button == "RightButton" then return end
+        TriggerHooks(self.onClickHooks, self, button)
+        if self.clickFunc then self.clickFunc(self, button) end
     end
 
     function ButtonMixin:SetOnClick(func)

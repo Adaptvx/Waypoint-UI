@@ -76,15 +76,7 @@ do --Input
 
     InputMixin.AnimGroup = UIAnim.New()
     do
-        local Blink = UIAnim.Animate()
-            :property(UIAnim.Enum.Property.Alpha)
-            :easing(UIAnim.Enum.Easing.Linear)
-            :duration(0.1)
-            :from(0)
-            :to(1)
-            :loop(UIAnim.Enum.Looping.Yoyo)
-            :loopDelayEnd(0.5)
-
+        local Blink = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):easing(UIAnim.Enum.Easing.Linear):duration(0.1):from(0):to(1):loop(UIAnim.Enum.Looping.Yoyo):loopDelayEnd(0.5)
         InputMixin.AnimGroup:State("NORMAL", function(frame)
             Blink:Play(frame)
         end)

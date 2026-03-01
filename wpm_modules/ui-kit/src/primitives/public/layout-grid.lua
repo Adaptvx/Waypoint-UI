@@ -27,17 +27,15 @@ function LayoutGridMixin:OnLoad()
     self.__visibleCount = 0
 end
 
-local function ResolveSpacing(spacingSetting, refWidth, refHeight)
-    if not spacingSetting then return 0, 0 end
+local function ResolveSpacing(spacingSetting, referenceSize)
+    if not spacingSetting then return 0 end
     if type(spacingSetting) == "number" then
-        return spacingSetting, spacingSetting
+        return spacingSetting
     end
     if spacingSetting == UIKit_Define_Percentage then
-        local pctVal, op, delta = spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta
-        return UIKit_Utils:CalculateRelativePercentage(refWidth, pctVal, op, delta),
-            UIKit_Utils:CalculateRelativePercentage(refHeight, pctVal, op, delta)
+        return UIKit_Utils:CalculateRelativePercentage(referenceSize, spacingSetting.value or 0, spacingSetting.operator, spacingSetting.delta)
     end
-    return 0, 0
+    return 0
 end
 
 function LayoutGridMixin:RenderElements()
@@ -69,7 +67,10 @@ function LayoutGridMixin:RenderElements()
     containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
     containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
-    local horizontalSpacing, verticalSpacing = ResolveSpacing(self:GetSpacing(), containerWidth, containerHeight)
+    local spacingH = self:GetSpacingH() or self:GetSpacing()
+    local spacingV = self:GetSpacingV() or self:GetSpacing()
+    local horizontalSpacing = ResolveSpacing(spacingH, containerWidth)
+    local verticalSpacing = ResolveSpacing(spacingV, containerHeight)
     local horizontalAlignment = self.uk_prop_layoutAlignmentH or UIKit_Enum_Direction_Leading
     local verticalAlignment = self.uk_prop_layoutAlignmentV or UIKit_Enum_Direction_Leading
 

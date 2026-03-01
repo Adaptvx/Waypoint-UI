@@ -73,10 +73,10 @@ function HitRectMixin:RemoveOnMouseUp(callback)
     if #self.__mouseUpHooks == 0 then self.__mouseUpHooks = nil end
 end
 
-local function ProcessCallback(var)
+local function ProcessCallback(var, ...)
     if not var then return end
     for i = 1, #var do
-        var[i]()
+        var[i](...)
     end
 end
 
@@ -88,12 +88,12 @@ local function HandleLeave(self)
     ProcessCallback(self.__leaveHooks)
 end
 
-local function HandleMouseDown(self)
-    ProcessCallback(self.__mouseDownHooks)
+local function HandleMouseDown(self, button)
+    ProcessCallback(self.__mouseDownHooks, button)
 end
 
-local function HandleMouseUp(self)
-    ProcessCallback(self.__mouseUpHooks)
+local function HandleMouseUp(self, button)
+    ProcessCallback(self.__mouseUpHooks, button)
 end
 
 function UIKit_Primitives_HitRect.New(name, parent)

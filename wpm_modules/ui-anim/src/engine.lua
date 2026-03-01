@@ -126,6 +126,15 @@ local function FinalizeInstance(inst)
     if endVal ~= nil then FastApply(inst, endVal) end
 end
 
+local function ApplyAtElapsed(inst, elapsed)
+    local ease = inst.easing
+    local norm = elapsed * inst.invDuration
+    local prog = ease == LINEAR_EASE and norm or ease(norm)
+    local fromVal, toVal, dir = inst.from, inst.to, inst.dir
+    local val = dir == 1 and (fromVal + inst.delta * prog) or (toVal - inst.delta * prog)
+    FastApply(inst, val)
+end
+
 
 
 local DefProto = {}
@@ -133,7 +142,7 @@ DefProto.__index = DefProto
 
 local function ResetDefinition(def)
     def.__property, def.__duration, def.__from, def.__to, def.__loopType = nil, nil, nil, nil, nil
-    def.__easing, def.__hasFrom, def.__loopDelayStart, def.__loopDelayEnd, def.__waitStart = "Linear", false, 0, 0, 0
+    def.__easing, def.__hasFrom, def.__loopDelayStart, def.__loopDelayEnd, def.__waitStart, def.__startAt = "Linear", false, 0, 0, 0, 0
     return def
 end
 
@@ -146,6 +155,9 @@ end
 
 function DefProto:wait(s)
     self.__waitStart = s or 0; return self
+end
+function DefProto:startAt(s)
+    self.__startAt = s or 0; return self
 end
 function DefProto:property(p)
     self.__property = p; return self
@@ -186,6 +198,9 @@ local function CreateInstance(def, target, wrapper, wrapperInfo, runId)
     end
     local loopType = def.__loopType
     local duration = def.__duration or 0
+    local startAt = def.__startAt or 0
+    if startAt < 0 then startAt = 0 end
+    if startAt > duration then startAt = duration end
     local info = wrapperInfo or (wrapper and wrapperRegistry[wrapper])
     local prop = def.__property
     inst.target, inst.property, inst.duration = target, prop, duration
@@ -194,6 +209,7 @@ local function CreateInstance(def, target, wrapper, wrapperInfo, runId)
     inst.to, inst.loopType = def.__to, loopType
     inst.loopDelayS, inst.loopDelayE = def.__loopDelayStart or 0, def.__loopDelayEnd or 0
     inst.dir, inst.t, inst.timer, inst.accum = 1, 0, 0, 0
+    inst.startAt, inst.startAtPending = startAt, startAt > 0
     inst.wrapper, inst.wrapperInfo = wrapper, info
     inst.runId = runId or currentRunId
     inst.stateName = info and info.activeStateName or nil
@@ -208,10 +224,17 @@ local function CreateInstance(def, target, wrapper, wrapperInfo, runId)
         inst.state, inst.timer = STATE_WAIT, startDelay
     else
         inst.state = STATE_PLAY
+        if inst.startAtPending then
+            inst.t = inst.startAt
+            inst.startAtPending = false
+        end
         TriggerStart(inst)
     end
     if not inst.from then inst.from = Processor_Read(target, prop) end
     inst.delta = (inst.to or 0) - (inst.from or 0)
+    if inst.state == STATE_PLAY and inst.t > 0 then
+        ApplyAtElapsed(inst, inst.t)
+    end
     inst.ignoreVisibility = def.__ignoreVisibility or false
     return inst
 end
@@ -301,7 +324,7 @@ function WrapperProto:Animation(name, fn)
     return self
 end
 
-function WrapperProto:Play(target, name)
+local function WrapperPlay(self, target, name, isSecure, ...)
     local info = wrapperRegistry[self]
     if not info then return self end
     local stateTarget, stateName
@@ -341,21 +364,40 @@ function WrapperProto:Play(target, name)
         animInfo.pendingCount, animInfo.finishCallback, animInfo.startCallback, animInfo.startNotified = 0, nil, nil, false
         local prevWrapper, prevRunId, prevIsAnim, prevAnimName, prevInfo = currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName, currentWrapperInfo
         currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName, currentWrapperInfo = self, animInfo.runId, true, stateName, animInfo
-        animFn(stateTarget)
+        animFn(stateTarget, ...)
         currentWrapper, currentRunId, currentWrapperIsAnimation, currentAnimationName, currentWrapperInfo = prevWrapper, prevRunId, prevIsAnim, prevAnimName, prevInfo
         lastPlayedWrapper = self
         lastPlayedWrapperInfo = animInfo
         return self
     end
-    local stateTargets = info.statePlayInfos
-    if not stateTargets then
-        stateTargets = setmetatable({}, { __mode = "k" })
-        info.statePlayInfos = stateTargets
-    end
-    local stateInfo = stateTargets[targetKey]
-    if not stateInfo then
-        stateInfo = { runId = 0, pendingCount = 0, startNotified = false }
-        stateTargets[targetKey] = stateInfo
+    local stateInfo
+    if isSecure then
+        local stateTargets = info.secureStatePlayInfos
+        if not stateTargets then
+            stateTargets = setmetatable({}, { __mode = "k" })
+            info.secureStatePlayInfos = stateTargets
+        end
+        local perTarget = stateTargets[targetKey]
+        if not perTarget then
+            perTarget = {}
+            stateTargets[targetKey] = perTarget
+        end
+        stateInfo = perTarget[stateName]
+        if not stateInfo then
+            stateInfo = { runId = 0, pendingCount = 0, startNotified = false }
+            perTarget[stateName] = stateInfo
+        end
+    else
+        local stateTargets = info.statePlayInfos
+        if not stateTargets then
+            stateTargets = setmetatable({}, { __mode = "k" })
+            info.statePlayInfos = stateTargets
+        end
+        stateInfo = stateTargets[targetKey]
+        if not stateInfo then
+            stateInfo = { runId = 0, pendingCount = 0, startNotified = false }
+            stateTargets[targetKey] = stateInfo
+        end
     end
     StopWrapperInstances(self, resolvedTarget, stateName, false)
     stateInfo.runId = (stateInfo.runId or 0) + 1
@@ -372,12 +414,20 @@ function WrapperProto:Play(target, name)
         else
             defCache.idx = 0
         end
-        stateFn(stateTarget)
+        stateFn(stateTarget, ...)
         currentWrapper, currentRunId, currentWrapperInfo = prevWrapper, prevRunId, prevInfo
         lastPlayedWrapper = self
         lastPlayedWrapperInfo = stateInfo
     end
     return self
+end
+
+function WrapperProto:Play(target, name, ...)
+    return WrapperPlay(self, target, name, false, ...)
+end
+
+function WrapperProto:SecurePlay(target, name, ...)
+    return WrapperPlay(self, target, name, true, ...)
 end
 
 function WrapperProto:IsPlaying(target, name)
@@ -492,6 +542,11 @@ local function StepInstance(inst, dt)
             end
             remain = remain - timer
             inst.state, inst.t, inst.timer = STATE_PLAY, 0, 0
+            if inst.startAtPending then
+                inst.t = inst.startAt
+                inst.startAtPending = false
+                ApplyAtElapsed(inst, inst.t)
+            end
             TriggerStart(inst)
         elseif state == STATE_PLAY then
             local dur, elapsed = inst.duration, inst.t
@@ -503,12 +558,8 @@ local function StepInstance(inst, dt)
                 elapsed, inst.t = dur, dur
                 remain = remain - timeLeft
             end
-            local ease = inst.easing
-            local norm = elapsed * inst.invDuration
-            local prog = ease == LINEAR_EASE and norm or ease(norm)
+            ApplyAtElapsed(inst, elapsed)
             local fromVal, toVal, dir = inst.from, inst.to, inst.dir
-            local val = dir == 1 and (fromVal + inst.delta * prog) or (toVal - inst.delta * prog)
-            FastApply(inst, val)
             local tgt = inst.target
             if tgt.IsVisible and not tgt:IsVisible() then
                 if inst.hasBeenVisible and not inst.ignoreVisibility then

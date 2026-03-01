@@ -35,13 +35,7 @@ do -- Tab
 
     TabMixin.AnimGroup = UIAnim.New()
     do
-        local Intro = UIAnim.Animate()
-            :wait(0.1)
-            :property(UIAnim.Enum.Property.Alpha)
-            :duration(0.25)
-            :from(0)
-            :to(1)
-
+        local Intro = UIAnim.Animate():wait(0.1):property(UIAnim.Enum.Property.Alpha):duration(0.25):from(0):to(1)
         TabMixin.AnimGroup:State("Intro", function(frame)
             frame:SetAlpha(0)
             Intro:Play(frame)
@@ -220,7 +214,7 @@ do -- Widgets
 
         local TitleMixin = {}
 
-        function TitleMixin:SetInfo(image, title, description)
+        function TitleMixin:SetData(image, title, description)
             self.SplashTexture:SetTexture(image)
             self.Title:SetText(title)
             self.Description:SetText(description)
@@ -447,7 +441,7 @@ do -- Widgets
             self.Background:SetShown(not self.isTransparent and buttonState ~= "NORMAL")
         end
 
-        function ElementBaseMixin:SetInfo(title, description, imagePath, imageSize)
+        function ElementBaseMixin:SetData(title, description, imagePath, imageSize)
             self.Title:SetShown(title ~= nil)
             if title then self.Title:SetText(title) end
 

@@ -138,43 +138,19 @@ do --Prompt
 
     PromptMixin.AnimGroup = UIAnim.New()
     do
-        do -- Intro
-            local IntroAlpha = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.Alpha)
-                :duration(0.325)
-                :from(0)
-                :to(1)
+        local IntroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):duration(0.325):from(0):to(1)
+        local IntroTranslate = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.ElasticOut):duration(1.25):from(-15):to(0)
+        PromptMixin.AnimGroup:State("INTRO", function(frame)
+            IntroAlpha:Play(frame)
+            IntroTranslate:Play(frame)
+        end)
 
-            local IntroTranslate = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.PosY)
-                :easing(UIAnim.Enum.Easing.ElasticOut)
-                :duration(1.25)
-                :from(-15)
-                :to(0)
-
-            PromptMixin.AnimGroup:State("INTRO", function(frame)
-                IntroAlpha:Play(frame)
-                IntroTranslate:Play(frame)
-            end)
-        end
-
-        do -- Outro
-            local OutroAlpha = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.Alpha)
-                :duration(0.325)
-                :to(0)
-
-            local OutroTranslate = UIAnim.Animate()
-                :property(UIAnim.Enum.Property.PosY)
-                :easing(UIAnim.Enum.Easing.QuintInOut)
-                :duration(0.375)
-                :to(-15)
-
-            PromptMixin.AnimGroup:State("OUTRO", function(frame)
-                OutroAlpha:Play(frame)
-                OutroTranslate:Play(frame)
-            end)
-        end
+        local OutroAlpha = UIAnim.Animate():property(UIAnim.Enum.Property.Alpha):duration(0.325):to(0)
+        local OutroTranslate = UIAnim.Animate():property(UIAnim.Enum.Property.PosY):easing(UIAnim.Enum.Easing.QuintInOut):duration(0.375):to(-15)
+        PromptMixin.AnimGroup:State("OUTRO", function(frame)
+            OutroAlpha:Play(frame)
+            OutroTranslate:Play(frame)
+        end)
     end
 
     UICCommonPrompt.New = UIKit.Template(function(id, name, children, ...)
