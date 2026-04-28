@@ -7,11 +7,12 @@ local env = select(2, ...)
 local L = env.L
 
 -- Font
-L["FONT_FLAGS"] = "Font Flags"
-L["NONE"] = "None"
-L["OUTLINE"] = "Outline"
-L["THICKOUTLINE"] = "Thick Outline"
-L["MONOCHROME"] = "Monochrome"
+L["FONT_FLAGS"] = "글꼴 옵션"
+L["NONE"] = "없음"
+L["OUTLINE"] = "외곽선"
+L["THICKOUTLINE"] = "두꺼운 외곽선"
+L["MONOCHROME"] = "모노크롬"
+
 
 -- 웨이포인트 시스템
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "퀘스트 완료 후 보고 가능"
@@ -130,10 +131,10 @@ L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT"] = "SilverDragon"
 L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT_ENABLE"] = "SilverDragon 웨이포인트 강화"
 L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT_ENABLE_DESCRIPTION"] = "SilverDragon의 내장 웨이포인트 옵션을 활성화해야 합니다."
 L["CONFIG_EXTENSIONS_APRSUPPORT"] = "Azeroth Pilot Reloaded"
-L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE"] = "Track APR Waypoints"
-L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE_DESCRIPTION"] = "Enables Azeroth Pilot Reloaded waypoint tracking."
-L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
-L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with the incoming APR waypoint."
+L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE"] = "APR 웨이포인트 추적"
+L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE_DESCRIPTION"] = "Azeroth Pilot Reloaded 웨이포인트 추적을 활성화합니다."
+L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT"] = "웨이포인트 자동 교체"
+L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "활성화된 웨이포인트를 들어오는 APR 웨이포인트로 자동 교체합니다."
 
 L["CONFIG_ABOUT"] = "정보"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "제작 참여자"
