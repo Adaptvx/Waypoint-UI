@@ -7,11 +7,11 @@ local env = select(2, ...)
 local L = env.L
 
 -- Font
-L["FONT_FLAGS"] = "Font Flags"
-L["NONE"] = "None"
-L["OUTLINE"] = "Outline"
-L["THICKOUTLINE"] = "Thick Outline"
-L["MONOCHROME"] = "Monochrome"
+L["FONT_FLAGS"] = "Флаги шрифта"
+L["NONE"] = "Нет"
+L["OUTLINE"] = "Контур"
+L["THICKOUTLINE"] = "Толстый контур"
+L["MONOCHROME"] = "Монохромный"
 
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "Готов к сдаче"
@@ -130,10 +130,10 @@ L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT"] = "Поддержка SilverDragon"
 L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT_ENABLE"] = "Улучшить путевой точки Silver Dragon"
 L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT_ENABLE_DESCRIPTION"] = "Для этого необходимо включить встроенную в SilverDragon опцию установки путевых точек."
 L["CONFIG_EXTENSIONS_APRSUPPORT"] = "Azeroth Pilot Reloaded"
-L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE"] = "Track APR Waypoints"
-L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE_DESCRIPTION"] = "Enables Azeroth Pilot Reloaded waypoint tracking."
-L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
-L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with the incoming APR waypoint."
+L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE"] = "Отслеживать точки APR"
+L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE_DESCRIPTION"] = "Включает отслеживание путевых точек аддона Azeroth Pilot Reloaded."
+L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT"] = "Автозамена путевой точки"
+L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Автоматически заменяет текущую путевую точку на новую, поступающую от APR."
 
 L["CONFIG_ABOUT"] = "О нас"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "Участники"
