@@ -40,7 +40,15 @@ local REPLACE_PROMPT_INFO = {
 function SupportedAddons_TomTom.PlaceWaypointAtSession()
     if not TomTomWaypointInfo or not TomTomWaypointInfo.mapID or not TomTomWaypointInfo.x or not TomTomWaypointInfo.y then return end
     if not SupportedAddons_TomTom.IsWaypointIgnored(TomTomWaypointInfo.mapID, TomTomWaypointInfo.x, TomTomWaypointInfo.y) then
-        MapPin.NewUserNavigation(TomTomWaypointInfo.name, TomTomWaypointInfo.mapID, TomTomWaypointInfo.x, TomTomWaypointInfo.y, "TomTom_Waypoint", Path.Root .. "\\Art\\Icons\\TomTomArrow", nil, nil, nil, true)
+        MapPin.NewUserNavigation({
+            name = TomTomWaypointInfo.name,
+            mapID = TomTomWaypointInfo.mapID,
+            x = TomTomWaypointInfo.x,
+            y = TomTomWaypointInfo.y,
+            flags = "TomTom_Waypoint",
+            iconTexture = Path.Root .. "\\Art\\Icons\\TomTomArrow",
+            requestRecolor = true
+        })
     end
 end
 

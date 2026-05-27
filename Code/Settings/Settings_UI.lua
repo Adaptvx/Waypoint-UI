@@ -1,7 +1,7 @@
 local env = select(2, ...)
 local Path = env.modules:Import("packages\\path")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UICCommon = env.modules:Import("packages\\uic-common")
 local Settings_Preload = env.modules:Import("@\\Settings\\Preload")
@@ -65,7 +65,7 @@ do -- Prompt
     local name = Settings_Preload.FRAME_NAME
     local id = Settings_Preload.FRAME_NAME
 
-    local frame = UICCommon.Prompt(name .. ".Prompt")
+    local frame = UICCommon.PromptText(name .. ".Prompt")
         :frameStrata(UIKit.Enum.FrameStrata.FullscreenDialog, 100)
         :parent(UIParent)
         :anchor(StaticPopup1)

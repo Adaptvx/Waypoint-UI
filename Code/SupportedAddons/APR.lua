@@ -85,7 +85,16 @@ local function UpdateCurrentAPRWaypointName(name, mapID, x, y)
 	if not currentWaypoint then return end
 	if currentWaypoint.name == name then return end
 
-	MapPin.SetUserNavigation(name, mapID, x / 100, y / 100, "APR_Waypoint", Path.Root .. "\\Art\\Icons\\TomTomArrow", nil, nil, nil, true)
+	MapPin.SetUserNavigation({
+		name = name,
+		mapID = mapID,
+		x = x / 100,
+		y = y / 100,
+		fromWUI = true,
+		flags = "APR_Waypoint",
+		iconTexture = Path.Root .. "\\Art\\Icons\\TomTomArrow",
+		requestRecolor = true
+	})
 	CallbackRegistry.Trigger("MapPin.NewUserNavigation")
 end
 
@@ -332,7 +341,15 @@ end
 function SupportedAddons_APR.PlaceWaypointAtSession()
 	if not APRWaypointInfo.mapID or not APRWaypointInfo.x or not APRWaypointInfo.y then return end
 
-	MapPin.NewUserNavigation(APRWaypointInfo.name, APRWaypointInfo.mapID, APRWaypointInfo.x, APRWaypointInfo.y, "APR_Waypoint", APR_ARROW_ICON, nil, nil, nil, true)
+	MapPin.NewUserNavigation({
+		name = APRWaypointInfo.name,
+		mapID = APRWaypointInfo.mapID,
+		x = APRWaypointInfo.x,
+		y = APRWaypointInfo.y,
+		flags = "APR_Waypoint",
+		iconTexture = Path.Root .. "\\Art\\Icons\\TomTomArrow",
+		requestRecolor = true
+	})
 end
 
 local function OnAddonLoad()
@@ -343,8 +360,8 @@ local function OnAddonLoad()
 		hooksecurefunc(APR.transport, "GetMeToRightZone", RefreshSessionWaypoint)
 	end
 
-	if APR.routeconfig and APR.routeconfig.CheckIsCustomPathEmpty then
-		hooksecurefunc(APR.routeconfig, "CheckIsCustomPathEmpty", RefreshSessionWaypoint)
+	if APR.pathconfig and APR.pathconfig.CheckIsCustomPathEmpty then
+		hooksecurefunc(APR.pathconfig, "CheckIsCustomPathEmpty", RefreshSessionWaypoint)
 	end
 
 	local EL = CreateFrame("Frame")

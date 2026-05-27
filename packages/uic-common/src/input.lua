@@ -2,7 +2,7 @@ local env = select(2, ...)
 local Path = env.modules:Import("packages\\path")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
@@ -48,18 +48,13 @@ do --Input
         if not isEnabled then
             self.Background:background(UIDEF.UIInput_Disabled)
         elseif focused then
-            self.Background:background(UIDEF.UIInput_Highlighted)
+            self.Background:background(UIDEF.UIInput)
 
             if not self.AnimGroup:IsPlaying(self.Caret, "NORMAL") then
                 self.AnimGroup:Play(self.Caret, "NORMAL")
             end
         else
-            local buttonState = self:GetButtonState()
-            if buttonState == "HIGHLIGHTED" then
-                self.Background:background(UIDEF.UIInput_Highlighted)
-            else
-                self.Background:background(UIDEF.UIInput)
-            end
+            self.Background:background(UIDEF.UIInput)
         end
     end
 

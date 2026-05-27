@@ -1,5 +1,6 @@
 local env = select(2, ...)
 local SupportedAddons = env.modules:Import("@\\SupportedAddons")
+local MapPin = env.modules:Import("@\\MapPin")
 local SupportedAddons_MapPinEnhanced = env.modules:New("@\\SupportedAddons\\MapPinEnhanced")
 
 local MPE_TRACKER_FRAME = MapPinEnhancedSuperTrackedPin
@@ -8,7 +9,9 @@ local CreateFrame = CreateFrame
 
 function SupportedAddons_MapPinEnhanced.SetupEvents()
     MPE_TRACKER_FRAME:HookScript("OnShow", function()
-        MPE_TRACKER_FRAME:Hide()
+        if MapPin.IsCustomMapPinsEnabled() then
+            MPE_TRACKER_FRAME:Hide()
+        end
     end)
 end
 

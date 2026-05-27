@@ -31,7 +31,13 @@ local REPLACE_PROMPT_INFO = {
 
 
 function SupportedAddons_DugisGuideViewerZ.PlaceWaypointAtSession()
-    MapPin.NewUserNavigation(DugisWaypointInfo.name, DugisWaypointInfo.mapID, DugisWaypointInfo.x, DugisWaypointInfo.y, "Dugis_Waypoint")
+    MapPin.NewUserNavigation({
+        name = DugisWaypointInfo.name,
+        mapID = DugisWaypointInfo.mapID,
+        x = DugisWaypointInfo.x,
+        y = DugisWaypointInfo.y,
+        flags = "Dugis_Waypoint"
+    })
 end
 
 local function OnWaypointsChanged()

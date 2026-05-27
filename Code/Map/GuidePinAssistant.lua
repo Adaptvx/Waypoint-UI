@@ -32,7 +32,13 @@ local function PlaceUserNavigationAtGuidePin()
     local mapID = cachedGuidePin.mapID or GetBestMapForUnit("player")
     if not mapID then return end
 
-    MapPin.NewUserNavigation(cachedGuidePin.name, mapID, cachedGuidePin.normalizedX * 100, cachedGuidePin.normalizedY * 100, "GuidePin")
+    MapPin.NewUserNavigation({
+        name = cachedGuidePin.name,
+        mapID = mapID,
+        x = cachedGuidePin.normalizedX * 100,
+        y = cachedGuidePin.normalizedY * 100,
+        flags = "GuidePin"
+    })
 end
 
 local function LocateGuidePin()

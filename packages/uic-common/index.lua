@@ -24,4 +24,5 @@ UICCommon.Range = UICCommonRange.New
 UICCommon.RangeWithText = UICCommonRange.NewWithText
 UICCommon.SelectionMenu = UICCommonSelectionMenu.New
 UICCommon.ColorInput = UICCommonColorInput.New
-UICCommon.Prompt = UICCommonPrompt.New
+UICCommon.PromptText = UICCommonPrompt.Text
+UICCommon.PromptInput = UICCommonPrompt.Input

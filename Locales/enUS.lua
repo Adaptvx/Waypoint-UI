@@ -1,6 +1,11 @@
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "Font Flags"
 L["NONE"] = "None"
@@ -8,8 +13,13 @@ L["OUTLINE"] = "Outline"
 L["THICKOUTLINE"] = "Thick Outline"
 L["MONOCHROME"] = "Monochrome"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
+
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "Ready for turn-in"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- Config
 L["CONFIG_GENERAL"] = "General"
@@ -54,6 +64,23 @@ L["CONFIG_WAYPOINTSYSTEM_PINPOINT_SHOWINQUESTAREA_DESCRIPTION"] = "May cause pos
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "Navigator"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "Show"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "Shows the Navigator when the Waypoint or Pinpoint is off-screen, pointing toward the destination."
+
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "Auto-Track Pin"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Automatically tracks a pin when placed on the world map."
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "Auto-Track Pin from Link"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Automatically tracks the destination when clicking a map pin link in chat."
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "Track Guide Pin"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Enables navigation for city guide pins placed by guard NPCs."
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
 
 L["CONFIG_APPEARANCE"] = "Appearance"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "Waypoint"
@@ -104,13 +131,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "When Pinpoint is show
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "When commencing /way navigation..."
 
 L["CONFIG_EXTENSIONS"] = "Extensions"
-L["CONFIG_EXTENSIONS_PIN"] = "Map Pin"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "Auto-Track Pin"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Automatically tracks a pin when placed on the world map."
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "Auto-Track Pin from Link"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Automatically tracks the destination when clicking a map pin link in chat."
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "Track Guide Pin"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "Enables navigation for city guide pins placed by guard NPCs."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Track TomTom Waypoints"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Enables TomTom waypoint tracking. To track, right-click a TomTom waypoint on the world map and select \"Set as waypoint arrow\"."
@@ -132,6 +152,7 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatical
 
 L["CONFIG_ABOUT"] = "About"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "Contributors"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "Developer"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
@@ -169,12 +190,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "Code - Bug Fix"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "Code - Feature"
 
--- Extra Feature
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
+-- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Do you want to replace your current waypoint with \"%s\"?"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the Dugi waypoint \"%s\"?"
 L["APR_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the APR waypoint \"%s\"?"
-L["REPLACE"] = "Replace"
-L["CANCEL"] = "Cancel"

@@ -163,6 +163,7 @@ function UIKit_Primitives_Utils_Texture.New(parent, isMaskTexture)
         or frame:CreateTexture("$parent.TextureObject")
 
     texture:SetAllPoints(frame)
+    texture:SetSnapToPixelGrid(false)
     texture:SetTexelSnappingBias(0)
 
     frame.__Texture = texture

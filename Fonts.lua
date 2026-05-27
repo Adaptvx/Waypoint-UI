@@ -6,3 +6,8 @@ UIFont.WUIFooterFont = UIFont_FontUtil:CreateFontObject("WUIFooterFont")
 UIFont.WUIFooterFont:SetFont(GameFontNormal:GetFont(), 8, "")
 UIFont.WUIFooterFont:SetShadowOffset(1, -1)
 UIFont.WUIFooterFont:SetShadowColor(0, 0, 0, 1)
+
+UIFont.WUIPinpointFont = UIFont_FontUtil:CreateFontObject("WUIPinpointFont")
+UIFont.WUIPinpointFont:SetFont(GameFontNormal:GetFont(), 10, "")
+UIFont.WUIPinpointFont:SetShadowOffset(1, -1)
+UIFont.WUIPinpointFont:SetShadowColor(0, 0, 0, 1)

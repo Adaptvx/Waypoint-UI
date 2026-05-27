@@ -1,5 +1,6 @@
 local env = select(2, ...)
 local UIKit_Primitives_Frame = env.modules:Import("packages\\ui-kit\\primitives\\frame")
+local UIKit_Primitives_SecureButton = env.modules:Import("packages\\ui-kit\\primitives\\secure-button")
 local UIKit_Primitives_LayoutGrid = env.modules:Import("packages\\ui-kit\\primitives\\layout-grid")
 local UIKit_Primitives_LayoutHorizontal = env.modules:Import("packages\\ui-kit\\primitives\\layout-horizontal")
 local UIKit_Primitives_LayoutVertical = env.modules:Import("packages\\ui-kit\\primitives\\layout-vertical")
@@ -22,6 +23,7 @@ local UIKit_FrameCache_Add = UIKit_FrameCache.Add
 
 local FRAME_CONSTRUCTORS = {
     Frame               = function(name) return UIKit_Primitives_Frame.New("Frame", name, nil) end,
+    SecureButton        = UIKit_Primitives_SecureButton.New,
     LayoutGrid          = UIKit_Primitives_LayoutGrid.New,
     LayoutHorizontal    = UIKit_Primitives_LayoutHorizontal.New,
     LayoutVertical      = UIKit_Primitives_LayoutVertical.New,

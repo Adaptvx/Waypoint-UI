@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="Navigation_Preload.lua" />
+    <Script file="Navigation_Shared.lua" />
+    <Script file="FarstriderLib.lua" />
+    <Script file="Mapzeroth.lua" />
+    <Script file="Navigation_Overlay.lua" />
+    <Script file="Navigation_WorldMap.lua" />
+    <Script file="Navigation_DataProvider.lua" />
+</Ui>

@@ -8,7 +8,7 @@ local SlashCommand = env.modules:Import("packages\\slash-command")
 local Path = env.modules:Import("packages\\path")
 local Utils_InlineIcon = env.modules:Import("packages\\utils\\inline-icon")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
-local Support_TomTom = env.modules:Await("@\\SupportedAddons\\TomTom")
+local MapPin = env.modules:Await("@\\MapPin")
 
 local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 
@@ -16,8 +16,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.4.4"
-env.VERSION_NUMBER = 010404
+env.VERSION_STRING = "1.5.0"
+env.VERSION_NUMBER = 010500
 env.DEBUG_MODE = false
 
 
@@ -46,6 +46,12 @@ do
         WaypointShow      = SOUNDKIT.UI_RUNECARVING_OPEN_MAIN_WINDOW,
         PinpointShow      = SOUNDKIT.UI_RUNECARVING_CLOSE_MAIN_WINDOW,
         NewUserNavigation = 89712
+    }
+
+    Enum.PathProvider = {
+        None          = 1,
+        FarstriderLib = 2,
+        Mapzeroth     = 3
     }
 end
 
@@ -86,6 +92,7 @@ do
         WaypointDistanceTextScale              = 1,
         WaypointDistanceTextAlpha              = 1,
         WaypointDistanceSubtextAlpha           = 0.7,
+        PinpointFontFlags                      = 1, --UIFont.Enum.FontFlags
         PinpointAllowInQuestArea               = false,
         PinpointScale                          = 1,
         PinpointAlpha                          = 1,
@@ -113,9 +120,13 @@ do
         AudioCustomShowPinpoint                = Enum.Sound.PinpointShow,
         AudioCustomNewUserNavigation           = Enum.Sound.NewUserNavigation,
 
+        CustomMapPinsEnabled                   = false,
+        PathfindingEnabled                     = false,
+        PathfindingProvider                    = Enum.PathProvider.None,
         AutoTrackPlacedPinEnabled              = true,
         AutoTrackChatLinkPinEnabled            = true,
         GuidePinAssistantEnabled               = true,
+
         TomTomSupportEnabled                   = true,
         TomTomAutoReplaceWaypoint              = true,
         DugisSupportEnabled                    = true,
@@ -126,7 +137,7 @@ do
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS = {}
     local DB_LOCAL_DEFAULTS = {
-        slashWayCache = nil
+        mapPinSessionData = nil
     }
     local DB_LOCAL_PERSISTENT_DEFAULTS = {}
     ---@format disable
@@ -385,62 +396,109 @@ do
 
         local INLINE_ADDON_ICON = Utils_InlineIcon.New(env.LOGO_ALT, 16, 16)
         local PIPE = Utils_InlineIcon.New(Path.Root .. "\\Art\\Icons\\Pipe", 16, 16)
+        local WAY_COMMAND_ICON = Path.Root .. "\\Art\\Icons\\Navigation"
 
         local INVALID_WAY_LINE_1 = INLINE_ADDON_ICON .. " /way " .. GenericEnum.ColorHEX.NORMAL_FONT_COLOR .. "#<mapID> <x> <y> <name>" .. "|r"
         local INVALID_WAY_LINE_2 = PIPE .. " /way " .. GenericEnum.ColorHEX.NORMAL_FONT_COLOR .. "<x> <y> <name>" .. "|r"
         local INVALID_WAY_LINE_3 = PIPE .. " /way " .. GenericEnum.ColorHEX.NORMAL_FONT_COLOR .. "reset" .. "|r"
+        local INVALID_WAY_LINE_4 = PIPE .. " /way " .. GenericEnum.ColorHEX.NORMAL_FONT_COLOR .. "paste" .. "|r"
 
         local function ThrowSlashWayError()
             DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_LINE_1)
             DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_LINE_2)
             DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_LINE_3)
+
+            if Config.DBGlobal:GetVariable("CustomMapPinsEnabled") then
+                DEFAULT_CHAT_FRAME:AddMessage(INVALID_WAY_LINE_4)
+            end
         end
 
-        local localeUsesDecimalPoint = tonumber("1.1") ~= nil
-        local invalidDecimalPattern = "(%d)" .. (localeUsesDecimalPoint and "," or ".") .. "(%d)"
-        local validDecimalReplacement = "%1" .. (localeUsesDecimalPoint and "." or ",") .. "%2"
-        local tokens = {}
+        local function HandlePasteWayCommands()
+            MapPin.PasteWayCommands(WUISharedInputPrompt.Input:GetInput():GetText(), {
+                flags          = "WaypointUI_SlashWay",
+                iconTexture    = WAY_COMMAND_ICON,
+                requestRecolor = true,
+            })
+        end
 
         function Handlers.HandleSlashCmd_Way(inputMessage)
-            if IsAddOnLoaded("TomTom") then return Support_TomTom.PlaceWaypointAtSession() end
-            if not inputMessage or inputMessage == "" then return ThrowSlashWayError() end
-
-            wipe(tokens)
-            inputMessage:gsub("(%d)[%.,] (%d)", "%1 %2"):gsub(invalidDecimalPattern, validDecimalReplacement):gsub("%S+", function(w) tokens[#tokens + 1] = w end)
-            if #tokens == 0 then return ThrowSlashWayError() end
-
-            local cmd = tokens[1]:lower()
-            if cmd == "reset" or cmd == "clear" then return WaypointUIAPI.Navigation.ClearUserNavigation() end
-
-            local function num(i) return tokens[i] and tonumber(tokens[i]) end
-            local first, count = tokens[1], #tokens
-
-            local zoneMapId, coordX, coordY, labelName
-            if first:sub(1, 1) == "#" then
-                zoneMapId, coordX, coordY = tonumber(first:sub(2)), num(2), num(3)
-                if count > 3 then labelName = table.concat(tokens, " ", 4) end
-            elseif tonumber(first) then
-                coordX, coordY = num(2), num(3)
-                if coordY then
-                    zoneMapId, coordX, coordY = num(1), coordX, coordY
-                    if count > 3 then labelName = table.concat(tokens, " ", 4) end
-                else
-                    zoneMapId, coordX, coordY = GetBestMapForUnit("player"), num(1), coordX
-                    if count > 2 then labelName = table.concat(tokens, " ", 3) end
+            local isTomTomLoaded = IsAddOnLoaded("TomTom")
+            if not inputMessage or inputMessage == "" then
+                if not isTomTomLoaded then
+                    return ThrowSlashWayError()
                 end
-            else
-                for i = 1, count do
-                    if num(i) then
-                        coordX, coordY = num(i), num(i + 1)
-                        zoneMapId = GetBestMapForUnit("player")
-                        if i > 1 then labelName = table.concat(tokens, " ", 1, i - 1) end
-                        break
-                    end
-                end
+                return
             end
 
-            if not (zoneMapId and coordX and coordY) then return ThrowSlashWayError() end
-            WaypointUIAPI.Navigation.NewUserNavigation(labelName, zoneMapId, coordX, coordY)
+            if Config.DBGlobal:GetVariable("CustomMapPinsEnabled") and inputMessage:lower():match("^%s*paste%s*$") then
+                WUISharedInputPrompt:Open({
+                    text         = L["WAY_PASTE_PROMPT"],
+                    inputText    = "",
+                    autoFocus    = true,
+                    options      = {
+                        {
+                            text     = L["PASTE"],
+                            callback = HandlePasteWayCommands
+                        },
+                        {
+                            text     = L["CANCEL"],
+                            callback = nil
+                        }
+                    },
+                    hideOnEscape = true
+                })
+                return
+            end
+
+            local parsedLine = MapPin.ParseWayCommand(inputMessage, GetBestMapForUnit("player"))
+            if not parsedLine then
+                if not isTomTomLoaded then
+                    return ThrowSlashWayError()
+                end
+                return
+            end
+
+            if parsedLine.command == "clear" then
+                return WaypointUIAPI.Navigation.ClearUserNavigation(nil, true)
+            end
+
+            if isTomTomLoaded then
+                return
+            end
+
+            if not MapPin.IsMultiPinEnabled() then
+                local userNavigation = MapPin.NewUserNavigation({
+                    name           = parsedLine.name,
+                    mapID          = parsedLine.mapID,
+                    x              = parsedLine.x,
+                    y              = parsedLine.y,
+                    flags          = "WaypointUI_SlashWay",
+                    iconTexture    = WAY_COMMAND_ICON,
+                    requestRecolor = true
+                })
+                if not userNavigation then
+                    return ThrowSlashWayError()
+                end
+                return
+            end
+
+            local pinInfo, pinID = MapPin.NewGeneratedPin({
+                name           = parsedLine.name,
+                mapID          = parsedLine.mapID,
+                x              = parsedLine.x,
+                y              = parsedLine.y,
+                flags          = "WaypointUI_SlashWay",
+                iconTexture    = WAY_COMMAND_ICON,
+                requestRecolor = true,
+            })
+            if not pinInfo or not pinID then
+                if not isTomTomLoaded then
+                    return ThrowSlashWayError()
+                end
+                return
+            end
+
+            MapPin.NewUserNavigationFromPin(pinID)
         end
     end
     do -- /waypoint /wp
@@ -510,13 +568,16 @@ do
 
         UIFont.WUIFooterFont:SetFontFile(fontPath)
         UIFont.WUIFooterFont:SetFontFlags(UIFont.Enum.FontFlags[Config.DBGlobal:GetVariable("WaypointDistanceTextFontFlags") or 1])
-        
+        UIFont.WUIPinpointFont:SetFontFile(fontPath)
+        UIFont.WUIPinpointFont:SetFontFlags(UIFont.Enum.FontFlags[Config.DBGlobal:GetVariable("PinpointFontFlags") or 1])
+
         UIFont.SetNormalFont(fontPath)
         Config.DBGlobal:SetVariable("fontPath", fontPath)
     end
 
     SavedVariables.OnChange("WaypointDB_Global", "fontPath", UpdateFonts)
     SavedVariables.OnChange("WaypointDB_Global", "WaypointDistanceTextFontFlags", UpdateFonts)
+    SavedVariables.OnChange("WaypointDB_Global", "PinpointFontFlags", UpdateFonts)
 
     function FontHandler.Load()
         UpdateFonts()

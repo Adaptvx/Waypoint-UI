@@ -54,6 +54,7 @@ local L = env.L
 local Sound = env.modules:Import("packages\\sound")
 local UIFont = env.modules:Import("packages\\ui-font")
 local SharedUtil = env.modules:Import("@\\SharedUtil")
+local Navigation = env.modules:Import("@\\Navigation\\DataProvider")
 local Waypoint_Enum = env.modules:Import("@\\Waypoint\\Enum")
 local Settings_Define = env.modules:Import("@\\Settings\\Define")
 local Settings_Enum = env.modules:Import("@\\Settings\\Enum")
@@ -256,6 +257,77 @@ do -- Schema
             }
         },
         {
+            widgetName = L["CONFIG_MAP"],
+            widgetType = Settings_Enum.WidgetType.Tab,
+            children   = {
+                {
+                    widgetName = L["CONFIG_MAP_PINS"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    children   = {
+                        {
+                            widgetName        = L["CONFIG_MAP_PINS_ENABLE"],
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] },
+                            key               = "CustomMapPinsEnabled"
+                        }, {
+                        widgetName        = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"],
+                        widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] },
+                        widgetType        = Settings_Enum.WidgetType.CheckButton,
+                        key               = "AutoTrackPlacedPinEnabled"
+                    },
+                        {
+                            widgetName        = L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "AutoTrackChatLinkPinEnabled",
+                            showWhen          = function() return Config.DBGlobal:GetVariable("AutoTrackPlacedPinEnabled") == false end,
+                            indent            = 1
+                        },
+                        {
+                            widgetName        = L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "GuidePinAssistantEnabled"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            widgetName = L["CONFIG_NAVIGATION"],
+            widgetType = Settings_Enum.WidgetType.Tab,
+            children   = {
+                {
+                    widgetName = L["CONFIG_NAVIGATION_PATHFINDING"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    children   = {
+                        {
+                            widgetName        = L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "PathfindingEnabled"
+                        },
+                        {
+                            widgetName               = L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"],
+                            widgetType               = Settings_Enum.WidgetType.SelectionMenu,
+                            widgetSelectionMenu_data = function()
+                                return Navigation:GetAvailablePathProviderNames()
+                            end,
+                            widgetSelectionMenu_get  = function(value)
+                                return Navigation:GetAvailablePathProviderVisibleIndex(Config.DBGlobal:GetVariable("PathfindingProvider"))
+                            end,
+                            widgetSelectionMenu_set  = function(index)
+                                return Navigation:GetAvailablePathProviderID(index)
+                            end,
+                            showWhen                 = function() return Config.DBGlobal:GetVariable("PathfindingEnabled") == true end,
+                            key                      = "PathfindingProvider",
+                            indent                   = 1
+                        }
+                    }
+                }
+            }
+        },
+        {
             widgetName = L["CONFIG_APPEARANCE"],
             widgetType = Settings_Enum.WidgetType.Tab,
             children   = {
@@ -407,6 +479,25 @@ do -- Schema
                             widgetRange_step               = 0.1,
                             widgetRange_textFormattingFunc = FormatPercentage,
                             key                            = "PinpointAlpha"
+                        },
+                        {
+                            widgetName               = L["FONT_FLAGS"],
+                            widgetType               = Settings_Enum.WidgetType.SelectionMenu,
+                            widgetSelectionMenu_data = function()
+                                return {
+                                    L["NONE"],
+                                    L["OUTLINE"],
+                                    L["THICKOUTLINE"],
+                                    L["MONOCHROME"]
+                                }
+                            end,
+                            widgetSelectionMenu_get  = function(value)
+                                return Config.DBGlobal:GetVariable("PinpointFontFlags")
+                            end,
+                            widgetSelectionMenu_set  = function(index)
+                                return Config.DBGlobal:SetVariable("PinpointFontFlags", index)
+                            end,
+                            key                      = "PinpointFontFlags"
                         }
                     }
                 },
@@ -756,39 +847,12 @@ do -- Schema
         {
             widgetName = L["CONFIG_EXTENSIONS"],
             widgetType = Settings_Enum.WidgetType.Tab,
+            showWhen   = function() return IsAddOnLoaded("TomTom") or IsAddOnLoaded("DugisGuideViewerZ") or IsAddOnLoaded("APR") or IsAddOnLoaded("SilverDragon") end,
             children   = {
-                {
-                    widgetName = L["CONFIG_EXTENSIONS_PIN"],
-                    widgetType = Settings_Enum.WidgetType.Container,
-
-                    children   = {
-                        {
-                            widgetName        = L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"],
-                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] },
-                            widgetType        = Settings_Enum.WidgetType.CheckButton,
-                            key               = "AutoTrackPlacedPinEnabled"
-                        },
-                        {
-                            widgetName        = L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"],
-                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] },
-                            widgetType        = Settings_Enum.WidgetType.CheckButton,
-                            key               = "AutoTrackChatLinkPinEnabled",
-                            showWhen          = function() return Config.DBGlobal:GetVariable("AutoTrackPlacedPinEnabled") == false end,
-                            indent            = 1
-                        },
-                        {
-                            widgetName        = L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"],
-                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] },
-                            widgetType        = Settings_Enum.WidgetType.CheckButton,
-                            key               = "GuidePinAssistantEnabled"
-                        }
-                    }
-                },
                 {
                     widgetName = L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     showWhen   = function() return IsAddOnLoaded("TomTom") end,
-
                     children   = {
                         {
                             widgetName        = L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"],
@@ -810,7 +874,6 @@ do -- Schema
                     widgetName = L["CONFIG_EXTENSIONS_DUGISSUPPORT"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     showWhen   = function() return IsAddOnLoaded("DugisGuideViewerZ") end,
-
                     children   = {
                         {
                             widgetName        = L["CONFIG_EXTENSIONS_DUGISSUPPORT_ENABLE"],
@@ -832,7 +895,6 @@ do -- Schema
                     widgetName = L["CONFIG_EXTENSIONS_APRSUPPORT"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     showWhen   = function() return IsAddOnLoaded("APR") end,
-
                     children   = {
                         {
                             widgetName        = L["CONFIG_EXTENSIONS_APRSUPPORT_ENABLE"],
@@ -854,7 +916,6 @@ do -- Schema
                     widgetName = L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     showWhen   = function() return IsAddOnLoaded("SilverDragon") end,
-
                     children   = {
                         {
                             widgetName        = L["CONFIG_EXTENSIONS_SILVERDRAGONSUPPORT_ENABLE"],
@@ -975,6 +1036,19 @@ do -- Schema
                             widgetName        = L["CONTRIBUTORS_SYVERGISWOLD"],
                             widgetType        = Settings_Enum.WidgetType.Text,
                             widgetDescription = Settings_Define.Descriptor{ description = L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] },
+                            widgetTransparent = true
+                        }
+                    }
+                },
+                {
+                    widgetName        = L["CONFIG_ABOUT_LIBRARIES"],
+                    widgetType        = Settings_Enum.WidgetType.Container,
+                    widgetTransparent = true,
+                    children          = {
+                        {
+                            widgetName        = L["LIBRARIES_HEREBEDRAGONS"],
+                            widgetType        = Settings_Enum.WidgetType.Text,
+                            widgetDescription = Settings_Define.Descriptor{ description = L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] },
                             widgetTransparent = true
                         }
                     }

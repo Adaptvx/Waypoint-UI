@@ -328,6 +328,7 @@ local PinpointMixin = {}
 function PinpointMixin:OnLoad()
     SavedVariables.OnChange("WaypointDB_Global", "PinpointScale", function() self:UpdateSize() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointAlpha", function() self:UpdateOpacity() end)
+    SavedVariables.OnChange("WaypointDB_Global", "PinpointFontFlags", function() self:_Render() end)
     CallbackRegistry.Add("Preload.DatabaseReady", function()
         self:UpdateSize()
         self:UpdateOpacity()
@@ -726,7 +727,7 @@ Waypoint.navFrame = nil
 Waypoint.cachedMode = nil
 Waypoint.cachedContextIcon = nil
 
-local function ResolveColorIntegrity(color)
+function Waypoint.ResolveColorIntegrity(color)
     if not color then return false end
     if type(color) == "table" and color.r and color.g and color.b then return color end
     return false
@@ -737,11 +738,11 @@ function Waypoint.GetTintColorInfo(ContextIconTexture)
 
     local useCustomColor = (DBGlobal:GetVariable("CustomColor") == true)
 
-    local questIncomplete = (useCustomColor and ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestIncomplete"))) or (env.Enum.ColorRGB01.IncompleteQuest)
-    local questComplete = (useCustomColor and ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestComplete"))) or (env.Enum.ColorRGB01.NormalQuest)
-    local questCompleteRecurring = (useCustomColor and ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteRepeatable"))) or (env.Enum.ColorRGB01.RepeatableQuest)
-    local questCompleteImportant = (useCustomColor and ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteImportant"))) or (env.Enum.ColorRGB01.ImportantQuest)
-    local other = (useCustomColor and ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorOther"))) or (env.Enum.ColorRGB01.Other)
+    local questIncomplete = (useCustomColor and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestIncomplete"))) or (env.Enum.ColorRGB01.IncompleteQuest)
+    local questComplete = (useCustomColor and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestComplete"))) or (env.Enum.ColorRGB01.NormalQuest)
+    local questCompleteRecurring = (useCustomColor and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteRepeatable"))) or (env.Enum.ColorRGB01.RepeatableQuest)
+    local questCompleteImportant = (useCustomColor and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteImportant"))) or (env.Enum.ColorRGB01.ImportantQuest)
+    local other = (useCustomColor and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorOther"))) or (env.Enum.ColorRGB01.Other)
 
     local recolorQuestIncomplete = (useCustomColor and DBGlobal:GetVariable("CustomColorQuestIncompleteTint")) or (not useCustomColor and false)
     local recolorQuestComplete = (useCustomColor and DBGlobal:GetVariable("CustomColorQuestCompleteTint")) or (not useCustomColor and false)
@@ -755,10 +756,10 @@ function Waypoint.GetTintColorInfo(ContextIconTexture)
     local requestRecolor = ContextIconTexture and ContextIconTexture.requestRecolor or false
     local trackingType = Waypoint_Cache.Get("trackingType")
     local pinType = Waypoint_Cache.Get("pinType")
-    local isUserNavigationTracked = MapPin.IsUserNavigationTracked()
+    local isCustomUserNavigationTracked = MapPin.IsCustomUserNavigationTracked()
     local userNavigation = MapPin.GetUserNavigation()
 
-    if isUserNavigationTracked and userNavigation and userNavigation.r and userNavigation.g and userNavigation.b then
+    if isCustomUserNavigationTracked and userNavigation and userNavigation.r and userNavigation.g and userNavigation.b then
         color = {
             r = userNavigation.r,
             g = userNavigation.g,
@@ -804,6 +805,8 @@ function Waypoint.UpdateColor()
     WUIPinpointFrame:SetIconRecolor(recolor)
     WUINavigatorFrame:SetTint(tintColor)
     WUINavigatorFrame:SetIconRecolor(recolor)
+
+    CallbackRegistry.Trigger("Waypoint.UpdateColor", tintColor, recolor)
 end
 
 SavedVariables.OnChange("WaypointDB_Global", "CustomColor", Waypoint.UpdateColor)
@@ -858,7 +861,11 @@ function Waypoint.UpdateFrameVisibility(event, mode)
     local showNavigator = Config.DBGlobal:GetVariable("NavigatorShow")
     Waypoint.cachedMode = mode
 
-    if mode == Waypoint_Enum.NavigationMode.Waypoint then
+    if Waypoint_Director.IsSuperTrackedTargetIgnored() or mode == Waypoint_Enum.NavigationMode.Hidden then
+        CallbackRegistry.Trigger("WaypointAnimation.WaypointHide")
+        CallbackRegistry.Trigger("WaypointAnimation.PinpointHide")
+        CallbackRegistry.Trigger("WaypointAnimation.NavigatorHide")
+    elseif mode == Waypoint_Enum.NavigationMode.Waypoint then
         CallbackRegistry.Trigger("WaypointAnimation.WaypointShow")
         CallbackRegistry.Trigger("WaypointAnimation.PinpointHide")
         CallbackRegistry.Trigger("WaypointAnimation.NavigatorHide")
@@ -870,10 +877,6 @@ function Waypoint.UpdateFrameVisibility(event, mode)
         CallbackRegistry.Trigger("WaypointAnimation.WaypointHide")
         CallbackRegistry.Trigger("WaypointAnimation.PinpointHide")
         CallbackRegistry.Trigger("WaypointAnimation.NavigatorShow")
-    else
-        CallbackRegistry.Trigger("WaypointAnimation.WaypointHide")
-        CallbackRegistry.Trigger("WaypointAnimation.PinpointHide")
-        CallbackRegistry.Trigger("WaypointAnimation.NavigatorHide")
     end
 
     Waypoint.UnblockTransition()
@@ -904,12 +907,15 @@ function Waypoint.UpdateContext()
     Waypoint.UpdateColor()
     WUIWaypointFrame:UpdateText()
     WUIPinpointFrame:UpdateText()
+
+    CallbackRegistry.Trigger("Waypoint.UpdateContext", Waypoint.cachedContextIcon)
 end
 
 CallbackRegistry.Add("Waypoint_DataProvider.NavFrameObtained", Waypoint.UpdateAnchors, 10)
 CallbackRegistry.Add("Waypoint_DataProvider.CacheRealtime", Waypoint.UpdateRealtime)
 CallbackRegistry.Add("Waypoint.HideAllFrames", Waypoint.HideAllFrames)
 CallbackRegistry.Add("Waypoint.NavigationModeChanged", Waypoint.UpdateFrameVisibility)
+CallbackRegistry.Add("Waypoint.IgnoreSuperTrackedTarget", function() Waypoint.UpdateFrameVisibility("Waypoint.IgnoreSuperTrackedTarget", Waypoint_Director.navigationMode) end)
 CallbackRegistry.Add("Waypoint.ContextUpdate", Waypoint.UpdateContext, 10)
 SavedVariables.OnChange("WaypointDB_Global", "NavigatorShow", function() Waypoint.UpdateFrameVisibility(Waypoint_Director:GetNavigationMode()) end)
 SavedVariables.OnChange("WaypointDB_Global", "PinpointInfo", Waypoint.UpdateContext)

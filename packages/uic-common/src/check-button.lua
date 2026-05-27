@@ -1,7 +1,7 @@
 local env = select(2, ...)
 local Sound = env.modules:Import("packages\\sound")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
 local UICCommonCheckButton = env.modules:New("packages\\uic-common\\check-button")

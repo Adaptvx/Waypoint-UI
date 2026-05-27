@@ -79,7 +79,7 @@ do -- Button
         TriggerHooks(self.onMouseUpHooks, self, button)
 
         if self:IsMouseOver() then
-            self:OnClick()
+            self:OnClick(button)
         end
     end
 
@@ -230,18 +230,20 @@ do -- Selection Menu Remote
         return self.value
     end
 
-    function SelectionMenuRemoteMixin:SetValue(index)
+    function SelectionMenuRemoteMixin:SetValue(index, suppressHooks)
         index = math.min(index, #self.data)
 
         self.value = index
         self:SetText(self.data[index])
 
-        TriggerHooks(self.onValueChangedHooks, self, self.value)
+        if suppressHooks ~= true then
+            TriggerHooks(self.onValueChangedHooks, self, self.value)
+        end
     end
 
     function SelectionMenuRemoteMixin:SetData(data)
         self.data = data
-        self:SetValue(self.value)
+        self:SetValue(self.value, true)
     end
 
     function SelectionMenuRemoteMixin:GetData()

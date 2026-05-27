@@ -2,17 +2,18 @@ local env = select(2, ...)
 local CallbackRegistry = env.modules:Import("packages\\callback-registry")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local WoWClient = env.modules:Import("packages\\wow-client")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
 local UICCommonButton = env.modules:Import("packages\\uic-common\\button")
+local UICCommonInput = env.modules:Import("packages\\uic-common\\input")
 local UICCommonPrompt = env.modules:New("packages\\uic-common\\prompt")
 
 local Mixin = Mixin
 
 local UIDEF = {
-    UIPrompt = UICCommonPreload.ATLAS{ inset = 11, scale = 1, left = 4/512, right = 46/512, top = 330/512, bottom = 372/512 }
+    UIPrompt = UICCommonPreload.ATLAS{ inset = 11, scale = 1, left = 4 / 512, right = 46 / 512, top = 330 / 512, bottom = 372 / 512 }
 }
 
 do --Prompt Button
@@ -34,8 +35,6 @@ do --Prompt
     local PROMPT_HEIGHT = UIKit.Define.Fit{ delta = 36 }
     local PROMPT_CONTENT_SPACING = 9
     local PROMPT_CONTENT_SIZE = UIKit.Define.Fit{}
-    local PROMPT_TEXT_SIZE = UIKit.Define.Fit{}
-    local PROMPT_TEXT_MAX_WIDTH = 325
     local PROMPT_BUTTON_SPACING = 5
     local PROMPT_BUTTON_SIZE = UIKit.Define.Fit{}
 
@@ -97,10 +96,9 @@ do --Prompt
         end)
     end
 
-    function PromptMixin:Open(info, ...)
+    function PromptMixin:HandleOpen(info, ...)
         --[[
             Expected table:
-                text (string),
                 options = {
                     {
                         text (string),
@@ -112,18 +110,11 @@ do --Prompt
         ]]
 
         assert(info, "Invalid variable `info`")
-        assert(info.text and info.options, "Invalid variable `info`: Missing required fields")
+        assert(info.options, "Invalid variable `info`: Missing required fields")
 
         self.hideOnEscape = info.hideOnEscape or false
         if info.timeout then self:SetTimeout(info.timeout) end
 
-        local textToDisplay = ""
-        if ... then
-            textToDisplay = string.format(info.text, ...)
-        else
-            textToDisplay = info.text
-        end
-        self.Content.Text:SetText(textToDisplay)
         self.Content.ButtonContainer.List:SetData(info.options)
 
         self:_Render()
@@ -151,11 +142,11 @@ do --Prompt
         local frame =
             Frame(name, {
                 LayoutVertical(name .. ".Content", {
-                    Text(name .. ".Content.Text")
-                        :id("Content.Text", id)
-                        :size(PROMPT_TEXT_SIZE, PROMPT_TEXT_SIZE)
-                        :maxWidth(PROMPT_TEXT_MAX_WIDTH)
-                        :fontObject(UIFont.UIFontObjectNormal12)
+                    Frame(name .. ".DetailsFrame", {
+                        unpack(children)
+                    })
+                        :id("DetailsFrame", id)
+                        :size(UIKit.UI.P_FILL, UIKit.UI.FIT)
                         :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
 
                     LayoutHorizontal(name .. ".Content.ButtonContainer", {
@@ -184,13 +175,105 @@ do --Prompt
             :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
 
         frame.Content = UIKit.GetElementById("Content", id)
-        frame.Content.Text = UIKit.GetElementById("Content.Text", id)
+        frame.DetailsFrame = UIKit.GetElementById("DetailsFrame", id)
         frame.Content.ButtonContainer = UIKit.GetElementById("Content.ButtonContainer", id)
         frame.Content.ButtonContainer.List = UIKit.GetElementById("Content.ButtonContainer.List", id)
 
         Mixin(frame, PromptMixin)
         frame:OnLoad()
         frame.Content.ButtonContainer.__parentRef = frame
+
+        return frame
+    end)
+end
+
+do --Prompt (Text)
+    local PromptTextMixin = {}
+
+    function PromptTextMixin:Open(info, ...)
+        local textToDisplay = ""
+        if ... then
+            textToDisplay = string.format(info.text, ...)
+        else
+            textToDisplay = info.text
+        end
+        self.Text:SetText(textToDisplay)
+
+        self:HandleOpen(info, ...)
+    end
+
+    UICCommonPrompt.Text = UIKit.Template(function(id, name, children, ...)
+        local frame =
+            UICCommonPrompt.New(name, {
+                Text(name .. ".Text")
+                    :id("Text", id)
+                    :point(UIKit.Enum.Point.Center)
+                    :size(UIKit.UI.P_FILL, UIKit.UI.FIT)
+                    :fontObject(UIFont.UIFontObjectNormal12)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+            })
+
+        frame.Text = UIKit.GetElementById("Text", id)
+
+        Mixin(frame, PromptTextMixin)
+
+        return frame
+    end)
+end
+
+do --Prompt (Input)
+    local CONTENT_SPACING = 9
+
+    local PromptInputMixin = {}
+
+    function PromptInputMixin:Open(info, ...)
+        local inputText = info.inputText or ""
+        self.Input:GetInput():SetText(inputText)
+
+        local textToDisplay = ""
+        if ... then
+            textToDisplay = string.format(info.text, ...)
+        else
+            textToDisplay = info.text
+        end
+        self.Text:SetText(textToDisplay)
+
+        self:HandleOpen(info, ...)
+
+        if info.autoFocus then
+            self.Input:GetInput():SetFocus()
+        end
+    end
+
+    UICCommonPrompt.Input = UIKit.Template(function(id, name, children, ...)
+        local frame =
+            UICCommonPrompt.New(name, {
+                LayoutVertical(name .. ".InputContentFrame", {
+                    Text(name .. ".Text")
+                        :id("Text", id)
+                        :size(UIKit.UI.P_FILL, UIKit.UI.FIT)
+                        :fontObject(UIFont.UIFontObjectNormal12)
+                        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged),
+
+                    UICCommonInput.New(name .. ".Input")
+                        :id("Input", id)
+                        :size(UIKit.UI.P_FILL, 25)
+                        :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+                })
+                    :id("InputContentFrame", id)
+                    :point(UIKit.Enum.Point.Center)
+                    :size(UIKit.UI.P_FILL, UIKit.UI.FIT)
+                    :layoutSpacing(CONTENT_SPACING)
+                    :layoutAlignmentH(UIKit.Enum.Direction.Justified)
+                    :_updateMode(UIKit.Enum.UpdateMode.ExcludeVisibilityChanged)
+            })
+
+        frame.InputContentFrame = UIKit.GetElementById("InputContentFrame", id)
+        frame.Text = UIKit.GetElementById("Text", id)
+        frame.Input = UIKit.GetElementById("Input", id)
+        frame.Input:SetMultiline(false)
+
+        Mixin(frame, PromptInputMixin)
 
         return frame
     end)

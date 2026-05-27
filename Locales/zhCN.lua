@@ -6,6 +6,11 @@ if GetLocale() ~= "zhCN" then return end
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "Font Flags"
 L["NONE"] = "None"
@@ -13,8 +18,13 @@ L["OUTLINE"] = "Outline"
 L["THICKOUTLINE"] = "Thick Outline"
 L["MONOCHROME"] = "Monochrome"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
+
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "可交任务"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- Config
 L["CONFIG_GENERAL"] = "通用"
@@ -59,6 +69,23 @@ L["CONFIG_WAYPOINTSYSTEM_PINPOINT_SHOWINQUESTAREA_DESCRIPTION"] = "允许在任�
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "导航"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "显示"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "当路径点或标记点位于屏幕外，导航将会指示其方向。"
+
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "自动追踪图钉"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "当在世界地图上放置图钉时，自动追踪该图钉。"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "自动追踪来自链接的图钉"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "自动追踪通过点击链接放置的地图图钉。"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "追踪指南图钉"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "为城市卫兵给出的指南图钉，启用插件的追踪导航。"
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
 
 L["CONFIG_APPEARANCE"] = "外观"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "路径点"
@@ -109,13 +136,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "显示标记点时...
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "当开始 /way 导航时..."
 
 L["CONFIG_EXTENSIONS"] = "Extensions"
-L["CONFIG_EXTENSIONS_PIN"] = "地图图钉"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "自动追踪图钉"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "当在世界地图上放置图钉时，自动追踪该图钉。"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "自动追踪来自链接的图钉"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "自动追踪通过点击链接放置的地图图钉。"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "追踪指南图钉"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "为城市卫兵给出的指南图钉，启用插件的追踪导航。"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom箭头插件"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "追踪TomTom路径点"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "启用TomTom路径点的支持，你可以通过右键点击世界地图上的TomTom路径点，选择`设置为路径点箭头`来追踪TomTom路径点。"
@@ -137,6 +157,7 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "自动使�
 
 L["CONFIG_ABOUT"] = "关于"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "贡献者"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "开发者"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
@@ -174,12 +195,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "编码者 - 修复Bug"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "编码者 - 提交功能"
 
--- Extra Feature
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
+-- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "你确定使用\"%s\"替换当前路径点吗？"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "你确定使用TomTom箭头插件的路径点\"%s\"替换当前路径点吗？"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "你确定使用Dugi任务插件的路径点\"%s\"替换当前路径点吗？"
 L["APR_REPLACEPROMPT"] = "你确定使用APR插件的路径点\"%s\"替换当前路径点吗？"
-L["REPLACE"] = "替换"
-L["CANCEL"] = "取消"

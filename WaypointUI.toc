@@ -1,5 +1,5 @@
-## Interface: 120005
-## Version: 1.4.4
+## Interface: 120005, 120007
+## Version: 1.5.0
 ## Title: Waypoint UI
 ## Notes: An in-world waypoint and pinpoint to show relevant information directly in world-space.
 ## Notes-zhCN: 魔兽世界中的路径点和标记点，用于在虚拟空间中直接显示相关信息。
@@ -12,6 +12,7 @@
 
 
 packages\packages.xml
+libs\libs.xml
 
 Fonts.lua
 Preload.lua
@@ -19,10 +20,13 @@ Locales\Locales.xml
 
 Code\SharedUtil.lua
 Code\SharedUI.lua
+Code\UIWidgets.lua
 Code\MapPin\MapPin.xml
 Code\Waypoint\Waypoint.xml
+Code\MapPinFrame\MapPinFrame.xml
+Code\Navigation\Navigation.xml
 Code\Settings\Settings.xml
 Code\SupportedAddons\SupportedAddons.xml
-Code\Extensions\Extensions.xml
+Code\Map\Map.xml
 
 API.lua

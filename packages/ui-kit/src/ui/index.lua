@@ -18,7 +18,8 @@ UIKit_UI.Frames = {
     NewConstructorFor("Input"),
     NewConstructorFor("LinearSlider"),
     NewConstructorFor("HitRect"),
-    NewConstructorFor("List")
+    NewConstructorFor("List"),
+    NewConstructorFor("SecureButton")
 }
 
 --Pre defined

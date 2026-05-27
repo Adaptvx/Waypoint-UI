@@ -198,6 +198,11 @@ do -- General
         frame:SetResizeBounds(minWidth, minHeight, maxWidth, maxHeight)
     end
 
+    FrameProps["dontSavePosition"] = function(frame, dontSavePosition)
+        assert(type(dontSavePosition) == "boolean", "Invalid variable `dontSavePosition`: Must be of type `boolean`")
+        frame:SetDontSavePosition(dontSavePosition)
+    end
+
     -- React
     FrameProps["enableMouse"] = function(frame, enabled)
         enabled = HandleReact(frame, enabled, "enableMouse")
@@ -224,6 +229,10 @@ do -- General
         if leftButton or rightButton then frame:enableMouse(true) end
         if leftButton then frame:RegisterForDrag("LeftButton") end
         if rightButton then frame:RegisterForDrag("RightButton") end
+    end
+
+    FrameProps["registerForClicks"] = function(frame, ...)
+        frame:RegisterForClicks(...)
     end
 
     FrameProps["enableKeyboard"] = function(frame, enabled)

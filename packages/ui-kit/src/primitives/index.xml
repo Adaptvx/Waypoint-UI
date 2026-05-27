@@ -1,5 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="public\frame.lua"/>
+	<Script file="public\secure-button.lua"/>
 	<Script file="public\scroll-container-base.lua"/>
 	<Script file="public\lazy-scroll-container.lua"/>
 	<Script file="public\linear-slider.lua"/>

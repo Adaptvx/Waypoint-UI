@@ -161,9 +161,18 @@ do -- Tab
         Setting:OpenTabByIndex(self.__index)
     end
 
+    local function TabButton_FindFirstVisibleTabIndex()
+        for i, tabButton in ipairs(Settings_Constructor.TabButtons) do
+            if tabButton:IsShown() then
+                return i
+            end
+        end
+    end
+
     function Build.Tab(widgetInfo, parent)
         local name = widgetInfo.widgetName or ""
         local isFooter = widgetInfo.widgetTab_isFooter
+        local showWhen = widgetInfo.showWhen
 
         local tab = Settings_Widgets.Tab()
         tab:parent(parent)
@@ -180,6 +189,30 @@ do -- Tab
         -- Add to tab list
         tinsert(Settings_Constructor.Tabs, tab)
         tinsert(Settings_Constructor.TabButtons, tabButton)
+
+        if showWhen then
+            CallbackRegistry.Add("Setting.Refresh", function()
+                local shouldShow = showWhen()
+
+                if tabButton:IsShown() ~= shouldShow then
+                    tabButton:SetShown(shouldShow)
+                end
+
+                if shouldShow then return end
+                if not tabButton.isSelected then return end
+
+                local fallbackTabIndex = TabButton_FindFirstVisibleTabIndex()
+                if fallbackTabIndex then
+                    Setting:OpenTabByIndex(fallbackTabIndex)
+                    return
+                end
+
+                tabButton:SetSelected(false)
+                tab:Hide()
+            end)
+
+            tabButton:SetShown(showWhen())
+        end
 
         return tab, tab.Layout
     end
@@ -428,13 +461,18 @@ do -- Selection Menu
     local function SelectionMenu_Refresh(self, force)
         if not force and HasDBKeyValueChanged(self) == false then return end
 
+        local selectionMenuData = self.__selectionMenuData
+        if selectionMenuData then
+            self:GetSelectionMenuButton():SetData(ResolveValueThatIsFunctionOrValue(selectionMenuData))
+        end
+
         local value = self:GetLocalValue()
 
         if self.__selectionMenuGetFunc then
             value = self.__selectionMenuGetFunc(value)
         end
 
-        self:GetSelectionMenuButton():SetValue(value)
+        self:GetSelectionMenuButton():SetValue(value, true)
     end
 
     local function SelectionMenu_OnValueChanged(self, value)
@@ -481,6 +519,7 @@ do -- Selection Menu
         widget.__setFunc = set
         widget.__selectionMenuGetFunc = selectionMenuGet
         widget.__selectionMenuSetFunc = selectionMenuSet
+        widget.__selectionMenuData = selectionMenuData
 
         selectionMenuButton:SetSelectionMenu(SettingFrame.SelectionMenu)
         selectionMenuButton:SetData(ResolveValueThatIsFunctionOrValue(selectionMenuData))

@@ -6,6 +6,11 @@ if GetLocale() ~= "koKR" then return end
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "글꼴 옵션"
 L["NONE"] = "없음"
@@ -13,9 +18,13 @@ L["OUTLINE"] = "외곽선"
 L["THICKOUTLINE"] = "두꺼운 외곽선"
 L["MONOCHROME"] = "모노크롬"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
 
 -- 웨이포인트 시스템
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "퀘스트 완료 후 보고 가능"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- 설정
 L["CONFIG_GENERAL"] = "일반"
@@ -60,6 +69,23 @@ L["CONFIG_WAYPOINTSYSTEM_PINPOINT_SHOWINQUESTAREA_DESCRIPTION"] = "퀘스트 영
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "길 안내 도구"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "표시"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "지정한 위치가 화면 밖에 있을 땐, 길 안내 도구가 그 방향을 표시합니다.."
+
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "자동 추적 핀"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "세계 지도에 핀이 배치되면 자동으로 추적합니다."
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "링크에서 자동 추적 핀"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "지도 핀 링크를 클릭하여 배치된 핀을 자동으로 추적합니다."
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "가이드 핀 추적"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "경비병 NPC가 배치한 도시 가이드 핀에 대해 웨이포인트 UI 탐색을 활성화합니다."
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
 
 L["CONFIG_APPEARANCE"] = "UI 디자인"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "위치 아이콘 관련 설정"
@@ -110,13 +136,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "목표 위치창 표�
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "탐색 시작 시 사용자 지정 소리 재생"
 
 L["CONFIG_EXTENSIONS"] = "확장 기능"
-L["CONFIG_EXTENSIONS_PIN"] = "지도 핀"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "자동 추적 핀"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "세계 지도에 핀이 배치되면 자동으로 추적합니다."
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "링크에서 자동 추적 핀"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "지도 핀 링크를 클릭하여 배치된 핀을 자동으로 추적합니다."
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "가이드 핀 추적"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "경비병 NPC가 배치한 도시 가이드 핀에 대해 웨이포인트 UI 탐색을 활성화합니다."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "TomTom 웨이포인트 추적"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Waypoint UI에서 TomTom 웨이포인트 추적을 지원합니다. 월드 맵에서 TomTom 웨이포인트를 마우스 오른쪽 버튼으로 클릭한 후, 컨텍스트 메뉴에서 `웨이포인트 화살표로 설정`을 선택하면 해당 웨이포인트를 추적할 수 있습니다."
@@ -138,6 +157,7 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "활성화�
 
 L["CONFIG_ABOUT"] = "정보"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "제작 참여자"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "개발자"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
@@ -175,6 +195,10 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "코드: 버그 수정"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "코드: 기능"
 
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
 -- 확장 기능
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "현재 웨이포인트를 \"%s\"로 교체하시겠습니까?"
 
@@ -182,5 +206,3 @@ L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "현재 웨이포인트를 \"%s\"로 �
 L["TOMTOM_REPLACEPROMPT"] = "현재 웨이포인트를 TomTom 웨이포인트 \"%s\"로 교체하시겠습니까?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "현재 웨이포인트를 Dugi 웨이포인트 \"%s\"로 교체하시겠습니까?"
 L["APR_REPLACEPROMPT"] = "현재 웨이포인트를 APR 웨이포인트 \"%s\"로 교체하시겠습니까?"
-L["REPLACE"] = "확인"
-L["CANCEL"] = "취소"

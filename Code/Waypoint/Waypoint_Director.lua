@@ -18,9 +18,10 @@ local ipairs = ipairs
 Waypoint_Director.isActive = false
 Waypoint_Director.navigationMode = Waypoint_Enum.NavigationMode.Hidden
 
+local currentTargetIgnored = false
 local lastName, lastDescription, lastType, lastQuestID, lastTrackableType, lastTrackableID, lastIsUserWaypoint, lastMapID, lastX, lastY
 
-local function GetSuperTrackedState()
+function Waypoint_Director.GetSuperTrackedState()
     local name, description = C_SuperTrack.GetSuperTrackedItemName()
     local type = C_SuperTrack.GetHighestPrioritySuperTrackingType()
     local questID = C_SuperTrack.GetSuperTrackedQuestID()
@@ -34,12 +35,24 @@ local function GetSuperTrackedState()
     return name, description, type, questID, contentType, contentID, isUserWaypoint, mapID, x, y
 end
 
-local function SaveSuperTrackedState()
-    lastName, lastDescription, lastType, lastQuestID, lastTrackableType, lastTrackableID, lastIsUserWaypoint, lastMapID, lastX, lastY = GetSuperTrackedState()
+function Waypoint_Director.SaveSuperTrackedState()
+    currentTargetIgnored = false
+    lastName, lastDescription, lastType, lastQuestID, lastTrackableType, lastTrackableID, lastIsUserWaypoint, lastMapID, lastX, lastY = Waypoint_Director.GetSuperTrackedState()
 end
 
-local function IsNewSuperTrackedTarget()
-    local newName, newDescription, newType, newQuestID, newContentType, newContentID, newIsUserWaypoint, newMapID, newX, newY = GetSuperTrackedState()
+function Waypoint_Director.IgnoreSuperTrackedTarget(ignore)
+    if currentTargetIgnored == ignore then return end
+
+    currentTargetIgnored = ignore
+    CallbackRegistry.Trigger("Waypoint.IgnoreSuperTrackedTarget", ignore)
+end
+
+function Waypoint_Director.IsSuperTrackedTargetIgnored()
+    return currentTargetIgnored
+end
+
+function Waypoint_Director.IsNewSuperTrackedTarget()
+    local newName, newDescription, newType, newQuestID, newContentType, newContentID, newIsUserWaypoint, newMapID, newX, newY = Waypoint_Director.GetSuperTrackedState()
     local different = (newName ~= lastName)
         or (newDescription ~= lastDescription)
         or (newType ~= lastType)
@@ -240,9 +253,9 @@ do
 
         -- Super Tracking
         if event == "SUPER_TRACKING_CHANGED" or (event == "USER_WAYPOINT_UPDATED" and IsSuperTrackingUserWaypoint()) then
-            if IsNewSuperTrackedTarget() then
+            if Waypoint_Director.IsNewSuperTrackedTarget() then
                 OnSuperTrackingChange()
-                SaveSuperTrackedState()
+                Waypoint_Director.SaveSuperTrackedState()
             end
         end
 
@@ -348,7 +361,7 @@ do
             CallbackRegistry.Trigger("WaypointAnimation.PinpointToWaypoint")
         elseif lastNavigationMode == Waypoint_Enum.NavigationMode.Hidden and mode ~= Waypoint_Enum.NavigationMode.Hidden then
             CallbackRegistry.Trigger("WaypointAnimation.New")
-            SaveSuperTrackedState()
+            Waypoint_Director.SaveSuperTrackedState()
         end
     end
 
@@ -390,16 +403,19 @@ local INSTANCE_ALLOW_LIST = {
     [2351] = true -- Razorwind Shores
 }
 
-local function ShouldSetActive()
+function Waypoint_Director.ShouldShowInCurrentLocation()
     local mapID = C_Map.GetBestMapForUnit("player")
-    local force = false
     local isInInstance, instanceType = IsInInstance()
 
     if mapID and INSTANCE_ALLOW_LIST[mapID] then
-        force = true
+        return true
     end
 
-    local shouldShow = IsSuperTrackingAnything() and (force or (not isInInstance and instanceType == "none"))
+    return (not isInInstance and instanceType == "none")
+end
+
+local function ShouldSetActive()
+    local shouldShow = IsSuperTrackingAnything() and Waypoint_Director.ShouldShowInCurrentLocation()
     return shouldShow
 end
 
@@ -435,7 +451,7 @@ end
 local function OnAddonLoad()
     Waypoint_Director.UpdateActive()
     Waypoint_Director.AwaitDistance()
-    SaveSuperTrackedState()
+    Waypoint_Director.SaveSuperTrackedState()
 
     local f = CreateFrame("Frame")
     f:SetScript("OnEvent", function(self, event, ...)

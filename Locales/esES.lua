@@ -6,6 +6,11 @@ if GetLocale() ~= "esES" then return end
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "Font Flags"
 L["NONE"] = "None"
@@ -13,8 +18,13 @@ L["OUTLINE"] = "Outline"
 L["THICKOUTLINE"] = "Thick Outline"
 L["MONOCHROME"] = "Monochrome"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
+
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "Listo para Entregar"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- Config
 L["CONFIG_GENERAL"] = "General"
@@ -60,6 +70,23 @@ L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "Navegador"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "Mostrar"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "Cuando el Punto de Ruta o la Marca de Mapa está fuera de pantalla, el navegador apuntará en la dirección."
 
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "Auto-Track Pin"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Automatically tracks a pin when placed on the world map."
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "Auto-Track Pin from Link"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Automatically tracks the destination when clicking a map pin link in chat."
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "Track Guide Pin"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Enables navigation for city guide pins placed by guard NPCs."
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
+
 L["CONFIG_APPEARANCE"] = "Apariencia"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "Punto de Ruta"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE"] = "Tamaño"
@@ -68,11 +95,11 @@ L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN"] = "Mínimo %"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN_DESCRIPTION"] = "El tamaño puede reducirse hasta."
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX"] = "Máximo %"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX_DESCRIPTION"] = "El tamaño puede agrandarse hasta."
+L["CONFIG_APPEARANCE_WAYPOINT_ALPHA"] = "Transparencia"
 L["CONFIG_APPEARANCE_WAYPOINT_BEAM"] = "Mostrar Haz"
 L["CONFIG_APPEARANCE_WAYPOINT_BEAM_ALPHA"] = "Transparencia"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER"] = "Mostrar Texto de Información"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SCALE"] = "Tamaño"
-L["CONFIG_APPEARANCE_WAYPOINT_ALPHA"] = "Transparencia"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_ALPHA"] = "Transparencia"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SUBTEXTALPHA"] = "Subtext Opacity"
 L["CONFIG_APPEARANCE_PINPOINT"] = "Marca de Mapa"
@@ -109,13 +136,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "Mostrar Marca de Mapa
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "When commencing /way navigation..."
 
 L["CONFIG_EXTENSIONS"] = "Extensions"
-L["CONFIG_EXTENSIONS_PIN"] = "Map Pin"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "Auto-Track Pin"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Automatically tracks a pin when placed on the world map."
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "Auto-Track Pin from Link"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Automatically tracks the destination when clicking a map pin link in chat."
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "Track Guide Pin"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "Enables navigation for city guide pins placed by guard NPCs."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Track TomTom Waypoints"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Enables TomTom waypoint tracking. To track, right-click a TomTom waypoint on the world map and select \"Set as waypoint arrow\"."
@@ -137,6 +157,7 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatical
 
 L["CONFIG_ABOUT"] = "Acerca de"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "Colaboradores"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "Desarrollador"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
@@ -159,8 +180,8 @@ L["CONTRIBUTORS_LARSJ02"] = "Larsj02"
 L["CONTRIBUTORS_LARSJ02_DESCRIPTION"] = "Traductor — Alemán"
 L["CONTRIBUTORS_DABEAR78"] = "dabear78"
 L["CONTRIBUTORS_DABEAR78_DESCRIPTION"] = "Traductor - Alemán"
-L["Contributors - Gotxiko"] = "Gotxiko"
-L["Contributors - Gotxiko - Description"] = "Traductor - Español Castellano"
+L["CONTRIBUTORS_GOTZIKO"] = "Gotziko"
+L["CONTRIBUTORS_GOTZIKO_DESCRIPTION"] = "Traductor - Español Castellano"
 L["CONTRIBUTORS_Y45853160"] = "y45853160"
 L["CONTRIBUTORS_Y45853160_DESCRIPTION"] = "Código — Corrección de Bug Beta"
 L["CONTRIBUTORS_LEMIESZEK"] = "lemieszek"
@@ -174,12 +195,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "Código - Corrección de Bug"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "Código - Add-on"
 
--- Extra Feature
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
+-- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Do you want to replace your current waypoint with \"%s\"?"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the TomTom waypoint \"%s\"?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the Dugi waypoint \"%s\"?"
 L["APR_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the APR waypoint \"%s\"?"
-L["REPLACE"] = "Replace"
-L["CANCEL"] = "Cancel"

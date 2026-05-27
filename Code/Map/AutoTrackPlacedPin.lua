@@ -13,12 +13,24 @@ DelayTimer:SetAction(function()
     SetSuperTrackedUserWaypoint(true)
 end)
 
+local suppressNextUpdate = false
+
 local f = CreateFrame("Frame")
 f:RegisterEvent("USER_WAYPOINT_UPDATED")
 f:SetScript("OnEvent", function(_, event, ...)
     if event == "USER_WAYPOINT_UPDATED" then
+        if suppressNextUpdate then
+            suppressNextUpdate = false
+            return
+        end
+
         DelayTimer:Start(0)
     end
+end)
+
+CallbackRegistry.Add("Map.AutoTrackPlacedPin.SuppressNextUpdate", function()
+    suppressNextUpdate = true
+    DelayTimer:Stop()
 end)
 
 do -- Settings

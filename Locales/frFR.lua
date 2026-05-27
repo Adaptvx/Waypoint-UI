@@ -6,6 +6,11 @@ if GetLocale() ~= "frFR" then return end
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "Font Flags"
 L["NONE"] = "None"
@@ -13,8 +18,13 @@ L["OUTLINE"] = "Outline"
 L["THICKOUTLINE"] = "Thick Outline"
 L["MONOCHROME"] = "Monochrome"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
+
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "Quête à rendre"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- Config
 L["CONFIG_GENERAL"] = "Général"
@@ -60,6 +70,23 @@ L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "Navigateur"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "Afficher"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "Lorsque le point de passage ou le point de repère n'apparaît pas à l'écran, le navigateur indique la direction."
 
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "Suivi automatique des repères"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Suit automatiquement un repère cartographique lorsqu'il est placé sur la carte."
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "Suivi automatique d'un repère via un lien"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Suit automatiquement un repère cartographique lorsqu'il est cliqué d'un lien."
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "Suivi des repères des guides"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Active la navigation pour les repères placés par les gardes PNJ des capitales."
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
+
 L["CONFIG_APPEARANCE"] = "Apparence"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "Point de passage"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE"] = "Taille"
@@ -68,11 +95,11 @@ L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN"] = "Minimum en %"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN_DESCRIPTION"] = "Taille la plus petite visible à distance maximale."
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX"] = "Maximum en %"
 L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX_DESCRIPTION"] = "Taille la plus grande visible à distance minimale."
+L["CONFIG_APPEARANCE_WAYPOINT_ALPHA"] = "Opacité"
 L["CONFIG_APPEARANCE_WAYPOINT_BEAM"] = "Afficher le faisceau"
 L["CONFIG_APPEARANCE_WAYPOINT_BEAM_ALPHA"] = "Opacité"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER"] = "Afficher le texte d'information"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SCALE"] = "Taille"
-L["CONFIG_APPEARANCE_WAYPOINT_ALPHA"] = "Opacité"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_ALPHA"] = "Opacité"
 L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SUBTEXTALPHA"] = "Opacité du sous-texte"
 L["CONFIG_APPEARANCE_PINPOINT"] = "Point de repère"
@@ -109,13 +136,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "Lorsque le point de r
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "Lors du lancement de la navigation avec la commande /way..."
 
 L["CONFIG_EXTENSIONS"] = "Extensions"
-L["CONFIG_EXTENSIONS_PIN"] = "Repère cartographique"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "Suivi automatique des repères"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Suit automatiquement un repère cartographique lorsqu'il est placé sur la carte."
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "Suivi automatique d'un repère via un lien"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Suit automatiquement un repère cartographique lorsqu'il est cliqué d'un lien."
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "Suivi des repères des guides"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "Active la navigation pour les repères placés par les gardes PNJ des capitales."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Suivre les points de passage TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Waypoint UI prend en charge le suivi des repères TomTom. Vous pouvez suivre un repère TomTom en cliquant avec le bouton droit sur n'importe quel repère TomTom sur la carte et en sélectionnant « Set as waypoint arrow » dans le menu contextuel."
@@ -137,6 +157,7 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatical
 
 L["CONFIG_ABOUT"] = "À propos"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "Contributeurs"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "Développeur"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
@@ -174,12 +195,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "Code - Bug Fix"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "Code - Feature"
 
--- Extra Feature
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
+-- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par « %s » ?"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère TomTom « %s » ?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère Dugi « %s » ?"
 L["APR_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère APR « %s » ?"
-L["REPLACE"] = "Remplacer"
-L["CANCEL"] = "Annuler"

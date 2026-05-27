@@ -6,6 +6,11 @@ if GetLocale() ~= "ptBR" then return end
 local env = select(2, ...)
 local L = env.L
 
+L["PASTE"] = "Paste"
+L["REPLACE"] = "Replace"
+L["CANCEL"] = "Cancel"
+L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+
 -- Font
 L["FONT_FLAGS"] = "Font Flags"
 L["NONE"] = "None"
@@ -13,8 +18,13 @@ L["OUTLINE"] = "Outline"
 L["THICKOUTLINE"] = "Thick Outline"
 L["MONOCHROME"] = "Monochrome"
 
+-- Path Providers
+L["FARSTRIDERLIB"] = "FarstriderLib"
+L["MAPZEROTH"] = "Mapzeroth"
+
 -- Waypoint System
 L["WAYPOINTSYSTEM_PINPOINT_QUEST_COMPLETE"] = "Pronto para entregar"
+L["WAYPOINTSYSTEM_COORDINATE_FORMAT"] = "%0.1f, %0.1f"
 
 -- Config
 L["CONFIG_GENERAL"] = "Geral"
@@ -59,6 +69,23 @@ L["CONFIG_WAYPOINTSYSTEM_PINPOINT_SHOWINQUESTAREA_DESCRIPTION"] = "Permite que o
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "Navegador"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "Mostrar"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "Quando o marcador de mapa ou preciso estiver fora da tela, o navegador indicará a direção."
+
+L["CONFIG_MAP"] = "Map"
+L["CONFIG_MAP_PINS"] = "Map Pins"
+L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "Auto-rastrear marcador"
+L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Rastreia automaticamente quando um marcador for colocado no mapa."
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "Auto-rastrear marcador pelo link"
+L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Rastreia automaticamente um marcador clicando em um link de marcador de mapa."
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "Rastrear marcador de guia"
+L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Habilita a navegação do Waypoint UI para marcadores de guia colocados no mapa por NPCs guardas."
+
+L["CONFIG_NAVIGATION"] = "Navigation"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
 
 L["CONFIG_APPEARANCE"] = "Aparência"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "Marcador de Mapa"
@@ -109,13 +136,6 @@ L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_PINPOINTSHOW"] = "Exibir marcador preci
 L["CONFIG_AUDIO_CUSTOMIZE_USECUSTOMAUDIO_NEWUSERNAVIGATION"] = "Quando utilizar o comando /way..."
 
 L["CONFIG_EXTENSIONS"] = "Extensões"
-L["CONFIG_EXTENSIONS_PIN"] = "Marcador de Mapa"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN"] = "Auto-rastrear marcador"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "Rastreia automaticamente quando um marcador for colocado no mapa."
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN"] = "Auto-rastrear marcador pelo link"
-L["CONFIG_EXTENSIONS_PIN_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "Rastreia automaticamente um marcador clicando em um link de marcador de mapa."
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT"] = "Rastrear marcador de guia"
-L["CONFIG_EXTENSIONS_PIN_GUIDEPINASSISTANT_DESCRIPTION"] = "Habilita a navegação do Waypoint UI para marcadores de guia colocados no mapa por NPCs guardas."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"] = "TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Rastrear marcadores do TomTom"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Habilita o suporte para rastrear marcadores do TomTom com o Waypoint UI. Você pode rastrear marcadores do TomTom clicando com o botão direito em qualquer marcador do Tomtom no mapa mundial, depois clique em 'Set as waypoint arrow' no menu."
@@ -137,12 +157,11 @@ L["CONFIG_EXTENSIONS_APRSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatical
 
 L["CONFIG_ABOUT"] = "Sobre"
 L["CONFIG_ABOUT_CONTRIBUTORS"] = "Contribuidores"
+L["CONFIG_ABOUT_LIBRARIES"] = "Libraries"
 L["CONFIG_ABOUT_DEVELOPER"] = "Desenvolvedor"
 L["CONFIG_ABOUT_DEVELOPER_ADAPTIVEX"] = "AdaptiveX"
 
 -- Contributors
-L["CONTRIBUTORS_CATHTAIL"] = "cathtail"
-L["CONTRIBUTORS_CATHTAIL_DESCRIPTION"] = "Tradutora — Português Brasileiro"
 L["CONTRIBUTORS_ZAMESTOTV"] = "ZamestoTV"
 L["CONTRIBUTORS_ZAMESTOTV_DESCRIPTION"] = "Tradutor — Russo"
 L["CONTRIBUTORS_HUCHANG47"] = "huchang47"
@@ -155,6 +174,8 @@ L["CONTRIBUTORS_KLEP"] = "Klep"
 L["CONTRIBUTORS_KLEP_DESCRIPTION"] = "Tradutor — Francês"
 L["CONTRIBUTORS_KROFFY"] = "Kroffy"
 L["CONTRIBUTORS_KROFFY_DESCRIPTION"] = "Tradutor — Francês"
+L["CONTRIBUTORS_CATHTAIL"] = "cathtail"
+L["CONTRIBUTORS_CATHTAIL_DESCRIPTION"] = "Tradutora — Português Brasileiro"
 L["CONTRIBUTORS_LARSJ02"] = "Larsj02"
 L["CONTRIBUTORS_LARSJ02_DESCRIPTION"] = "Tradutor — Alemão"
 L["CONTRIBUTORS_DABEAR78"] = "dabear78"
@@ -174,12 +195,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "Code - Bug Fix"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "Code - Feature"
 
--- Extra Feature
+-- Libraries
+L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
+L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
+
+-- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Deseja substituir seu marcador atual por \"%s\"?"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Deseja substituir seu marcador atual pelo marcador do TomTom \"%s\"?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Deseja substituir seu marcador atual pelo marcador do Dugi \"%s\"?"
 L["APR_REPLACEPROMPT"] = "Deseja substituir seu marcador atual pelo marcador do APR \"%s\"?"
-L["REPLACE"] = "Substituir"
-L["CANCEL"] = "Cancelar"

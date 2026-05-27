@@ -11,7 +11,7 @@ local tostring = tostring
 
 local SessionWaypointInfo = { id = nil, name = nil, mapID = nil, x = nil, y = nil }
 
-function IsBuiltInWaypointEnabled()
+local function IsBuiltInWaypointEnabled()
     local SilverDragon = LibStub("AceAddon-3.0"):GetAddon("SilverDragon", true)
     if SilverDragon then
         local TomTom = SilverDragon:GetModule("TomTom", true)
@@ -67,7 +67,15 @@ end
 function SupportedAddons_SilverDragon.PlaceWaypointAtSession()
     if not SessionWaypointInfo.mapID or not SessionWaypointInfo.x or not SessionWaypointInfo.y then return end
     SupportedAddons_TomTom.IgnoreWaypoint(SessionWaypointInfo.mapID, SessionWaypointInfo.x, SessionWaypointInfo.y)
-    MapPin.NewUserNavigation(SessionWaypointInfo.name, SessionWaypointInfo.mapID, SessionWaypointInfo.x, SessionWaypointInfo.y, "SilverDragon_Waypoint", Path.Root .. "\\Art\\Icons\\VignetteElite", nil, nil, nil, true)
+    MapPin.NewUserNavigation({
+        name = SessionWaypointInfo.name,
+        mapID = SessionWaypointInfo.mapID,
+        x = SessionWaypointInfo.x,
+        y = SessionWaypointInfo.y,
+        flags = "SilverDragon_Waypoint",
+        iconTexture = Path.Root .. "\\Art\\Icons\\VignetteElite",
+        requestRecolor = true
+    })
 end
 
 local function OnPointTo(_, sourceID, mapID, x, y)
