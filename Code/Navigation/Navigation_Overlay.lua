@@ -124,7 +124,9 @@ do --WUINavigationOverlayFrame
             self:HideTooltip()
         end
 
-        self:_Render()
+        if not InCombatLockdown() then
+            self:_Render()
+        end
     end
 
     function NavigationOverlayFrameMixin.ShowFrame(frame)
@@ -133,6 +135,7 @@ do --WUINavigationOverlayFrame
     end
 
     function NavigationOverlayFrameMixin.HideFrame(frame)
+        if frame.fadeOutPlayback == true then return end
         frame:SetAlpha(0)
         frame:Hide()
     end
@@ -157,20 +160,24 @@ do --WUINavigationOverlayFrame
         local fadeId = self.overlayFadeId
 
         self:SetItem(nil)
-
-        if InCombatLockdown() then
-            UIKit_Utils:AwaitProtectedEvent(NavigationOverlayFrameMixin.HideFrame, self)
-            return
-        end
-
         if not self:IsShown() then return end
 
         self.AnimGroup:Stop(self, false)
+
+        self.fadeOutPlayback = true
         self.AnimGroup:Play(self, "FADE_OUT"):onFinish(function()
             if self.overlayFadeId == fadeId and self.overlayVisible == false then
-                self:Hide()
+                self.fadeOutPlayback = false
+
+                if InCombatLockdown() then
+                    UIKit_Utils:AwaitProtectedEvent(NavigationOverlayFrameMixin.HideFrame, self)
+                else
+                    self:HideFrame()
+                end
             end
         end)
+
+        if InCombatLockdown() then UIKit_Utils:AwaitProtectedEvent(NavigationOverlayFrameMixin.HideFrame, self) end
     end
 
     function NavigationOverlayFrameMixin:ShowStep(step, destinationSnapshot)
@@ -185,7 +192,9 @@ do --WUINavigationOverlayFrame
 
         if not self:IsShown() or self.overlayVisible ~= true then self:FadeIn() end
 
-        self:_Render()
+        if not InCombatLockdown() then
+            self:_Render()
+        end
     end
 
     NavigationOverlayFrameMixin.AnimGroup = UIAnim.New()

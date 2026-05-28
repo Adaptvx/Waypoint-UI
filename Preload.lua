@@ -16,8 +16,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.5.0"
-env.VERSION_NUMBER = 010500
+env.VERSION_STRING = "1.5.1"
+env.VERSION_NUMBER = 010501
 env.DEBUG_MODE = false
 
 

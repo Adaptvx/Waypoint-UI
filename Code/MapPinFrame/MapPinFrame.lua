@@ -141,6 +141,10 @@ local function IsMinimapPinRegistered(pin)
     return minimapPins and minimapPins[pin] ~= nil
 end
 
+local function GetMinimapRegistrationFrame(pin)
+    return pin and pin.hbdMinimapAnchor or pin
+end
+
 local function IsParentZoneMap(mapID, parentMapID)
     local mapInfo = GetMapInfo(mapID)
     local currentParentMapID = mapInfo and mapInfo.parentMapID or nil
@@ -617,19 +621,21 @@ do --Map Pin Template
 
         self:DetachFromMinimap()
 
-        HBDPins:AddMinimapIconMap(env, self, mapID, x, y, true, false)
+        local minimapFrame = GetMinimapRegistrationFrame(self)
+        HBDPins:AddMinimapIconMap(env, minimapFrame, mapID, x, y, true, false)
         self:UpdatePriorityHitbox()
-        if not IsMinimapPinRegistered(self) then
+        if not IsMinimapPinRegistered(minimapFrame) then
             self:ClearAttachmentState()
             self:Hide()
             return
         end
 
+        self:Show()
         self:SetAttachmentState(mapID, x, y, true)
     end
 
     function MapPinFrameMixin:DetachFromMinimap()
-        if self.isAttached then HBDPins:RemoveMinimapIcon(env, self) end
+        if self.isAttached then HBDPins:RemoveMinimapIcon(env, GetMinimapRegistrationFrame(self)) end
         self:ClearAttachmentState()
         self:Hide()
     end
@@ -829,14 +835,23 @@ do --Map Pin Template
 end
 
 local function BuildMapPinFrame(name, pinType, displayLayer)
-    local parent = displayLayer == MapPinFrame_Preload.Enum.DisplayLayer.Minimap and Minimap or UIParent
-    local template = displayLayer == MapPinFrame_Preload.Enum.DisplayLayer.Minimap and MapPinFrame.MinimapPin or MapPinFrame.MapPin
+    local isMinimapPin = displayLayer == MapPinFrame_Preload.Enum.DisplayLayer.Minimap
+    local anchor = nil
+    local template = isMinimapPin and MapPinFrame.MinimapPin or MapPinFrame.MapPin
+
+    if isMinimapPin then
+        anchor = CreateFrame("Frame", nil, Minimap)
+        anchor:SetSize(1, 1)
+        anchor:EnableMouse(false)
+        anchor:Hide()
+    end
 
     local frame = template(name)
-        :parent(parent)
+        :parent(anchor or UIParent)
         :point(UIKit.Enum.Point.Center)
         :_Render()
 
+    frame.hbdMinimapAnchor = anchor or UIParent
     frame:SetIgnoreParentScale(displayLayer ~= MapPinFrame_Preload.Enum.DisplayLayer.Minimap)
     frame:Hide()
     frame:OnLoad(pinType, displayLayer)

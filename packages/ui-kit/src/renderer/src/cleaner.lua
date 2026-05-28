@@ -5,6 +5,7 @@ local UIKit_Renderer_Cleaner = env.modules:New("packages\\ui-kit\\renderer\\clea
 
 local band = bit.band
 local bor = bit.bor
+local InCombatLockdown = InCombatLockdown
 local Processor_SizeStatic = UIKit_Renderer_Processor.SizeStatic
 local Processor_SizeFit = UIKit_Renderer_Processor.SizeFit
 local Processor_SizeFill = UIKit_Renderer_Processor.SizeFill
@@ -47,6 +48,12 @@ local washTimer = LazyTimer.New()
 local cooldownTimer = LazyTimer.New()
 washTimer:SetAction(function() UIKit_Renderer_Cleaner.Wash() end)
 cooldownTimer:SetAction(function() UIKit_Renderer_Cleaner.onCooldown = false end)
+
+local combatEL = CreateFrame("Frame")
+combatEL:SetScript("OnEvent", function(self)
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    if waitingForWash and dirtyCount > 0 then washTimer:Start(0) end
+end)
 
 function UIKit_Renderer_Cleaner.AddDirty(actionId, frame)
     local actions = frame[FIELD_ACTIONS] or 0
@@ -108,20 +115,25 @@ function UIKit_Renderer_Cleaner.Wash()
     cooldownTimer:Start(0)
     waitingForWash = false
 
+    local deferProtected = InCombatLockdown()
     local requiresDependencyPass = UIKit_Renderer_Cleaner.requiresDependencyPass
     local needsBackward = hasBackwardActions
 
     -- PASS 1: Forward (top-down)
     for i = 1, dirtyCount do
         local frame = dirty[i]
-        ProcessForwardPass(frame, frame[FIELD_ACTIONS])
+        if not (deferProtected and frame.IsProtected and frame:IsProtected()) then
+            ProcessForwardPass(frame, frame[FIELD_ACTIONS])
+        end
     end
 
     -- PASS 1: Backward (bottom-up) - only if needed
     if needsBackward then
         for i = dirtyCount, 1, -1 do
             local frame = dirty[i]
-            ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
+            if not (deferProtected and frame.IsProtected and frame:IsProtected()) then
+                ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
+            end
         end
     end
 
@@ -129,29 +141,47 @@ function UIKit_Renderer_Cleaner.Wash()
     if requiresDependencyPass then
         for i = 1, dirtyCount do
             local frame = dirty[i]
-            ProcessForwardPass(frame, frame[FIELD_ACTIONS])
+            if not (deferProtected and frame.IsProtected and frame:IsProtected()) then
+                ProcessForwardPass(frame, frame[FIELD_ACTIONS])
+            end
         end
 
         for i = dirtyCount, 1, -1 do
             local frame = dirty[i]
-            ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
+            if not (deferProtected and frame.IsProtected and frame:IsProtected()) then
+                ProcessBackwardPass(frame, frame[FIELD_ACTIONS])
+            end
         end
     end
 
     -- FINAL PASS: ScrollBar updates and cleanup
+    local deferredCount = 0
+    local deferredHasBackwardActions = false
     for i = 1, dirtyCount do
         local frame = dirty[i]
         local actions = frame[FIELD_ACTIONS]
 
-        if band(actions, ACTION_SCROLLBAR) ~= 0 then
+        if deferProtected and frame.IsProtected and frame:IsProtected() then
+            deferredCount = deferredCount + 1
+            dirty[deferredCount] = frame
+            if band(actions, BACKWARD_MASK) ~= 0 then deferredHasBackwardActions = true end
+        elseif band(actions, ACTION_SCROLLBAR) ~= 0 then
             Processor_ScrollBar(frame)
+
+            frame[FIELD_ACTIONS] = nil
+        else
+            frame[FIELD_ACTIONS] = nil
         end
 
-        frame[FIELD_ACTIONS] = nil
-        dirty[i] = nil
+        if i > deferredCount then dirty[i] = nil end
     end
 
-    dirtyCount = 0
-    hasBackwardActions = false
-    UIKit_Renderer_Cleaner.requiresDependencyPass = false
+    dirtyCount = deferredCount
+    hasBackwardActions = deferredHasBackwardActions
+    UIKit_Renderer_Cleaner.requiresDependencyPass = deferredHasBackwardActions
+
+    if dirtyCount > 0 then
+        waitingForWash = true
+        combatEL:RegisterEvent("PLAYER_REGEN_ENABLED")
+    end
 end
