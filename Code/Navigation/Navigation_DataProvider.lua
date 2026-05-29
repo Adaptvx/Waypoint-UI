@@ -89,6 +89,25 @@ do
         return false
     end
 
+    function DataProviderUtil.GetSuperTrackedUserNavigationDestination()
+        local userNavigation = MapPin.GetUserNavigation()
+        if not userNavigation or userNavigation.superTracked ~= true then return nil end
+
+        return Navigation_WorldMap:GetUserWaypointDestinationState()
+    end
+
+    function DataProviderUtil.ActivateCurrentDestination()
+        if IsSuperTrackingAnything() then return DataProviderUtil.HandleTrackedDestinationUpdate() end
+
+        local destination = DataProviderUtil.GetSuperTrackedUserNavigationDestination()
+        if destination then
+            DataProviderUtil.OnDestinationSet(destination)
+            return true
+        end
+
+        return false
+    end
+
     function DataProviderUtil.ShouldIgnoreNativeWaypointSuperTrackingChanged()
         if Navigation_DataProvider.IgnoreNativeWaypointSuperTrackingChanged ~= true then return false end
         if Navigation_DataProvider:HasPath() then return false end
@@ -772,6 +791,9 @@ CallbackRegistry.Add("MapPin.UserNavigationCleared", DataProviderUtil.OnUserWayp
 local function OnEnableChanged(enabled)
     if enabled then
         EL:Show()
+        if Navigation_DataProvider:IsEnabled() then
+            DataProviderUtil.ActivateCurrentDestination()
+        end
     else
         EL:Hide()
         Navigation_DataProvider:ClearSessionData()
@@ -784,6 +806,11 @@ local function OnPathProviderChanged(provider)
         if provider ~= env.Enum.PathProvider.None then
             Navigation_DataProvider:StartPathfinding()
         end
+        return
+    end
+
+    if provider ~= env.Enum.PathProvider.None and Navigation_DataProvider:IsEnabled() then
+        DataProviderUtil.ActivateCurrentDestination()
     end
 end
 

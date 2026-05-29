@@ -146,6 +146,29 @@ do
         return true
     end
 
+    function WorldMapUtil.EnsureUserWaypointNavigation(destination)
+        if not destination or destination.userNavigation then return destination end
+        if not destination.mapID or destination.normalizedX == nil or destination.normalizedY == nil then return destination end
+
+        local userNavigation = MapPin.SetUserNavigation({
+            name           = destination.name or MAP_PIN,
+            mapID          = destination.mapID,
+            x              = destination.normalizedX,
+            y              = destination.normalizedY,
+            fromWUI        = true,
+            superTracked   = true
+        })
+        if not userNavigation then return destination end
+
+        MapPin.SuppressNextUserNavigationValidation(userNavigation)
+
+        destination.pin = MapPinFrame:GetUserNavigationWorldPin()
+        destination.fromWUI = true
+        destination.userNavigation = userNavigation
+
+        return destination
+    end
+
     function WorldMapUtil.IsPathfindingEnabled()
         if not Config.DBGlobal or Config.DBGlobal:GetVariable("PathfindingEnabled") ~= true then return false end
         return Navigation_DataProvider:IsEnabled() == true
@@ -587,6 +610,9 @@ function Navigation_WorldMap:CaptureDestinationPinSnapshot(owner, destination)
         destination = self:GetTrackedDestinationState(pin, metadata)
     end
     if not destination then return false end
+    if self:IsUserWaypointSnapshot(destination) then
+        destination = WorldMapUtil.EnsureUserWaypointNavigation(destination)
+    end
 
     wipe(Snapshot)
     self:ApplyDestinationSnapshot(Snapshot, destination)
@@ -796,6 +822,7 @@ end
 local function OnCanvasClick(mapCanvas, button, cursorX, cursorY)
     if button == "LeftButton" and IsControlKeyDown() then
         if not WorldMapUtil.IsPathfindingEnabled() then return false end
+        if MapPinFrame:ConsumeWorldMapPinCtrlClick() then return true end
 
         local mapID = mapCanvas:GetMapID()
         local x, y = mapCanvas:GetNormalizedCursorPosition()

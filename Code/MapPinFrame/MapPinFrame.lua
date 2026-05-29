@@ -18,12 +18,10 @@ local HBDPins = LibStub("HereBeDragons-Pins-2.0")
 
 local SetSuperTrackedUserWaypoint = C_SuperTrack.SetSuperTrackedUserWaypoint
 local IsSuperTrackingUserWaypoint = C_SuperTrack.IsSuperTrackingUserWaypoint
-local CanSetUserWaypointOnMap = C_Map.CanSetUserWaypointOnMap
 local GetMapInfo = C_Map.GetMapInfo
 local GetBestMapForUnit = C_Map.GetBestMapForUnit
 local GetUserWaypoint = C_Map.GetUserWaypoint
 local GetUserWaypointHyperlink = C_Map.GetUserWaypointHyperlink
-local SetUserWaypoint = C_Map.SetUserWaypoint
 local ClearUserWaypoint = C_Map.ClearUserWaypoint
 local HasUserWaypoint = C_Map.HasUserWaypoint
 local CreateFromMixins = CreateFromMixins
@@ -32,6 +30,7 @@ local Mixin = Mixin
 local IsModifiedClick = IsModifiedClick
 local IsControlKeyDown = IsControlKeyDown
 local PlaySound = PlaySound
+local GetTime = GetTime
 local type = type
 local pairs = pairs
 local max = math.max
@@ -46,8 +45,10 @@ local DBGlobal = nil
 local WUIMapPinFrame, WUIMinimapPinFrame = nil, nil
 local WUIPathStepWaypointFrame, WUIPathStepWaypointMinimapFrame = nil, nil
 local HasActivePathfinding = false
+local SuppressedWorldMapCtrlClickTime = nil
 
 local USER_WAYPOINT_PIN_TEMPLATE = "WaypointLocationPinTemplate"
+local WORLD_MAP_CTRL_CLICK_SUPPRESS_SECONDS = 0.25
 
 
 
@@ -58,6 +59,16 @@ end
 
 local function HasWaypointUIPinReplacement()
     return MapPin.GetUserNavigation() ~= nil or MapPin.GetPathStepWaypoint() ~= nil or Navigation_DataProvider:IsCurrentPathStepHandledByOverlay()
+end
+
+local function ClearUserNavigationPin()
+    if MapPin.GetUserNavigation() then
+        MapPin.ClearUserNavigation()
+        return
+    end
+
+    ClearUserWaypoint()
+    SetSuperTrackedUserWaypoint(false)
 end
 
 local function ShouldPreserveNativeDestination(options)
@@ -251,6 +262,8 @@ do --Map Pin Template
         if self.isInteractive then
             self:HookButtonStateChange(self.UpdateAnimation)
             self:HookEnableChange(self.UpdateAnimation)
+            self:HookMouseDown(self.SuppressWorldMapCtrlClick)
+            self:HookMouseUp(self.SuppressWorldMapCtrlClick)
             self:HookClick(self.HandleClick)
             self:SetScale(0.6)
         else
@@ -304,25 +317,13 @@ do --Map Pin Template
         self.Background:background((pushed or buttonState == "HIGHLIGHTED") and MapPinFrame_Preload.UIDEF.UIMapPinFrame_Highlighted or MapPinFrame_Preload.UIDEF.UIMapPinFrame)
     end
 
-    function MapPinFrameMixin:ReplaceUserWaypointFromWorldMapClick()
-        if self.displayLayer ~= MapPinFrame_Preload.Enum.DisplayLayer.WorldMap then return false end
-        if not WorldMapFrame or not WorldMapFrame.ScrollContainer then return false end
+    function MapPinFrameMixin:SuppressWorldMapCtrlClick(button)
+        if button ~= "LeftButton" then return end
+        if not IsControlKeyDown() then return end
+        if not IsPathfindingEnabled() then return end
+        if self.displayLayer ~= MapPinFrame_Preload.Enum.DisplayLayer.WorldMap then return end
 
-        local mapID = WorldMapFrame:GetMapID()
-        if not mapID or CanSetUserWaypointOnMap(mapID) ~= true then return false end
-
-        local scrollContainer = WorldMapFrame.ScrollContainer
-        local cursorX, cursorY = scrollContainer:NormalizeUIPosition(scrollContainer:GetCursorPosition())
-        if cursorX == nil or cursorY == nil then return false end
-
-        local uiMapPoint = UiMapPoint.CreateFromCoordinates(mapID, cursorX, cursorY)
-        if not uiMapPoint then return false end
-
-        if MapPin.GetUserNavigation() then MapPin.ClearUserNavigation(true, true) end
-
-        SetUserWaypoint(uiMapPoint)
-        SetSuperTrackedUserWaypoint(false)
-        return true
+        MapPinFrame:SuppressNextWorldMapCtrlClick()
     end
 
     function MapPinFrameMixin:HandleClick(button)
@@ -340,17 +341,11 @@ do --Map Pin Template
 
             if IsControlKeyDown() then
                 self:HideTooltip()
+                ClearUserNavigationPin()
                 if IsPathfindingEnabled() then
-                    MapPin.ClearUserNavigation()
                     ClearActivePathfinding()
-                    PlaySound(SOUNDKIT.UI_MAP_WAYPOINT_REMOVE)
-                elseif self:ReplaceUserWaypointFromWorldMapClick() then
-                    PlaySound(SOUNDKIT.UI_MAP_WAYPOINT_CONTROL_CLICK)
-                else
-                    ClearUserWaypoint()
-                    SetSuperTrackedUserWaypoint(false)
-                    PlaySound(SOUNDKIT.UI_MAP_WAYPOINT_REMOVE)
                 end
+                PlaySound(SOUNDKIT.UI_MAP_WAYPOINT_REMOVE)
                 return
             end
 
@@ -914,6 +909,20 @@ local function ApplyStoredPin(pinID, method, ...)
     if storedPin.minimap then storedPin.minimap[method](storedPin.minimap, ...) end
 
     return true
+end
+
+function MapPinFrame:SuppressNextWorldMapCtrlClick()
+    SuppressedWorldMapCtrlClickTime = GetTime()
+end
+
+function MapPinFrame:ConsumeWorldMapPinCtrlClick()
+    if not SuppressedWorldMapCtrlClickTime then return false end
+
+    local suppressAge = GetTime() - SuppressedWorldMapCtrlClickTime
+    SuppressedWorldMapCtrlClickTime = nil
+    if suppressAge <= WORLD_MAP_CTRL_CLICK_SUPPRESS_SECONDS then return true end
+
+    return false
 end
 
 local function ApplyUserNavigationPin(method, ...)
