@@ -134,6 +134,23 @@ function ListMixin:GetAllElementsInPoolByType(typeKey)
     return self.__elementPool[typeKey]
 end
 
+function ListMixin:GetVisibleElement(index, typeKey)
+    local pool = self.__elementPool[typeKey]
+    if not pool or not index or index < 1 then return nil end
+
+    local visibleCount = 0
+    for i = 1, #pool do
+        local element = pool[i]
+        if element and element:IsShown() then
+            visibleCount = visibleCount + 1
+            if visibleCount == index then
+                return element
+            end
+        end
+    end
+    return nil
+end
+
 function ListMixin:RenderElements()
     self:ClearElementFlags()
     self:ClearElementTypeIndex()

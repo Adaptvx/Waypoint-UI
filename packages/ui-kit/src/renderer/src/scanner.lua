@@ -68,13 +68,6 @@ function UIKit_Renderer_Scanner.ScanFrame(rootFrame)
 
         AnalyzeFrameProperty(frame)
 
-        -- Push ScrollContainer/LazyScrollContainer Content onto stack
-        local contentFrame = frame.GetContentFrame and frame:GetContentFrame()
-        if contentFrame then
-            scanStackTop = scanStackTop + 1
-            scanStack[scanStackTop] = contentFrame
-        end
-
         -- Push child frames onto stack (in reverse order for correct processing order)
         local children = frame.GetFrameChildren and frame:GetFrameChildren()
         if children then
@@ -85,6 +78,13 @@ function UIKit_Renderer_Scanner.ScanFrame(rootFrame)
                     scanStack[scanStackTop] = child
                 end
             end
+        end
+
+        -- Scan scroll content before logical children so bottom-up sizing resolves children first.
+        local contentFrame = frame.GetContentFrame and frame:GetContentFrame()
+        if contentFrame then
+            scanStackTop = scanStackTop + 1
+            scanStack[scanStackTop] = contentFrame
         end
     end
 end

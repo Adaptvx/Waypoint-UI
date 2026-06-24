@@ -65,11 +65,6 @@ local function RemoveActive(index)
     if index ~= lastIdx then activeInstances[index] = activeInstances[lastIdx] end
     activeInstances[lastIdx] = nil
     activeInstanceCount = lastIdx - 1
-    local info = inst.wrapperInfo
-    if info and info.pendingCount > 0 then
-        info.pendingCount = info.pendingCount - 1
-        if info.pendingCount == 0 then NotifyFinish(info) end
-    end
     if instancePoolCount < 100 then
         instancePoolCount = instancePoolCount + 1
         instancePool[instancePoolCount] = inst
@@ -265,10 +260,8 @@ local function CreateInstance(def, target, wrapper, wrapperInfo, runId)
             inst.t = inst.startAt
             inst.startAtPending = false
         end
-        TriggerStart(inst)
-    end
-    if inst.state == STATE_PLAY and inst.t > 0 then
         ApplyAtElapsed(inst, inst.t)
+        TriggerStart(inst)
     end
     inst.ignoreVisibility = def.__ignoreVisibility or false
     return inst
@@ -595,8 +588,8 @@ local function StepInstance(inst, dt)
             if inst.startAtPending then
                 inst.t = inst.startAt
                 inst.startAtPending = false
-                ApplyAtElapsed(inst, inst.t)
             end
+            ApplyAtElapsed(inst, inst.t)
             TriggerStart(inst)
         elseif state == STATE_PLAY then
             if not ResolveInstanceValues(inst) then
