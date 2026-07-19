@@ -3,7 +3,7 @@ local UIKit_Define = env.modules:Import("packages\\ui-kit\\define")
 local UIKit_UI_Parser = env.modules:Import("packages\\ui-kit\\ui\\parser")
 local UIKit_UI = env.modules:New("packages\\ui-kit\\ui")
 
-local function NewConstructorFor(type) return function(name, children) return UIKit_UI_Parser:CreateFrameFromType(type, name, children) end end
+local function NewConstructorFor(type) return function(name, children, ...) return UIKit_UI_Parser:CreateFrameFromType(type, name, children, ...) end end
 
 UIKit_UI.Frames = {
     NewConstructorFor("Frame"),
@@ -19,7 +19,8 @@ UIKit_UI.Frames = {
     NewConstructorFor("LinearSlider"),
     NewConstructorFor("HitRect"),
     NewConstructorFor("List"),
-    NewConstructorFor("SecureButton")
+    NewConstructorFor("SecureButton"),
+    NewConstructorFor("ModelScene")
 }
 
 --Pre defined

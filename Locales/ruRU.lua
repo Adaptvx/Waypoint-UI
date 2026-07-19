@@ -12,6 +12,10 @@ L["CANCEL"] = "Cancel"
 L["WAY_PASTE_PROMPT"] = "Enter /way commands"
 
 -- Font
+L["TEXT_ALIGNMENT"] = "Text Alignment"
+L["LEADING"] = "Leading"
+L["JUSTIFIED"] = "Justified"
+L["TRAILING"] = "Trailing"
 L["FONT_FLAGS"] = "Флаги шрифта"
 L["NONE"] = "Нет"
 L["OUTLINE"] = "Контур"

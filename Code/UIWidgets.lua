@@ -3,7 +3,7 @@ local Path = env.modules:Import("packages\\path")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
-local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton = unpack(UIKit.UI.Frames)
+local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UIWidgets = env.modules:New("@\\UIWidgets")
 
 local Mixin = Mixin

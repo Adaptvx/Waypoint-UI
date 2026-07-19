@@ -498,6 +498,24 @@ do -- Schema
                                 return Config.DBGlobal:SetVariable("PinpointFontFlags", index)
                             end,
                             key                      = "PinpointFontFlags"
+                        },
+                        {
+                            widgetName               = L["TEXT_ALIGNMENT"],
+                            widgetType               = Settings_Enum.WidgetType.SelectionMenu,
+                            widgetSelectionMenu_data = function()
+                                return {
+                                    L["LEADING"],
+                                    L["JUSTIFIED"],
+                                    L["TRAILING"]
+                                }
+                            end,
+                            widgetSelectionMenu_get  = function(value)
+                                return Config.DBGlobal:GetVariable("PinpointTextAlignment")
+                            end,
+                            widgetSelectionMenu_set  = function(index)
+                                return Config.DBGlobal:SetVariable("PinpointTextAlignment", index)
+                            end,
+                            key                      = "PinpointTextAlignment"
                         }
                     }
                 },

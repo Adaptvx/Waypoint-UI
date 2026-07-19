@@ -16,8 +16,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.5.3"
-env.VERSION_NUMBER = 010503
+env.VERSION_STRING = "1.5.4"
+env.VERSION_NUMBER = 010504
 env.DEBUG_MODE = false
 
 
@@ -93,6 +93,7 @@ do
         WaypointDistanceTextAlpha              = 1,
         WaypointDistanceSubtextAlpha           = 0.7,
         PinpointFontFlags                      = 1, --UIFont.Enum.FontFlags
+        PinpointTextAlignment                  = 1,
         PinpointAllowInQuestArea               = false,
         PinpointScale                          = 1,
         PinpointAlpha                          = 1,

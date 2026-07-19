@@ -325,14 +325,27 @@ WUIWaypointFrame:OnLoad()
 
 local PinpointMixin = {}
 
+local PINPOINT_TEXT_ALIGNMENT = {
+    [1] = "LEFT",
+    [2] = "CENTER",
+    [3] = "RIGHT"
+}
+
 function PinpointMixin:OnLoad()
     SavedVariables.OnChange("WaypointDB_Global", "PinpointScale", function() self:UpdateSize() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointAlpha", function() self:UpdateOpacity() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointFontFlags", function() self:_Render() end)
+    SavedVariables.OnChange("WaypointDB_Global", "PinpointTextAlignment", function() self:UpdateTextAlignment() end)
     CallbackRegistry.Add("Preload.DatabaseReady", function()
         self:UpdateSize()
         self:UpdateOpacity()
+        self:UpdateTextAlignment()
     end)
+end
+
+function PinpointMixin:UpdateTextAlignment()
+    local textAlignment = Config.DBGlobal:GetVariable("PinpointTextAlignment") or 1
+    self.Foreground.Content:SetJustifyH(PINPOINT_TEXT_ALIGNMENT[textAlignment] or PINPOINT_TEXT_ALIGNMENT[1])
 end
 
 function PinpointMixin:UpdateText()
