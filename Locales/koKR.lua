@@ -6,23 +6,23 @@ if GetLocale() ~= "koKR" then return end
 local env = select(2, ...)
 local L = env.L
 
-L["PASTE"] = "Paste"
-L["REPLACE"] = "Replace"
-L["CANCEL"] = "Cancel"
-L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+L["PASTE"] = "붙여넣기"
+L["REPLACE"] = "바꾸기"
+L["CANCEL"] = "취소"
+L["WAY_PASTE_PROMPT"] = "/way 명령어를 입력하세요"
 
--- Font
-L["TEXT_ALIGNMENT"] = "Text Alignment"
-L["LEADING"] = "Leading"
-L["JUSTIFIED"] = "Justified"
-L["TRAILING"] = "Trailing"
+-- 폰트
+L["TEXT_ALIGNMENT"] = "텍스트 정렬"
+L["LEADING"] = "줄 간격"
+L["JUSTIFIED"] = "양쪽 정렬"
+L["TRAILING"] = "뒷부분 정렬"
 L["FONT_FLAGS"] = "글꼴 옵션"
 L["NONE"] = "없음"
 L["OUTLINE"] = "외곽선"
 L["THICKOUTLINE"] = "두꺼운 외곽선"
 L["MONOCHROME"] = "모노크롬"
 
--- Path Providers
+-- 경로 제공자
 L["FARSTRIDERLIB"] = "FarstriderLib"
 L["MAPZEROTH"] = "Mapzeroth"
 
@@ -74,10 +74,10 @@ L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR"] = "길 안내 도구"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE"] = "표시"
 L["CONFIG_WAYPOINTSYSTEM_NAVIGATOR_ENABLE_DESCRIPTION"] = "지정한 위치가 화면 밖에 있을 땐, 길 안내 도구가 그 방향을 표시합니다.."
 
-L["CONFIG_MAP"] = "Map"
-L["CONFIG_MAP_PINS"] = "Map Pins"
-L["CONFIG_MAP_PINS_ENABLE"] = "Use Waypoint UI Map Pins"
-L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "Replaces the default map pins with Waypoint UI's minimap and world map pins, and enables /way paste."
+L["CONFIG_MAP"] = "지도"
+L["CONFIG_MAP_PINS"] = "지도 핀"
+L["CONFIG_MAP_PINS_ENABLE"] = "Waypoint UI 지도 핀 사용"
+L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] = "기본 지도 핀을 Waypoint UI의 미니맵 및 세계 지도 핀으로 교체하고, /way 붙여넣기 기능을 활성화합니다."
 L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"] = "자동 추적 핀"
 L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] = "세계 지도에 핀이 배치되면 자동으로 추적합니다."
 L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"] = "링크에서 자동 추적 핀"
@@ -85,11 +85,11 @@ L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] = "지도 핀 링크를 �
 L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"] = "가이드 핀 추적"
 L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "경비병 NPC가 배치한 도시 가이드 핀에 대해 웨이포인트 UI 탐색을 활성화합니다."
 
-L["CONFIG_NAVIGATION"] = "Navigation"
-L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
-L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
-L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
-L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
+L["CONFIG_NAVIGATION"] = "내비게이션"
+L["CONFIG_NAVIGATION_PATHFINDING"] = "길찾기"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "길찾기 활성화"
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "성능 저하 및 내비게이션 오류가 발생할 수 있습니다."
+L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "제공자"
 
 L["CONFIG_APPEARANCE"] = "UI 디자인"
 L["CONFIG_APPEARANCE_WAYPOINT"] = "위치 아이콘 관련 설정"
@@ -199,14 +199,14 @@ L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "코드: 버그 수정"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "코드: 기능"
 
--- Libraries
+-- 라이브러리
 L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"
 L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.com/wow/addons/herebedragons"
 
 -- 확장 기능
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "현재 웨이포인트를 \"%s\"로 교체하시겠습니까?"
 
--- Supported Add-ons
+-- 지원되는 애드온
 L["TOMTOM_REPLACEPROMPT"] = "현재 웨이포인트를 TomTom 웨이포인트 \"%s\"로 교체하시겠습니까?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "현재 웨이포인트를 Dugi 웨이포인트 \"%s\"로 교체하시겠습니까?"
 L["APR_REPLACEPROMPT"] = "현재 웨이포인트를 APR 웨이포인트 \"%s\"로 교체하시겠습니까?"
