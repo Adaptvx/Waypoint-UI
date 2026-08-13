@@ -23,7 +23,7 @@ local Utils_LazyTable_New = Utils_LazyTable.New
 local UIKit_FrameCache_Add = UIKit_FrameCache.Add
 
 local FRAME_CONSTRUCTORS = {
-    Frame               = function(name) return UIKit_Primitives_Frame.New("Frame", name, nil) end,
+    Frame               = function(name, _, parent, template) return UIKit_Primitives_Frame.New("Frame", name, parent, template) end,
     SecureButton        = UIKit_Primitives_SecureButton.New,
     ModelScene          = UIKit_Primitives_ModelScene.New,
     LayoutGrid          = UIKit_Primitives_LayoutGrid.New,

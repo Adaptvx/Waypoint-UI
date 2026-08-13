@@ -109,7 +109,11 @@ local function ProcessBackwardPass(frame, actions)
 end
 
 function UIKit_Renderer_Cleaner.Wash()
-    if UIKit_Renderer_Cleaner.onCooldown or dirtyCount == 0 then return end
+    if dirtyCount == 0 then return end
+    if UIKit_Renderer_Cleaner.onCooldown then
+        washTimer:Start(0)
+        return
+    end
 
     UIKit_Renderer_Cleaner.onCooldown = true
     cooldownTimer:Start(0)

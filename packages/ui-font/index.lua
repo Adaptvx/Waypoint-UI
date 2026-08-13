@@ -14,7 +14,7 @@ do -- Fonts
         8, 10, 11, 12, 13, 14, 16, 18
     }
 
-    local function CreateUIFontObjectNormal(fontHeight)
+    function UIFont.CreateUIFontObjectNormal(fontHeight)
         local fontObject = UIFont_FontUtil:CreateFontObject()
         fontObject:SetFont(GameFontNormal:GetFont(), fontHeight, "")
         fontObject:SetShadowOffset(1, -1)
@@ -33,6 +33,6 @@ do -- Fonts
     UIFont.UIFontNormal = UIFontNormal
 
     for _, fontHeight in ipairs(UI_FONT_SCHEMATIC) do
-        UIFont["UIFontObjectNormal" .. fontHeight] = CreateUIFontObjectNormal(fontHeight)
+        UIFont["UIFontObjectNormal" .. fontHeight] = UIFont.CreateUIFontObjectNormal(fontHeight)
     end
 end

@@ -78,6 +78,11 @@ do -- Button
 
         TriggerHooks(self.onMouseUpHooks, self, button)
 
+        if self:IsAnchoringRestricted() then
+            self:OnClick(button)
+            return
+        end
+
         if self:IsMouseOver() then
             self:OnClick(button)
         end

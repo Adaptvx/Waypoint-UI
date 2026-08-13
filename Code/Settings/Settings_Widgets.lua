@@ -14,6 +14,7 @@ local Settings_Widgets = env.modules:New("@\\Settings\\Settings_Widgets")
 
 local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
+local CreateColor = CreateColor
 
 do -- Tab
     local CONTENT_Y = -22
@@ -207,7 +208,8 @@ do -- Widgets
     do -- Title
         local MAX_WIDTH = 255
         local VERTICAL_SPACING = 11
-        local ICON_MASK = UIKit.Define.Texture{ path = Path.Root .. "\\Art\\Primitives\\Gradient-TB" }
+        local ICON_GRADIENT_BOTTOM = CreateColor(1, 1, 1, 0)
+        local ICON_GRADIENT_TOP = CreateColor(1, 1, 1, 1)
         local ICON_SIZE = 138
         local WIDTH = UIKit.Define.Percentage{ value = 100 }
         local HEIGHT = 225
@@ -216,6 +218,7 @@ do -- Widgets
 
         function TitleMixin:SetData(icon, title, description)
             self.IconTexture:SetTexture(icon)
+            self.IconTexture:GetTextureObject():SetGradient("VERTICAL", ICON_GRADIENT_BOTTOM, ICON_GRADIENT_TOP)
             self.Title:SetText(title)
             self.Description:SetText(description)
         end
@@ -229,9 +232,7 @@ do -- Widgets
                             :point(UIKit.Enum.Point.Center)
                             :size(ICON_SIZE, ICON_SIZE)
                             :alpha(0.0975)
-                            :background(UIKit.UI.TEXTURE_NIL)
-                            :mask(ICON_MASK)
-                            :backgroundBlendMode(UIKit.Enum.BlendMode.Add),
+                            :background(UIKit.UI.TEXTURE_NIL),
 
                         LayoutVertical(name .. ".Container.LayoutHorizontal.LayoutVertical", {
                             Text(name .. ".Title")

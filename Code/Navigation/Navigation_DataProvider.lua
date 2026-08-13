@@ -29,6 +29,7 @@ local PATH_RECALC_INTERVAL = 5
 local PATH_RECALC_MOVEMENT_THRESHOLD = 10
 local SUPER_TRACKING_SUPPRESSION_DELAY = 0.15
 local PATH_STEP_TRANSITION_DELAY = 0.15
+local IsClearingSessionData = false
 
 
 local DataProviderUtil = {}
@@ -632,12 +633,16 @@ function Navigation_DataProvider:ClearDestinationPinSnapshot()
 end
 
 function Navigation_DataProvider:ClearSessionData(options)
+    if IsClearingSessionData then return end
+    IsClearingSessionData = true
+
     options = DataProviderUtil.NormalizePathClearOptions(options)
 
     self:ClearDestinationPinSnapshot()
     self:StopPathfinding(options)
 
     CallbackRegistry.Trigger("Navigation_DataProvider.ClearSessionData", options)
+    IsClearingSessionData = false
 end
 
 function Navigation_DataProvider:AbortPathfindingFromPathStepWaypoint()

@@ -9,6 +9,7 @@ local ColorPickerFrame = ColorPickerFrame
 local StaticPopup_Show = StaticPopup_Show
 local StaticPopup_Hide = StaticPopup_Hide
 local assert = assert
+local issecretvalue = issecretvalue
 local lower = string.lower
 local band = bit.band
 local GetServerTime = GetServerTime
@@ -17,7 +18,7 @@ local date = date
 
 do -- Bags
     function Utils_Blizzard.FindItemInInventory(itemName)
-        if not itemName then return nil, nil end
+        if not itemName or issecretvalue(itemName) then return nil, nil end
 
         local targetName = lower(itemName)
 
