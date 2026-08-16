@@ -3,10 +3,12 @@ local L = env.L
 local Config = env.Config
 local Pool = env.modules:Import("packages\\pool")
 local CallbackRegistry = env.modules:Import("packages\\callback-registry")
+local SavedVariables = env.modules:Import("packages\\saved-variables")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local UIKit = env.modules:Import("packages\\ui-kit")
 local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
+local SharedUtil = env.modules:Import("@\\SharedUtil")
 local Navigation_DataProvider = env.modules:Await("@\\Navigation\\DataProvider")
 local Waypoint = env.modules:Import("@\\Waypoint")
 local Waypoint_DataProvider = env.modules:Import("@\\Waypoint\\DataProvider")
@@ -196,6 +198,20 @@ do --Map Pin Template
     local WORLD_MAP_HITBOX_INSET = 10
     local MINIMAP_HITBOX_INSET = 16
     local HITBOX_FRAME_LEVEL_OFFSET = 100
+    local APPEARANCE_TEXTURE_MAP = {
+        [env.Enum.ContextIconAppearance.Diamond] = {
+            Normal      = MapPinFrame_Preload.UIDEF.UIMapPinFrame,
+            Highlighted = MapPinFrame_Preload.UIDEF.UIMapPinFrame_Highlighted,
+            Glow        = MapPinFrame_Preload.UIDEF.UIMapPinFrameGlow,
+            Minimap     = MapPinFrame_Preload.UIDEF.UIMinimapPin
+        },
+        [env.Enum.ContextIconAppearance.Circle]  = {
+            Normal      = MapPinFrame_Preload.UIDEF.UIMapPinFrameCircle,
+            Highlighted = MapPinFrame_Preload.UIDEF.UIMapPinFrameCircle_Highlighted,
+            Glow        = MapPinFrame_Preload.UIDEF.UIMapPinFrameCircleGlow,
+            Minimap     = MapPinFrame_Preload.UIDEF.UIMinimapPinCircle
+        }
+    }
 
     local MapPinFrameMixin = CreateFromMixins(UICSharedMixin.ButtonMixin)
 
@@ -308,13 +324,30 @@ do --Map Pin Template
         self.priorityHitbox:SetFrameLevel(max(self:GetFrameLevel() + HITBOX_FRAME_LEVEL_OFFSET, 9000 + HITBOX_FRAME_LEVEL_OFFSET))
     end
 
+    function MapPinFrameMixin:UpdateAppearance()
+        local contextIconAppearance = Config.DBGlobal:GetVariable("ContextIconAppearance")
+        self.Background:SetScale(1 * SharedUtil:GetContextIconScaleOffset())
+        self.Glow:SetScale(1.5 * SharedUtil:GetContextIconScaleOffset())
+
+        if self.displayLayer == MapPinFrame_Preload.Enum.DisplayLayer.Minimap then
+            self.Background:background(APPEARANCE_TEXTURE_MAP[contextIconAppearance].Minimap)
+            self.Glow:background(APPEARANCE_TEXTURE_MAP[contextIconAppearance].Glow)
+            return
+        end
+
+        local buttonState = self:GetButtonState()
+        local highlighted = buttonState == "HIGHLIGHTED" or buttonState == "PUSHED"
+        self.Background:background(highlighted and APPEARANCE_TEXTURE_MAP[contextIconAppearance].Highlighted or APPEARANCE_TEXTURE_MAP[contextIconAppearance].Normal)
+        self.Glow:background(APPEARANCE_TEXTURE_MAP[contextIconAppearance].Glow)
+    end
+
     function MapPinFrameMixin:UpdateAnimation()
         local buttonState = self:GetButtonState()
         local pushed = buttonState == "PUSHED"
 
         self.Container:ClearAllPoints()
         self.Container:SetPoint("CENTER", self, "CENTER", pushed and 1 or 0, pushed and -1 or 0)
-        self.Background:background((pushed or buttonState == "HIGHLIGHTED") and MapPinFrame_Preload.UIDEF.UIMapPinFrame_Highlighted or MapPinFrame_Preload.UIDEF.UIMapPinFrame)
+        self:UpdateAppearance()
     end
 
     function MapPinFrameMixin:SuppressWorldMapCtrlClick(button)
@@ -699,6 +732,8 @@ do --Map Pin Template
     end
 
     function MapPinFrameMixin:Refresh()
+        self:UpdateAppearance()
+
         local pinInfo = self:GetResolvedPinInfo()
         if not MapPin.IsCustomMapPinsEnabled() and not ShouldShowPinWithCustomMapPinsDisabled(self, pinInfo) then
             self:HideFromSurface()
@@ -1099,6 +1134,7 @@ CallbackRegistry.Add("Navigation_DataProvider.ClearSessionData", function(_, opt
     RefreshPathStepWaypointPins()
     UpdateWaypointLocationPinVisibility()
 end)
+SavedVariables.OnChange("WaypointDB_Global", "ContextIconAppearance", RefreshVisiblePins)
 EventRegistry:RegisterCallback("MapCanvas.MapSet", UpdateWaypointLocationPinVisibility)
 EventRegistry:RegisterCallback("WorldMapOnShow", UpdateWaypointLocationPinVisibility)
 

@@ -66,10 +66,13 @@ function WaypointMixin:OnUpdate()
     if not distance then return end
 
     local scale = Config.DBGlobal:GetVariable("WaypointScale") or 1
-    local min = Config.DBGlobal:GetVariable("WaypointScaleMin")
-    local max = Config.DBGlobal:GetVariable("WaypointScaleMax")
-    local newScale = (min == max) and max or GetScaleForDistance(distance, BASE_SCALE_DISTANCE, BASE_SCALE, min, max)
-    newScale = newScale * scale
+    local worldScale = 1
+    if Config.DBGlobal:GetVariable("WaypointUseWorldScale") then
+        local min = Config.DBGlobal:GetVariable("WaypointScaleMin")
+        local max = Config.DBGlobal:GetVariable("WaypointScaleMax")
+        worldScale = (min == max) and max or GetScaleForDistance(distance, BASE_SCALE_DISTANCE, BASE_SCALE, min, max)
+    end
+    local newScale = worldScale * scale
 
     if not self.lastScale or abs(self.lastScale - newScale) > 0.0025 then
         self.lastScale = newScale
@@ -202,10 +205,13 @@ end
 
 function WaypointMixin:SetTint(color)
     self.ContextIcon:SetTint(color)
-    self.Beam.BackgroundTexture:SetColor(color)
     self.Footer.InfoText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
     self.Footer.DistanceText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
     self.Footer.ArrivalTimeText:SetTextColor(color.r or 1, color.g or 1, color.b or 1, color.a or 1)
+end
+
+function WaypointMixin:SetBeamTint(color)
+    self.Beam.BackgroundTexture:SetColor(color)
 end
 
 function WaypointMixin:SetBeam(shown, opacity)
@@ -332,15 +338,21 @@ local PINPOINT_TEXT_ALIGNMENT = {
 }
 
 function PinpointMixin:OnLoad()
+    SavedVariables.OnChange("WaypointDB_Global", "PinpointShowContextIcon", function() self:UpdateContextIcon() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointScale", function() self:UpdateSize() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointAlpha", function() self:UpdateOpacity() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointFontFlags", function() self:_Render() end)
     SavedVariables.OnChange("WaypointDB_Global", "PinpointTextAlignment", function() self:UpdateTextAlignment() end)
     CallbackRegistry.Add("Preload.DatabaseReady", function()
+        self:UpdateContextIcon()
         self:UpdateSize()
         self:UpdateOpacity()
         self:UpdateTextAlignment()
     end)
+end
+
+function PinpointMixin:UpdateContextIcon()
+    self.Background.ContextIcon:SetShown(Config.DBGlobal:GetVariable("PinpointShowContextIcon"))
 end
 
 function PinpointMixin:UpdateTextAlignment()
@@ -556,11 +568,22 @@ function NavigatorMixin:OnLoad()
     self:SetScript("OnUpdate", self.OnUpdate)
     SavedVariables.OnChange("WaypointDB_Global", "NavigatorDistance", function() self:Update(true) end)
     SavedVariables.OnChange("WaypointDB_Global", "NavigatorDynamicDistance", function() self:Update(true) end)
+    SavedVariables.OnChange("WaypointDB_Global", "NavigatorShowContextIcon", function() self:UpdateContextIcon() end)
+    SavedVariables.OnChange("WaypointDB_Global", "NavigatorShowArrow", function() self:UpdateArrowVisibility() end)
     SavedVariables.OnChange("WaypointDB_Global", "NavigatorScale", function() self:UpdateSize() end)
+    SavedVariables.OnChange("WaypointDB_Global", "NavigatorArrowScale", function() self:UpdateArrowSize() end)
     SavedVariables.OnChange("WaypointDB_Global", "NavigatorAlpha", function() self:UpdateOpacity() end)
     CallbackRegistry.Add("Preload.DatabaseReady", function()
-        self:UpdateSize(); self:UpdateOpacity()
+        self:UpdateContextIcon(); self:UpdateArrowVisibility(); self:UpdateSize(); self:UpdateArrowSize(); self:UpdateOpacity()
     end)
+end
+
+function NavigatorMixin:UpdateContextIcon()
+    self.ContextIcon:SetShown(Config.DBGlobal:GetVariable("NavigatorShowContextIcon"))
+end
+
+function NavigatorMixin:UpdateArrowVisibility()
+    self.Arrow:SetShown(Config.DBGlobal:GetVariable("NavigatorShowArrow"))
 end
 
 function NavigatorMixin:OnUpdate()
@@ -660,6 +683,11 @@ end
 function NavigatorMixin:UpdateSize()
     local scale = Config.DBGlobal:GetVariable("NavigatorScale")
     self:SetScale(scale or 1)
+end
+
+function NavigatorMixin:UpdateArrowSize()
+    local scale = Config.DBGlobal:GetVariable("NavigatorArrowScale")
+    self.Arrow:SetScale(scale or 1)
 end
 
 function NavigatorMixin:UpdateOpacity()
@@ -763,8 +791,15 @@ function Waypoint.GetTintColorInfo(ContextIconTexture)
     local recolorQuestCompleteImportant = (useCustomColor and DBGlobal:GetVariable("CustomColorQuestCompleteImportantTint")) or (not useCustomColor and false)
     local recolorOther = (useCustomColor and DBGlobal:GetVariable("CustomColorOtherTint")) or (not useCustomColor and false)
 
+    local beamQuestIncomplete = (useCustomColor and not DBGlobal:GetVariable("CustomColorQuestIncompleteTintBeam") and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestIncompleteBeam"))) or questIncomplete
+    local beamQuestComplete = (useCustomColor and not DBGlobal:GetVariable("CustomColorQuestCompleteTintBeam") and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteBeam"))) or questComplete
+    local beamQuestCompleteRecurring = (useCustomColor and not DBGlobal:GetVariable("CustomColorQuestCompleteRepeatableTintBeam") and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteRepeatableBeam"))) or questCompleteRecurring
+    local beamQuestCompleteImportant = (useCustomColor and not DBGlobal:GetVariable("CustomColorQuestCompleteImportantTintBeam") and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorQuestCompleteImportantBeam"))) or questCompleteImportant
+    local beamOther = (useCustomColor and not DBGlobal:GetVariable("CustomColorOtherTintBeam") and Waypoint.ResolveColorIntegrity(DBGlobal:GetVariable("CustomColorOtherBeam"))) or other
+
 
     local color = nil
+    local beamColor = nil
     local recolor = nil
     local requestRecolor = ContextIconTexture and ContextIconTexture.requestRecolor or false
     local trackingType = Waypoint_Cache.Get("trackingType")
@@ -779,6 +814,7 @@ function Waypoint.GetTintColorInfo(ContextIconTexture)
             b = userNavigation.b,
             a = 1
         }
+        beamColor = color
         recolor = requestRecolor or true
     elseif pinType == Enum.SuperTrackingType.Corpse then
         color = {
@@ -787,32 +823,39 @@ function Waypoint.GetTintColorInfo(ContextIconTexture)
             b = GenericEnum.ColorRGB01.WHITE_FONT_COLOR.b,
             a = 1
         }
+        beamColor = color
         recolor = requestRecolor or false
     elseif trackingType == Waypoint_Enum.TrackingType.CompleteQuest then
         color = questComplete
+        beamColor = beamQuestComplete
         recolor = requestRecolor or recolorQuestComplete
     elseif trackingType == Waypoint_Enum.TrackingType.CompleteRepeatableQuest then
         color = questCompleteRecurring
+        beamColor = beamQuestCompleteRecurring
         recolor = requestRecolor or recolorQuestCompleteRecurring
     elseif trackingType == Waypoint_Enum.TrackingType.CompleteImportantQuest then
         color = questCompleteImportant
+        beamColor = beamQuestCompleteImportant
         recolor = requestRecolor or recolorQuestCompleteImportant
     elseif trackingType == Waypoint_Enum.TrackingType.IncompleteQuest then
         color = questIncomplete
+        beamColor = beamQuestIncomplete
         recolor = requestRecolor or recolorQuestIncomplete
     else
         color = other
+        beamColor = beamOther
         recolor = requestRecolor or recolorOther
     end
 
-    return color, recolor
+    return color, recolor, beamColor
 end
 
 function Waypoint.UpdateColor()
     if not Waypoint.cachedContextIcon then return end
 
-    local tintColor, recolor = Waypoint.GetTintColorInfo(Waypoint.cachedContextIcon)
+    local tintColor, recolor, beamColor = Waypoint.GetTintColorInfo(Waypoint.cachedContextIcon)
     WUIWaypointFrame:SetTint(tintColor)
+    WUIWaypointFrame:SetBeamTint(beamColor)
     WUIWaypointFrame:SetIconRecolor(recolor)
     WUIPinpointFrame:SetTint(tintColor)
     WUIPinpointFrame:SetIconRecolor(recolor)
@@ -833,6 +876,16 @@ SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteTint", Way
 SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatableTint", Waypoint.UpdateColor)
 SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportantTint", Waypoint.UpdateColor)
 SavedVariables.OnChange("WaypointDB_Global", "CustomColorOtherTint", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncompleteTintBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestIncompleteBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteTintBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatableTintBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteRepeatableBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportantTintBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorQuestCompleteImportantBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorOtherTintBeam", Waypoint.UpdateColor)
+SavedVariables.OnChange("WaypointDB_Global", "CustomColorOtherBeam", Waypoint.UpdateColor)
 
 function Waypoint.UpdateAnchors()
     local navFrame = Waypoint_Cache.navFrame

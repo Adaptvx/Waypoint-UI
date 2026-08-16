@@ -1,7 +1,10 @@
 local env = select(2, ...)
+local Config = env.Config
 local Path = env.modules:Import("packages\\path")
 local GenericEnum = env.modules:Import("packages\\generic-enum")
 local UIKit = env.modules:Import("packages\\ui-kit")
+local CallbackRegistry = env.modules:Import("packages\\callback-registry")
+local SavedVariables = env.modules:Import("packages\\saved-variables")
 local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local Waypoint_Preload = env.modules:Import("@\\Waypoint\\Preload")
@@ -124,11 +127,24 @@ end
 do -- Context Icon
     local FOREGROUND_SIZE = UIKit.Define.Percentage{ value = 100, operator = "-", delta = 14 }
     local CONTENT_SIZE = UIKit.Define.Percentage{ value = 28 }
+    local APPEARANCE_TEXTURE_MAP = {
+        [env.Enum.ContextIconAppearance.Diamond] = Waypoint_Preload.UIDEF.UIContextIcon,
+        [env.Enum.ContextIconAppearance.Circle] = Waypoint_Preload.UIDEF.UIContextIconCircle
+    }
 
     local ContextIconMixin = {}
 
     function ContextIconMixin:OnLoad()
         self.tintColor = nil
+        self:UpdateAppearance()
+
+        SavedVariables.OnChange("WaypointDB_Global", "ContextIconAppearance", function() self:UpdateAppearance() end)
+        CallbackRegistry.Add("Preload.DatabaseReady", function() self:UpdateAppearance() end)
+    end
+
+    function ContextIconMixin:UpdateAppearance()
+        if not Config.DBGlobal then return end
+        self.BackgroundFrame:background(APPEARANCE_TEXTURE_MAP[Config.DBGlobal:GetVariable("ContextIconAppearance")])
     end
 
     function ContextIconMixin:SetIcon(texture)
@@ -170,10 +186,10 @@ do -- Context Icon
         local frame =
             Frame(name, {
                 Frame(name .. "Background")
-                    :id("BackgroundTexture", id)
+                    :id("BackgroundFrame", id)
                     :point(UIKit.Enum.Point.Center)
                     :size(FOREGROUND_SIZE, FOREGROUND_SIZE)
-                    :background(Waypoint_Preload.UIDEF.ContextIcon)
+                    :background(Waypoint_Preload.UIDEF.UIContextIcon)
                     :frameLevel(2),
                 Frame(name .. "Image")
                     :id("Image", id)
@@ -183,7 +199,8 @@ do -- Context Icon
                     :size(CONTENT_SIZE, CONTENT_SIZE)
             })
 
-        frame.BackgroundTexture = UIKit.GetElementById("BackgroundTexture", id):GetTextureFrame()
+        frame.BackgroundFrame = UIKit.GetElementById("BackgroundFrame", id)
+        frame.BackgroundTexture = frame.BackgroundFrame:GetTextureFrame()
         frame.ImageTexture = UIKit.GetElementById("Image", id):GetTextureFrame()
 
         Mixin(frame, ContextIconMixin)

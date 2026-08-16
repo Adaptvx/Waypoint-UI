@@ -16,8 +16,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.5.5"
-env.VERSION_NUMBER = 010505
+env.VERSION_STRING = "1.6.0"
+env.VERSION_NUMBER = 010600
 env.DEBUG_MODE = false
 
 
@@ -53,6 +53,16 @@ do
         FarstriderLib = 2,
         Mapzeroth     = 3
     }
+
+    Enum.ContextIconAppearance = {
+        Diamond = 1,
+        Circle  = 2
+    }
+
+    Enum.ContextIconScaleOffset = {
+        [Enum.ContextIconAppearance.Diamond] = 1,
+        [Enum.ContextIconAppearance.Circle]  = 0.85
+    }
 end
 
 
@@ -70,71 +80,89 @@ do
 
     ---@format enable
     local DB_GLOBAL_DEFAULTS = {
-        lastLoadedVersion                      = nil,
-        fontPath                               = nil,
+        lastLoadedVersion                          = nil,
+        fontPath                                   = nil,
 
-        WaypointSystemType                     = 1,
-        DistanceThresholdPinpoint              = 325,
-        DistanceThresholdHidden                = 25,
-        AlwaysShow                             = false,
-        RightClickToClear                      = true,
-        BackgroundPreview                      = true,
-        PrefMetric                             = false,
-        WaypointScale                          = 1,
-        WaypointScaleMin                       = 0.25,
-        WaypointScaleMax                       = 1.5,
-        WaypointAlpha                          = 1,
-        WaypointBeam                           = true,
-        WaypointBeamAlpha                      = 1,
-        WaypointDistanceTextFontFlags          = 1, --UIFont.Enum.FontFlags
-        WaypointDistanceText                   = true,
-        WaypointDistanceTextType               = 1,
-        WaypointDistanceTextScale              = 1,
-        WaypointDistanceTextAlpha              = 1,
-        WaypointDistanceSubtextAlpha           = 0.7,
-        PinpointFontFlags                      = 1, --UIFont.Enum.FontFlags
-        PinpointTextAlignment                  = 1,
-        PinpointAllowInQuestArea               = false,
-        PinpointScale                          = 1,
-        PinpointAlpha                          = 1,
-        PinpointInfo                           = true,
-        PinpointInfoExtended                   = true,
-        NavigatorShow                          = true,
-        NavigatorScale                         = 1,
-        NavigatorAlpha                         = 1,
-        NavigatorDistance                      = 1,
-        NavigatorDynamicDistance               = true,
-        CustomColor                            = false,
-        CustomColorQuestIncomplete             = { r = Enum.ColorRGB01.IncompleteQuest.r, g = Enum.ColorRGB01.IncompleteQuest.g, b = Enum.ColorRGB01.IncompleteQuest.b, a = 1 },
-        CustomColorQuestIncompleteTint         = false,
-        CustomColorQuestComplete               = { r = Enum.ColorRGB01.NormalQuest.r, g = Enum.ColorRGB01.NormalQuest.g, b = Enum.ColorRGB01.NormalQuest.b, a = 1 },
-        CustomColorQuestCompleteTint           = false,
-        CustomColorQuestCompleteRepeatable     = { r = Enum.ColorRGB01.RepeatableQuest.r, g = Enum.ColorRGB01.RepeatableQuest.g, b = Enum.ColorRGB01.RepeatableQuest.b, a = 1 },
-        CustomColorQuestCompleteRepeatableTint = false,
-        CustomColorQuestCompleteImportant      = { r = Enum.ColorRGB01.ImportantQuest.r, g = Enum.ColorRGB01.ImportantQuest.g, b = Enum.ColorRGB01.ImportantQuest.b, a = 1 },
-        CustomColorQuestCompleteImportantTint  = false,
-        CustomColorOther                       = { r = Enum.ColorRGB01.Other.r, g = Enum.ColorRGB01.Other.g, b = Enum.ColorRGB01.Other.b, a = 1 },
-        CustomColorOtherTint                   = false,
-        AudioGlobal                            = true,
-        AudioCustom                            = false,
-        AudioCustomShowWaypoint                = Enum.Sound.WaypointShow,
-        AudioCustomShowPinpoint                = Enum.Sound.PinpointShow,
-        AudioCustomNewUserNavigation           = Enum.Sound.NewUserNavigation,
+        WaypointSystemType                         = 1,
+        DistanceThresholdPinpoint                  = 325,
+        DistanceThresholdHidden                    = 25,
+        AlwaysShow                                 = false,
+        RightClickToClear                          = true,
+        BackgroundPreview                          = true,
+        PrefMetric                                 = false,
+        WaypointScale                              = 1,
+        WaypointUseWorldScale                      = true,
+        WaypointScaleMin                           = 0.01,
+        WaypointScaleMax                           = 2,
+        ContextIconAppearance                      = Enum.ContextIconAppearance.Diamond,
+        WaypointAlpha                              = 1,
+        WaypointBeam                               = true,
+        WaypointBeamAlpha                          = 1,
+        WaypointDistanceTextFontFlags              = 1, --UIFont.Enum.FontFlags
+        WaypointDistanceText                       = true,
+        WaypointDistanceTextType                   = 1,
+        WaypointDistanceTextScale                  = 1,
+        WaypointDistanceTextAlpha                  = 0.7,
+        WaypointDistanceSubtextAlpha               = 0.7,
+        PinpointFontFlags                          = 1, --UIFont.Enum.FontFlags
+        PinpointTextAlignment                      = 1,
+        PinpointAllowInQuestArea                   = false,
+        PinpointScale                              = 1,
+        PinpointAlpha                              = 1,
+        PinpointShowContextIcon                    = true,
+        PinpointInfo                               = true,
+        PinpointInfoExtended                       = true,
+        NavigatorShow                              = true,
+        NavigatorShowContextIcon                   = true,
+        NavigatorShowArrow                         = true,
+        NavigatorScale                             = 1,
+        NavigatorArrowScale                        = 1,
+        NavigatorAlpha                             = 1,
+        NavigatorDistance                          = 1,
+        NavigatorDynamicDistance                   = true,
 
-        CustomMapPinsEnabled                   = false,
-        PathfindingEnabled                     = false,
-        PathfindingProvider                    = Enum.PathProvider.None,
-        AutoTrackPlacedPinEnabled              = true,
-        AutoTrackChatLinkPinEnabled            = true,
-        GuidePinAssistantEnabled               = true,
+        CustomColor                                = false,
+        CustomColorQuestIncomplete                 = { r = Enum.ColorRGB01.IncompleteQuest.r, g = Enum.ColorRGB01.IncompleteQuest.g, b = Enum.ColorRGB01.IncompleteQuest.b, a = 1 },
+        CustomColorQuestIncompleteTint             = false,
+        CustomColorQuestIncompleteTintBeam         = true,
+        CustomColorQuestIncompleteBeam             = { r = Enum.ColorRGB01.IncompleteQuest.r, g = Enum.ColorRGB01.IncompleteQuest.g, b = Enum.ColorRGB01.IncompleteQuest.b, a = 1 },
+        CustomColorQuestComplete                   = { r = Enum.ColorRGB01.NormalQuest.r, g = Enum.ColorRGB01.NormalQuest.g, b = Enum.ColorRGB01.NormalQuest.b, a = 1 },
+        CustomColorQuestCompleteTint               = false,
+        CustomColorQuestCompleteTintBeam           = true,
+        CustomColorQuestCompleteBeam               = { r = Enum.ColorRGB01.NormalQuest.r, g = Enum.ColorRGB01.NormalQuest.g, b = Enum.ColorRGB01.NormalQuest.b, a = 1 },
+        CustomColorQuestCompleteRepeatable         = { r = Enum.ColorRGB01.RepeatableQuest.r, g = Enum.ColorRGB01.RepeatableQuest.g, b = Enum.ColorRGB01.RepeatableQuest.b, a = 1 },
+        CustomColorQuestCompleteRepeatableTint     = false,
+        CustomColorQuestCompleteRepeatableTintBeam = true,
+        CustomColorQuestCompleteRepeatableBeam     = { r = Enum.ColorRGB01.RepeatableQuest.r, g = Enum.ColorRGB01.RepeatableQuest.g, b = Enum.ColorRGB01.RepeatableQuest.b, a = 1 },
+        CustomColorQuestCompleteImportant          = { r = Enum.ColorRGB01.ImportantQuest.r, g = Enum.ColorRGB01.ImportantQuest.g, b = Enum.ColorRGB01.ImportantQuest.b, a = 1 },
+        CustomColorQuestCompleteImportantTint      = false,
+        CustomColorQuestCompleteImportantTintBeam  = true,
+        CustomColorQuestCompleteImportantBeam      = { r = Enum.ColorRGB01.ImportantQuest.r, g = Enum.ColorRGB01.ImportantQuest.g, b = Enum.ColorRGB01.ImportantQuest.b, a = 1 },
+        CustomColorOther                           = { r = Enum.ColorRGB01.Other.r, g = Enum.ColorRGB01.Other.g, b = Enum.ColorRGB01.Other.b, a = 1 },
+        CustomColorOtherTint                       = false,
+        CustomColorOtherTintBeam                   = true,
+        CustomColorOtherBeam                       = { r = Enum.ColorRGB01.Other.r, g = Enum.ColorRGB01.Other.g, b = Enum.ColorRGB01.Other.b, a = 1 },
 
-        TomTomSupportEnabled                   = true,
-        TomTomAutoReplaceWaypoint              = true,
-        DugisSupportEnabled                    = true,
-        DugisAutoReplaceWaypoint               = true,
-        APRSupportEnabled                      = false,
-        APRAutoReplaceWaypoint                 = true,
-        SilverDragonSupportEnabled             = false
+        AudioGlobal                                = true,
+        AudioCustom                                = false,
+        AudioCustomShowWaypoint                    = Enum.Sound.WaypointShow,
+        AudioCustomShowPinpoint                    = Enum.Sound.PinpointShow,
+        AudioCustomNewUserNavigation               = Enum.Sound.NewUserNavigation,
+
+        CustomMapPinsEnabled                       = false,
+        PathfindingEnabled                         = false,
+        PathfindingProvider                        = Enum.PathProvider.None,
+        AutoTrackPlacedPinEnabled                  = true,
+        AutoTrackChatLinkPinEnabled                = true,
+        GuidePinAssistantEnabled                   = true,
+
+        TomTomSupportEnabled                       = true,
+        TomTomAutoReplaceWaypoint                  = true,
+        DugisSupportEnabled                        = true,
+        DugisAutoReplaceWaypoint                   = true,
+        APRSupportEnabled                          = false,
+        APRAutoReplaceWaypoint                     = true,
+        SilverDragonSupportEnabled                 = false
     }
     local DB_GLOBAL_PERSISTENT_DEFAULTS = {}
     local DB_LOCAL_DEFAULTS = {
@@ -418,7 +446,7 @@ do
             MapPin.PasteWayCommands(WUISharedInputPrompt.Input:GetInput():GetText(), {
                 flags          = "WaypointUI_SlashWay",
                 iconTexture    = WAY_COMMAND_ICON,
-                requestRecolor = true,
+                requestRecolor = true
             })
         end
 
@@ -490,7 +518,7 @@ do
                 y              = parsedLine.y,
                 flags          = "WaypointUI_SlashWay",
                 iconTexture    = WAY_COMMAND_ICON,
-                requestRecolor = true,
+                requestRecolor = true
             })
             if not pinInfo or not pinID then
                 if not isTomTomLoaded then

@@ -546,13 +546,19 @@ do -- Color Input
         widget.__lastValue.g = color.g
         widget.__lastValue.b = color.b
 
-        widget:SetLocalValue(color)
+        local value = {
+            r = color.r,
+            g = color.g,
+            b = color.b
+        }
+
+        widget:SetLocalValue(value)
         widget:PushLocalValueToDBKey()
         widget:Refresh(true)
 
         local setFunc = widget.__setFunc
         if setFunc then
-            setFunc(self, color)
+            setFunc(self, value)
         end
     end
 

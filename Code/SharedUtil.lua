@@ -57,9 +57,15 @@ do -- Conversion
     function SharedUtil:FormatDistance(yds)
         if Config.DBGlobal:GetVariable("PrefMetric") then
             local m = self:CalculateDistance(yds)
-            return m > 1000 and string.format("%0.2f", m / 1000) .. "km" or m .. "m"
+            return m > 1000 and string.format("%0.2f", m / 1000) .. " km" or m .. " m"
         else
             return BreakUpLargeNumbers(math.ceil(yds)) .. " yds"
         end
+    end
+end
+
+do -- Context Icon Scale
+    function SharedUtil:GetContextIconScaleOffset()
+        return env.Enum.ContextIconScaleOffset[Config.DBGlobal:GetVariable("ContextIconAppearance")]
     end
 end

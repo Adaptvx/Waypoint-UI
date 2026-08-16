@@ -332,6 +332,21 @@ do -- Schema
             widgetType = Settings_Enum.WidgetType.Tab,
             children   = {
                 {
+                    widgetName = L["CONFIG_APPEARANCE_CONTEXTICON"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    children   = {
+                        {
+                            widgetName               = L["CONFIG_APPEARANCE_CONTEXTICON_APPEARANCE"],
+                            widgetType               = Settings_Enum.WidgetType.SelectionMenu,
+                            widgetSelectionMenu_data = {
+                                L["CONFIG_APPEARANCE_CONTEXTICON_APPEARANCE_DIAMOND"],
+                                L["CONFIG_APPEARANCE_CONTEXTICON_APPEARANCE_CIRCLE"]
+                            },
+                            key                      = "ContextIconAppearance"
+                        }
+                    }
+                },
+                {
                     widgetName = L["CONFIG_APPEARANCE_WAYPOINT"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     showWhen   = function() return Config.DBGlobal:GetVariable("WaypointSystemType") == Waypoint_Enum.WaypointSystemType.Waypoint or Config.DBGlobal:GetVariable("WaypointSystemType") == Waypoint_Enum.WaypointSystemType.All end,
@@ -340,33 +355,41 @@ do -- Schema
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_SCALE"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
                             widgetDescription              = Settings_Define.Descriptor{ description = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_DESCRIPTION"] },
-                            widgetRange_min                = 0.5,
+                            widgetRange_min                = 0.1,
                             widgetRange_max                = 5,
                             widgetRange_step               = 0.1,
                             widgetRange_textFormattingFunc = FormatPercentage,
                             key                            = "WaypointScale"
                         },
                         {
+                            widgetName = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_USEWORLDSCALE"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "WaypointUseWorldScale",
+                            indent     = 1
+                        },
+                        {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
+                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointUseWorldScale") == true end,
                             widgetDescription              = Settings_Define.Descriptor{ description = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MIN_DESCRIPTION"] },
-                            widgetRange_min                = 0.125,
+                            widgetRange_min                = 0.01,
                             widgetRange_max                = 1,
-                            widgetRange_step               = 0.125,
+                            widgetRange_step               = 0.01,
                             widgetRange_textFormattingFunc = FormatPercentage,
                             key                            = "WaypointScaleMin",
-                            indent                         = 1
+                            indent                         = 2
                         },
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
+                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointUseWorldScale") == true end,
                             widgetDescription              = Settings_Define.Descriptor{ description = L["CONFIG_APPEARANCE_WAYPOINT_SCALE_MAX_DESCRIPTION"] },
                             widgetRange_min                = 1,
                             widgetRange_max                = 2,
                             widgetRange_step               = 0.1,
                             widgetRange_textFormattingFunc = FormatPercentage,
                             key                            = "WaypointScaleMax",
-                            indent                         = 1
+                            indent                         = 2
                         },
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_ALPHA"],
@@ -462,6 +485,11 @@ do -- Schema
                     showWhen   = function() return Config.DBGlobal:GetVariable("WaypointSystemType") == Waypoint_Enum.WaypointSystemType.Pinpoint or Config.DBGlobal:GetVariable("WaypointSystemType") == Waypoint_Enum.WaypointSystemType.All end,
                     children   = {
                         {
+                            widgetName = L["CONFIG_APPEARANCE_PINPOINT_SHOWCONTEXTICON"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "PinpointShowContextIcon"
+                        },
+                        {
                             widgetName                     = L["CONFIG_APPEARANCE_PINPOINT_SCALE"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
                             widgetRange_min                = 0.5,
@@ -525,6 +553,16 @@ do -- Schema
                     showWhen   = function() return Config.DBGlobal:GetVariable("NavigatorShow") == true end,
                     children   = {
                         {
+                            widgetName = L["CONFIG_APPEARANCE_NAVIGATOR_SHOWCONTEXTICON"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "NavigatorShowContextIcon"
+                        },
+                        {
+                            widgetName = L["CONFIG_APPEARANCE_NAVIGATOR_SHOWARROW"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "NavigatorShowArrow"
+                        },
+                        {
                             widgetName                     = L["CONFIG_APPEARANCE_NAVIGATOR_SCALE"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
                             indent                         = 0,
@@ -533,6 +571,15 @@ do -- Schema
                             widgetRange_step               = 0.1,
                             widgetRange_textFormattingFunc = FormatPercentage,
                             key                            = "NavigatorScale"
+                        },
+                        {
+                            widgetName                     = L["CONFIG_APPEARANCE_NAVIGATOR_ARROWSCALE"],
+                            widgetType                     = Settings_Enum.WidgetType.Range,
+                            widgetRange_min                = 0.8,
+                            widgetRange_max                = 1.2,
+                            widgetRange_step               = 0.1,
+                            widgetRange_textFormattingFunc = FormatPercentage,
+                            key                            = "NavigatorArrowScale"
                         },
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_NAVIGATOR_ALPHA"],
@@ -587,12 +634,27 @@ do -- Schema
                                     indent     = 1
                                 },
                                 {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_TINTBEAM"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "CustomColorQuestCompleteTintBeam",
+                                    indent     = 1
+                                },
+                                {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_BEAMCOLOR"],
+                                    widgetType = Settings_Enum.WidgetType.ColorInput,
+                                    key        = "CustomColorQuestCompleteBeam",
+                                    showWhen   = function() return Config.DBGlobal:GetVariable("CustomColorQuestCompleteTintBeam") == false end,
+                                    indent     = 2
+                                },
+                                {
                                     widgetType                  = Settings_Enum.WidgetType.Button,
                                     widgetButton_text           = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_RESET"],
                                     widgetButton_refreshOnClick = true,
                                     set                         = function()
                                         Config.DBGlobal:ResetVariable("CustomColorQuestComplete")
                                         Config.DBGlobal:ResetVariable("CustomColorQuestCompleteTint")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteTintBeam")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteBeam")
                                     end
                                 }
                             }
@@ -615,12 +677,27 @@ do -- Schema
                                     indent     = 1
                                 },
                                 {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_TINTBEAM"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "CustomColorQuestCompleteRepeatableTintBeam",
+                                    indent     = 1
+                                },
+                                {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_BEAMCOLOR"],
+                                    widgetType = Settings_Enum.WidgetType.ColorInput,
+                                    key        = "CustomColorQuestCompleteRepeatableBeam",
+                                    showWhen   = function() return Config.DBGlobal:GetVariable("CustomColorQuestCompleteRepeatableTintBeam") == false end,
+                                    indent     = 2
+                                },
+                                {
                                     widgetType                  = Settings_Enum.WidgetType.Button,
                                     widgetButton_text           = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_RESET"],
                                     widgetButton_refreshOnClick = true,
                                     set                         = function()
                                         Config.DBGlobal:ResetVariable("CustomColorQuestCompleteRepeatable")
                                         Config.DBGlobal:ResetVariable("CustomColorQuestCompleteRepeatableTint")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteRepeatableTintBeam")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteRepeatableBeam")
                                     end
                                 }
                             }
@@ -643,12 +720,27 @@ do -- Schema
                                     indent     = 1
                                 },
                                 {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_TINTBEAM"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "CustomColorQuestCompleteImportantTintBeam",
+                                    indent     = 1
+                                },
+                                {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_BEAMCOLOR"],
+                                    widgetType = Settings_Enum.WidgetType.ColorInput,
+                                    key        = "CustomColorQuestCompleteImportantBeam",
+                                    showWhen   = function() return Config.DBGlobal:GetVariable("CustomColorQuestCompleteImportantTintBeam") == false end,
+                                    indent     = 2
+                                },
+                                {
                                     widgetType                  = Settings_Enum.WidgetType.Button,
                                     widgetButton_text           = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_RESET"],
                                     widgetButton_refreshOnClick = true,
                                     set                         = function()
                                         Config.DBGlobal:ResetVariable("CustomColorQuestCompleteImportant")
                                         Config.DBGlobal:ResetVariable("CustomColorQuestCompleteImportantTint")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteImportantTintBeam")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestCompleteImportantBeam")
                                     end
                                 }
                             }
@@ -671,12 +763,27 @@ do -- Schema
                                     indent     = 1
                                 },
                                 {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_TINTBEAM"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "CustomColorQuestIncompleteTintBeam",
+                                    indent     = 1
+                                },
+                                {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_BEAMCOLOR"],
+                                    widgetType = Settings_Enum.WidgetType.ColorInput,
+                                    key        = "CustomColorQuestIncompleteBeam",
+                                    showWhen   = function() return Config.DBGlobal:GetVariable("CustomColorQuestIncompleteTintBeam") == false end,
+                                    indent     = 2
+                                },
+                                {
                                     widgetType                  = Settings_Enum.WidgetType.Button,
                                     widgetButton_text           = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_RESET"],
                                     widgetButton_refreshOnClick = true,
                                     set                         = function()
                                         Config.DBGlobal:ResetVariable("CustomColorQuestIncomplete")
                                         Config.DBGlobal:ResetVariable("CustomColorQuestIncompleteTint")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestIncompleteTintBeam")
+                                        Config.DBGlobal:ResetVariable("CustomColorQuestIncompleteBeam")
                                     end
                                 }
                             }
@@ -699,12 +806,27 @@ do -- Schema
                                     indent     = 1
                                 },
                                 {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_TINTBEAM"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "CustomColorOtherTintBeam",
+                                    indent     = 1
+                                },
+                                {
+                                    widgetName = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_BEAMCOLOR"],
+                                    widgetType = Settings_Enum.WidgetType.ColorInput,
+                                    key        = "CustomColorOtherBeam",
+                                    showWhen   = function() return Config.DBGlobal:GetVariable("CustomColorOtherTintBeam") == false end,
+                                    indent     = 2
+                                },
+                                {
                                     widgetType                  = Settings_Enum.WidgetType.Button,
                                     widgetButton_text           = L["CONFIG_APPEARANCE_COLOR_CUSTOMCOLOR_RESET"],
                                     widgetButton_refreshOnClick = true,
                                     set                         = function()
                                         Config.DBGlobal:ResetVariable("CustomColorOther")
                                         Config.DBGlobal:ResetVariable("CustomColorOtherTint")
+                                        Config.DBGlobal:ResetVariable("CustomColorOtherTintBeam")
+                                        Config.DBGlobal:ResetVariable("CustomColorOtherBeam")
                                     end
                                 }
                             }
