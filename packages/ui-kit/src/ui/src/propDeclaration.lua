@@ -533,6 +533,13 @@ end
 
 do -- Layout Group
     -- React
+    FrameProps["layoutGrow"] = function(frame, growValue)
+        growValue = HandleReact(frame, growValue, "layoutGrow")
+        assert(type(growValue) == "number" and growValue >= 0, "Invalid variable `layoutGrow`: Must be a non-negative number")
+        frame.uk_prop_layoutGrow = growValue
+    end
+
+    -- React
     FrameProps["layoutSpacing"] = function(frame, spacingValue)
         spacingValue = HandleReact(frame, spacingValue, "layoutSpacing")
         assert(type(spacingValue) == "number" or spacingValue == UIKit_Define.Percentage, "Invalid variable `layoutSpacing`: Must be of type `number` or `UIKit.Define.Percentage`")

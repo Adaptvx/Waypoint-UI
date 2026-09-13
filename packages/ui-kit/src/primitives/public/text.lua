@@ -16,7 +16,7 @@ local Method_SetText = getmetatable(dummy).__index.SetText
 local Method_SetFormattedText = getmetatable(dummy).__index.SetFormattedText
 
 local TEXT_PORT_METHODS = {
-    "CalculateScreenAreaFromCharacterSpan", "CanNonSpaceWrap", "CanWordWrap",
+    "CalculateScreenAreaFromCharacterSpan", "CanNonSpaceWrap", "CanWordWrap", "ClearAlphaGradient",
     "FindCharacterIndexAtCoordinate", "GetFieldSize", "GetFont", "GetFontObject",
     "GetIndentedWordWrap", "GetJustifyH", "GetJustifyV", "GetLineHeight",
     "GetMaxLines", "GetNumLines", "GetRotation", "GetShadowColor",

@@ -16,8 +16,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.7.0"
-env.VERSION_NUMBER = 010700
+env.VERSION_STRING = "1.7.1"
+env.VERSION_NUMBER = 010701
 env.DEBUG_MODE = false
 
 
@@ -46,7 +46,8 @@ do
         WaypointShow      = SOUNDKIT.UI_RUNECARVING_OPEN_MAIN_WINDOW,
         PinpointShow      = SOUNDKIT.UI_RUNECARVING_CLOSE_MAIN_WINDOW,
         NewUserNavigation = 89712,
-        Proximity         = 17318
+        ProximityEntry    = 17318,
+        ProximityLeaving  = 13827
     }
 
     Enum.PathProvider = {
@@ -147,7 +148,9 @@ do
         AudioGlobal                                = true,
         AudioProximity                             = false,
         AudioProximityDistance                     = 200,
-        AudioProximitySound                        = Enum.Sound.Proximity,
+        AudioProximitySound                        = Enum.Sound.ProximityEntry,
+        AudioProximityLeavingDistance              = 200,
+        AudioProximityLeavingSound                 = Enum.Sound.ProximityLeaving,
         AudioCustom                                = false,
         AudioCustomShowWaypoint                    = Enum.Sound.WaypointShow,
         AudioCustomShowPinpoint                    = Enum.Sound.PinpointShow,

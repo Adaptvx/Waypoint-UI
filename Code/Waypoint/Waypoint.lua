@@ -1015,7 +1015,8 @@ local function PlayPinpointShowAudio()
 end
 
 do -- Proximity Audio
-    local hasPlayed = false
+    local hasPlayed = nil
+    local wasInsideLeavingDistance = nil
     local isDistanceReady = false
 
     local function UpdateProximityAudio()
@@ -1025,19 +1026,29 @@ do -- Proximity Audio
         if not distance or distance < 0 then return end
 
         local proximityDistance = Config.DBGlobal:GetVariable("AudioProximityDistance")
+        if hasPlayed == nil then hasPlayed = distance < proximityDistance end
+
         if distance > proximityDistance * 2 then
             hasPlayed = false
         elseif not hasPlayed and distance < proximityDistance and Config.DBGlobal:GetVariable("AudioGlobal") and Config.DBGlobal:GetVariable("AudioProximity") and not Waypoint_Director.IsSuperTrackedTargetIgnored() then
             Sound.PlaySound("Main", Config.DBGlobal:GetVariable("AudioProximitySound"))
             hasPlayed = true
         end
+
+        local leavingDistance = Config.DBGlobal:GetVariable("AudioProximityLeavingDistance")
+        if wasInsideLeavingDistance and distance > leavingDistance and Config.DBGlobal:GetVariable("AudioGlobal") and Config.DBGlobal:GetVariable("AudioProximity") and not Waypoint_Director.IsSuperTrackedTargetIgnored() then
+            Sound.PlaySound("Main", Config.DBGlobal:GetVariable("AudioProximityLeavingSound"))
+        end
+        wasInsideLeavingDistance = distance <= leavingDistance
     end
 
     CallbackRegistry.Add("Waypoint.SuperTrackingChanged", function()
         hasPlayed = false
+        wasInsideLeavingDistance = nil
         isDistanceReady = false
     end)
     CallbackRegistry.Add("Waypoint.ActiveChanged", function()
+        wasInsideLeavingDistance = nil
         isDistanceReady = false
     end)
     CallbackRegistry.Add("Waypoint.DistanceReady", function()
@@ -1048,6 +1059,10 @@ do -- Proximity Audio
     SavedVariables.OnChange("WaypointDB_Global", "AudioGlobal", UpdateProximityAudio)
     SavedVariables.OnChange("WaypointDB_Global", "AudioProximity", UpdateProximityAudio)
     SavedVariables.OnChange("WaypointDB_Global", "AudioProximityDistance", UpdateProximityAudio)
+    SavedVariables.OnChange("WaypointDB_Global", "AudioProximityLeavingDistance", function()
+        wasInsideLeavingDistance = nil
+        UpdateProximityAudio()
+    end)
 end
 
 do --Animation

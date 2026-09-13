@@ -88,7 +88,7 @@ do -- Stepper
     end
 
     function StepperButtonMixin:PlayInteractSound()
-        Sound.PlaySound("UI", SOUNDKIT.SCROLLBAR_STEP)
+        Sound.PlaySound("UI", SOUNDKIT.SCROLLBAR_STEP or SOUNDKIT.U_CHAT_SCROLL_BUTTON)
     end
 
     UICCommonRange.StepperButton = UIKit.Template(function(id, name, children, ...)

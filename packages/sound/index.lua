@@ -19,7 +19,6 @@ function Sound.PlaySoundFile(layer, filePath, force)
 end
 
 function Sound.PlaySound(layer, soundID, force)
-    assert(soundID, "Invalid variable `soundID`")
     if not tonumber(soundID) then return end
     if not force and IsLayerEnabled(layer) == false then return end
     PlaySound(soundID, "SFX")

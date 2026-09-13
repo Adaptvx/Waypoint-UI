@@ -6,6 +6,7 @@ local UIKit_Primitives_Frame = env.modules:Import("packages\\ui-kit\\primitives\
 local UIKit_Primitives_LayoutHorizontal = env.modules:New("packages\\ui-kit\\primitives\\layout-horizontal")
 
 local Mixin = Mixin
+local max = math.max
 local type = type
 local UIKit_Enum_Direction_Leading = UIKit_Enum.Direction.Leading
 local UIKit_Enum_Direction_Justified = UIKit_Enum.Direction.Justified
@@ -19,6 +20,7 @@ function LayoutHorizontalMixin:OnLoad()
     self.__visibleChildren = {}
     self.__cachedWidths = {}
     self.__cachedHeights = {}
+    self.__growBaseWidths = {}
     self.__visibleCount = 0
 end
 
@@ -38,9 +40,10 @@ function LayoutHorizontalMixin:RenderElements()
     local visibleChildren = self.__visibleChildren
     local cachedWidths = self.__cachedWidths
     local cachedHeights = self.__cachedHeights
+    local growBaseWidths = self.__growBaseWidths
     local prevCount = self.__visibleCount or 0
 
-    local totalChildrenWidth, maxChildHeight, visibleChildCount = 0, 0, 0
+    local totalChildrenWidth, maxChildHeight, visibleChildCount, totalGrow = 0, 0, 0, 0
 
     for childIndex = 1, #allChildren do
         local child = allChildren[childIndex]
@@ -51,6 +54,21 @@ function LayoutHorizontalMixin:RenderElements()
 
             local childWidth, childHeight = child:GetSize()
             childWidth, childHeight = childWidth or 0, childHeight or 0
+
+            local grow = child.uk_prop_layoutGrow or 0
+            local growBaseWidth = growBaseWidths[child]
+            if grow > 0 then
+                if growBaseWidth == nil then
+                    growBaseWidth = childWidth
+                    growBaseWidths[child] = growBaseWidth
+                end
+                childWidth = growBaseWidth
+                totalGrow = totalGrow + grow
+            elseif growBaseWidth ~= nil then
+                childWidth = growBaseWidth
+                growBaseWidths[child] = nil
+                if child:GetWidth() ~= childWidth then child:SetWidth(childWidth) end
+            end
 
             cachedWidths[visibleChildCount] = childWidth
             cachedHeights[visibleChildCount] = childHeight
@@ -83,6 +101,20 @@ function LayoutHorizontalMixin:RenderElements()
     if shouldFitHeight then
         containerHeight = self:ResolveFitSize("height", maxChildHeight, self.uk_prop_height)
         self:SetHeight(containerHeight)
+    end
+
+    if totalGrow > 0 then
+        local remainingWidth = max(0, containerWidth - contentWidth)
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
+            local grow = child.uk_prop_layoutGrow or 0
+            if grow > 0 then
+                local childWidth = cachedWidths[childIndex] + remainingWidth * grow / totalGrow
+                cachedWidths[childIndex] = childWidth
+                if child:GetWidth() ~= childWidth then child:SetWidth(childWidth) end
+            end
+        end
+        contentWidth = contentWidth + remainingWidth
     end
 
     local horizontalAlignment = self.uk_prop_layoutAlignmentH or UIKit_Enum_Direction_Leading

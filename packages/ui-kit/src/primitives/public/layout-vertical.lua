@@ -6,6 +6,7 @@ local UIKit_Primitives_Frame = env.modules:Import("packages\\ui-kit\\primitives\
 local UIKit_Primitives_LayoutVertical = env.modules:New("packages\\ui-kit\\primitives\\layout-vertical")
 
 local Mixin = Mixin
+local max = math.max
 local type = type
 local UIKit_Enum_Direction_Leading = UIKit_Enum.Direction.Leading
 local UIKit_Enum_Direction_Justified = UIKit_Enum.Direction.Justified
@@ -19,6 +20,7 @@ function LayoutVerticalMixin:OnLoad()
     self.__visibleChildren = {}
     self.__cachedWidths = {}
     self.__cachedHeights = {}
+    self.__growBaseHeights = {}
     self.__visibleCount = 0
 end
 
@@ -38,9 +40,10 @@ function LayoutVerticalMixin:RenderElements()
     local visibleChildren = self.__visibleChildren
     local cachedWidths = self.__cachedWidths
     local cachedHeights = self.__cachedHeights
+    local growBaseHeights = self.__growBaseHeights
     local prevCount = self.__visibleCount or 0
 
-    local totalChildrenHeight, maxChildWidth, visibleChildCount, sizedChildCount = 0, 0, 0, 0
+    local totalChildrenHeight, maxChildWidth, visibleChildCount, sizedChildCount, totalGrow = 0, 0, 0, 0, 0
 
     for childIndex = 1, #allChildren do
         local child = allChildren[childIndex]
@@ -52,12 +55,27 @@ function LayoutVerticalMixin:RenderElements()
             local childWidth, childHeight = child:GetSize()
             childWidth, childHeight = childWidth or 0, childHeight or 0
 
+            local grow = child.uk_prop_layoutGrow or 0
+            local growBaseHeight = growBaseHeights[child]
+            if grow > 0 then
+                if growBaseHeight == nil then
+                    growBaseHeight = childHeight
+                    growBaseHeights[child] = growBaseHeight
+                end
+                childHeight = growBaseHeight
+                totalGrow = totalGrow + grow
+            elseif growBaseHeight ~= nil then
+                childHeight = growBaseHeight
+                growBaseHeights[child] = nil
+                if child:GetHeight() ~= childHeight then child:SetHeight(childHeight) end
+            end
+
             cachedWidths[visibleChildCount] = childWidth
             cachedHeights[visibleChildCount] = childHeight
 
             totalChildrenHeight = totalChildrenHeight + childHeight
             if childWidth > maxChildWidth then maxChildWidth = childWidth end
-            if childHeight > 0 then sizedChildCount = sizedChildCount + 1 end
+            if childHeight > 0 or grow > 0 then sizedChildCount = sizedChildCount + 1 end
         end
     end
 
@@ -87,6 +105,20 @@ function LayoutVerticalMixin:RenderElements()
         self:SetHeight(containerHeight)
     end
 
+    if totalGrow > 0 then
+        local remainingHeight = max(0, containerHeight - contentHeight)
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
+            local grow = child.uk_prop_layoutGrow or 0
+            if grow > 0 then
+                local childHeight = cachedHeights[childIndex] + remainingHeight * grow / totalGrow
+                cachedHeights[childIndex] = childHeight
+                if child:GetHeight() ~= childHeight then child:SetHeight(childHeight) end
+            end
+        end
+        contentHeight = contentHeight + remainingHeight
+    end
+
     local horizontalAlignment = self.uk_prop_layoutAlignmentH or UIKit_Enum_Direction_Leading
     local verticalAlignment = self.uk_prop_layoutAlignmentV or UIKit_Enum_Direction_Leading
 
@@ -104,7 +136,9 @@ function LayoutVerticalMixin:RenderElements()
             or horizontalAlignment == UIKit_Enum_Direction_Trailing and (containerWidth - childWidth)
             or 0
 
-        if childHeight > 0 and hasPlacedSizedChild then
+        local grow = child.uk_prop_layoutGrow or 0
+        local isSizedChild = childHeight > 0 or grow > 0
+        if isSizedChild and hasPlacedSizedChild then
             currentY = currentY + spacing
         end
 
@@ -112,7 +146,7 @@ function LayoutVerticalMixin:RenderElements()
         child:SetPoint("TOPLEFT", self, "TOPLEFT", horizontalOffset, -currentY)
 
         currentY = currentY + childHeight
-        if childHeight > 0 then hasPlacedSizedChild = true end
+        if isSizedChild then hasPlacedSizedChild = true end
     end
 end
 
