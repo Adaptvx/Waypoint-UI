@@ -12,13 +12,13 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UIRow               = UICCommonPreload.ATLAS{ inset = 4, scale = 1, left = 401 / 512, right = 433 / 512, top = 102 / 512, bottom = 118 / 512 },
-    UIMenu              = UICCommonPreload.ATLAS{ inset = { 35, 35, 22, 51 }, scale = 0.9, left = 192 / 512, right = 319 / 512, top = 98 / 512, bottom = 192 / 512 },
-    UIArrow             = UICCommonPreload.ATLAS{ left = 319 / 512, right = 345 / 512, top = 137 / 512, bottom = 163 / 512 },
-    UIArrow_Highlighted = UICCommonPreload.ATLAS{ left = 349 / 512, right = 375 / 512, top = 137 / 512, bottom = 163 / 512 },
-    UIArrow_Pushed      = UICCommonPreload.ATLAS{ left = 380 / 512, right = 406 / 512, top = 137 / 512, bottom = 163 / 512 },
-    UIEdgeFade_Top      = UICCommonPreload.ATLAS{ inset = 0, left = 321 / 512, right = 353 / 512, top = 102 / 512, bottom = 134 / 512 },
-    UIEdgeFade_Bottom   = UICCommonPreload.ATLAS{ inset = 0, left = 361 / 512, right = 393 / 512, top = 102 / 512, bottom = 134 / 512 }
+    UIRow               = UICCommonPreload.ATLAS{ inset = 4, scale = 1, left = 401 / 1024, right = 433 / 1024, top = 102 / 512, bottom = 118 / 512 },
+    UIMenu              = UICCommonPreload.ATLAS{ inset = { 35, 35, 22, 51 }, scale = 0.9, left = 192 / 1024, right = 319 / 1024, top = 98 / 512, bottom = 192 / 512 },
+    UIArrow             = UICCommonPreload.ATLAS{ left = 319 / 1024, right = 345 / 1024, top = 137 / 512, bottom = 163 / 512 },
+    UIArrow_Highlighted = UICCommonPreload.ATLAS{ left = 349 / 1024, right = 375 / 1024, top = 137 / 512, bottom = 163 / 512 },
+    UIArrow_Pushed      = UICCommonPreload.ATLAS{ left = 380 / 1024, right = 406 / 1024, top = 137 / 512, bottom = 163 / 512 },
+    UIEdgeFade_Top      = UICCommonPreload.ATLAS{ inset = 0, left = 321 / 1024, right = 353 / 1024, top = 102 / 512, bottom = 134 / 512 },
+    UIEdgeFade_Bottom   = UICCommonPreload.ATLAS{ inset = 0, left = 361 / 1024, right = 393 / 1024, top = 102 / 512, bottom = 134 / 512 }
 }
 
 do -- Row

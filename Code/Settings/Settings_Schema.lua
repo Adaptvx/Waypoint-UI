@@ -53,6 +53,7 @@ local Config = env.Config
 local L = env.L
 local Sound = env.modules:Import("packages\\sound")
 local UIFont = env.modules:Import("packages\\ui-font")
+local InputHandler = env.modules:Import("packages\\input-handler")
 local SharedUtil = env.modules:Import("@\\SharedUtil")
 local Navigation = env.modules:Import("@\\Navigation\\DataProvider")
 local Waypoint_Enum = env.modules:Import("@\\Waypoint\\Enum")
@@ -60,6 +61,8 @@ local Settings_Define = env.modules:Import("@\\Settings\\Define")
 local Settings_Enum = env.modules:Import("@\\Settings\\Enum")
 local Settings_Preload = env.modules:Import("@\\Settings\\Preload")
 local Settings_Schema = env.modules:New("@\\Settings\\Schema")
+
+Settings_Schema.BINDING_BUTTON_OPTIONS = nil
 
 local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 local SettingsPrompt = _G[Settings_Preload.FRAME_NAME].Prompt
@@ -1121,7 +1124,7 @@ do -- Schema
         {
             widgetName = L["CONFIG_EXTENSIONS"],
             widgetType = Settings_Enum.WidgetType.Tab,
-            showWhen   = function() return IsAddOnLoaded("TomTom") or IsAddOnLoaded("DugisGuideViewerZ") or IsAddOnLoaded("APR") or IsAddOnLoaded("SilverDragon") end,
+            showWhen   = function() return IsAddOnLoaded("TomTom") or IsAddOnLoaded("Mapzeroth") or IsAddOnLoaded("RXPGuides") or IsAddOnLoaded("DugisGuideViewerZ") or IsAddOnLoaded("APR") or IsAddOnLoaded("SilverDragon") end,
             children   = {
                 {
                     widgetName = L["CONFIG_EXTENSIONS_TOMTOMSUPPORT"],
@@ -1140,6 +1143,48 @@ do -- Schema
                             widgetType        = Settings_Enum.WidgetType.CheckButton,
                             key               = "TomTomAutoReplaceWaypoint",
                             showWhen          = function() return Config.DBGlobal:GetVariable("TomTomSupportEnabled") == true end,
+                            indent            = 1
+                        }
+                    }
+                },
+                {
+                    widgetName = L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    showWhen   = function() return IsAddOnLoaded("Mapzeroth") end,
+                    children   = {
+                        {
+                            widgetName        = L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "MapzerothSupportEnabled"
+                        },
+                        {
+                            widgetName        = L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "MapzerothAutoReplaceWaypoint",
+                            showWhen          = function() return Config.DBGlobal:GetVariable("MapzerothSupportEnabled") == true end,
+                            indent            = 1
+                        }
+                    }
+                },
+                {
+                    widgetName = L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    showWhen   = function() return IsAddOnLoaded("RXPGuides") end,
+                    children   = {
+                        {
+                            widgetName        = L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "RestedXPSupportEnabled"
+                        },
+                        {
+                            widgetName        = L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "RestedXPAutoReplaceWaypoint",
+                            showWhen          = function() return Config.DBGlobal:GetVariable("RestedXPSupportEnabled") == true end,
                             indent            = 1
                         }
                     }

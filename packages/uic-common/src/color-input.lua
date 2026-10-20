@@ -10,11 +10,11 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UIColorInput              = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 7/512, right = 100/512, top = 242/512, bottom = 283/512 },
-    UIColorInput_Disabled     = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 106/512, right = 199/512, top = 242/512, bottom = 283/512 },
-    UIColorInputFill          = UICCommonPreload.ATLAS{ left = 202/512, right = 292/512, top = 243/512, bottom = 282/512 },
-    UIColorInputFill_Pushed   = UICCommonPreload.ATLAS{ left = 292/512, right = 382/512, top = 243/512, bottom = 282/512 },
-    UIColorInputFill_Disabled = UICCommonPreload.ATLAS{ left = 382/512, right = 472/512, top = 243/512, bottom = 282/512 }
+    UIColorInput              = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 7/1024, right = 100/1024, top = 242/512, bottom = 283/512 },
+    UIColorInput_Disabled     = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 106/1024, right = 199/1024, top = 242/512, bottom = 283/512 },
+    UIColorInputFill          = UICCommonPreload.ATLAS{ left = 202/1024, right = 292/1024, top = 243/512, bottom = 282/512 },
+    UIColorInputFill_Pushed   = UICCommonPreload.ATLAS{ left = 292/1024, right = 382/1024, top = 243/512, bottom = 282/512 },
+    UIColorInputFill_Disabled = UICCommonPreload.ATLAS{ left = 382/1024, right = 472/1024, top = 243/512, bottom = 282/512 }
 }
 
 do --Color Input

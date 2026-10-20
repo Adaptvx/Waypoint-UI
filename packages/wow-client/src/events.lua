@@ -40,21 +40,3 @@ do -- Addon Lifecycle
     end)
 end
 
-do -- Mouse
-    WoWClient_Events.IsPlayerTurning = false
-    WoWClient_Events.IsPlayerLooking = false
-
-    local f = CreateFrame("Frame")
-    f:RegisterEvent("PLAYER_STARTED_LOOKING")
-    f:RegisterEvent("PLAYER_STOPPED_LOOKING")
-    f:RegisterEvent("PLAYER_STARTED_TURNING")
-    f:RegisterEvent("PLAYER_STOPPED_TURNING")
-    f:SetScript("OnEvent", function(self, event, ...)
-        if event == "PLAYER_STARTED_TURNING" or event == "PLAYER_STOPPED_TURNING" then
-            WoWClient_Events.IsPlayerTurning = (event == "PLAYER_STARTED_TURNING")
-        end
-        if event == "PLAYER_STARTED_MOVING" or event == "PLAYER_STOPPED_MOVING" then
-            WoWClient_Events.IsPlayerLooking = (event == "PLAYER_STARTED_MOVING")
-        end
-    end)
-end

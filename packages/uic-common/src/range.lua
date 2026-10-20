@@ -12,20 +12,20 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UIStepperArrowLeft              = UICCommonPreload.ATLAS{ left = 92/512, right = 117/512, top = 415/512, bottom = 440/512 },
-    UIStepperArrowLeft_Highlighted  = UICCommonPreload.ATLAS{ left = 115/512, right = 140/512, top = 415/512, bottom = 440/512 },
-    UIStepperArrowLeft_Pushed       = UICCommonPreload.ATLAS{ left = 138/512, right = 163/512, top = 415/512, bottom = 440/512 },
-    UIStepperArrowLeft_Disabled     = UICCommonPreload.ATLAS{ left = 161/512, right = 186/512, top = 415/512, bottom = 440/512 },
-    UIStepperArrowRight             = UICCommonPreload.ATLAS{ left = 90/512, right = 115/512, top = 446/512, bottom = 471/512 },
-    UIStepperArrowRight_Highlighted = UICCommonPreload.ATLAS{ left = 113/512, right = 138/512, top = 446/512, bottom = 471/512 },
-    UIStepperArrowRight_Pushed      = UICCommonPreload.ATLAS{ left = 136/512, right = 161/512, top = 446/512, bottom = 471/512 },
-    UIStepperArrowRight_Disabled    = UICCommonPreload.ATLAS{ left = 159/512, right = 184/512, top = 446/512, bottom = 471/512 },
+    UIStepperArrowLeft              = UICCommonPreload.ATLAS{ left = 92/1024, right = 117/1024, top = 415/512, bottom = 440/512 },
+    UIStepperArrowLeft_Highlighted  = UICCommonPreload.ATLAS{ left = 115/1024, right = 140/1024, top = 415/512, bottom = 440/512 },
+    UIStepperArrowLeft_Pushed       = UICCommonPreload.ATLAS{ left = 138/1024, right = 163/1024, top = 415/512, bottom = 440/512 },
+    UIStepperArrowLeft_Disabled     = UICCommonPreload.ATLAS{ left = 161/1024, right = 186/1024, top = 415/512, bottom = 440/512 },
+    UIStepperArrowRight             = UICCommonPreload.ATLAS{ left = 90/1024, right = 115/1024, top = 446/512, bottom = 471/512 },
+    UIStepperArrowRight_Highlighted = UICCommonPreload.ATLAS{ left = 113/1024, right = 138/1024, top = 446/512, bottom = 471/512 },
+    UIStepperArrowRight_Pushed      = UICCommonPreload.ATLAS{ left = 136/1024, right = 161/1024, top = 446/512, bottom = 471/512 },
+    UIStepperArrowRight_Disabled    = UICCommonPreload.ATLAS{ left = 159/1024, right = 184/1024, top = 446/512, bottom = 471/512 },
 
-    UIRangeTrack                    = UICCommonPreload.ATLAS{ inset = { 15, 15, 13, 13 }, scale = 1, left = 90/512, right = 144/512, top = 474/512, bottom = 499/512 },
-    UIRangeThumb                    = UICCommonPreload.ATLAS{ left = 92/512, right = 128/512, top = 376/512, bottom = 412/512 },
-    UIRangeThumb_Highlighted        = UICCommonPreload.ATLAS{ left = 128/512, right = 164/512, top = 376/512, bottom = 412/512 },
-    UIRangeThumb_Pushed             = UICCommonPreload.ATLAS{ left = 164/512, right = 200/512, top = 376/512, bottom = 412/512 },
-    UIRangeThumb_Disabled           = UICCommonPreload.ATLAS{ left = 200/512, right = 236/512, top = 376/512, bottom = 412/512 }
+    UIRangeTrack                    = UICCommonPreload.ATLAS{ inset = { 15, 15, 13, 13 }, scale = 1, left = 90/1024, right = 144/1024, top = 474/512, bottom = 499/512 },
+    UIRangeThumb                    = UICCommonPreload.ATLAS{ left = 92/1024, right = 128/1024, top = 376/512, bottom = 412/512 },
+    UIRangeThumb_Highlighted        = UICCommonPreload.ATLAS{ left = 128/1024, right = 164/1024, top = 376/512, bottom = 412/512 },
+    UIRangeThumb_Pushed             = UICCommonPreload.ATLAS{ left = 164/1024, right = 200/1024, top = 376/512, bottom = 412/512 },
+    UIRangeThumb_Disabled           = UICCommonPreload.ATLAS{ left = 200/1024, right = 236/1024, top = 376/512, bottom = 412/512 }
 }
 
 do -- Stepper

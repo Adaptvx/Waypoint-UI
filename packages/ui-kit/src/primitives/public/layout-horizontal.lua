@@ -3,6 +3,7 @@ local UIKit_Utils = env.modules:Import("packages\\ui-kit\\utils")
 local UIKit_Enum = env.modules:Import("packages\\ui-kit\\enum")
 local UIKit_Define = env.modules:Import("packages\\ui-kit\\define")
 local UIKit_Primitives_Frame = env.modules:Import("packages\\ui-kit\\primitives\\frame")
+local UIKit_Renderer_Processor = env.modules:Await("packages\\ui-kit\\renderer\\processor")
 local UIKit_Primitives_LayoutHorizontal = env.modules:New("packages\\ui-kit\\primitives\\layout-horizontal")
 
 local Mixin = Mixin
@@ -42,17 +43,23 @@ function LayoutHorizontalMixin:RenderElements()
     local cachedHeights = self.__cachedHeights
     local growBaseWidths = self.__growBaseWidths
     local prevCount = self.__visibleCount or 0
+    local horizontalAlignment = self.uk_prop_layoutAlignmentH or UIKit_Enum_Direction_Leading
+    local verticalAlignment = self.uk_prop_layoutAlignmentV or UIKit_Enum_Direction_Leading
+    local stretchHeight = self:GetStretchV()
 
-    local totalChildrenWidth, maxChildHeight, visibleChildCount, totalGrow = 0, 0, 0, 0
+    local totalChildrenWidth, maxChildHeight, visibleChildCount, totalGrow, totalPush = 0, 0, 0, 0, 0
 
     for childIndex = 1, #allChildren do
         local child = allChildren[childIndex]
         local isLayoutChild = child and child:IsShown() and not child.uk_flag_excludeFromCalculations and child.uk_type ~= "List"
+        if child and (not isLayoutChild or not stretchHeight) and child:ResetLayoutStretch() then
+            UIKit_Renderer_Processor.RefreshLayoutSize(child)
+        end
         if isLayoutChild then
             visibleChildCount = visibleChildCount + 1
             visibleChildren[visibleChildCount] = child
 
-            local childWidth, childHeight = child:GetSize()
+            local childWidth, childHeight = child:GetLayoutSize()
             childWidth, childHeight = childWidth or 0, childHeight or 0
 
             local grow = child.uk_prop_layoutGrow or 0
@@ -75,6 +82,7 @@ function LayoutHorizontalMixin:RenderElements()
 
             totalChildrenWidth = totalChildrenWidth + childWidth
             if childHeight > maxChildHeight then maxChildHeight = childHeight end
+            if child.uk_prop_layoutPushH then totalPush = totalPush + 1 end
         end
     end
 
@@ -83,24 +91,36 @@ function LayoutHorizontalMixin:RenderElements()
     end
     self.__visibleCount = visibleChildCount
 
-    if visibleChildCount == 0 then return end
-
     local parent = self:GetParent()
     local containerWidth, containerHeight = self:GetSize()
     containerWidth = containerWidth or (parent and parent:GetWidth()) or UIParent:GetWidth()
     containerHeight = containerHeight or (parent and parent:GetHeight()) or UIParent:GetHeight()
 
     local spacing = ResolveSpacing(self:GetSpacing(), containerWidth)
-    local contentWidth = totalChildrenWidth + (visibleChildCount - 1) * spacing
-
     local shouldFitWidth, shouldFitHeight = self:GetFitContent()
-    if shouldFitWidth then
-        containerWidth = self:ResolveFitSize("width", contentWidth, self.uk_prop_width)
-        self:SetWidth(containerWidth)
-    end
     if shouldFitHeight then
         containerHeight = self:ResolveFitSize("height", maxChildHeight, self.uk_prop_height)
         self:SetHeight(containerHeight)
+    end
+
+    if stretchHeight then
+        totalChildrenWidth = 0
+        for childIndex = 1, visibleChildCount do
+            local child = visibleChildren[childIndex]
+            local grow = child.uk_prop_layoutGrow or 0
+            if UIKit_Renderer_Processor.LayoutStretch(child, nil, containerHeight) then
+                cachedWidths[childIndex] = child:GetWidth() or 0
+                if grow > 0 then growBaseWidths[child] = cachedWidths[childIndex] end
+            end
+            cachedHeights[childIndex] = child:GetHeight() or 0
+            totalChildrenWidth = totalChildrenWidth + cachedWidths[childIndex]
+        end
+    end
+
+    local contentWidth = totalChildrenWidth + max(0, visibleChildCount - 1) * spacing
+    if shouldFitWidth then
+        containerWidth = self:ResolveFitSize("width", contentWidth, self.uk_prop_width)
+        self:SetWidth(containerWidth)
     end
 
     if totalGrow > 0 then
@@ -117,8 +137,12 @@ function LayoutHorizontalMixin:RenderElements()
         contentWidth = contentWidth + remainingWidth
     end
 
-    local horizontalAlignment = self.uk_prop_layoutAlignmentH or UIKit_Enum_Direction_Leading
-    local verticalAlignment = self.uk_prop_layoutAlignmentV or UIKit_Enum_Direction_Leading
+    local pushSpacing = 0
+    if totalPush > 0 then
+        local remainingWidth = max(0, containerWidth - contentWidth)
+        pushSpacing = remainingWidth / totalPush
+        contentWidth = contentWidth + remainingWidth
+    end
 
     local currentX = horizontalAlignment == UIKit_Enum_Direction_Justified and (containerWidth - contentWidth) * 0.5
         or horizontalAlignment == UIKit_Enum_Direction_Trailing and (containerWidth - contentWidth)
@@ -128,6 +152,8 @@ function LayoutHorizontalMixin:RenderElements()
         local child = visibleChildren[childIndex]
         local childWidth = cachedWidths[childIndex]
         local childHeight = cachedHeights[childIndex]
+
+        if child.uk_prop_layoutPushH then currentX = currentX + pushSpacing end
 
         local verticalOffset = verticalAlignment == UIKit_Enum_Direction_Justified and (containerHeight - childHeight) * 0.5
             or verticalAlignment == UIKit_Enum_Direction_Trailing and (containerHeight - childHeight)
@@ -156,6 +182,17 @@ end
 function LayoutHorizontalMixin:SetAlignmentV(layoutAlignmentV)
     self.uk_prop_layoutAlignmentV = layoutAlignmentV
     self:RenderElements()
+end
+
+function LayoutHorizontalMixin:GetStretchV()
+    return self.uk_prop_layoutStretchV == true
+end
+
+function LayoutHorizontalMixin:SetStretchV(stretch)
+    assert(type(stretch) == "boolean", "Invalid variable `layoutStretchV`: Must be of type `boolean`")
+    if self.uk_prop_layoutStretchV == stretch then return end
+    self.uk_prop_layoutStretchV = stretch
+    if self.uk_ready then self:_Render() end
 end
 
 function UIKit_Primitives_LayoutHorizontal.New(name, parent)

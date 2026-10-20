@@ -540,6 +540,42 @@ do -- Layout Group
     end
 
     -- React
+    FrameProps["layoutPushH"] = function(frame, push)
+        push = HandleReact(frame, (push == nil and true) or push, "layoutPushH")
+        assert(type(push) == "boolean", "Invalid variable `layoutPushH`: Must be of type `boolean`")
+        if frame.uk_prop_layoutPushH == push then return end
+        frame.uk_prop_layoutPushH = push
+
+        local parent = frame.uk_parent
+        if parent and parent.uk_type == "LayoutHorizontal" then parent:_Render() end
+    end
+
+    -- React
+    FrameProps["layoutPushV"] = function(frame, push)
+        push = HandleReact(frame, (push == nil and true) or push, "layoutPushV")
+        assert(type(push) == "boolean", "Invalid variable `layoutPushV`: Must be of type `boolean`")
+        if frame.uk_prop_layoutPushV == push then return end
+        frame.uk_prop_layoutPushV = push
+
+        local parent = frame.uk_parent
+        if parent and parent.uk_type == "LayoutVertical" then parent:_Render() end
+    end
+
+    -- React
+    FrameProps["layoutStretchH"] = function(frame, stretch)
+        stretch = HandleReact(frame, (stretch == nil and true) or stretch, "layoutStretchH")
+        assert(frame.uk_type == "LayoutVertical", "Invalid variable `layoutStretchH`: Must be called on `LayoutVertical`")
+        frame:SetStretchH(stretch)
+    end
+
+    -- React
+    FrameProps["layoutStretchV"] = function(frame, stretch)
+        stretch = HandleReact(frame, (stretch == nil and true) or stretch, "layoutStretchV")
+        assert(frame.uk_type == "LayoutHorizontal", "Invalid variable `layoutStretchV`: Must be called on `LayoutHorizontal`")
+        frame:SetStretchV(stretch)
+    end
+
+    -- React
     FrameProps["layoutSpacing"] = function(frame, spacingValue)
         spacingValue = HandleReact(frame, spacingValue, "layoutSpacing")
         assert(type(spacingValue) == "number" or spacingValue == UIKit_Define.Percentage, "Invalid variable `layoutSpacing`: Must be of type `number` or `UIKit.Define.Percentage`")

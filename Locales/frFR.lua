@@ -88,7 +88,7 @@ L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Active la navigation pour 
 L["CONFIG_NAVIGATION"] = "Navigation"
 L["CONFIG_NAVIGATION_PATHFINDING"] = "Pathfinding"
 L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Enable Pathfinding"
-L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "May cause performance and navigation issues."
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "Uses Mapzeroth or FarstriderLib to calculate a route to your tracked destination. May cause performance and navigation issues."
 L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Provider"
 
 L["CONFIG_APPEARANCE"] = "Apparence"
@@ -162,6 +162,16 @@ L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Suivre les points de passage TomT
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Waypoint UI prend en charge le suivi des repères TomTom. Vous pouvez suivre un repère TomTom en cliquant avec le bouton droit sur n'importe quel repère TomTom sur la carte et en sélectionnant « Set as waypoint arrow » dans le menu contextuel."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_AUTOREPLACEWAYPOINT"] = "Remplacer automatiquement le point de passage"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Suivi automatique des repères TomTom à travers Waypoint UI."
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT"] = "Mapzeroth"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE"] = "Track Mapzeroth Steps"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE_DESCRIPTION"] = "Tracks Mapzeroth's active travel step."
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with Mapzeroth's current step."
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT"] = "RestedXP"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE"] = "Track RestedXP Waypoints"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE_DESCRIPTION"] = "Tracks RestedXP's active arrow destination. Requires RestedXP's arrow to be enabled."
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with the incoming RestedXP waypoint."
 L["CONFIG_EXTENSIONS_DUGISSUPPORT"] = "Dugi Questing Essential"
 L["CONFIG_EXTENSIONS_DUGISSUPPORT_ENABLE"] = "Suivre les points de passage Dugi"
 L["CONFIG_EXTENSIONS_DUGISSUPPORT_ENABLE_DESCRIPTION"] = "Waypoint UI prend en charge le suivi des repères Dugi Questing Essential."
@@ -225,5 +235,7 @@ L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de p
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère TomTom « %s » ?"
+L["MAPZEROTH_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the Mapzeroth step \"%s\"?"
+L["RESTEDXP_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the RestedXP waypoint \"%s\"?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère Dugi « %s » ?"
 L["APR_REPLACEPROMPT"] = "Voulez-vous remplacer votre point de passage actuel par le repère APR « %s » ?"

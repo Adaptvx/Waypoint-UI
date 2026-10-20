@@ -1,5 +1,6 @@
 local env = select(2, ...)
 local UICCommonButton = env.modules:Import("packages\\uic-common\\button")
+local UICCommonBindingButton = env.modules:Import("packages\\uic-common\\binding-button")
 local UICCommonCheckButton = env.modules:Import("packages\\uic-common\\check-button")
 local UICCommonRange = env.modules:Import("packages\\uic-common\\range")
 local UICCommonScrollBar = env.modules:Import("packages\\uic-common\\scroll-bar")
@@ -17,6 +18,7 @@ UICCommon.RedTextButton = UICCommonButton.RedTextButton
 UICCommon.GrayTextButton = UICCommonButton.GrayTextButton
 UICCommon.RedCloseButton = UICCommonButton.RedCloseButton
 UICCommon.SelectionMenuButton = UICCommonButton.SelectionMenuButton
+UICCommon.BindingButton = UICCommonBindingButton.New
 UICCommon.CheckButton = UICCommonCheckButton.New
 UICCommon.ScrollBar = UICCommonScrollBar.New
 UICCommon.Input = UICCommonInput.New

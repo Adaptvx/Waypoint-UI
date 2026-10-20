@@ -17,8 +17,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.7.3"
-env.VERSION_NUMBER = 010703
+env.VERSION_STRING = "1.7.4"
+env.VERSION_NUMBER = 010704
 env.DEBUG_MODE = false
 
 
@@ -171,6 +171,10 @@ do
 
         TomTomSupportEnabled                       = true,
         TomTomAutoReplaceWaypoint                  = true,
+        MapzerothSupportEnabled                    = true,
+        MapzerothAutoReplaceWaypoint               = true,
+        RestedXPSupportEnabled                     = false,
+        RestedXPAutoReplaceWaypoint                = true,
         DugisSupportEnabled                        = true,
         DugisAutoReplaceWaypoint                   = true,
         APRSupportEnabled                          = false,

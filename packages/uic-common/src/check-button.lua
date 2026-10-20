@@ -10,10 +10,10 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UICheckButton                    = UICCommonPreload.ATLAS{ left = 4/512, right = 51/512, top = 192/512, bottom = 239/512 },
-    UICheckButton_Disabled           = UICCommonPreload.ATLAS{ left = 98/512, right = 145/512, top = 192/512, bottom = 239/512 },
-    UICheckButtonChecked             = UICCommonPreload.ATLAS{ left = 51/512, right = 98/512, top = 192/512, bottom = 239/512 },
-    UICheckButtonChecked_Disabled    = UICCommonPreload.ATLAS{ left = 145/512, right = 192/512, top = 192/512, bottom = 239/512 }
+    UICheckButton                    = UICCommonPreload.ATLAS{ left = 4/1024, right = 51/1024, top = 192/512, bottom = 239/512 },
+    UICheckButton_Disabled           = UICCommonPreload.ATLAS{ left = 98/1024, right = 145/1024, top = 192/512, bottom = 239/512 },
+    UICheckButtonChecked             = UICCommonPreload.ATLAS{ left = 51/1024, right = 98/1024, top = 192/512, bottom = 239/512 },
+    UICheckButtonChecked_Disabled    = UICCommonPreload.ATLAS{ left = 145/1024, right = 192/1024, top = 192/512, bottom = 239/512 }
 }
 
 do --Check Button

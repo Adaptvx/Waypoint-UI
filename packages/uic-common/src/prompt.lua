@@ -4,7 +4,7 @@ local UIFont = env.modules:Import("packages\\ui-font")
 local UIKit = env.modules:Import("packages\\ui-kit")
 local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
-local WoWClient = env.modules:Import("packages\\wow-client")
+local InputHandler = env.modules:Import("packages\\input-handler")
 local UICCommonPreload = env.modules:Import("packages\\uic-common\\preload")
 local UICCommonButton = env.modules:Import("packages\\uic-common\\button")
 local UICCommonInput = env.modules:Import("packages\\uic-common\\input")
@@ -13,7 +13,7 @@ local UICCommonPrompt = env.modules:New("packages\\uic-common\\prompt")
 local Mixin = Mixin
 
 local UIDEF = {
-    UIPrompt = UICCommonPreload.ATLAS{ inset = 11, scale = 1, left = 4 / 512, right = 46 / 512, top = 330 / 512, bottom = 372 / 512 }
+    UIPrompt = UICCommonPreload.ATLAS{ inset = 11, scale = 1, left = 4 / 1024, right = 46 / 1024, top = 330 / 512, bottom = 372 / 512 }
 }
 
 do --Prompt Button
@@ -58,9 +58,9 @@ do --Prompt
     function PromptMixin:OnLoad()
         self.hideOnEscape = false
 
-        CallbackRegistry.Add("WoWClient.OnEscapePressed", function()
+        CallbackRegistry.Add("InputHandler.OnEscapePressed", function()
             if self.hideOnEscape and self:IsShown() then
-                WoWClient.BlockKeyEvent()
+                InputHandler.BlockKeyEvent()
                 self:OnEscape()
             end
         end)

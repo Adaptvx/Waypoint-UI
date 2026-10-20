@@ -12,26 +12,26 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    Close                           = UICCommonPreload.ATLAS{ left = 319 / 512, right = 345 / 512, top = 185 / 512, bottom = 211 / 512 },
-    SelectionMenu                   = UICCommonPreload.ATLAS{ left = 344 / 512, right = 370 / 512, top = 186 / 512, bottom = 212 / 512 },
+    Close                           = UICCommonPreload.ATLAS{ left = 319 / 1024, right = 345 / 1024, top = 185 / 512, bottom = 211 / 512 },
+    SelectionMenu                   = UICCommonPreload.ATLAS{ left = 344 / 1024, right = 370 / 1024, top = 186 / 512, bottom = 212 / 512 },
 
-    UIRedButton                     = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 512, right = 100 / 512, top = 54 / 512, bottom = 95 / 512 },
-    UIRedButton_Highlighted         = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 106 / 512, right = 199 / 512, top = 54 / 512, bottom = 95 / 512 },
-    UIRedButton_Pushed              = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 205 / 512, right = 298 / 512, top = 54 / 512, bottom = 95 / 512 },
-    UIRedButton_Disabled            = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 304 / 512, right = 397 / 512, top = 54 / 512, bottom = 95 / 512 },
-    UIRedButtonCompact              = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 512, right = 48 / 512, top = 148 / 512, bottom = 189 / 512 },
-    UIRedButtonCompact_Highlighted  = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 54 / 512, right = 95 / 512, top = 148 / 512, bottom = 189 / 512 },
-    UIRedButtonCompact_Pushed       = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 101 / 512, right = 142 / 512, top = 148 / 512, bottom = 189 / 512 },
-    UIRedButtonCompact_Disabled     = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 148 / 512, right = 189 / 512, top = 148 / 512, bottom = 189 / 512 },
+    UIRedButton                     = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 1024, right = 100 / 1024, top = 54 / 512, bottom = 95 / 512 },
+    UIRedButton_Highlighted         = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 106 / 1024, right = 199 / 1024, top = 54 / 512, bottom = 95 / 512 },
+    UIRedButton_Pushed              = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 205 / 1024, right = 298 / 1024, top = 54 / 512, bottom = 95 / 512 },
+    UIRedButton_Disabled            = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 304 / 1024, right = 397 / 1024, top = 54 / 512, bottom = 95 / 512 },
+    UIRedButtonCompact              = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 1024, right = 48 / 1024, top = 148 / 512, bottom = 189 / 512 },
+    UIRedButtonCompact_Highlighted  = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 54 / 1024, right = 95 / 1024, top = 148 / 512, bottom = 189 / 512 },
+    UIRedButtonCompact_Pushed       = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 101 / 1024, right = 142 / 1024, top = 148 / 512, bottom = 189 / 512 },
+    UIRedButtonCompact_Disabled     = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 148 / 1024, right = 189 / 1024, top = 148 / 512, bottom = 189 / 512 },
 
-    UIGrayButton                    = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 512, right = 100 / 512, top = 7 / 512, bottom = 48 / 512 },
-    UIGrayButton_Highlighted        = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 106 / 512, right = 199 / 512, top = 7 / 512, bottom = 48 / 512 },
-    UIGrayButton_Pushed             = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 205 / 512, right = 298 / 512, top = 7 / 512, bottom = 48 / 512 },
-    UIGrayButton_Disabled           = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 304 / 512, right = 397 / 512, top = 7 / 512, bottom = 48 / 512 },
-    UIGrayButtonCompact             = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 512, right = 48 / 512, top = 101 / 512, bottom = 142 / 512 },
-    UIGrayButtonCompact_Highlighted = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 54 / 512, right = 95 / 512, top = 101 / 512, bottom = 142 / 512 },
-    UIGrayButtonCompact_Pushed      = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 101 / 512, right = 142 / 512, top = 101 / 512, bottom = 142 / 512 },
-    UIGrayButtonCompact_Disabled    = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 148 / 512, right = 189 / 512, top = 101 / 512, bottom = 142 / 512 }
+    UIGrayButton                    = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 1024, right = 100 / 1024, top = 7 / 512, bottom = 48 / 512 },
+    UIGrayButton_Highlighted        = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 106 / 1024, right = 199 / 1024, top = 7 / 512, bottom = 48 / 512 },
+    UIGrayButton_Pushed             = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 205 / 1024, right = 298 / 1024, top = 7 / 512, bottom = 48 / 512 },
+    UIGrayButton_Disabled           = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 304 / 1024, right = 397 / 1024, top = 7 / 512, bottom = 48 / 512 },
+    UIGrayButtonCompact             = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 7 / 1024, right = 48 / 1024, top = 101 / 512, bottom = 142 / 512 },
+    UIGrayButtonCompact_Highlighted = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 54 / 1024, right = 95 / 1024, top = 101 / 512, bottom = 142 / 512 },
+    UIGrayButtonCompact_Pushed      = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 101 / 1024, right = 142 / 1024, top = 101 / 512, bottom = 142 / 512 },
+    UIGrayButtonCompact_Disabled    = UICCommonPreload.ATLAS{ inset = 14, scale = 0.7, left = 148 / 1024, right = 189 / 1024, top = 101 / 512, bottom = 142 / 512 }
 }
 
 do --Button

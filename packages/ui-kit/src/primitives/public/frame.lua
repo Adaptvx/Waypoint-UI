@@ -205,7 +205,22 @@ function FrameMixin:ResolveFitSize(axis, measuredSize, sizeProp)
 end
 
 function FrameMixin:GetFitContent()
-    return self.uk_prop_width == UIKit_Define.Fit, self.uk_prop_height == UIKit_Define.Fit
+    return self.uk_prop_width == UIKit_Define.Fit and self.__layoutNaturalWidth == nil,
+        self.uk_prop_height == UIKit_Define.Fit and self.__layoutNaturalHeight == nil
+end
+
+function FrameMixin:GetLayoutSize()
+    return self.__layoutNaturalWidth or self:GetWidth(), self.__layoutNaturalHeight or self:GetHeight()
+end
+
+function FrameMixin:ResetLayoutStretch()
+    local width, height = self.__layoutNaturalWidth, self.__layoutNaturalHeight
+    if width == nil and height == nil then return false end
+    self.__layoutNaturalWidth, self.__layoutNaturalHeight = nil, nil
+
+    if width ~= nil then self:SetWidth(width) end
+    if height ~= nil then self:SetHeight(height) end
+    return true
 end
 
 function FrameMixin:FitContent(shouldFitWidth, shouldFitHeight, childFrames)

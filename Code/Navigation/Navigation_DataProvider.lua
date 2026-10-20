@@ -406,6 +406,9 @@ end
 
 function Navigation_DataProvider:BuildPathToDestination()
     local destinationPinSnapshot = self:GetDestinationPinSnapshot()
+    local userNavigation = destinationPinSnapshot and destinationPinSnapshot.userNavigation
+    if userNavigation and userNavigation.flags == "Mapzeroth_Waypoint" then return nil end
+
     local pathBuilder = self:GetPathBuilder()
     if not pathBuilder or not destinationPinSnapshot or not destinationPinSnapshot.mapID or not destinationPinSnapshot.normalizedX or not destinationPinSnapshot.normalizedY then return nil end
 

@@ -1,0 +1,8 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="src\devices.lua"/>
+    <Script file="src\handler.lua"/>
+    <Script file="src\bindings.lua"/>
+    <Script file="src\capture.lua"/>
+    <Script file="src\repeater.lua"/>
+    <Script file="index.lua"/>
+</Ui>

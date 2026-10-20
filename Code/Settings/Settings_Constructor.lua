@@ -405,6 +405,68 @@ do -- Button
     end
 end
 
+do -- Binding Button
+    local function BindingButton_Refresh(self)
+        local options = self.__bindingOptions
+        local device = options.getDevice()
+        local binding = options.manager:GetBinding(self.__action, device)
+        local button = self:GetBindingButton()
+
+        if self.__bindingDevice ~= device then
+            button:StopCapture()
+            self.__bindingDevice = device
+        end
+
+        button:SetBinding(binding)
+        if not binding then button:SetText(NOT_BOUND) end
+    end
+
+    local function BindingButton_OnBinding(button, key, device)
+        local widget = button.__widgetRef
+        local options = widget.__bindingOptions
+        options.manager:SetBinding(widget.__action, device or options.getDevice(), key or false)
+        widget.__tab:_Render()
+    end
+
+    function Build.BindingButton(widgetInfo, parent, root, tab, options)
+        local action = assert(widgetInfo.widgetBindingButton_action, "Binding action is required!")
+        assert(options, "Binding options are required!")
+        local widget = Settings_Widgets.ElementBindingButton()
+        local button = widget:GetBindingButton()
+        widget:parent(parent)
+        Mixin(widget, WidgetMixin)
+        widget:OnLoad(widgetInfo, root, tab)
+        widget:SetUserInteractableObject(button)
+
+        widget.__action = action
+        widget.__bindingOptions = options
+        button.__widgetRef = widget
+        button:SetOnBinding(BindingButton_OnBinding)
+        button:SetBindingValidator(options.isAllowed)
+        button:SetTextFormattingFunc(options.textFormattingFunc)
+        widget:SetRefreshHandler(BindingButton_Refresh)
+        CallbackRegistry.Add("Input.BindingChanged", function(_, changedManager, device, actions)
+            if changedManager ~= options.manager or (device and device ~= options.getDevice()) then return end
+
+            if not actions then
+                widget:Refresh(true)
+                return
+            end
+
+            for _, changedAction in ipairs(actions) do
+                if changedAction == action then
+                    widget:Refresh(true)
+                    return
+                end
+            end
+        end)
+        CallbackRegistry.Add("Input.DisplayInputDeviceChanged", function() widget:Refresh(true) end)
+        BindingButton_Refresh(widget)
+
+        return widget
+    end
+end
+
 do -- Check Button
     local function CheckButton_Refresh(self, force)
         if not force and HasDBKeyValueChanged(self) == false then return end
@@ -662,33 +724,34 @@ local BUILD_MAP = {
     [Settings_Enum.WidgetType.Text]          = Build.Text,
     [Settings_Enum.WidgetType.Range]         = Build.Range,
     [Settings_Enum.WidgetType.Button]        = Build.Button,
+    [Settings_Enum.WidgetType.BindingButton] = Build.BindingButton,
     [Settings_Enum.WidgetType.CheckButton]   = Build.CheckButton,
     [Settings_Enum.WidgetType.SelectionMenu] = Build.SelectionMenu,
     [Settings_Enum.WidgetType.ColorInput]    = Build.ColorInput,
     [Settings_Enum.WidgetType.Input]         = Build.Input
 }
 
-local function BuildWidget(info, parent, root, tab)
+local function BuildWidget(info, parent, root, tab, options)
     local widgetType = info.widgetType
     local buildFunc = BUILD_MAP[widgetType]
 
     if not buildFunc then return end
 
-    local widget, contentFrame = buildFunc(info, parent, root, tab)
+    local widget, contentFrame = buildFunc(info, parent, root, tab, options)
     return widget, contentFrame
 end
 
-local function TraverseAndBuildWidgetsFromTable(widgetTable, parent, root, currentTab)
+local function TraverseAndBuildWidgetsFromTable(widgetTable, parent, root, currentTab, options)
     for _, info in ipairs(widgetTable) do
         local isTab = info.widgetType == Settings_Enum.WidgetType.Tab
 
-        local widget, contentFrame = BuildWidget(info, parent, root, currentTab)
+        local widget, contentFrame = BuildWidget(info, parent, root, currentTab, options)
         assert(widget, "Failed to build widget!")
 
         local nextTab = isTab and widget or currentTab
 
         if info.children then
-            TraverseAndBuildWidgetsFromTable(info.children, contentFrame or widget, widget, nextTab)
+            TraverseAndBuildWidgetsFromTable(info.children, contentFrame or widget, widget, nextTab, options)
         end
     end
 end
@@ -699,9 +762,9 @@ function Settings_Constructor:SetBuildTargetFrame(frame)
     buildTarget = frame
 end
 
-function Settings_Constructor:Build(origin)
+function Settings_Constructor:Build(origin, options)
     UIKit.BeginBatch()
-    TraverseAndBuildWidgetsFromTable(origin, buildTarget)
+    TraverseAndBuildWidgetsFromTable(origin, buildTarget, nil, nil, options)
     UIKit.EndBatch()
 end
 

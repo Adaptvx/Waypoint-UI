@@ -4,6 +4,8 @@
 	<Script file="UnlimitedMapPinDistance.lua"/>
 	<Script file="MapPinEnhanced.lua"/>
 	<Script file="TomTom.lua"/>
+	<Script file="Mapzeroth.lua"/>
+	<Script file="RestedXP.lua"/>
 	<Script file="DugisGuideViewerZ.lua"/>
 	<Script file="SilverDragon.lua"/>
 	<Script file="APR.lua"/>

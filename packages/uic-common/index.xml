@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Script file="src\preload.lua"/>
     <Script file="src\button.lua"/>
+    <Script file="src\binding-button.lua"/>
     <Script file="src\check-button.lua"/>
     <Script file="src\color-input.lua"/>
     <Script file="src\input.lua"/>

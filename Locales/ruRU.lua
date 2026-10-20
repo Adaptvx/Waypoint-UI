@@ -88,7 +88,7 @@ L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] = "Включить нави�
 L["CONFIG_NAVIGATION"] = "Навигация"
 L["CONFIG_NAVIGATION_PATHFINDING"] = "Поиск пути"
 L["CONFIG_NAVIGATION_PATHFINDING_ENABLE"] = "Включить поиск пути"
-L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "Может вызвать проблемы с производительностью и навигацией."
+L["CONFIG_NAVIGATION_PATHFINDING_ENABLE_DESCRIPTION"] = "Uses Mapzeroth or FarstriderLib to calculate a route to your tracked destination. May cause performance and navigation issues."
 L["CONFIG_NAVIGATION_PATHFINDING_PROVIDER"] = "Источник"
 
 L["CONFIG_APPEARANCE"] = "Появление"
@@ -162,6 +162,16 @@ L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE"] = "Отслеживание точе
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_ENABLE_DESCRIPTION"] = "Включает поддержку отслеживания точек TomTom с помощью интерфейса Waypoint. Чтобы начать отслеживание точки TomTom, ПКМ по любой точке TomTom на карте мира и выберите Установить как стрелку путевой точки в контекстном меню."
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_AUTOREPLACEWAYPOINT"] = "Автозамена путевой точки"
 L["CONFIG_EXTENSIONS_TOMTOMSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Автоматически отслеживать точку TomTom с помощью интерфейса Waypoint."
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT"] = "Mapzeroth"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE"] = "Track Mapzeroth Steps"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_ENABLE_DESCRIPTION"] = "Tracks Mapzeroth's active travel step."
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
+L["CONFIG_EXTENSIONS_MAPZEROTHSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with Mapzeroth's current step."
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT"] = "RestedXP"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE"] = "Track RestedXP Waypoints"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_ENABLE_DESCRIPTION"] = "Tracks RestedXP's active arrow destination. Requires RestedXP's arrow to be enabled."
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT"] = "Auto-Replace Waypoint"
+L["CONFIG_EXTENSIONS_RESTEDXPSUPPORT_AUTOREPLACEWAYPOINT_DESCRIPTION"] = "Automatically replaces the active waypoint with the incoming RestedXP waypoint."
 L["CONFIG_EXTENSIONS_DUGISSUPPORT"] = "Поддержка Dugi Questing Essential"
 L["CONFIG_EXTENSIONS_DUGISSUPPORT_ENABLE"] = "Отслеживать метки Dugi"
 L["CONFIG_EXTENSIONS_DUGISSUPPORT_ENABLE_DESCRIPTION"] = "Включает поддержку отслеживания путевых точек аддона Dugi Questing Essential через Waypoint UI."
@@ -225,5 +235,7 @@ L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Заменить текущую пут
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Хотите ли вы заменить текущую путевую точку на путевую точку TomTom \"%s\"?"
+L["MAPZEROTH_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the Mapzeroth step \"%s\"?"
+L["RESTEDXP_REPLACEPROMPT"] = "Do you want to replace your current waypoint with the RestedXP waypoint \"%s\"?"
 L["DUGISGUIDEVIEWERZ_REPLACEPROMPT"] = "Хотите ли вы заменить текущую путевую точку на путевую точку Dugi \"%s\"?"
 L["APR_REPLACEPROMPT"] = "Хотите ли вы заменить текущую путевую точку на путевую точку APR \"%s\"?"

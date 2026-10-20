@@ -25,6 +25,33 @@ local LAYOUT_TYPE_LOOKUP = {
     LayoutHorizontal = true
 }
 
+local function HasLayoutStretch(frame)
+    return frame and (frame.uk_prop_layoutStretchH ~= nil or frame.uk_prop_layoutStretchV ~= nil)
+end
+
+local function GetStretchScanRoot(rootFrame)
+    local scanRoot = rootFrame
+    local frame = rootFrame
+    while frame and frame ~= UIParent do
+        if HasLayoutStretch(frame) then scanRoot = frame end
+        if frame.uk_flag_renderBreakpoint then break end
+        if frame.__layoutNaturalWidth ~= nil or frame.__layoutNaturalHeight ~= nil then
+            scanRoot = frame.uk_parent or frame
+        end
+        frame = frame.uk_parent
+    end
+
+    if not scanRoot.uk_flag_renderBreakpoint and (scanRoot ~= rootFrame or HasLayoutStretch(scanRoot)) then
+        local parent = scanRoot.uk_parent
+        while parent and parent ~= UIParent and (parent.uk_prop_width == UIKit_Define_Fit or parent.uk_prop_height == UIKit_Define_Fit) do
+            scanRoot = parent
+            if parent.uk_flag_renderBreakpoint then break end
+            parent = parent.uk_parent
+        end
+    end
+    return scanRoot
+end
+
 local function AnalyzeFrameProperty(frame)
     local frameType = frame.uk_type
     local propWidth = frame.uk_prop_width
@@ -42,7 +69,9 @@ local function AnalyzeFrameProperty(frame)
     if (propX == UIKit_Define_Percentage or type(propX) == "number") or (propY == UIKit_Define_Percentage or type(propY) == "number") then AddDirty(ACTION_POSITION_OFFSET, frame) end
 
     -- Size (width/height)
-    if propWidth == UIKit_Define_Percentage or propHeight == UIKit_Define_Percentage then AddDirty(ACTION_SIZE_STATIC, frame) end
+    local parent = frame.uk_parent
+    local isStretched = parent and (parent.uk_prop_layoutStretchH or parent.uk_prop_layoutStretchV)
+    if propWidth == UIKit_Define_Percentage or propHeight == UIKit_Define_Percentage or isStretched or frame.__layoutNaturalWidth ~= nil or frame.__layoutNaturalHeight ~= nil then AddDirty(ACTION_SIZE_STATIC, frame) end
     if propWidth == UIKit_Define_Fit or propHeight == UIKit_Define_Fit then AddDirty(ACTION_SIZE_FIT, frame) end
 
     -- Layout
@@ -56,6 +85,8 @@ local function AnalyzeFrameProperty(frame)
 end
 
 function UIKit_Renderer_Scanner.ScanFrame(rootFrame)
+    rootFrame = GetStretchScanRoot(rootFrame)
+    
     -- Reset stack and push root frame
     scanStackTop = 1
     scanStack[1] = rootFrame
@@ -91,6 +122,11 @@ end
 
 function UIKit_Renderer_Scanner.ScanFrameOnly(frame)
     if not frame then return end
+    local scanRoot = GetStretchScanRoot(frame)
+    if scanRoot ~= frame or HasLayoutStretch(frame) then
+        UIKit_Renderer_Scanner.ScanFrame(scanRoot)
+        return
+    end
     AnalyzeFrameProperty(frame)
 
     -- Scan content frame

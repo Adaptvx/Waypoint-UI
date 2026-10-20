@@ -10,10 +10,10 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UIScrollBarTrack             = UICCommonPreload.ATLAS{ inset = 6, scale = 0.3, left = 78/512, right = 90/512, top = 378/512, bottom = 499/512 },
-    UIScrollBarThumb             = UICCommonPreload.ATLAS{ inset = 12, left = 4 / 512, right = 28 / 512, top = 376 / 512, bottom = 501 / 512 },
-    UIScrollBarThumb_Highlighted = UICCommonPreload.ATLAS{ inset = 12, left = 28 / 512, right = 52 / 512, top = 376 / 512, bottom = 501 / 512 },
-    UIScrollBarThumb_Pushed      = UICCommonPreload.ATLAS{ inset = 12, left = 52 / 512, right = 76 / 512, top = 376 / 512, bottom = 501 / 512 }
+    UIScrollBarTrack             = UICCommonPreload.ATLAS{ inset = 6, scale = 0.3, left = 78/1024, right = 90/1024, top = 378/512, bottom = 499/512 },
+    UIScrollBarThumb             = UICCommonPreload.ATLAS{ inset = 12, left = 4 / 1024, right = 28 / 1024, top = 376 / 512, bottom = 501 / 512 },
+    UIScrollBarThumb_Highlighted = UICCommonPreload.ATLAS{ inset = 12, left = 28 / 1024, right = 52 / 1024, top = 376 / 512, bottom = 501 / 512 },
+    UIScrollBarThumb_Pushed      = UICCommonPreload.ATLAS{ inset = 12, left = 52 / 1024, right = 76 / 1024, top = 376 / 512, bottom = 501 / 512 }
 }
 
 do --Scroll Bar

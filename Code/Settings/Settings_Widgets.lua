@@ -616,6 +616,30 @@ do -- Widgets
         end)
     end
 
+    do -- Element (Binding Button)
+        local ElementBindingButtonMixin = {}
+
+        function ElementBindingButtonMixin:GetBindingButton()
+            return self.BindingButton
+        end
+
+        Settings_Widgets.ElementBindingButton = UIKit.Template(function(id, name, children, ...)
+            local frame =
+                Settings_Widgets.ElementBase(name, {
+                    UICCommon.BindingButton(name .. ".BindingButton")
+                        :id("BindingButton", id)
+                        :point(UIKit.Enum.Point.Right)
+                        :size(ACTION_SIZE_750, ACTION_SIZE_125)
+                })
+
+            frame.BindingButton = UIKit.GetElementById("BindingButton", id)
+
+            Mixin(frame, ElementBindingButtonMixin)
+
+            return frame
+        end)
+    end
+
     do -- Element (Range)
         local ElementRangeMixin = {}
 

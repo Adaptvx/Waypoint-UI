@@ -12,8 +12,8 @@ local Mixin = Mixin
 local CreateFromMixins = CreateFromMixins
 
 local UIDEF = {
-    UIInput          = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 7 / 512, right = 100 / 512, top = 242 / 512, bottom = 283 / 512 },
-    UIInput_Disabled = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 106 / 512, right = 199 / 512, top = 242 / 512, bottom = 283 / 512 },
+    UIInput          = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 7 / 1024, right = 100 / 1024, top = 242 / 512, bottom = 283 / 512 },
+    UIInput_Disabled = UICCommonPreload.ATLAS{ inset = 10, scale = 0.7, left = 106 / 1024, right = 199 / 1024, top = 242 / 512, bottom = 283 / 512 },
     UIInputCaret     = UIKit.Define.Texture{ path = Path.Root .. "\\Art\\Primitives\\Box" }
 }
 

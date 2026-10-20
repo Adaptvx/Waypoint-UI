@@ -12,6 +12,7 @@
 	<Include file="struct\index.xml"/>
 	<Include file="slash-command\index.xml"/>
 	<Include file="wow-client\index.xml"/>
+	<Include file="input-handler\index.xml"/>
 	<Include file="ui-kit\index.xml"/>
 	<Include file="generic-enum\index.xml"/>
 	<Include file="ui-anim\index.xml"/>

@@ -69,7 +69,7 @@ end
 
 local function SetupSettingUI()
     Settings_Constructor:SetBuildTargetFrame(SettingFrame.Content.Container)
-    Settings_Constructor:Build(Settings_Schema.SCHEMA)
+    Settings_Constructor:Build(Settings_Schema.SCHEMA, Settings_Schema.BINDING_BUTTON_OPTIONS)
 
     SettingFrame:SetParent(SettingFrameAnchor)
     SettingFrame:SetPoint("CENTER", SettingFrameAnchor)

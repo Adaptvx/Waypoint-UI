@@ -19,7 +19,7 @@ function UIKit_Renderer_Processor.SizeStatic(frame)
     local parent = frame:GetParent() or UIParent
 
     local width = frame.uk_prop_width
-    if width then
+    if width and frame.__layoutNaturalWidth == nil then
         if type(width) == "number" then
             frame:SetWidth(width)
         elseif width == UIKit_Define_Percentage then
@@ -28,7 +28,7 @@ function UIKit_Renderer_Processor.SizeStatic(frame)
     end
 
     local height = frame.uk_prop_height
-    if height then
+    if height and frame.__layoutNaturalHeight == nil then
         if type(height) == "number" then
             frame:SetHeight(height)
         elseif height == UIKit_Define_Percentage then
@@ -90,4 +90,44 @@ end
 function UIKit_Renderer_Processor.ScrollBar(frame)
     frame:SetThumbSize()
     frame:SyncValue()
+end
+
+function UIKit_Renderer_Processor.RefreshLayoutSize(frame)
+    UIKit_Renderer_Processor.SizeStatic(frame)
+    if frame.uk_prop_fill then UIKit_Renderer_Processor.SizeFill(frame) end
+    UIKit_Renderer_Processor.PositionOffset(frame)
+
+    local contentFrame = frame.GetContentFrame and frame:GetContentFrame()
+    if contentFrame then UIKit_Renderer_Processor.SizeStatic(contentFrame) end
+    local children = frame:GetFrameChildren()
+    if children then
+        for i = 1, #children do
+            local child = children[i]
+            if child and not child.uk_flag_renderBreakpoint then
+                UIKit_Renderer_Processor.RefreshLayoutSize(child)
+            end
+        end
+    end
+
+    if contentFrame then UIKit_Renderer_Processor.SizeFit(contentFrame) end
+    UIKit_Renderer_Processor.SizeFit(frame)
+    UIKit_Renderer_Processor.Layout(frame)
+end
+
+function UIKit_Renderer_Processor.LayoutStretch(frame, width, height)
+    local isChanged = false
+    if width ~= nil then
+        width = frame:ResolveFitSize("width", width)
+        isChanged = frame.__layoutNaturalWidth == nil or frame:GetWidth() ~= width
+        frame.__layoutNaturalWidth = frame.__layoutNaturalWidth or frame:GetWidth() or 0
+        if frame:GetWidth() ~= width then frame:SetWidth(width) end
+    end
+    if height ~= nil then
+        height = frame:ResolveFitSize("height", height)
+        isChanged = isChanged or frame.__layoutNaturalHeight == nil or frame:GetHeight() ~= height
+        frame.__layoutNaturalHeight = frame.__layoutNaturalHeight or frame:GetHeight() or 0
+        if frame:GetHeight() ~= height then frame:SetHeight(height) end
+    end
+    if isChanged then UIKit_Renderer_Processor.RefreshLayoutSize(frame) end
+    return isChanged
 end

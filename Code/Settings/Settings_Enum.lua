@@ -11,7 +11,8 @@ Settings_Enum.WidgetType = {
     CheckButton   = 7,
     SelectionMenu = 8,
     ColorInput    = 9,
-    Input         = 10
+    Input         = 10,
+    BindingButton = 11
 }
 
 Settings_Enum.ImageType = {
