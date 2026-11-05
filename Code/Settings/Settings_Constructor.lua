@@ -269,25 +269,23 @@ do -- Text
 end
 
 do -- Range
+    local function Range_NormalizeValue(self, value)
+        local min = ResolveValueThatIsFunctionOrValue(self.__min)
+        local max = ResolveValueThatIsFunctionOrValue(self.__max)
+        local step = ResolveValueThatIsFunctionOrValue(self.__step)
+        local steps = math.floor((value - min) / step + 0.5)
+        return math.max(min, math.min(max, min + steps * step))
+    end
+
     local function Range_Refresh(self, force)
         if not force and HasDBKeyValueChanged(self) == false then return end
 
-        local value = self:GetLocalValue()
-        self:GetRange():SetValue(value)
-
+        self.__isRefreshingRange = true
         local textFormatting = self.__textFormatting
         local textFormattingFunc = self.__textFormattingFunc
         local min = self.__min
         local max = self.__max
         local step = self.__step
-        local text = tostring(value)
-
-        -- Format text using provided formatter
-        if textFormattingFunc then
-            text = tostring(textFormattingFunc(value))
-        elseif textFormatting then
-            text = string.format(textFormatting, tostring(value))
-        end
 
         -- Re-apply dynamic min/max/step values
         if min and type(min) == "function" and max and type(max) == "function" then
@@ -298,12 +296,33 @@ do -- Range
             self:GetRange():SetValueStep(step())
         end
 
+        local previousValue = self:GetLocalValue()
+        local value = Range_NormalizeValue(self, previousValue)
+        self:SetLocalValue(value)
+        self.__lastValue = value
+        if value ~= previousValue then
+            Config.DBGlobal:SetVariable(self:GetDBKey(), value)
+        end
+        self:GetRange():SetValue(value)
+        self.__isRefreshingRange = false
+
+        local text = tostring(value)
+
+        -- Format text using provided formatter
+        if textFormattingFunc then
+            text = tostring(textFormattingFunc(value))
+        elseif textFormatting then
+            text = string.format(textFormatting, tostring(value))
+        end
+
         self.Range:SetText(text)
     end
 
     local function Range_OnValueChanged(self, value, userInput)
         local widget = self.__widgetRef
+        if widget.__isRefreshingRange then return end
 
+        value = Range_NormalizeValue(widget, value)
         if widget.__lastValue == value then return end
         widget.__lastValue = value
 
@@ -355,7 +374,7 @@ do -- Range
         widget.__max = max
         widget.__step = step
 
-        range:SetValue(widget:GetLocalValue())
+        Range_Refresh(widget, true)
         range:HookEvent("OnValueChanged", Range_OnValueChanged)
         widget:SetRefreshHandler(Range_Refresh)
 
@@ -445,7 +464,7 @@ do -- Binding Button
         button:SetBindingValidator(options.isAllowed)
         button:SetTextFormattingFunc(options.textFormattingFunc)
         widget:SetRefreshHandler(BindingButton_Refresh)
-        CallbackRegistry.Add("Input.BindingChanged", function(_, changedManager, device, actions)
+        CallbackRegistry.Add("InputHandler.BindingChanged", function(_, changedManager, device, actions)
             if changedManager ~= options.manager or (device and device ~= options.getDevice()) then return end
 
             if not actions then
@@ -460,7 +479,7 @@ do -- Binding Button
                 end
             end
         end)
-        CallbackRegistry.Add("Input.DisplayInputDeviceChanged", function() widget:Refresh(true) end)
+        CallbackRegistry.Add("InputHandler.DisplayInputDeviceChanged", function() widget:Refresh(true) end)
         BindingButton_Refresh(widget)
 
         return widget
@@ -472,6 +491,7 @@ do -- Check Button
         if not force and HasDBKeyValueChanged(self) == false then return end
 
         local value = self:GetLocalValue()
+        self.__lastValue = value
         self:GetCheckButton():SetChecked(value)
     end
 

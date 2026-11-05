@@ -2,4 +2,5 @@
 	<Script file="AutoTrackChatLinkPin.lua"/>
 	<Script file="AutoTrackPlacedPin.lua"/>
 	<Script file="GuidePinAssistant.lua"/>
+	<Script file="MinimapPinPlacement.lua"/>
 </Ui>

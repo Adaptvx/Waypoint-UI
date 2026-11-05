@@ -274,13 +274,13 @@ do --Map Pin Template
         self:UpdateHitboxSize()
         self:HookMouseEnter(self.ShowTooltip)
         self:HookMouseLeave(self.HideTooltip)
+        self:HookClick(self.HandleClick)
 
         if self.isInteractive then
             self:HookButtonStateChange(self.UpdateAnimation)
             self:HookEnableChange(self.UpdateAnimation)
             self:HookMouseDown(self.SuppressWorldMapCtrlClick)
             self:HookMouseUp(self.SuppressWorldMapCtrlClick)
-            self:HookClick(self.HandleClick)
             self:SetScale(0.6)
         else
             self:SetScale(1)
@@ -361,6 +361,7 @@ do --Map Pin Template
 
     function MapPinFrameMixin:HandleClick(button)
         if button ~= "LeftButton" then return end
+        if self.displayLayer == MapPinFrame_Preload.Enum.DisplayLayer.Minimap and not IsControlKeyDown() then return end
 
         if self.isUserNavigation then
             if IsModifiedClick("CHATLINK") then
@@ -610,8 +611,8 @@ do --Map Pin Template
 
         if not isMinimap then
             GameTooltip_AddNormalLine(GameTooltip, MAP_PIN_SHARING_TOOLTIP)
-            GameTooltip_AddColoredLine(GameTooltip, MAP_PIN_REMOVE, GREEN_FONT_COLOR)
         end
+        GameTooltip_AddColoredLine(GameTooltip, MAP_PIN_REMOVE, GREEN_FONT_COLOR)
 
         GameTooltip:Show()
     end

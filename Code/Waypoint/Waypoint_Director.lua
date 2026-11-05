@@ -2,6 +2,9 @@ local env = select(2, ...)
 local Config = env.Config
 local SavedVariables = env.modules:Import("packages\\saved-variables")
 local CallbackRegistry = env.modules:Import("packages\\callback-registry")
+local MapPin = env.modules:Import("@\\MapPin")
+local Navigation_DataProvider = env.modules:Await("@\\Navigation\\DataProvider")
+local Navigation_Preload = env.modules:Await("@\\Navigation\\Preload")
 local Waypoint_Cache = env.modules:Import("@\\Waypoint\\Cache")
 local Waypoint_DataProvider = env.modules:Import("@\\Waypoint\\DataProvider")
 local Waypoint_Enum = env.modules:Import("@\\Waypoint\\Enum")
@@ -13,6 +16,7 @@ local IsInInstance = IsInInstance
 local IsPlayerMoving = IsPlayerMoving
 local IsSuperTrackingAnything = C_SuperTrack.IsSuperTrackingAnything
 local IsSuperTrackingUserWaypoint = C_SuperTrack.IsSuperTrackingUserWaypoint
+local GetHighestPrioritySuperTrackingType = C_SuperTrack.GetHighestPrioritySuperTrackingType
 local ipairs = ipairs
 
 Waypoint_Director.isActive = false
@@ -75,6 +79,7 @@ end
         Waypoint.ContextUpdate
         Waypoint.SuperTrackingChanged
         Waypoint.ActiveChanged
+        Waypoint.UpdateActive
         Waypoint.NavigationModeChanged
         Waypoint.DistanceReady
 ]]
@@ -414,8 +419,51 @@ function Waypoint_Director.ShouldShowInCurrentLocation()
     return (not isInInstance and instanceType == "none")
 end
 
+function Waypoint_Director.IsTrackingEnabled()
+    local trackingType = GetHighestPrioritySuperTrackingType()
+
+    if trackingType == Enum.SuperTrackingType.Quest then
+        return Config.DBGlobal:GetVariable("TrackingQuestsEnabled")
+    elseif trackingType == Enum.SuperTrackingType.MapPin or trackingType == Enum.SuperTrackingType.Vignette then
+        return Config.DBGlobal:GetVariable("TrackingPOIsEnabled")
+    elseif trackingType == Enum.SuperTrackingType.UserWaypoint then
+        local userNavigation = nil
+
+        if MapPin.IsPathStepWaypointTracked() then
+            local destination = Navigation_DataProvider:GetDestinationPinSnapshot()
+            local metadata = destination.metadata
+            local pinType = metadata and metadata.pinType
+            local PinType = Navigation_Preload.Enum.SuperTrackedPinType
+
+            if pinType == PinType.Quest then
+                return Config.DBGlobal:GetVariable("TrackingQuestsEnabled")
+            elseif pinType == PinType.MapPin or pinType == PinType.Vignette then
+                return Config.DBGlobal:GetVariable("TrackingPOIsEnabled")
+            elseif pinType == PinType.Content then
+                return true
+            end
+
+            userNavigation = destination.userNavigation
+        elseif MapPin.IsUserNavigationTracked() then
+            userNavigation = MapPin.GetUserNavigation()
+        end
+
+        if userNavigation and userNavigation.flags then
+            if userNavigation.flags == "GuidePin" then
+                return Config.DBGlobal:GetVariable("TrackingPOIsEnabled")
+            end
+
+            return true
+        end
+
+        return Config.DBGlobal:GetVariable("TrackingMapPinsEnabled")
+    end
+
+    return true
+end
+
 local function ShouldSetActive()
-    local shouldShow = IsSuperTrackingAnything() and Waypoint_Director.ShouldShowInCurrentLocation()
+    local shouldShow = IsSuperTrackingAnything() and Waypoint_Director.IsTrackingEnabled() and Waypoint_Director.ShouldShowInCurrentLocation()
     return shouldShow
 end
 
@@ -433,7 +481,16 @@ function Waypoint_Director.UpdateActive()
 
         CallbackRegistry.Trigger("Waypoint.ActiveChanged", active)
     end
+
+    CallbackRegistry.Trigger("Waypoint.UpdateActive", active)
 end
+
+SavedVariables.OnChange("WaypointDB_Global", "TrackingQuestsEnabled", Waypoint_Director.UpdateActive)
+SavedVariables.OnChange("WaypointDB_Global", "TrackingMapPinsEnabled", Waypoint_Director.UpdateActive)
+SavedVariables.OnChange("WaypointDB_Global", "TrackingPOIsEnabled", Waypoint_Director.UpdateActive)
+CallbackRegistry.Add("MapPin.UserNavigationChanged", Waypoint_Director.UpdateActive)
+CallbackRegistry.Add("MapPin.UserNavigationCleared", Waypoint_Director.UpdateActive)
+CallbackRegistry.Add("MapPin.PathStepWaypointChanged", Waypoint_Director.UpdateActive)
 
 function Waypoint_Director.GetNavigationMode()
     return Waypoint_Director.navigationMode

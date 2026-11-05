@@ -60,8 +60,12 @@ do -- Protected event util
     f:SetScript("OnEvent", Wash)
 
     function UIKit_Utils:AwaitProtectedEvent(func, frame)
+        if not InCombatLockdown() then
+            func(frame)
+            return
+        end
+
         tinsert(dirty, func)
         tinsert(dirtyFrame, frame)
-        Wash()
     end
 end

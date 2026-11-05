@@ -17,8 +17,8 @@ local IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 env.NAME = "Waypoint UI"
 env.LOGO = Path.Root .. "\\Art\\Icons\\Logo"
 env.LOGO_ALT = Path.Root .. "\\Art\\Icons\\Logo-White"
-env.VERSION_STRING = "1.7.4"
-env.VERSION_NUMBER = 010704
+env.VERSION_STRING = "1.7.5"
+env.VERSION_NUMBER = 010705
 env.DEBUG_MODE = false
 
 
@@ -90,8 +90,12 @@ do
     local DB_GLOBAL_DEFAULTS = {
         lastLoadedVersion                          = nil,
         fontPath                                   = nil,
+        navigationOverlayFrameBounds               = nil,
 
         WaypointSystemType                         = 1,
+        TrackingQuestsEnabled                      = true,
+        TrackingMapPinsEnabled                     = true,
+        TrackingPOIsEnabled                        = true,
         DistanceThresholdPinpoint                  = WoWClient.IS_FOREVER and 100 or 325,
         DistanceThresholdHidden                    = 25,
         AlwaysShow                                 = false,
@@ -108,7 +112,9 @@ do
         WaypointBeamAlpha                          = 1,
         WaypointDistanceTextFontFlags              = 1, --UIFont.Enum.FontFlags
         WaypointDistanceText                       = true,
-        WaypointDistanceTextType                   = 1,
+        WaypointShowDestinationName                = true,
+        WaypointShowDistance                       = true,
+        WaypointShowArrivalTime                    = true,
         WaypointDistanceTextScale                  = 1,
         WaypointDistanceTextAlpha                  = 0.7,
         WaypointDistanceSubtextAlpha               = 0.7,
@@ -163,6 +169,7 @@ do
         AudioCustomNewUserNavigation               = Enum.Sound.NewUserNavigation,
 
         CustomMapPinsEnabled                       = false,
+        MinimapPinPlacementEnabled                 = true,
         PathfindingEnabled                         = false,
         PathfindingProvider                        = Enum.PathProvider.None,
         AutoTrackPlacedPinEnabled                  = true,
@@ -228,11 +235,6 @@ do
             migrationType = "variable",
             from          = { "profiles", "Default", "WS_DISTANCE_HIDE" },
             to            = "DistanceThresholdHidden"
-        },
-        {
-            migrationType = "variable",
-            from          = { "profiles", "Default", "WS_DISTANCE_TEXT_TYPE" },
-            to            = "WaypointDistanceTextType"
         },
         {
             migrationType = "variable",

@@ -32,10 +32,3 @@ Waypoint_Enum.WaypointSystemType = {
     Pinpoint = 3
 }
 
-Waypoint_Enum.WaypointDistanceTextType = {
-    All             = 1,
-    Distance        = 2,
-    ArrivalTime     = 3,
-    DestinationName = 4,
-    None            = 5
-}

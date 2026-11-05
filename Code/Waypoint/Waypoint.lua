@@ -47,11 +47,14 @@ function WaypointMixin:OnLoad()
     self.lastScale = nil
 
     self:SetScript("OnUpdate", self.OnUpdate)
-    local footerTextCallbackKeys = { "WaypointDistanceTextFontFlags", "WaypointDistanceTextType", "WaypointDistanceTextAlpha", "WaypointDistanceSubtextAlpha", "WaypointDistanceTextScale" }
+    local footerTextCallbackKeys = { "WaypointDistanceTextFontFlags", "WaypointDistanceTextAlpha", "WaypointDistanceSubtextAlpha", "WaypointDistanceTextScale" }
     for _, event in ipairs(footerTextCallbackKeys) do
         SavedVariables.OnChange("WaypointDB_Global", event, function() self:SetFooterTextAppearance() end)
     end
-    SavedVariables.OnChange("WaypointDB_Global", "WaypointDistanceText", function() self:UpdateFooter() end)
+    local footerCallbackKeys = { "WaypointDistanceText", "WaypointShowDestinationName", "WaypointShowDistance", "WaypointShowArrivalTime" }
+    for _, event in ipairs(footerCallbackKeys) do
+        SavedVariables.OnChange("WaypointDB_Global", event, function() self:UpdateFooter() end)
+    end
     SavedVariables.OnChange("WaypointDB_Global", "WaypointBeam", function() self:UpdateBeam() end)
     SavedVariables.OnChange("WaypointDB_Global", "WaypointBeamAlpha", function() self:UpdateBeam() end)
     SavedVariables.OnChange("WaypointDB_Global", "WaypointAlpha", function() self:UpdateOpacity() end)
@@ -83,11 +86,11 @@ end
 
 function WaypointMixin:UpdateText()
     local waypointDistanceText = Config.DBGlobal:GetVariable("WaypointDistanceText")
-    local waypointDistanceTextType = Config.DBGlobal:GetVariable("WaypointDistanceTextType")
-    if not waypointDistanceText then return end
-
-    local showInfoText = (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.DestinationName) or (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
-    if not showInfoText then return end
+    local showInfoText = Config.DBGlobal:GetVariable("WaypointShowDestinationName")
+    if not waypointDistanceText or not showInfoText then
+        self.Footer.InfoText:Hide()
+        return
+    end
 
     local pinName = Waypoint_Cache.Get("pinName")
     local redirectInfo = Waypoint_Cache.Get("redirectInfo")
@@ -130,14 +133,14 @@ end
 
 function WaypointMixin:UpdateDistanceText()
     local waypointDistanceText = Config.DBGlobal:GetVariable("WaypointDistanceText")
-    local waypointDistanceTextType = Config.DBGlobal:GetVariable("WaypointDistanceTextType")
     if not waypointDistanceText then return end
 
-    local isDistance = (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.Distance) or (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
-    local isArrivalTime = (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.ArrivalTime) or (waypointDistanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
+    local isDistance = Config.DBGlobal:GetVariable("WaypointShowDistance")
+    local isArrivalTime = Config.DBGlobal:GetVariable("WaypointShowArrivalTime")
+    local distance = Waypoint_Cache.Get("distance")
 
-    if isDistance then
-        local distance = Waypoint_Cache.Get("distance")
+    self.Footer.DistanceText:SetShown(isDistance and distance ~= nil)
+    if isDistance and distance ~= nil then
         local oldText = self.Footer.DistanceText:GetText()
         local newText = tostring(SharedUtil:FormatDistance(distance))
 
@@ -164,18 +167,15 @@ end
 function WaypointMixin:UpdateFooter()
     local distanceTextEnabled = Config.DBGlobal:GetVariable("WaypointDistanceText")
 
+    self.AnimGroup_ArrivalTimeText:Stop(self.Footer.ArrivalTimeText)
+    self.Footer.ArrivalTimeText.isVisible = false
+    self.Footer.ArrivalTimeText:Hide()
     self.Footer:SetShown(distanceTextEnabled)
     if not distanceTextEnabled then return end
 
-    local distanceTextType = Config.DBGlobal:GetVariable("WaypointDistanceTextType")
-    local showInfoText = (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.DestinationName) or (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
-    local showDistanceText = (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.Distance) or (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
-    local showArrivalTime = (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.ArrivalTime) or (distanceTextType == Waypoint_Enum.WaypointDistanceTextType.All)
-
     self:SetFooterTextAppearance()
-    self.Footer.InfoText:SetShown(showInfoText)
-    self.Footer.DistanceText:SetShown(showDistanceText)
-    self.Footer.ArrivalTimeText:SetShown(showArrivalTime)
+    self:UpdateText()
+    self:UpdateDistanceText()
     self.Footer:_Render()
 end
 
@@ -987,7 +987,6 @@ CallbackRegistry.Add("Waypoint.ContextUpdate", Waypoint.UpdateContext, 10)
 SavedVariables.OnChange("WaypointDB_Global", "NavigatorShow", function() Waypoint.UpdateFrameVisibility(Waypoint_Director:GetNavigationMode()) end)
 SavedVariables.OnChange("WaypointDB_Global", "PinpointInfo", Waypoint.UpdateContext)
 SavedVariables.OnChange("WaypointDB_Global", "PinpointInfoExtended", Waypoint.UpdateContext)
-SavedVariables.OnChange("WaypointDB_Global", "WaypointDistanceTextType", Waypoint.UpdateContext)
 
 local function PlayWaypointShowAudio()
     local Settings_CustomAudio = Config.DBGlobal:GetVariable("AudioCustom")
@@ -1177,13 +1176,21 @@ do --Animation
     CallbackRegistry.Add("WaypointAnimation.New", Waypoint.New)
 end
 
-do -- Hide SuperTrackedFrame while waypoint is active
+do -- Hide SuperTrackedFrame while waypoint is active or tracking is disabled
     local function HideSuperTrackedFrame()
-        if not Waypoint_Director.isActive then return end
+        if not Config.DBGlobal then return end
+        if not Waypoint_Director.isActive and Waypoint_Director.IsTrackingEnabled() then return end
         SuperTrackedFrame:Hide()
     end
 
-    CallbackRegistry.Add("Waypoint.ActiveChanged", HideSuperTrackedFrame)
+    CallbackRegistry.Add("Waypoint.UpdateActive", function(_, active)
+        if active or not Waypoint_Director.IsTrackingEnabled() then
+            SuperTrackedFrame:Hide()
+        else
+            SuperTrackedFrame:CheckInitializeNavigationFrame()
+            SuperTrackedFrame:SetShown(SuperTrackedFrame.navFrame ~= nil)
+        end
+    end)
     hooksecurefunc(SuperTrackedFrame, "SetShown", HideSuperTrackedFrame)
     hooksecurefunc(SuperTrackedFrame, "Show", HideSuperTrackedFrame)
 end

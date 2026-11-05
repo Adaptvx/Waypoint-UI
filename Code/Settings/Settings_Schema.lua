@@ -155,6 +155,32 @@ do -- Schema
                     key                      = "WaypointSystemType"
                 },
                 {
+                    widgetName = L["CONFIG_WAYPOINTSYSTEM_TRACKING"],
+                    widgetType = Settings_Enum.WidgetType.Container,
+                    children   = {
+                        {
+                            widgetName = L["CONFIG_WAYPOINTSYSTEM_TRACKING_QUESTS"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "TrackingQuestsEnabled"
+                        },
+                        {
+                            widgetName = L["CONFIG_WAYPOINTSYSTEM_TRACKING_MAPPINS"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "TrackingMapPinsEnabled"
+                        },
+                        {
+                            widgetName = L["CONFIG_WAYPOINTSYSTEM_TRACKING_POIS"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "TrackingPOIsEnabled"
+                        },
+                        {
+                            widgetName = L["CONFIG_WAYPOINTSYSTEM_TRACKING_GUIDEPINS"],
+                            widgetType = Settings_Enum.WidgetType.CheckButton,
+                            key        = "GuidePinAssistantEnabled"
+                        }
+                    }
+                },
+                {
                     widgetName = L["CONFIG_WAYPOINTSYSTEM_GENERAL"],
                     widgetType = Settings_Enum.WidgetType.Container,
                     children   = {
@@ -206,15 +232,25 @@ do -- Schema
                     children   = {
                         {
                             widgetName               = L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE"],
-                            widgetType               = Settings_Enum.WidgetType.SelectionMenu,
-                            widgetSelectionMenu_data = {
-                                L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_BOTH"],
-                                L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_DISTANCE"],
-                                L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_ARRIVALTIME"],
-                                L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_DESTINATIONNAME"],
-                                L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_NONE"]
-                            },
-                            key                      = "WaypointDistanceTextType"
+                            widgetType               = Settings_Enum.WidgetType.Container,
+                            widgetContainer_isNested = true,
+                            children                 = {
+                                {
+                                    widgetName = L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_DESTINATIONNAME"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "WaypointShowDestinationName"
+                                },
+                                {
+                                    widgetName = L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_DISTANCE"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "WaypointShowDistance"
+                                },
+                                {
+                                    widgetName = L["CONFIG_WAYPOINTSYSTEM_WAYPOINT_FOOTER_TYPE_ARRIVALTIME"],
+                                    widgetType = Settings_Enum.WidgetType.CheckButton,
+                                    key        = "WaypointShowArrivalTime"
+                                }
+                            }
                         }
                     }
                 },
@@ -272,12 +308,21 @@ do -- Schema
                             widgetType        = Settings_Enum.WidgetType.CheckButton,
                             widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_ENABLE_DESCRIPTION"] },
                             key               = "CustomMapPinsEnabled"
-                        }, {
-                        widgetName        = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"],
-                        widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] },
-                        widgetType        = Settings_Enum.WidgetType.CheckButton,
-                        key               = "AutoTrackPlacedPinEnabled"
-                    },
+                        },
+                        {
+                            widgetName        = L["CONFIG_MAP_PINS_MINIMAPPLACEMENT"],
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_MINIMAPPLACEMENT_DESCRIPTION"] },
+                            key               = "MinimapPinPlacementEnabled",
+                            showWhen          = function() return Config.DBGlobal:GetVariable("CustomMapPinsEnabled") == true end,
+                            indent            = 1
+                        },
+                        {
+                            widgetName        = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN"],
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_AUTOTRACKPLACEDPIN_DESCRIPTION"] },
+                            widgetType        = Settings_Enum.WidgetType.CheckButton,
+                            key               = "AutoTrackPlacedPinEnabled"
+                        },
                         {
                             widgetName        = L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN"],
                             widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_AUTOTRACKCHATLINKPIN_DESCRIPTION"] },
@@ -285,12 +330,6 @@ do -- Schema
                             key               = "AutoTrackChatLinkPinEnabled",
                             showWhen          = function() return Config.DBGlobal:GetVariable("AutoTrackPlacedPinEnabled") == false end,
                             indent            = 1
-                        },
-                        {
-                            widgetName        = L["CONFIG_MAP_PINS_GUIDEPINASSISTANT"],
-                            widgetDescription = Settings_Define.Descriptor{ description = L["CONFIG_MAP_PINS_GUIDEPINASSISTANT_DESCRIPTION"] },
-                            widgetType        = Settings_Enum.WidgetType.CheckButton,
-                            key               = "GuidePinAssistantEnabled"
                         }
                     }
                 }
@@ -444,13 +483,12 @@ do -- Schema
                         {
                             widgetName = L["CONFIG_APPEARANCE_WAYPOINT_FOOTER"],
                             widgetType = Settings_Enum.WidgetType.CheckButton,
-                            key        = "WaypointDistanceText",
-                            showWhen   = function() return Config.DBGlobal:GetVariable("waypointwaypointDistanceTextType") ~= Waypoint_Enum.WaypointDistanceTextType.None end
+                            key        = "WaypointDistanceText"
                         },
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SCALE"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
-                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true and Config.DBGlobal:GetVariable("waypointwaypointDistanceTextType") ~= Waypoint_Enum.WaypointDistanceTextType.None end,
+                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true end,
                             indent                         = 1,
                             widgetRange_min                = 0.1,
                             widgetRange_max                = 2,
@@ -461,7 +499,7 @@ do -- Schema
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_ALPHA"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
-                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true and Config.DBGlobal:GetVariable("waypointwaypointDistanceTextType") ~= Waypoint_Enum.WaypointDistanceTextType.None end,
+                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true end,
                             indent                         = 1,
                             widgetRange_min                = 0,
                             widgetRange_max                = 1,
@@ -472,7 +510,7 @@ do -- Schema
                         {
                             widgetName                     = L["CONFIG_APPEARANCE_WAYPOINT_FOOTER_SUBTEXTALPHA"],
                             widgetType                     = Settings_Enum.WidgetType.Range,
-                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true and Config.DBGlobal:GetVariable("waypointwaypointDistanceTextType") ~= Waypoint_Enum.WaypointDistanceTextType.None end,
+                            showWhen                       = function() return Config.DBGlobal:GetVariable("WaypointDistanceText") == true end,
                             indent                         = 1,
                             widgetRange_min                = 0,
                             widgetRange_max                = 1,

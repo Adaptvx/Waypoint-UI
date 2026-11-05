@@ -6,6 +6,7 @@ local UIKit = env.modules:Import("packages\\ui-kit")
 local Frame, LayoutGrid, LayoutHorizontal, LayoutVertical, Text, ScrollContainer, LazyScrollContainer, ScrollBar, ScrollContainerEdge, Input, LinearSlider, HitRect, List, SecureButton, ModelScene = unpack(UIKit.UI.Frames)
 local UIAnim = env.modules:Import("packages\\ui-anim")
 local UIWidgets = env.modules:Import("@\\UIWidgets")
+local SharedUtil = env.modules:Import("@\\SharedUtil")
 local UICSharedMixin = env.modules:Import("packages\\uic-sharedmixin")
 local Waypoint_DataProvider = env.modules:Import("@\\Waypoint\\DataProvider")
 local Navigation_Preload = env.modules:Import("@\\Navigation\\Preload")
@@ -42,6 +43,7 @@ do --WUINavigationOverlayFrame
 
         self:EnableMouse(true)
         self:RegisterMouseEvents()
+        SharedUtil:InitializeBoundsForFrame(self, "navigationOverlayFrameBounds", self.TitleFrame)
         self:HookButtonStateChange(self.UpdateAnimation)
         self:HookMouseEnter(self.ShowTooltip)
         self:HookMouseLeave(self.HideTooltip)
@@ -50,6 +52,17 @@ do --WUINavigationOverlayFrame
 
         self:SetAlpha(0)
         self:Hide()
+    end
+
+    function NavigationOverlayFrameMixin:GetDefaultPosition()
+        return "TOP", UIParent, "TOP", 0, -20
+    end
+
+    function NavigationOverlayFrameMixin:SetDefaultPosition()
+        local point, relativeTo, relativePoint, x, y = self:GetDefaultPosition()
+        self:point(point, relativePoint):anchor(relativeTo):position(x, y)
+        self:ClearAllPoints()
+        self:SetPoint(point, relativeTo, relativePoint, x, y)
     end
 
     function NavigationOverlayFrameMixin:UpdateAnimation()
@@ -232,6 +245,7 @@ do --WUINavigationOverlayFrame
                     :size(UIKit.UI.FIT, 15)
                     :layoutAlignmentH(UIKit.Enum.Direction.Justified)
                     :layoutSpacing(2)
+                    :registerForDrag(true)
                     :alpha(0.5),
 
                 LayoutHorizontal(name .. ".ContentFrame", {
@@ -262,6 +276,7 @@ do --WUINavigationOverlayFrame
         :size(UIKit.UI.FIT, UIKit.UI.FIT)
         :parent(UIParent)
         :frameStrata(UIKit.Enum.FrameStrata.Medium)
+        :clampedToScreen(true)
         :enableMouse(true)
         :registerForClicks("LeftButtonDown", "LeftButtonUp")
         :_Render()
