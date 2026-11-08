@@ -12,6 +12,7 @@ L["CANCEL"] = "취소"
 L["WAY_PASTE_PROMPT"] = "/way 명령어를 입력하세요"
 
 -- 폰트
+L["FONT_GAME_DEFAULT"] = "Game Font"
 L["TEXT_ALIGNMENT"] = "텍스트 정렬"
 L["LEADING"] = "줄 간격"
 L["JUSTIFIED"] = "양쪽 정렬"
@@ -237,6 +238,8 @@ L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.
 
 -- 확장 기능
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "현재 웨이포인트를 \"%s\"로 교체하시겠습니까?"
+L["GUIDE_PIN_DEFAULT_NAME"] = "Guide Pin"
+L["DUGI_WAYPOINT_DEFAULT_NAME"] = "Dugi Waypoint"
 
 -- 지원되는 애드온
 L["TOMTOM_REPLACEPROMPT"] = "현재 웨이포인트를 TomTom 웨이포인트 \"%s\"로 교체하시겠습니까?"

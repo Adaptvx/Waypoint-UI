@@ -52,7 +52,7 @@ local function OnWaypointsChanged()
     end
 
     local wp = activePoint.waypoint
-    DugisWaypointInfo.name = (wp and wp.desc) or "Dugi Waypoint"
+    DugisWaypointInfo.name = (wp and wp.desc) or L["DUGI_WAYPOINT_DEFAULT_NAME"]
     DugisWaypointInfo.mapID = activePoint.m
     DugisWaypointInfo.x = activePoint.x * 100
     DugisWaypointInfo.y = activePoint.y * 100

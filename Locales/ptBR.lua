@@ -12,6 +12,7 @@ L["CANCEL"] = "Cancel"
 L["WAY_PASTE_PROMPT"] = "Enter /way commands"
 
 -- Font
+L["FONT_GAME_DEFAULT"] = "Game Font"
 L["TEXT_ALIGNMENT"] = "Text Alignment"
 L["LEADING"] = "Leading"
 L["JUSTIFIED"] = "Justified"
@@ -237,6 +238,8 @@ L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.
 
 -- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Deseja substituir seu marcador atual por \"%s\"?"
+L["GUIDE_PIN_DEFAULT_NAME"] = "Guide Pin"
+L["DUGI_WAYPOINT_DEFAULT_NAME"] = "Dugi Waypoint"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Deseja substituir seu marcador atual pelo marcador do TomTom \"%s\"?"
