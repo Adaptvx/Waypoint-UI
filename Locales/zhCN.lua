@@ -12,6 +12,7 @@ L["CANCEL"] = "取消"
 L["WAY_PASTE_PROMPT"] = "输入 /way 命令"
 
 -- Font
+L["FONT_GAME_DEFAULT"] = "游戏默认字体"
 L["TEXT_ALIGNMENT"] = "文本对齐"
 L["LEADING"] = "左对齐"
 L["JUSTIFIED"] = "两端对齐"
@@ -237,6 +238,8 @@ L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.
 
 -- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "你确定使用\"%s\"替换当前路径点吗？"
+L["GUIDE_PIN_DEFAULT_NAME"] = "向导图钉"
+L["DUGI_WAYPOINT_DEFAULT_NAME"] = "Dugi 路径点"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "你确定使用TomTom箭头插件的路径点\"%s\"替换当前路径点吗？"

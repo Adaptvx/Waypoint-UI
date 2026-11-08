@@ -57,7 +57,7 @@ local function LocateGuidePin()
     if not normalizedX or not normalizedY then return nil end
 
     cachedGuidePin = {
-        name = poiInfo.name or "Guide Pin",
+        name = poiInfo.name or L["GUIDE_PIN_DEFAULT_NAME"],
         mapID = mapID,
         normalizedX = normalizedX,
         normalizedY = normalizedY

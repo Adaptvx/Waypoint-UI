@@ -25,7 +25,7 @@ function UIFont_CustomFont.RefreshFontList()
 
     -- Always add the default game font first
     local gameFontPath = GameFontNormal:GetFont()
-    tinsert(fonts.names, "Game Font")
+    tinsert(fonts.names, (env.L and env.L["FONT_GAME_DEFAULT"]) or "Game Font")
     tinsert(fonts.paths, gameFontPath)
 
     -- Populate LibSharedMedia fonts

@@ -12,6 +12,7 @@ L["CANCEL"] = "Отмена"
 L["WAY_PASTE_PROMPT"] = "Введите команды /way"
 
 -- Font
+L["FONT_GAME_DEFAULT"] = "Game Font"
 L["TEXT_ALIGNMENT"] = "Выравнивание текста"
 L["LEADING"] = "По левому краю"
 L["JUSTIFIED"] = "По ширине"
@@ -237,6 +238,8 @@ L["LIBRARIES_HEREBEDRAGONS_DESCRIPTION"] = "nevcairiel - https://www.curseforge.
 
 -- Extensions
 L["GUIDE_PIN_ASSISTANT_REPLACEPROMPT"] = "Заменить текущую путевую точку на \"%s\"?"
+L["GUIDE_PIN_DEFAULT_NAME"] = "Guide Pin"
+L["DUGI_WAYPOINT_DEFAULT_NAME"] = "Dugi Waypoint"
 
 -- Supported Add-ons
 L["TOMTOM_REPLACEPROMPT"] = "Хотите ли вы заменить текущую путевую точку на путевую точку TomTom \"%s\"?"
