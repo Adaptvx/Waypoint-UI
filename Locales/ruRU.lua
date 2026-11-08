@@ -230,6 +230,8 @@ L["CONTRIBUTORS_HECTORZAGA"] = "HectorZaGa"
 L["CONTRIBUTORS_HECTORZAGA_DESCRIPTION"] = "Код - Исправление ошибок"
 L["CONTRIBUTORS_SYVERGISWOLD"] = "SyverGiswold"
 L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] = "Код - Особенность"
+L["CONTRIBUTORS_QIRENZHIFU"] = "骑人知福-正直"
+L["CONTRIBUTORS_QIRENZHIFU_DESCRIPTION"] = "Translator - Chinese (Simplified)"
 
 -- Libraries
 L["LIBRARIES_HEREBEDRAGONS"] = "HereBeDragons"

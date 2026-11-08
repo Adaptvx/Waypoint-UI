@@ -1394,6 +1394,12 @@ do -- Schema
                             widgetType        = Settings_Enum.WidgetType.Text,
                             widgetDescription = Settings_Define.Descriptor{ description = L["CONTRIBUTORS_SYVERGISWOLD_DESCRIPTION"] },
                             widgetTransparent = true
+                        },
+                        {
+                            widgetName        = L["CONTRIBUTORS_QIRENZHIFU"],
+                            widgetType        = Settings_Enum.WidgetType.Text,
+                            widgetDescription = Settings_Define.Descriptor{ description = L["CONTRIBUTORS_QIRENZHIFU_DESCRIPTION"] },
+                            widgetTransparent = true
                         }
                     }
                 },
