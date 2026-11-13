@@ -9,7 +9,7 @@ local L = env.L
 L["PASTE"] = "Colar"
 L["REPLACE"] = "Substituir"
 L["CANCEL"] = "Cancelar"
-L["WAY_PASTE_PROMPT"] = "Enter /way commands"
+L["WAY_PASTE_PROMPT"] = "Inserir comandos /way"
 
 -- Font
 L["TEXT_ALIGNMENT"] = "Alinhamento do texto"
